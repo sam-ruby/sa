@@ -1,0 +1,92 @@
+.h4.accordion.side-nav-container-my-stuff
+  .title
+    My Stuff
+  .accordion-group
+    .accordion-heading
+      %a.accordion-toggle.menu-expand-link{'data-toggle'=>:collapse,
+        'data-parent'=>'div.side-nav-container-my-stuff',
+        :href=>'#saved-cats'}
+        .sub-title
+          %b.caret.dd
+          &nbsp;
+          Saved Categories
+    #saved-cats.accordion-body.collapse
+      .accordion-inner
+        List of Saved Categories. TBD.
+
+  .divider
+
+  .accordion-group
+    .accordion-heading
+      %a.accordion-toggle.menu-expand-link{'data-toggle'=>:collapse,
+        'data-parent'=>'div.side-nav-container-my-stuff',
+        :href=>'#short-cuts'}
+        .sub-title
+          %b.caret.dd
+          &nbsp;
+          Short Cuts
+    #short-cuts.accordion-body.collapse
+      .accordion-inner
+        List of shortcuts. TBD.
+
+.vspacer
+
+- cats = Rails.cache.fetch(:category_map, :expires_in=>8.hours) do 
+  - Category.get_cat_map
+
+- get_link = Proc.new do |name, cat_id|
+  - link_to name, "#/cat?cat_id=#{cat_id}", :class=>'sub-cat'
+
+- unless session[:user_id].nil?
+  - user = User.get_item_with_name(session[:user_id])
+  - cat_pref_list = JSON.parse(user.get_val(User::DOD_PREF_KEY)) rescue []  
+- else
+  - cat_pref_list = []
+
+- saved_cat = Proc.new do |cat_ids, cat_id_map|
+  - last_cat_id = cat_ids.split(/,/).last
+  - last_cat_name = cat_id_map[last_cat_id.to_i] 
+  %tr
+    %td.cat-item
+      = get_link.call(last_cat_name, last_cat_id)
+
+- cat_item = Proc.new do |cat, parent_id, parent_cat_ids=[]|
+  - cat_id = cat[:cat_id]
+  - cat_ids = (parent_cat_ids + [cat_id])
+  .accordion
+    .accordion-group
+      .accordion-heading
+        - if cat['children'] and cat['children'].size > 0
+          - sub_cats = cat['children'].sort do |a, b|
+            - if a['children'] and b['children']
+              - [b['children'].size, a[:name]] <=> [a['children'].size, b[:name]]
+            - else
+              - a[:name] <=> b[:name]
+          %a.accordion-toggle.menu-expand-link{'data-toggle'=>:collapse,
+            'data-parent'=>'#' + parent_id, :href=>"#cat-#{cat_ids.join('-')}"}
+            %b.caret.dd
+        - else
+          - sub_cats = []
+        = get_link.call(cat[:name], cat_ids.join(','))
+      .accordion-body.collapse{:id => "cat-#{cat_ids.join('-')}"}
+        .accordion-inner
+          %div{:id => "parent-#{cat_id}"}
+            - sub_cats.each do |sub_cat|
+              - cat_item.call(sub_cat, "parent-#{cat_id}", cat_ids)
+
+
+.side-nav-container-categories.accordion
+  .accordion-group
+    .accordion-heading.title
+      %a.accordion-toggle.menu-expand-link{'data-toggle'=>:collapse,
+        'data-parent'=>'div.side-nav-container-categories',
+        :href=>'#all-cats'}
+        %b.caret.dd
+        &nbsp;
+        Category List
+    #all-cats.accordion-body.collapse
+      .accordion-inner
+        #category-menu.fsize-small.sub-cat.accordion
+          - cats.each do |cat|
+            - cat_item.call(cat, 'category-menu')
+

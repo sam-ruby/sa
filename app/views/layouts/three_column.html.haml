@@ -1,0 +1,22 @@
+!!!
+%html
+  %head
+    %title= @title
+    = stylesheet_link_tag 'application'
+    = yield :stylesheets
+    = csrf_meta_tag 
+  %body.base
+    .inner-container
+      = render 'title'
+      .container-fluid
+        .row-fluid.content.tmargin-one-em
+          .span2.side-bar
+            = render 'side_nav'
+          #data-container.span10.fsize-small.middle-content
+            %p.notice
+              = notice
+            %p.alert
+              = alert
+            = yield :middle_content
+            = yield :right_column
+        = yield :javascript

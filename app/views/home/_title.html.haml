@@ -1,0 +1,29 @@
+.row-fluid.app-title-box
+  = link_to root_url do
+    .span6.app-title
+      %span Search 
+      %span.walmart-yellow Analytics
+      %span Dashboard
+
+  .span4.offset2.talign-right
+    %ul.nav.nav-pills.login-links.title-login
+      - if user_signed_in?
+        %li.dropdown
+          %a.dropdown-toggle{"data-toggle" => "dropdown"}
+            %i.icon-user>
+             #{session[:user_id]} 
+            %b.caret
+          %ul.dropdown-menu.pull-right
+            %li
+              = link_to 'Settings', :controller => 'dept_analysis/user_prefs',
+                  :action => :index
+            %li
+              %a{:href => "https://jira.kosmix.com/browse/MODULATOR", 
+              :target => "_blank"} Report Bug
+            %li
+              %a{:href => "/user/logout"} Log Out
+      - else
+        - if params[:action] != 'login'
+          %li
+            %a{:href => "/user/login"} Log In
+

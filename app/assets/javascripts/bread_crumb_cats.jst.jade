@@ -1,0 +1,19 @@
+- var cat_ids = src_cat_ids.split(',')
+if $.inArray('0', cat_ids) == -1
+  - cat_ids.unshift('0')
+- var last_cat_id = cat_ids.pop()
+- var parent_ids = []
+- var options = ''
+- var cat_name = ''
+
+.cat-breadcrumb
+  each cat_id in cat_ids
+    - parent_ids.push(cat_id)
+    a.cat-breadcrumb(href="#/cat?cat_id=#{parent_ids.join(',')}")
+      = cat_map[cat_id]
+    span /
+  - parent_ids.push(last_cat_id)
+  a.cat-breadcrumb.cat-breadcrumb-active-field(
+    href="#/cat?cat_id=#{parent_ids.join(',')}")
+    = cat_map[last_cat_id]
+

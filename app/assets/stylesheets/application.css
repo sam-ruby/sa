@@ -1,0 +1,27 @@
+/*
+*= require_self
+*= require bootstrap_and_overrides
+*= require backgrid
+*= require backgrid-extensions/backgrid-paginator
+*= require datepicker
+*/
+@import 'searchad.css.scss';
+
+td.numerical {
+	text-align: right;
+	vertical-align: middle;
+}
+
+a i:hover {
+	text-decoration: none;
+	cursor: pointer;
+}
+
+@font-face {
+  font-family: "BebasNeueRegular";
+  src: url('font/BebasNeue.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+

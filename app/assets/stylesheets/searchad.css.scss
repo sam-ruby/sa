@@ -1,0 +1,420 @@
+a.subcat {
+  color: black;
+}
+a.subcat:hover {
+  color: #F7B800;
+}
+.base {
+  font-family: Arial, sans-serif;
+}
+.content {
+  max-width: 110em;
+  margin-left: auto;
+  margin-right: auto;
+}
+.app-title {
+  font-size:2em;
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-weight:600;
+  color: #2F8DD6;
+  padding-left:0.5em;
+}
+.app-title-box {
+  border-bottom: thin solid silver;
+  line-height: 3em;
+  background-color: #f9f9f9;
+}
+.nav {
+  margin-bottom: -11px;
+}
+.walmart-yellow {
+  color:#F7B800;
+}
+.weekly-info-title {
+  font-size: small;
+}
+.list-no-bullets {
+  list-style-type:none;
+}
+.title-spacer {
+  border-top: thin solid #c9e1f4;
+}
+.title-login {
+  float: right;
+}
+.table-title {
+  height: 2em;
+  line-height: 2em;
+  background-color:#dcdcdc;
+  width:100%;
+}
+.footer {
+  border-bottom: thin solid black;
+  margin: 2em 0 1em
+}
+.fcolor-white {
+  color: white;
+}
+#week-selector {
+  font-size: small;
+  margin: 0;
+  width: 100%;
+}
+.login-links > li > a {
+	color: black;
+}
+.brand-div:after {
+	clear: both;
+}
+.lmargin-zero-em-imp {
+  margin-left:0em !important;
+}
+.lmargin-quarter-em {
+  margin-left:.25em !important;
+}
+.lmargin-half-em-imp {
+  margin-left:.5em !important;
+}
+.lmargin-half-em {
+  margin-left:.5em;
+}
+.lmargin-one-em {
+  margin-left:1em;
+}
+.tmargin-one-em {
+  margin-top:1em;
+}
+.tmargin-two-em {
+  margin-top:2em;
+}
+.talign-center {
+  text-align:center !important;
+}
+.talign-left {
+  text-align:left !important;
+}
+.talign-right {
+  text-align:right !important;
+}
+.rpadding-one-em {
+  padding-right: 1em;
+}
+.tpadding-quarter-em {
+  padding-right: .25em;
+}
+.padding-one-em {
+  padding: 1em;
+}
+#query-search {
+  display: inline;
+  margin-bottom: 0em;
+}
+#query-search input[type=text] {
+  border: 2px solid #c9e1f4;
+  text-indent: 1em;
+  padding: 0em;
+  width: 65%;
+}
+.vspacer {
+  padding-top: 3em;
+}
+$bg-color: #f9f9f9;
+.side-bar {
+  border:  thin solid silver;
+  height: 100%;
+  background-color: $bg-color;
+  
+  .title {
+    line-height: 2.5em;
+    padding-left: .25em;
+    background-color: #d8d8d8;
+  }
+
+  .sub-title {
+    padding-left: 1em;
+    line-height: 2.5em;
+    display: inline;
+  }
+
+  .accordion-group {
+    border: 0;
+    margin-bottom: 0;
+  }
+
+  .divider {
+    border-bottom: thin solid #e5e5e5;
+  }
+
+  .accordion-heading {
+  }
+
+  .accordion-body {
+    font-size: small;
+    background-color: lighten($bg-color, 5%);
+  }
+
+  .no-border {
+    border: 0;
+  }
+
+  .in {
+  }
+
+  .caret {
+    vertical-align: middle;
+  }
+
+  .accordion-inner {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .accordion-toggle {
+    padding-left: .5em;
+  }
+
+  .accordion {
+    margin-bottom: 0;
+  }
+}
+
+.side-nav-table {
+  border: 1px solid #c9e1f4;
+}
+.sub-cat-title {
+  color:#0088cc;
+}
+a.sub-cat:hover {
+  color:#F7B800;
+  text-decoration: none;
+}
+a.sub-cat {
+  color:black;
+}
+.fsize-normal {
+  font-size:1.1em;
+}
+.fsize-small {
+  font-size:small;
+}
+.fweight-bold {
+  font-weight:bold;
+}
+.four-percent-width {
+  width: 4%;
+}
+.nine-percent-width {
+  width: 9%;
+}
+.five-percent-width {
+  width: 5%;
+}
+.twelve-percent-width {
+  width: 12%;
+}
+.fifty-percent-width {
+  width: 50%;
+}
+.fiftyfive-percent-width {
+  width: 55%;
+}
+.sixty-percent-width {
+  width: 60%;
+}
+.twenty-percent-width {
+  width: 20%;
+}
+.twentytwo-percent-width {
+  width: 22%;
+}
+.twentyseven-percent-width {
+  width: 27%;
+}
+.fourteen-percent-width {
+  width: 14%;
+}
+.fifteen-percent-width {
+  width: 15%;
+}
+.seventyfive-percent-width {
+  width: 75%;
+}
+.twentyfive-percent-width {
+  width: 25%;
+}
+.date-picker-container {
+  text-align: right;
+}
+.dd {
+  vertical-align:middle;
+}
+#dp3 {
+  display: inline;
+  width: 100%;
+}
+.bmargin-two-em {
+  margin-bottom:2em;
+}
+.bmargin-three-em {
+  margin-bottom:3em;
+}
+.bmargin-onehalf-em {
+  margin-bottom:.5em;
+}
+.bmargin-one-em {
+  margin-bottom: 1em;
+}
+.cat-breadcrumb-field {
+  padding-bottom: 2em;
+}
+div.cat-breadcrumb, div.daily-weekly {
+  margin-bottom: 0.5em;
+  margin-top: 0.3em;
+}
+a.cat-breadcrumb, .cat-breadcrumb-active-field, a.daily, .daily-active, a.weekly, .weekly-active {
+  color: black;
+  padding:.3em 0.1em;
+  font-weight: bold;
+}
+a.cat-breadcrumb, a.daily, a.weekly {
+  text-decoration: underline;
+}
+.cat-breadcrumb-active-field, .daily-active, .weekly-active {
+  background-color: #eaf3fe;
+  border: 1px solid #dddddd;
+}
+.fcolor-black {
+  color:black;
+}
+.subcategory-title {
+  text-align:center;
+  font-weight:bold;
+  font-style:italic;
+  padding-bottom:20px;
+}
+.filter-row {
+  display: inline-block;
+  margin-bottom: 5px;
+  font-size:12px;
+}
+.filter-col1 {
+  width: 290px;
+}
+.filter-caption {
+  display: inline-block;
+  text-align: right;
+  width: 110px;
+}
+.highlight-section {
+  border: solid 1px #797979;
+  padding: 20px 10px;
+}
+#chart-outer-container {
+  border: thin solid white;
+}
+.chart-container {
+  margin-bottom: 1em;
+  overflow: auto;
+  height: 25em;
+  width: 90%;
+  margin-right: auto;
+  margin-left: auto;
+}
+.content-divider {
+  border-right: 1px solid #c9e1f4;
+  margin-right: -1.6em;
+  padding-right: 1.6em;
+}
+.cat-title {
+  background-color: #EAF3FE;
+}
+.red {
+  background-color: red;
+  color: white;
+}
+.orange {
+  background-color: orange;
+}
+.table-module {
+  overflow: auto;
+  height: 32em;
+}
+.background-color-silver {
+  background-color:#dcdcdc;
+}
+.width-onehundred-percent {
+  width:100%;
+}
+.item-image {
+  float:left;
+  padding-right:5px;
+  width:80px;
+  height:80px;
+}
+.outer-container {
+  width: 100%; 
+}
+.inner-container {
+  padding-bottom: 1em;
+}
+.middle-content, .right-content {
+}
+.missing-img {
+  display: inline-table;
+  width:85px;
+}
+.title-div {
+  display:table;
+  height:80px;
+}
+.title-p {
+  display:table-cell;
+  vertical-align:middle;
+}
+.background-color-lightsilver {
+  background-color: lightgray;
+}
+div.accordion-heading a.menu-expand-link {
+  display: inline;
+  padding: 0;
+  padding-right:.25em;
+}
+div.accordion-group div.sub-cat-group {
+  padding: 0;
+  padding-left: 1em;
+  border: 0;
+}
+div.cat-group {
+  border: 0;
+}
+.accordion-group {
+  border: 0;
+} 
+.nowrap {
+  white-space: nowrap;
+}
+table.trending-items, table.top-selling-items, table.queries, table.sub-categories, table.query-items, table.query-words, table.amazon-items{
+  margin-bottom: 1em;
+}
+#sort-form {
+  margin: 0;
+}
+.cat-item {
+  padding-left: .4em;
+}
+.accordion {
+  border: 0;
+  margin: 0;
+}
+.accordion-heading a.accordion-toggle {
+  display: inline;
+  padding: 0;
+  color: black;
+}
+a.accordion-toggle:hover {
+  text-decoration: none;
+}
+span.caret {
+  vertical-align: middle;
+  margin: 0 0.5em;
+}

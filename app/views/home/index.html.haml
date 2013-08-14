@@ -1,0 +1,6 @@
+- content_for :middle_content do
+  = render :partial => 'middle_content'
+
+- content_for :javascript do
+  :javascript
+    var Current_cat_id = #{@cat_id} || 0;
