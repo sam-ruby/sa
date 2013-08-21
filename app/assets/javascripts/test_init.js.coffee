@@ -50,6 +50,7 @@ $ ->
       controller: controller)
 
     searchQualityRouter.on('all', (name) ->
+      console.log('matched route ', name)
       return unless name.match(/route:/)
       date = window.location.hash.match(/filters\/date\/([^\/]+)/)
       if (date)

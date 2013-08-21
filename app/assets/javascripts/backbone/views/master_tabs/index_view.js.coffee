@@ -4,6 +4,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
  initialize: (options) =>
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
+    @controller.bind('dashboard:index', @select_dashboard_tab)
     @controller.bind('poor-performing:index', @select_pp_tab)
     @controller.bind('search-quality-query:index', @select_sq_tab)
     @widget_el =  @$el.find('.modal')
@@ -50,6 +51,11 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.trigger('dashboard:index')
     @router.update_path('/')
   
+  select_dashboard_tab: =>
+    e = {}
+    e.target = @$el.find('div.dashboard-tab').get(0)
+    @toggleTab(e)
+
   select_pp_tab: =>
     e = {}
     e.target = @$el.find('li.poor-performing-tab a').get(0)
