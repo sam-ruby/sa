@@ -1,6 +1,6 @@
 class BaseController < ApplicationController
 
-  layout 'three_column'
+  layout 'test'
 
   def login_user
     user = User.get_item_with_name(session[:user_id].to_s)

@@ -15,7 +15,7 @@
 //= require backgrid
 //= require backgrid-extensions/backgrid-paginator
 //= require jade/runtime
-//= require twitter/bootstrap
+//= require bootstrap
 //= require bootstrap-datepicker
 //= require backbone/searchad
 //= require init

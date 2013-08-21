@@ -141,7 +141,8 @@ en:
       revenue: "Revenue"
       query_string: "Query String"
       query_count: "Query Count"
- 
+      queries: "Queries"
+  
   collection:
       add_collection: "Add Collection"
       collections: "Collections"

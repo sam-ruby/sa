@@ -15,29 +15,30 @@ class Searchad.Models.QueryItem extends Backbone.Model
 
 class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollection
   model: Searchad.Models.QueryItem
-  url: '/query_items/get_items.json'
+  url: '/search_quality_query/get_query_items.json'
   filters:
+    date: null
+  data:
     id: null
     query_items: null
     top_rev_items: null
-    date: null
+
   state:
     pageSize: 16
   mode: 'client'
 
   get_items: (data) =>
-    @filters.id = data.id if data.id
-    @filters.query_items = data.query_items if data.query_items
-    @filters.top_rev_items = data.top_rev_items if data.top_rev_items
+    if data
+      for k, v of data
+        @data[k] = v
+    else
+      data = @data
     @filters.date = data.date if data.date
-    data = {}
-
     for k, v of @filters
       continue unless v
       data[k] = v
-
     @fetch(
       reset: true
-      data: data
+      data: @data
       type: 'post'
     )

@@ -24,11 +24,16 @@ group :assets do
   gem 'sass-rails'
   gem 'coffee-rails'
   gem 'coffee-script-source', '1.5.0'
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
+  # See https://github.com/sstephenson/execjs#readme for more
+  # supported runtimes
   # gem 'therubyracer'
   gem 'uglifier', '>= 1.0.3'
-  gem "twitter-bootstrap-rails"
   gem "jade"
+  gem "jquery-ui-rails"
+
+  # sass version of bootstrap
+  gem 'bootstrap-sass'
+  gem 'font-awesome-sass-rails'
 end
 
 group :development do

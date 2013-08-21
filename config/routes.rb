@@ -60,12 +60,14 @@ Searchad::Application.routes.draw do
   # via GET requests.
   # match ':controller(/:action(/:id(.:format)))'
   
-  root :to => 'home#index'
+  root :to => 'search_quality_query#index'
   #get 'search_quality_daily(/:action(.:format))'
-  get 'search_quality_daily(/:action(.:format))',
-    :to => 'search_quality_daily' 
+  match 'search_quality_query(/:action(.:format))',
+    :to => 'search_quality_query', :via => [:get, :post]  
   
-  match 'query_items(/:action(.:format))',
-    :to => 'query_items', :via => [:get, :post]  
+  match 'poor_performing(/:action(.:format))',
+    :to => 'poor_performing', :via => [:get, :post]  
+  
+  get 'test(/:action(.:format))', :to=>'test'
 
 end
