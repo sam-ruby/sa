@@ -1,0 +1,33 @@
+#dashboard.row-fluid{:style=>'font-size:small;'}
+  .span6
+    #dashboard-search-quality-container
+      .content-header
+        Search Quality Queries
+        %button.close.pull-right
+          &times;
+      .content
+        = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+        
+  .span6
+    #dashboard-poorly-performing-container
+      .content-header
+        Poorly Performing Product Intents
+        %button.close.pull-right
+          &times;
+      .content
+        = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+
+#search-quality
+  #search-quality-queries
+    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+  #query-items-tab
+  #query-items-content
+    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+   
+#poor-performing
+  #poor-performing-queries
+    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+
+  #poor-performing-subtabs
+  #poor-performing-subtabs-content
+    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'

@@ -1,0 +1,37 @@
+%table.table-condensed{:width=>'97%'} 
+  %thead
+    %tr.table-title-background-color
+      %th.four-percent-width= t 'dashboard2.rank'
+      %th.twentyseven-percent-width= t 'dashboard.query'
+      %th.fourteen-perdent-width= t 'dashboard2.revenue_correlation'
+      %th.fourteen-percent-width= t 'dashboard.revenue'
+      %th.fourteen-percent-width= t 'dashboard.queries'
+      %th.nine-percent-width= t 'perf_monitor2.conversion_rate'
+      %th.nine-percent-width= t 'perf_monitor2.add_to_cart_rate'
+      %th.nine-percent-width= t 'perf_monitor2.product_view_rate'
+
+%table.table.table-bordered.table-condensed.queries
+  %tbody
+    - bg_colors = ["#DAE0D6", "white"]
+    - color_index = 0
+    - cat_path = @categories.map do |cat_map| cat_map[:c_id] end.join(',')
+    - @top50.each do |row|
+      - color_index = (color_index + 1) % 2
+      %tr{:style=>"background-color:#{bg_colors[color_index]}"}
+        %td.numerical.four-percent-width.talign-right
+          = formt_integer row['query_rank']
+        %td.twentyseven-percent-width
+          = link_to row['query_str'], {:action=>:query, :cat_id=>cat_path,
+            :query=>row['query_str']}.merge(get_default_url_params)
+        %td.fourteen-percent-width.talign-right
+          = formt_decimal(row['query_rev_correl'], 2)
+        %td.fourteen-percent-width.talign-right
+          = formt_revenue row['query_revenue']
+        %td.fourteen-percent-width.talign-right
+          = formt_integer row['query_count']
+        %td.nine-percent-width.talign-right
+          = row['query_con'] ? formt_percent(row['query_con']) : '-'
+        %td.nine-percent-width.talign-right
+          = row['query_atc'] ? formt_percent(row['query_atc']) : '-'
+        %td.nine-percent-width.talign-right
+          = row['query_pvr'] ? formt_percent(row['query_pvr']) : '-'

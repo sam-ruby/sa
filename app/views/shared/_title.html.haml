@@ -1,0 +1,27 @@
+.navbar
+  .navbar-inner
+    %a.brand{:href=>'#'}
+      = image_tag 'walmart-transparent.png', {:class=>'walmart_logo'}
+      Search Analytics Dashboard
+
+    %ul.nav.pull-right
+      - if user_signed_in?
+        %li.dropdown
+          %a.dropdown-toggle{"data-toggle" => "dropdown"}
+            %i.icon-user>
+             #{session[:user_id]} 
+            %b.caret
+          %ul.dropdown-menu.pull-right
+            %li
+              = link_to 'Settings', :controller => 'dept_analysis/user_prefs',
+                  :action => :index
+            %li
+              %a{:href => "https://jira.kosmix.com/browse/MODULATOR", 
+              :target => "_blank"} Report Bug
+            %li
+              %a{:href => "/user/logout"} Log Out
+      - else
+        - if params[:action] != 'login'
+          %li
+            %a{:href => "/user/login"} Log In
+

@@ -1,0 +1,37 @@
+/*
+*= require_self
+*= require backgrid
+*= require backgrid-extensions/backgrid-paginator
+*= require datepicker
+*
+
+/* bootstrap overrides.. */
+
+$navbarBackground: #007796;
+$navbarBackgroundHighlight: #008dd4;
+$navbarLinkColor: #FFF;
+$navbarLinkColorHover: #B3B3B3;
+$navbarLinkColorActive: #FFF;
+
+@import "bootstrap";
+@import "font-awesome";
+@import 'searchad.css.scss';
+
+td.numerical {
+	text-align: right;
+	vertical-align: middle;
+}
+
+a i:hover {
+	text-decoration: none;
+	cursor: pointer;
+}
+
+@font-face {
+  font-family: "BebasNeueRegular";
+  src: url('font/BebasNeue.otf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+

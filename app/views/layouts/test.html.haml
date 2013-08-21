@@ -1,0 +1,161 @@
+!!!
+%html
+  %head
+    %title= @title
+    = stylesheet_link_tag 'application'
+    :scss
+      .test {
+        width: 100%;
+      }
+      .side-bar {
+        height: 100em;
+        vertical-align: top;
+      }
+      .date-picker-input {
+        width: 80% !important;
+      }
+      .test-title-box {
+        line-height: 3em;
+      }
+      .dashboard-search-quality-container, .dashboard-poorly-performing-container {
+        width: 36em;
+      }
+      .content-header, .widget-header {
+        line-height: 2em;
+        font-weight: bold;
+        padding-left: .2em;
+        border: thin solid silver;
+      }
+      .widget-header {
+        color: black;
+      }
+      .close {
+        padding-right: 0.5em !important;
+      }
+      .ajax-loader {
+        display: none;
+        margin-right: auto;
+        margin-left: auto;
+        padding-top:2em;
+      }
+      .side-title {
+        font-size: 1.2em;
+        color: #2f7ed8;
+      }
+      .side-title-item {
+        padding-left: 0em;
+        font-size: small;
+      }
+      .inner-container {
+        margin: 0 2em 0 2em;
+      }
+      .tab-title {
+        font-size: 1.2em;
+      }
+      .side-nav {
+        display:inline-block;
+        width:10%;
+      }
+      .main-content-container {
+        display:inline-block;
+        vertical-align:top;
+        margin-left: 1em;
+        width: 88%;
+        position: relative;
+      }
+      .main-content {
+        display: inline-block;
+        width: 100%;
+      }
+      .date-picker-container {
+        display:inline-block;
+        position:absolute;
+        right: 0em;
+        top: 0em;
+      }
+      #dashboard {
+        display: none;
+      }
+      .dashboard-tab {
+        display: none;
+      }
+      .walmart_logo {
+        height: 33px;
+        width: 33px;
+        margin-top: -13px;
+        margin-bottom: -9px;
+      }
+
+    = yield :stylesheets
+    = csrf_meta_tag 
+  
+  %body
+    = render 'shared/title'
+    .container-fluid.base.inner-container.fsize-small
+      .side-nav
+        = render 'shared/side_test'
+      
+      .main-content-container
+        %ul.nav.nav-tabs.master-tab
+          %li.active
+            %a
+              .tab-title.add-widget
+                %i.icon-plus
+                Add a widget
+              
+              .tab-title.dashboard-tab
+                Dashboard 
+          %li.tab-title.search-quality-tab
+            %a{:href=>'#search'}
+              Search Quality Queries
+              
+          %li.tab-title.poor-performing-tab
+            %a{:href=>'/#poor_performing'}
+              Poorly Performing Intents 
+
+        .modal.hide.fade
+          .modal-header
+            .widget-header
+              Add a new Widget
+              %button.close.pull-right
+                &times;
+          .modal-body.fsize-small
+            %form#widget-dialog
+              %label
+                Widget Title
+              %input{:type=>:text, :placeholder=>'Widget Title',
+                :name=>:widget_title}
+              %label
+                Select a widget
+              %select
+                %option
+                  Search Quality Queries
+                %option
+                  Poorly Performing Product Intents
+              
+              %label
+                Filter this data
+              %a
+                Add a filter
+          .modal-footer
+            %a.btn.cancel-widget
+              Cancel
+            %a.btn.btn-primary.save-widget
+              Add Widget 
+
+
+        .row-fluid
+          #data-container.fsize-small.main-content
+            = yield :test_content
+       
+        .date-picker-container
+          #dp3.input-append.date{'data-date-format' => 'yyyy-mm-dd',
+            'data-date-autoclose' => 'true',
+            'data-date-todayBtn'=>'true'}
+            %input.date-picker-input.span2{:size=>16,
+                :type=>:text, :value=>'08-05-2013', :readonly=>true}
+              %span.add-on
+                %i.icon-th
+
+    = javascript_include_tag :test 
+    = yield :javascript
