@@ -67,7 +67,8 @@ class BaseController < ApplicationController
       end
     
     @view = params[:view] || 'weekly'
-    @date = params[:date] ? Date.parse(params[:date]) : @most_recent_date 
+    @date = params[:date] ? Date.strptime(params[:date], '%m-%d-%Y') :
+      Date.parse(@most_recent_date) 
     
     @weekly_ts = PipelineLogWeekly.maximum(:timestamp).to_i.to_s
     @daily_ts = PipelineLogDaily.maximum(:timestamp).to_i.to_s

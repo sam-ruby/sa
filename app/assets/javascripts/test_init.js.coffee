@@ -28,7 +28,7 @@ $ ->
 
     updateURLParam = (location, fName, fValue, filter=false) ->
       if location.indexOf('filters') >=0
-        parts = location.split('/filters/')
+        parts = location.split('filters/')
         filterURL = parts[1]
         pathURL = parts[0]
       else
@@ -49,9 +49,12 @@ $ ->
     searchQualityRouter = new Searchad.Routers.SearchQualityQuery(
       controller: controller)
 
-    searchQualityRouter.on('all', ->
+    searchQualityRouter.on('all', (name) ->
+      return unless name.match(/route:/)
       date = window.location.hash.match(/filters\/date\/([^\/]+)/)
-      $('#dp3').datepicker('update', date[1]) if date
+      if (date)
+        $('#dp3').datepicker('update', date[1])
+        controller.trigger('collections:update-date', date: date[1])
     )
 
     Controller: controller
@@ -87,7 +90,8 @@ $ ->
         el: '#poor-performing-subtabs-content')
     
   $('#dp3').on('changeDate', (e) ->
-    dateStr = e.date.getFullYear() + '-' + (e.date.getMonth() + 1) + '-' + e.date.getDate()
+    dateStr = e.date.getMonth() + 1 + '-' + e.date.getDate() + '-' +
+      e.date.getFullYear()
     currentPath = window.location.hash.replace('#', '')
     newPath = Utils.UpdateURLParam(currentPath, 'date', dateStr, true)
     SearchQualityApp.Router.navigate(newPath)

@@ -21,11 +21,11 @@ class Searchad.Views.Dashboard.IndexView extends Backbone.View
         controller: @controller
       )
   
-  renderFrame: =>
+  renderFrame: (data) =>
     @$el.show()
     @$el.children().show()
-    @controller.trigger('dashboard:search-quality:index')
-    @controller.trigger('dashboard:poor-performing:index')
+    @controller.trigger('dashboard:search-quality:index', data)
+    @controller.trigger('dashboard:poor-performing:index', data)
   
   unrenderFrame: =>
     @$el.children().hide()

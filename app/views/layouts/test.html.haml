@@ -149,11 +149,12 @@
             = yield :test_content
        
         .date-picker-container
-          #dp3.input-append.date{'data-date-format' => 'yyyy-mm-dd',
+          #dp3.input-append.date{'data-date-format' => 'mm-dd-yyyy',
             'data-date-autoclose' => 'true',
             'data-date-todayBtn'=>'true'}
             %input.date-picker-input.span2{:size=>16,
-                :type=>:text, :value=>'08-05-2013', :readonly=>true}
+              :type=>:text, :value=>@date.strftime('%m-%d-%Y'),
+              :readonly=>true}
               %span.add-on
                 %i.icon-th
 

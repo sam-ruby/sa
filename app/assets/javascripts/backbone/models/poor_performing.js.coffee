@@ -14,6 +14,12 @@ class Searchad.Models.PoorPerforming extends Backbone.Model
     query_con: null
 
 class Searchad.Collections.PoorPerformingCollection extends Backbone.PageableCollection
+  initialize: (options) ->
+    @controller = SearchQualityApp.Controller
+    @controller.bind('collections:update-date', (data) =>
+      @filters.date = data.date if data and data.date
+    )
+
   model: Searchad.Models.PoorPerforming
   url: '/poor_performing/get_search_words.json'
   filters:

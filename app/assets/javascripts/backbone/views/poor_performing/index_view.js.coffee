@@ -30,8 +30,10 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
       handleQueryClick: (e) =>
         e.preventDefault()
         id = @model.get('id')
+        date_parts = @model.get('query_date').split('-')
+        date = date_parts[1] + '-' + date_parts[2] + '-' + date_parts[0]
         data =
-          date: @model.get('query_date')
+          date: date
           query: @model.get('query')
         @controller.trigger('pp:walmart-items:index', data)
         new_path = 'poor_performing/walmart_items/query/' + data.query

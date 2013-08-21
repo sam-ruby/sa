@@ -11,8 +11,8 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @initTable()
 
     @controller.bind('search-quality-query:index', @get_items)
-    @controller.bind('date-changed', (data) =>
-      @get_items(data) if @active)
+    @controller.bind('date-changed', =>
+      @get_items() if @active)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
   

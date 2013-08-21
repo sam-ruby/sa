@@ -14,6 +14,12 @@ class Searchad.Models.SearchQualityQuery extends Backbone.Model
     top_rev_items: null
 
 class Searchad.Collections.SearchQualityQueryCollection extends Backbone.PageableCollection
+  initialize: (options) ->
+    @controller = SearchQualityApp.Controller
+    @controller.bind('collections:update-date', (data) =>
+      @filters.date = data.date if data and data.date
+    )
+
   model: Searchad.Models.SearchQualityQuery
   url: '/search_quality_query/get_search_words.json'
   filters:

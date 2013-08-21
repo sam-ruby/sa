@@ -15,8 +15,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "poor_performing/amazon_items/query/:query(/filters/date/:date)":
       "pp_amazon_items"
 
-    "(/filters/date/:date)"        : "dashboard"
-    ".*"        : "dashboard"
+    "(filters/date/:date)"        : "dashboard"
 
   search: (date) =>
     @controller.trigger('search-quality-query:index', date: date)
