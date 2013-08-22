@@ -3,7 +3,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller = options.controller
     
   routes:
-    "search(/filters/date/(:date))": "search"
+    "search(/filters/date/:date)": "search"
     "search/item_id/:id(/filters/date/:date)": "search_query_items"
 
     "search.*": "search"
@@ -18,30 +18,33 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     ".*(filters/date/:date)"        : "dashboard"
 
   search: (date) =>
-    @controller.trigger('search-quality-query:index', date: date)
+    @controller.set_date(date)
+    @controller.trigger('search-quality-query:index')
 
   search_query_items: (id, date) =>
-    @controller.trigger('search-quality-query:index', date: date)
-    @controller.trigger('search:query-items:index',
-      {id: id, date: date})
+    @controller.set_date(date)
+    @controller.trigger('search-quality-query:index')
+    @controller.trigger('search:query-items:index', id: id)
   
   dashboard: (date) =>
-    @controller.trigger('dashboard:index', date: date)
+    @controller.set_date(date)
+    @controller.trigger('dashboard:index')
   
   poor_performing: (date) =>
-    @controller.trigger('poor-performing:index', date: date)
+    @controller.set_date(date)
+    @controller.trigger('poor-performing:index')
 
   pp_walmart_items: (query, date) =>
-    @controller.trigger('poor-performing:index', date: date)
+    @controller.set_date(date)
+    @controller.trigger('poor-performing:index')
     @controller.trigger('pp:walmart-items:index',
       date: date
       query: query)
   
   pp_amazon_items: (query, date) =>
-    @controller.trigger('poor-performing:index', date: date)
-    @controller.trigger('pp:amazon-items:index',
-      date: params
-      query: query)
+    @controller.set_date(date)
+    @controller.trigger('poor-performing:index')
+    @controller.trigger('pp:amazon-items:index', query: query)
   
   update_path: (path) =>
     url_parts = window.location.hash.replace('#', '').split('filters')

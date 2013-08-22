@@ -16,25 +16,26 @@ class Searchad.Models.SearchQualityQuery extends Backbone.Model
 class Searchad.Collections.SearchQualityQueryCollection extends Backbone.PageableCollection
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
-    @controller.bind('collections:update-date', (data) =>
-      @filters.date = data.date if data and data.date
-    )
+
+  get_date: ->
+    @date
 
   model: Searchad.Models.SearchQualityQuery
   url: '/search_quality_query/get_search_words.json'
-  filters:
-    date: null
   state:
     pageSize: 10
-  query_params:
+
+  queryParams:
     currentPage: 'page'
     pageSize: 'per_page'
+    date: ->
+      @controller.get_filter_params().date
+
   mode: 'server'
 
   get_items: (data) =>
-    @filters.date = data.date if data and data.date
     data = {} unless data
-    for k, v of @filters
+    for k, v of @controller.get_filter_params()
       continue unless v
       data[k] = v
     @fetch(

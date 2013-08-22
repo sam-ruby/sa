@@ -7,7 +7,8 @@ class Searchad.Views.Dashboard.SearchQualityQuery.IndexView extends Backbone.Vie
     @collection = new Searchad.Collections.SearchQualityQueryCollection()
     @controller = SearchQualityApp.Controller
     @controller.bind('dashboard:search-quality:index', @getItems)
-    @controller.bind('date-changed', @getItems)
+    @controller.bind('date-changed', =>
+      @getItems() if @active)
     @collection.bind('reset', @render)
     @controller.bind('content-cleanup', @unrender)
     @initTable()

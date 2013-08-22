@@ -16,28 +16,31 @@ class Searchad.Models.PoorPerforming extends Backbone.Model
 class Searchad.Collections.PoorPerformingCollection extends Backbone.PageableCollection
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
-    @controller.bind('collections:update-date', (data) =>
-      @filters.date = data.date if data and data.date
-    )
 
   model: Searchad.Models.PoorPerforming
   url: '/poor_performing/get_search_words.json'
+  
   filters:
     date: null
     cat_id: null
+  
   state:
     pageSize: 10
-  query_params:
+  
+  queryParams:
     currentPage: 'page'
     pageSize: 'per_page'
+    date: ->
+      @controller.get_filter_params().date
+  
   mode: 'server'
 
   get_items: (data) =>
-    @filters.date = data.date if data and data.date
     data = {} unless data
-    for k, v of @filters
+    for k, v of @controller.get_filter_params()
       continue unless v
       data[k] = v
+    
     @fetch(
       reset: true
       data: data

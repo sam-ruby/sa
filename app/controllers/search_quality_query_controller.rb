@@ -11,8 +11,8 @@ class SearchQualityQueryController < BaseController
       respond_to do |format|
         format.json do 
           render :json => [
-            {:total_entries => @search_words.total_pages * @limit},
-            @search_words]
+            {:total_entries => @search_words.total_pages * @limit,
+             :date => @date}, @search_words]
         end
       end
     end

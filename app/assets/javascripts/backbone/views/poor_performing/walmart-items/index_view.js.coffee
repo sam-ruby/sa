@@ -10,8 +10,8 @@ class Searchad.Views.PoorPerforming.WalmartItems.IndexView extends Backbone.View
     @initTable()
     
     @controller.bind('pp:walmart-items:index', @get_items)
-    @controller.bind('date-changed', (data) =>
-      @get_items(data) if @active)
+    @controller.bind('date-changed', =>
+      @get_items() if @active)
     @collection.bind('reset', @render)
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('pp:content-cleanup', @unrender)

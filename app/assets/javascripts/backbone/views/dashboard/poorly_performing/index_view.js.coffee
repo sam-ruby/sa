@@ -8,7 +8,8 @@ class Searchad.Views.Dashboard.PoorlyPerforming.IndexView extends Backbone.View
     # @collection = new Searchad.Collections.PoorlyPerformingCollection()
     @collection = new Searchad.Collections.SearchQualityQueryCollection()
     @controller.bind('dashboard:poor-performing:index', @getItems)
-    @controller.bind('date-changed', @getItems)
+    @controller.bind('date-changed', =>
+      @getItems() if @active)
     @collection.bind('reset', @render)
     @controller.bind('content-cleanup', @unrender)
     @initTable()

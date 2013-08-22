@@ -34,30 +34,34 @@ $ ->
       else
         filterURL = ''
         pathURL = location
+      pathURL += '/' if pathURL.lastIndexOf('/') != (pathURL.length - 1)
 
       if filter
         newFilter = updateParam(filterURL, fName, fValue)
-        return pathURL + '/filters/' + newFilter
+        return pathURL + 'filters/' + newFilter
       else
         newPath = updateParam(pathURL, fName, fValue)
-        return newPath + '/filters/' + filterURL
+        return newPath + 'filters/' + filterURL
 
     UpdateURLParam: updateURLParam
   
   window.SearchQualityApp = do ->
     controller = _.extend({}, Backbone.Events)
+    controller.set_date = (date) =>
+      @date = date
+    controller.get_filter_params = =>
+      date: @date
+
     searchQualityRouter = new Searchad.Routers.SearchQualityQuery(
       controller: controller)
 
     searchQualityRouter.on('all', (name) ->
-      console.log('matched route ', name)
       return unless name.match(/route:/)
       date = window.location.hash.match(/filters\/date\/([^\/]+)/)
       if (date)
         $('#dp3').datepicker('update', date[1])
-        controller.trigger('collections:update-date', date: date[1])
     )
-
+    
     Controller: controller
     Router: searchQualityRouter
 
@@ -96,6 +100,7 @@ $ ->
     currentPath = window.location.hash.replace('#', '')
     newPath = Utils.UpdateURLParam(currentPath, 'date', dateStr, true)
     SearchQualityApp.Router.navigate(newPath)
-    SearchQualityApp.Controller.trigger('date-changed', date: dateStr)
+    SearchQualityApp.Controller.set_date(dateStr)
+    SearchQualityApp.Controller.trigger('date-changed')
   )
   Backbone.history.start()

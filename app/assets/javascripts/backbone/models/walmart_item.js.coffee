@@ -13,10 +13,12 @@ class Searchad.Models.PoorPerfWalmartItem extends Backbone.Model
     image_url: null
 
 class Searchad.Collections.PoorPerfWalmartItemsCollection extends Backbone.PageableCollection
+  
+  initialize: (options) ->
+    @controller = SearchQualityApp.Controller
+  
   model: Searchad.Models.PoorPerfWalmartItem
   url: '/poor_performing/get_walmart_items.json'
-  filters:
-    date: null
   state:
     pageSize: 10
   mode: 'client'
@@ -24,16 +26,15 @@ class Searchad.Collections.PoorPerfWalmartItemsCollection extends Backbone.Pagea
     query: null
   
   get_items: (data) =>
-    if data
-      for k, v of data
-        @data[k] = v
+    data = {} unless data
+    if data.query
+      @data.query = data.query
     else
-      data = @data
-    @filters.date = data.date if data.date
-    for k, v of @filters
+      data.query = @data.query
+    for k, v of @controller.get_filter_params()
       continue unless v
       data[k] = v
     @fetch(
       reset: true
-      data: @data
+      data: data
     )
