@@ -17,4 +17,12 @@ class QueryCatMetricsDaily < BaseModel
       channel = "ORGANIC_USER")}, query_date, cat_id]).order(
         order_str).page(page).per(limit)
   end
+
+  def self.get_query_stats(query)
+    selects = %q{query_date, query_count, query_pvr, query_atc, 
+      query_con, query_revenue}
+    QueryCatMetricsDaily.select(selects).where(
+      ["query = ? AND cat_id = ? AND channel = 'TOTAL'", query,
+       0]).order("query_date")
+  end
 end

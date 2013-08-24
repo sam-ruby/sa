@@ -67,12 +67,6 @@
         display: inline-block;
         width: 100%;
       }
-      .date-picker-container {
-        display:inline-block;
-        position:absolute;
-        right: 0em;
-        top: 0em;
-      }
       #dashboard {
         display: none;
       }
@@ -85,17 +79,24 @@
         margin-top: -13px;
         margin-bottom: -9px;
       }
-
+      .date-picker-container {
+        display:inline-block;
+        position:absolute;
+        right: 0em;
+        top: 0em;
+        margin-bottom: 1em;
+      }
+      .input-append {
+        margin-bottom: 0px;
+        vertical-align: inherit;
+      }
     = yield :stylesheets
     = csrf_meta_tag 
   
   %body
     = render 'shared/title'
-    .container-fluid.base.inner-container.fsize-small
-      .side-nav
-        = render 'shared/side_test'
-      
-      .main-content-container
+    .container
+      .row
         %ul.nav.nav-tabs.master-tab
           %li.active
             %a
@@ -107,11 +108,18 @@
                 Dashboard 
           %li.tab-title.search-quality-tab
             %a{:href=>'#search'}
-              Search Quality Queries
+              Search Relevance 
               
           %li.tab-title.poor-performing-tab
             %a{:href=>'/#poor_performing'}
-              Poorly Performing Intents 
+              Poor Performing Intents 
+
+          %li.tab-title.search-tab.pull-right
+            %form.form-search{:style=>'margin:0'}
+              %input.input-medium.search-query{:type=>:text,
+                :style=>'width:20em'}
+              %button.btn{:type=>:submit}
+                Search
 
         .modal.hide.fade
           .modal-header
@@ -144,19 +152,10 @@
               Add Widget 
 
 
-        .row-fluid
-          #data-container.fsize-small.main-content
-            = yield :test_content
-       
-        .date-picker-container
-          #dp3.input-append.date{'data-date-format' => 'mm-dd-yyyy',
-            'data-date-autoclose' => 'true',
-            'data-date-todayBtn'=>'true'}
-            %input.date-picker-input.span2{:size=>16,
-              :type=>:text, :value=>@date.strftime('%m-%d-%Y'),
-              :readonly=>true}
-              %span.add-on
-                %i.icon-th
-
+      .row
+        #data-container
+          = yield :test_content
+     
+        
     = javascript_include_tag :test 
     = yield :javascript

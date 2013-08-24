@@ -246,7 +246,7 @@ a.sub-cat {
   vertical-align:middle;
 }
 #dp3 {
-  display: inline;
+  display: inline-block;
   width: 100%;
 }
 .bmargin-two-em {
@@ -308,14 +308,6 @@ a.cat-breadcrumb, a.daily, a.weekly {
 }
 #chart-outer-container {
   border: thin solid white;
-}
-.chart-container {
-  margin-bottom: 1em;
-  overflow: auto;
-  height: 25em;
-  width: 90%;
-  margin-right: auto;
-  margin-left: auto;
 }
 .content-divider {
   border-right: 1px solid #c9e1f4;

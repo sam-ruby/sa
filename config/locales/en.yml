@@ -137,10 +137,10 @@ en:
       weekly_view: "Weekly View"
 
   search_analytics:
-      rev_rank_correlation: "Revenue Rank Correlation"
+      rev_rank_correlation: "Rev Rank Correlation"
       revenue: "Revenue"
       query_string: "Query String"
-      query_count: "Query Count"
+      query_count: "Count"
       queries: "Queries"
   
   collection:

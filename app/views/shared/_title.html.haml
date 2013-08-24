@@ -5,6 +5,37 @@
       Search Analytics Dashboard
 
     %ul.nav.pull-right
+      %li.dropdown
+        %a.dropdown-toggle{"data-toggle"=>"dropdown", :href=>'#'}
+          %i.icon-briefcase
+          Dashboards
+          %b.caret
+        %ul.dropdown-menu
+          %li
+            %a{:href=>'#'} Dashboard 1
+          %li
+            %a{:href=>'#'} Dashboard 2
+
+      %li.dropdown
+        %a.dropdown-toggle{"data-toggle"=>"dropdown"}
+          %i.icon-share-alt
+          Shortcuts
+          %b.caret 
+        %ul.dropdown-menu
+          %li
+            %a{:href=>'#'} Shortcut 1
+          %li
+            %a{:href=>'#'} Shortcut 2
+
+      %li
+        #dp3.input-append.date{'data-date-format'=>'mm-dd-yyyy',
+          'data-date-autoclose' => 'true',
+          'data-date-todayBtn'=>'true', :style=>'padding-top:1em'}
+          %input.date-picke-input.span2{:size=>16,
+            :type=>:text, :value=>@date.strftime('%m-%d-%Y'),
+            :readonly=>true}
+            %span.add-on
+              %i.icon-th
       - if user_signed_in?
         %li.dropdown
           %a.dropdown-toggle{"data-toggle" => "dropdown"}

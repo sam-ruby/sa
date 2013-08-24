@@ -35,8 +35,8 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
         data =
           date: date
           query: @model.get('query')
-        @controller.trigger('pp:walmart-items:index', data)
-        new_path = 'poor_performing/walmart_items/query/' + data.query
+        @controller.trigger('pp:stats', data)
+        new_path = 'poor_performing/stats/query/' + data.query
         @router.update_path(new_path)
 
 

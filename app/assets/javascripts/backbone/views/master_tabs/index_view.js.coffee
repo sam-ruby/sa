@@ -7,6 +7,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.bind('dashboard:index', @select_dashboard_tab)
     @controller.bind('poor-performing:index', @select_pp_tab)
     @controller.bind('search-quality-query:index', @select_sq_tab)
+    @controller.bind('do-search', @select_search_tab)
     @widget_el =  @$el.find('.modal')
     @widget_el.modal(
       backdrop: false
@@ -21,6 +22,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     'click li.search-quality-tab': 'searchQuality'
     'click li.poor-performing-tab': 'poorPerforming'
     'click .dashboard-tab': 'dashBoard'
+    'click button.btn': 'do_search'
     
   toggleTab: (e) =>
     if $(e.target).hasClass('dashboard-tab')
@@ -51,6 +53,12 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.trigger('dashboard:index')
     @router.update_path('/')
   
+  do_search: (e) =>
+    @controller.trigger('content-cleanup')
+    e.preventDefault()
+    @controller.trigger('do-search')
+  
+
   select_dashboard_tab: =>
     e = {}
     e.target = @$el.find('div.dashboard-tab').get(0)
@@ -65,7 +73,12 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     e = {}
     e.target = @$el.find('li.search-quality-tab a').get(0)
     @toggleTab(e)
-    
+   
+  select_search_tab: =>
+    e = {}
+    e.target = @$el.find('li.search-tab a').get(0)
+    @toggleTab(e)
+ 
   saveWidget: =>
     $('#main-content .modal', @el).modal('hide')
     # Trigger additional widgets from here.

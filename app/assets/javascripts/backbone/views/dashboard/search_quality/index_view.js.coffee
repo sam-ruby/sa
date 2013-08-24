@@ -49,7 +49,11 @@ class Searchad.Views.Dashboard.SearchQualityQuery.IndexView extends Backbone.Vie
         return this
     
     columns = [{
-    name: 'search_rev_rank_correlation',
+      name: 'query_str',
+    label: I18n.t('search_analytics.query_string'),
+    editable: false,
+    cell: QueryCell},
+    {name: 'search_rev_rank_correlation',
     label: I18n.t('search_analytics.rev_rank_correlation'),
     editable: false,
     cell: 'number'},
@@ -57,10 +61,6 @@ class Searchad.Views.Dashboard.SearchQualityQuery.IndexView extends Backbone.Vie
     label: I18n.t('search_analytics.revenue'),
     editable: false,
     cell: 'number'},
-    {name: 'query_str',
-    label: I18n.t('search_analytics.query_string'),
-    editable: false,
-    cell: QueryCell},
     {name: 'query_count',
     label: I18n.t('search_analytics.query_count'),
     editable: false,

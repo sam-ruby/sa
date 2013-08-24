@@ -84,7 +84,7 @@ $ ->
         el: '#dashboard')
  
     masterTabView = new Searchad.Views.MasterTab.IndexView(
-        el: '.main-content-container')
+        el: 'ul.master-tab')
 
     poorPerformingSubtabsView =
       new Searchad.Views.PoorPerforming.SubTabs.IndexView(
@@ -94,6 +94,10 @@ $ ->
       new Searchad.Views.PoorPerforming.WalmartItems.IndexView(
         el: '#poor-performing-subtabs-content')
     
+    poorPerformingStatsView =
+      new Searchad.Views.PoorPerforming.Stats.IndexView(
+        el: '#poor-performing-subtabs-content')
+
   $('#dp3').on('changeDate', (e) ->
     dateStr = e.date.getMonth() + 1 + '-' + e.date.getDate() + '-' +
       e.date.getFullYear()

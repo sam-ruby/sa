@@ -7,7 +7,8 @@
 //= require jquery
 //= require jquery_ujs
 //= require jquery.ui.draggable
-//= require highcharts
+// require highcharts
+//= require highstocks/js/highstock
 //= require i18n
 //= require i18n/translations
 //= require underscore
@@ -21,5 +22,6 @@
 //= require bootstrap-popover
 //= require bootstrap-datepicker
 //= require bootstrap-transition
+//= require bootstrap-dropdown
 //= require backbone/searchad
 //= require test_init

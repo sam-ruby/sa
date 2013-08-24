@@ -9,6 +9,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "search.*": "search"
     "poor_performing(/filters/date/:date)": "poor_performing"
 
+    "poor_performing/stats/query/:query(/filters/date/:date)":
+      "pp_stats"
+    
     "poor_performing/walmart_items/query/:query(/filters/date/:date)":
       "pp_walmart_items"
     
@@ -34,6 +37,13 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.set_date(date)
     @controller.trigger('poor-performing:index')
 
+  pp_stats: (query, date) =>
+    @controller.set_date(date)
+    @controller.trigger('poor-performing:index')
+    @controller.trigger('pp:stats',
+      date: date
+      query: query)
+ 
   pp_walmart_items: (query, date) =>
     @controller.set_date(date)
     @controller.trigger('poor-performing:index')

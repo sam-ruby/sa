@@ -34,4 +34,13 @@ class PoorPerformingController < BaseController
       end
     end
   end
+
+  def get_query_stats
+    query = params['query']
+    respond_to do |format|
+      format.json do 
+        render :json => QueryCatMetricsDaily.get_query_stats(query)
+      end
+    end
+  end
 end
