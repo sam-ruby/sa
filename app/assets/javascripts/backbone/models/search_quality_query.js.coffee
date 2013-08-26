@@ -23,7 +23,7 @@ class Searchad.Collections.SearchQualityQueryCollection extends Backbone.Pageabl
   model: Searchad.Models.SearchQualityQuery
   url: '/search_quality_query/get_search_words.json'
   state:
-    pageSize: 5
+    pageSize: 10
 
   queryParams:
     currentPage: 'page'
