@@ -32,13 +32,9 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
         id = @model.get('id')
         date_parts = @model.get('query_date').split('-')
         date = date_parts[1] + '-' + date_parts[2] + '-' + date_parts[0]
-        data =
-          date: date
-          query: @model.get('query')
-        @controller.trigger('pp:stats', data)
-        new_path = 'poor_performing/stats/query/' + data.query
+        @controller.trigger('pp:stats', query: @model.get('query'))
+        new_path = 'poor_performing/stats/query/' + @model.get('query')
         @router.update_path(new_path)
-
 
       render: ->
         value = @model.get(@column.get('name'))

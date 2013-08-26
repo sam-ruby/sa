@@ -47,12 +47,16 @@ class Searchad.Views.SearchQualityQuery.QueryItems.IndexView extends Backbone.Vi
   get_items: (data) =>
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items(data)
+    
+    @paginator = new Backgrid.Extension.Paginator(
+      collection: @collection)
 
   render: =>
     @active = true
     @$el.children().not('.ajax-loader').remove()
     @$el.find('.ajax-loader').hide()
     @$el.append( @grid.render().$el)
+    @$el.append( @paginator.render().$el)
     this
   
   unrender: =>

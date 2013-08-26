@@ -69,6 +69,8 @@ class Searchad.Views.PoorPerforming.WalmartItems.IndexView extends Backbone.View
       columns: @gridColumns()
       collection: @collection
     )
+    @paginator = new Backgrid.Extension.Paginator(
+      collection: @collection)
     
   unrender: =>
     @active = false
@@ -84,4 +86,5 @@ class Searchad.Views.PoorPerforming.WalmartItems.IndexView extends Backbone.View
     @$el.children().not('.ajax-loader').remove()
     @$el.find('.ajax-loader').hide()
     @$el.append( @grid.render().$el)
+    @$el.append( @paginator.render().$el)
     return this

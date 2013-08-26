@@ -104,6 +104,7 @@ class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
         yAxis: if i > 2 then 1 else 0)
     
     series[0].fillOpacity = .1
+    series[1].fillOpacity = .3
     series
 
   render: (query, data) ->

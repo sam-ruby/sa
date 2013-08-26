@@ -12,7 +12,6 @@ class Searchad.Views.PoorPerforming.SubTabs.IndexView extends Backbone.View
       @select_amazon_tab)
 
   data:
-    date: null
     query: null
 
   events:
@@ -23,12 +22,10 @@ class Searchad.Views.PoorPerforming.SubTabs.IndexView extends Backbone.View
   template: JST["backbone/templates/poor_performing/sub_tabs"]
   
   update_url: (path) =>
-    currentPath = ''
-    if @data.date
-      newPath = Utils.UpdateURLParam(currentPath, 'date', @data.date, true)
     if @data.query
-      newPath = Utils.UpdateURLParam(newPath, 'query', @data.query)
-    @router.navigate(path + newPath)
+      newPath = Utils.UpdateURLParam(window.location.hash, 'query',
+        @data.query)
+      @router.navigate(path + newPath)
 
   toggleTab: (e) =>
     @$el.find('li.active').removeClass('active')
@@ -38,22 +35,22 @@ class Searchad.Views.PoorPerforming.SubTabs.IndexView extends Backbone.View
     @controller.trigger('pp:content-cleanup')
     e.preventDefault()
     @controller.trigger('pp:walmart-items:index', @data)
-    @update_url('poor_performing/walmart_items/')
+    @router.update_path('poor_performing/walmart_items/query/' + @data.query)
   
   stats: (e) =>
     @controller.trigger('pp:content-cleanup')
     e.preventDefault()
     @controller.trigger('pp:stats', @data)
-    @update_url('poor_performing/stats/')
+    @router.update_path('poor_performing/stats/query/' + @data.query)
 
   amazon_items: (e) =>
     @controller.trigger('pp:content-cleanup')
     e.preventDefault()
     @controller.trigger('pp:amazon-items:index', @data)
-    @update_url('poor_performing/amazon_items/')
+    @router.update_path('poor_performing/amazon_items/query/' + @data.query)
 
   select_walmart_tab: (data) =>
-    @data = data
+    @data.query = data.query if data and data.query
     unless @$el.find('ul.nav').length > 0
       @$el.append( @template())
     e = {}
@@ -61,7 +58,7 @@ class Searchad.Views.PoorPerforming.SubTabs.IndexView extends Backbone.View
     @toggleTab(e)
   
   select_amazon_tab: (data) =>
-    @data = data
+    @data.query = data.query if data and data.query
     unless @$el.find('ul.nav').length > 0
       @$el.append( @template())
     e = {}
@@ -69,7 +66,7 @@ class Searchad.Views.PoorPerforming.SubTabs.IndexView extends Backbone.View
     @toggleTab(e)
   
   select_stats_tab: (data) =>
-    @data = data
+    @data.query = data.query if data and data.query
     unless @$el.find('ul.nav').length > 0
       @$el.append( @template())
     e = {}

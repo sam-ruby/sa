@@ -20,7 +20,7 @@ class Searchad.Collections.PoorPerfWalmartItemsCollection extends Backbone.Pagea
   model: Searchad.Models.PoorPerfWalmartItem
   url: '/poor_performing/get_walmart_items.json'
   state:
-    pageSize: 10
+    pageSize: 5
   mode: 'client'
   data:
     query: null

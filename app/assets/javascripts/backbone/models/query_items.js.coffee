@@ -24,7 +24,7 @@ class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollect
     top_rev_items: null
 
   state:
-    pageSize: 16
+    pageSize: 5
   mode: 'client'
 
   get_items: (data) =>
