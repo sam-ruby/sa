@@ -1,34 +1,43 @@
-class Searchad.Models.SearchQualityDaily extends Backbone.Model
-  paramRoot: 'search_quality_daily'
+class Searchad.Models.PoorPerfAmazonItem extends Backbone.Model
+  paramRoot: 'poor_performing_amazon_items'
 
   defaults:
-    id: null
-    query_str: null
-    query_date: null
-    query_count: null
-    query_revenue: null
-    search_rev_rank_correlation: null
-    ctr_ranks: null
-    top_ctr_item: null
-    query_items: null
-    top_rev_items: null
+    item_id: null
+    idd: null
+    name: null
+    brand: null
+    position: null
+    'amazon.name': null
+    brand: null
+    img_url: null
+    'amazon.url': null
+    newprice: null
 
-class Searchad.Collections.SearchQualityDailiesCollection extends Backbone.PageableCollection
-  model: Searchad.Models.SearchQualityDaily
-  url: '/search_quality_daily/get_search_words.json'
+class Searchad.Collections.PoorPerfAmazonItemsCollection extends Backbone.PageableCollection
+  
+  initialize: (options) ->
+    @controller = SearchQualityApp.Controller
+  
+  model: Searchad.Models.PoorPerfAmazonItem
+  url: '/poor_performing/get_amazon_items.json'
   filters:
     date: null
   state:
-    pageSize: 10
+    pageSize: 5
   query_params:
     currentPage: 'page'
     pageSize: 'per_page'
-  mode: 'server'
+  mode: 'client'
+  data:
+    query: null
 
   get_items: (data) =>
-    @filters.date = data.date if data and data.date
-    data = {}
-    for k, v of @filters
+    data = {} unless data
+    if data.query
+      @data.query = data.query
+    else
+      data.query = @data.query
+    for k, v of @controller.get_filter_params()
       continue unless v
       data[k] = v
     @fetch(

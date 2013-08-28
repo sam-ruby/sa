@@ -1,0 +1,7 @@
+a(href=image_url, target='_blank')
+  unless image_url
+    .missing-img &nbsp;
+    = name 
+  else
+    img.item-image(src=image_url)
+    = name

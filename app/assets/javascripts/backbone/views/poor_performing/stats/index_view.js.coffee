@@ -69,12 +69,14 @@ class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
   unrender: ->
     @active = false
     @$el.highcharts().destroy()
-    @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').hide()
+    @$el.children().remove()
 
   get_items: (data) ->
     @unrender()
-    @$el.find('.ajax-loader').css('display', 'block')
+    console.log('jsut checking')
+    image =$('<img>').addClass('ajax-loader').attr(
+      'src', '/assets/ajax_loader.gif').css('display', 'block')
+    @$el.append(image)
     $.ajax(
       url: '/poor_performing/get_query_stats.json'
       data:
@@ -109,12 +111,11 @@ class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
 
   render: (query, data) ->
     @active = true
-    @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').hide()
+    @$el.children().remove()
     @initChart(query, data)
     return this
   
   unrender: =>
     @active = false
     @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').hide()
+    @$el.find('img.ajax-loader').hide()

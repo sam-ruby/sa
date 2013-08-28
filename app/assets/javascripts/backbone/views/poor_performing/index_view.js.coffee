@@ -29,9 +29,9 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
 
       handleQueryClick: (e) =>
         e.preventDefault()
+        $(e.target).parents('table').find('tr.selected').removeClass('selected')
+        $(e.target).parents('tr').addClass('selected')
         id = @model.get('id')
-        date_parts = @model.get('query_date').split('-')
-        date = date_parts[1] + '-' + date_parts[2] + '-' + date_parts[0]
         @controller.trigger('pp:stats', query: @model.get('query'))
         new_path = 'poor_performing/stats/query/' + @model.get('query')
         @router.update_path(new_path)

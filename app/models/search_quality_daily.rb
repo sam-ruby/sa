@@ -14,7 +14,8 @@ class SearchQualityDaily < BaseModel
  end
  
  def self.get_search_relevance_data_by_id(id)
-   self.select(%q{id, query_items, top_rev_items}).where('id = ?', id)
+   self.select(%q{id, query_str, query_items, top_rev_items}).where(
+     'id = ?', id)
  end
 
 end

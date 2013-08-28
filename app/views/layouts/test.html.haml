@@ -90,6 +90,9 @@
         margin-bottom: 0px;
         vertical-align: inherit;
       }
+      tr.selected {
+        background-color: rgba(47, 126, 216, .07);
+      }
     = yield :stylesheets
     = csrf_meta_tag 
   
@@ -157,5 +160,5 @@
           = yield :test_content
      
         
-    = javascript_include_tag :test 
+    = javascript_include_tag :application
     = yield :javascript

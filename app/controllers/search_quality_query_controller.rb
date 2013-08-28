@@ -23,6 +23,7 @@ class SearchQualityQueryController < BaseController
     id = params[:id]
     query_items = params[:query_items]
     top_rev_items = params[:top_rev_items]
+    query = ''
     
     if query_items.nil?  or top_rev_items.nil? or 
       query_items.empty? or top_rev_items.empty?
@@ -30,6 +31,7 @@ class SearchQualityQueryController < BaseController
       unless results.empty?
         query_items = results.first['query_items']
         top_rev_items = results.first['top_rev_items']
+        query = results.first['query_str']
       end
     end
 
@@ -50,7 +52,7 @@ class SearchQualityQueryController < BaseController
     
     respond_to do |format|
       format.json do 
-        render :json => result
+        render :json => {:query=>query, :results=>result}
       end
     end
   end

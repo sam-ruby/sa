@@ -1,7 +1,6 @@
 class PoorPerformingController < BaseController
 
   before_filter :set_common_data
-
   def get_search_words
     @search_words = QueryCatMetricsDaily.get_search_words(
       @date, @cat_id, @page, @sort_by, @order, @limit)
@@ -23,14 +22,10 @@ class PoorPerformingController < BaseController
     query = params['query']
     @walmart_items = ItemQueryCatMetricsDaily.get_walmart_items(
       query, @cat_id, @date)
-      
+    
     respond_to do |format|
       format.json do 
-        if @walmart_items.nil? or @walmart_items.empty?
-          render :json => []
-        else
-          render :json => @walmart_items
-        end
+        render :json => @walmart_items
       end
     end
   end
@@ -40,6 +35,18 @@ class PoorPerformingController < BaseController
     respond_to do |format|
       format.json do 
         render :json => QueryCatMetricsDaily.get_query_stats(query)
+      end
+    end
+  end
+
+  def get_amazon_items
+    query = params['query']
+    respond_to do |format|
+      format.json do 
+        result = URLMapping.get_amazon_items(query).map do |record|
+          record.attributes.merge(:walmart_price => record.walmart_price)
+        end
+        render :json => result
       end
     end
   end

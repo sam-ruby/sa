@@ -96,8 +96,12 @@ $ ->
     
     poorPerformingStatsView =
       new Searchad.Views.PoorPerforming.Stats.IndexView(
-        el: '#poor-performing-subtabs-content')
+        el: '#hcharts')
 
+    poorPerformingAmazonItemsView =
+      new Searchad.Views.PoorPerforming.AmazonItems.IndexView(
+        el: '#poor-performing-subtabs-content')
+    
   $('#dp3').on('changeDate', (e) ->
     dateStr = e.date.getMonth() + 1 + '-' + e.date.getDate() + '-' +
       e.date.getFullYear()

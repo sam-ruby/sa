@@ -14,6 +14,9 @@ class Searchad.Models.QueryItem extends Backbone.Model
       curr_item_price: null
 
 class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollection
+  initialize: ->
+    @controller = SearchQualityApp.Controller
+
   model: Searchad.Models.QueryItem
   url: '/search_quality_query/get_query_items.json'
   filters:
@@ -42,3 +45,9 @@ class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollect
       data: @data
       type: 'post'
     )
+
+  parse: (response) =>
+    if response and response.query
+      @controller.trigger('search:query-items:set-tab-content', response.query)
+    if response and response.results
+      response.results

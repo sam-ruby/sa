@@ -28,13 +28,17 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
 
       handleQueryClick: (e) ->
         e.preventDefault()
+        $(e.target).parents('table').find('tr.selected').removeClass('selected')
+        $(e.target).parents('tr').addClass('selected')
         id = @model.get('id')
+        query = @model.get('query_str')
         data =
           id: id
           query_items: @model.get('query_items')
           top_rev_items: @model.get('top_rev_items')
         
         @controller.trigger('search:query-items:index', data)
+        @controller.trigger('search:query-items:set-tab-content', query)
         new_path = 'search/item_id/' + id
         @router.update_path(new_path)
 

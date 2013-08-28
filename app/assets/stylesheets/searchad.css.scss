@@ -407,3 +407,17 @@ span.caret {
   vertical-align: middle;
   margin: 0 0.5em;
 }
+.less_expensive {
+	color: green;
+}
+
+.more_expensive {
+	color: orange;
+}
+
+.not_carried {
+	color: red;
+}
+.walmart_price {
+	text-align:center;
+}

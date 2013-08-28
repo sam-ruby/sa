@@ -7,6 +7,8 @@ class Searchad.Views.SearchQualityQuery.SubTabs.IndexView extends Backbone.View
     @controller.bind('search:sub-content-cleanup', @unrender)
     @controller.bind('search:query-items:index',
       @select_first_tab)
+    @controller.bind('search:query-items:set-tab-content',
+      @set_tab_content)
  
   events:
     'click': 'pre_render'
@@ -19,7 +21,7 @@ class Searchad.Views.SearchQualityQuery.SubTabs.IndexView extends Backbone.View
 
   select_first_tab: =>
     unless @$el.find('ul.nav').length > 0
-      @$el.append( @template())
+      @$el.append(@template())
     @$el.find('li.active').removeClass('active')
     @$el.find('li' + '.query-items-tab').addClass('active')
   
@@ -27,3 +29,6 @@ class Searchad.Views.SearchQualityQuery.SubTabs.IndexView extends Backbone.View
     @active = false
     @$el.children().not('.ajax-loader').remove()
     @$el.find('.ajax-loader').hide()
+
+  set_tab_content: (query) =>
+    @$el.find('i.tab-query').text(query)
