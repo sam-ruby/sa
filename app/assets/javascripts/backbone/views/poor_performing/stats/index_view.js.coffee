@@ -4,7 +4,6 @@ class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
   initialize: (options) ->
     _.bindAll(this, 'render', 'get_items')
     @controller = SearchQualityApp.Controller
-    @controller.bind('pp:stats', @get_items)
     @controller.bind('date-changed', =>
       @get_items() if @active)
     @controller.bind('content-cleanup', @unrender)
@@ -73,7 +72,6 @@ class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
 
   get_items: (data) ->
     @unrender()
-    console.log('jsut checking')
     image =$('<img>').addClass('ajax-loader').attr(
       'src', '/assets/ajax_loader.gif').css('display', 'block')
     @$el.append(image)

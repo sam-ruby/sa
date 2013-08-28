@@ -66,6 +66,7 @@ $ ->
     Router: searchQualityRouter
 
   do ->
+    controller = SearchQualityApp.Controller
     searchQualityQueryView =
       new Searchad.Views.SearchQualityQuery.IndexView(
         el: '#search-quality-queries')
@@ -84,24 +85,66 @@ $ ->
         el: '#dashboard')
  
     masterTabView = new Searchad.Views.MasterTab.IndexView(
-        el: 'ul.master-tab')
+        el: 'div.master-tab')
 
-    poorPerformingSubtabsView =
+    ppSubtabsView =
       new Searchad.Views.PoorPerforming.SubTabs.IndexView(
-        el: '#poor-performing-subtabs')
-
-    poorPerformingWalmartItemsView =
+        el: '#poor-performing-subtabs'
+      )
+    
+    ppWalmartItemsView =
       new Searchad.Views.PoorPerforming.WalmartItems.IndexView(
         el: '#poor-performing-subtabs-content')
+    ppWalmartItemsView.listenTo(
+      controller, 'pp:walmart-items:index', ppWalmartItemsView.get_items)
+    ppWalmartItemsView.listenTo(
+      controller, 'pp:content-cleanup', ppWalmartItemsView.unrender)
     
-    poorPerformingStatsView =
+    ppStatsView =
       new Searchad.Views.PoorPerforming.Stats.IndexView(
         el: '#hcharts')
+    ppStatsView.listenTo(
+      controller, 'pp:stats', ppStatsView.get_items)
 
-    poorPerformingAmazonItemsView =
+    ppAmazonItemsView =
       new Searchad.Views.PoorPerforming.AmazonItems.IndexView(
         el: '#poor-performing-subtabs-content')
+    ppAmazonItemsView.listenTo(
+      controller, 'pp:amazon-items:index', ppAmazonItemsView.get_items)
+    ppAmazonItemsView.listenTo(
+      controller, 'pp:content-cleanup', ppAmazonItemsView.unrender)
     
+    searchSubtabsView =
+      new Searchad.Views.Search.SubTabs.IndexView(
+        el: '#search-subtabs'
+      )
+    
+    searchStatsView =
+      new Searchad.Views.PoorPerforming.Stats.IndexView(
+        el: '#search-stats-hcharts')
+    searchStatsView.listenTo(controller, 'do-search',
+      searchStatsView.get_items)
+
+    searchWalmartItemsView =
+      new Searchad.Views.PoorPerforming.WalmartItems.IndexView(
+        el: '#search-subtabs-content')
+    searchWalmartItemsView.listenTo(
+      controller, 'do-search', searchWalmartItemsView.get_items)
+    searchWalmartItemsView.listenTo(
+      controller, 'search:walmart-items:index',
+      searchWalmartItemsView.get_items)
+    searchWalmartItemsView.listenTo(
+      controller, 'search:content-cleanup',
+      searchWalmartItemsView.unrender)
+    
+    searchAmazonItemsView =
+      new Searchad.Views.PoorPerforming.AmazonItems.IndexView(
+        el: '#search-subtabs-content')
+    searchAmazonItemsView.listenTo(
+      controller, 'search:amazon-items:index', searchAmazonItemsView.get_items)
+    searchAmazonItemsView.listenTo(
+      controller, 'search:content-cleanup', searchAmazonItemsView.unrender)
+
   $('#dp3').on('changeDate', (e) ->
     dateStr = e.date.getMonth() + 1 + '-' + e.date.getDate() + '-' +
       e.date.getFullYear()

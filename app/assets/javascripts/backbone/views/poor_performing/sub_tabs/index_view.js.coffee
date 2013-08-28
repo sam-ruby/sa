@@ -6,11 +6,8 @@ class Searchad.Views.PoorPerforming.SubTabs.IndexView extends Backbone.View
     @router = SearchQualityApp.Router
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('pp:stats', @select_stats_tab)
-    @controller.bind('pp:walmart-items:index',
-      @select_walmart_tab)
-    @controller.bind('pp:amazon-items:index',
-      @select_amazon_tab)
-
+    @controller.bind('pp:walmart-items:index', @select_walmart_tab)
+    @controller.bind('pp:amazon-items:index', @select_amazon_tab)
   data:
     query: null
 
@@ -19,8 +16,8 @@ class Searchad.Views.PoorPerforming.SubTabs.IndexView extends Backbone.View
     'click li.pp-walmart-items-tab': 'walmart_items'
     'click li.pp-amazon-items-tab': 'amazon_items'
 
-  template: JST["backbone/templates/poor_performing/sub_tabs"]
-  
+  template: JST['backbone/templates/poor_performing/sub_tabs']
+
   update_url: (path) =>
     if @data.query
       newPath = Utils.UpdateURLParam(window.location.hash, 'query',

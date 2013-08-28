@@ -99,8 +99,8 @@
   %body
     = render 'shared/title'
     .container
-      .row
-        %ul.nav.nav-tabs.master-tab
+      .row.master-tab
+        %ul.nav.nav-tabs
           %li.active
             %a
               .tab-title.add-widget
@@ -110,7 +110,7 @@
               .tab-title.dashboard-tab
                 Dashboard 
           %li.tab-title.search-quality-tab
-            %a{:href=>'#search'}
+            %a{:href=>'#search_rel'}
               Search Relevance 
               
           %li.tab-title.poor-performing-tab

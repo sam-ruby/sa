@@ -3,10 +3,10 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller = options.controller
     
   routes:
-    "search(/filters/date/:date)": "search"
-    "search/item_id/:id(/filters/date/:date)": "search_query_items"
+    "search_rel(/filters/date/:date)": "search_rel"
+    "search_rel/item_id/:id(/filters/date/:date)": "search_query_items"
 
-    "search.*": "search"
+    "search_rel.*": "search_rel"
     "poor_performing(/filters/date/:date)": "poor_performing"
 
     "poor_performing/stats/query/:query(/filters/date/:date)":
@@ -18,12 +18,26 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "poor_performing/amazon_items/query/:query(/filters/date/:date)":
       "pp_amazon_items"
 
+    "search(/filters/date/:date)": "search"
+    "search/query/:query(/filters/date/:date)": "search"
+    "search/amazon_items/query/:query(/filters/date/:date)":
+      "search_amazon_items"
+    
     ".*(filters/date/:date)"        : "dashboard"
 
-  search: (date) =>
+  search_rel: (date) =>
     @controller.set_date(date)
     @controller.trigger('search-quality-query:index')
 
+  search: (query, date) =>
+    @controller.set_date(date)
+    @controller.trigger('do-search', query: query)
+  
+  search_amazon_items: (query, date) =>
+    @controller.set_date(date)
+    @controller.trigger('do-search', query: query)
+    @controller.trigger('search:amazon-items:index', query: query)
+  
   search_query_items: (id, date) =>
     @controller.set_date(date)
     @controller.trigger('search-quality-query:index')

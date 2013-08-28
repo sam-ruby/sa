@@ -39,7 +39,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
         
         @controller.trigger('search:query-items:index', data)
         @controller.trigger('search:query-items:set-tab-content', query)
-        new_path = 'search/item_id/' + id
+        new_path = 'search_rel/item_id/' + id
         @router.update_path(new_path)
 
       render: ->

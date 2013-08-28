@@ -32,6 +32,7 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
         $(e.target).parents('table').find('tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
         id = @model.get('id')
+        @controller.trigger('pp:content-cleanup')
         @controller.trigger('pp:stats', query: @model.get('query'))
         new_path = 'poor_performing/stats/query/' + @model.get('query')
         @router.update_path(new_path)

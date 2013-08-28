@@ -9,12 +9,10 @@ class Searchad.Views.PoorPerforming.AmazonItems.IndexView extends Backbone.View
       new Searchad.Collections.PoorPerfAmazonItemsCollection()
     @initTable()
     
-    @controller.bind('pp:amazon-items:index', @get_items)
     @controller.bind('date-changed', =>
       @get_items() if @active)
     @collection.bind('reset', @render)
     @controller.bind('content-cleanup', @unrender)
-    @controller.bind('pp:content-cleanup', @unrender)
 
   active: false
 

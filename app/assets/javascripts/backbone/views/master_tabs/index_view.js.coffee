@@ -8,7 +8,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.bind('poor-performing:index', @select_pp_tab)
     @controller.bind('search-quality-query:index', @select_sq_tab)
     @controller.bind('do-search', @select_search_tab)
-    @widget_el =  @$el.find('.modal')
+    @widget_el =  $('div.modal')
     @widget_el.modal(
       backdrop: false
       show: false
@@ -39,7 +39,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.trigger('content-cleanup')
     e.preventDefault()
     @controller.trigger('search-quality-query:index')
-    @router.update_path('search')
+    @router.update_path('search_rel')
 
   poorPerforming: (e) =>
     @controller.trigger('content-cleanup')
@@ -54,11 +54,13 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @router.update_path('/')
   
   do_search: (e) =>
-    @controller.trigger('content-cleanup')
     e.preventDefault()
-    @controller.trigger('do-search')
+    query = $('form.form-search input.search-query').val()
+    if query
+      @router.update_path('search/query/' + query)
+      @controller.trigger('content-cleanup')
+      @controller.trigger('do-search', query: query)
   
-
   select_dashboard_tab: =>
     e = {}
     e.target = @$el.find('div.dashboard-tab').get(0)
