@@ -5,7 +5,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   routes:
     "search_rel(/filters/date/:date)": "search_rel"
     "search_rel/item_id/:id(/filters/date/:date)": "search_query_items"
-
+    
+    "search_kpi(/filters/date/:date)": "search_kpi"
+    
     "search_rel.*": "search_rel"
     "poor_performing(/filters/date/:date)": "poor_performing"
 
@@ -28,6 +30,10 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   search_rel: (date) =>
     @controller.set_date(date)
     @controller.trigger('search-rel:index')
+
+  search_kpi: (date) =>
+    @controller.set_date(date)
+    @controller.trigger('search-kpi:index')
 
   search: (query, date) =>
     @controller.set_date(date)

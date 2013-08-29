@@ -159,6 +159,14 @@ $ ->
     searchAmazonItemsView.listenTo(
       controller, 'search:content-cleanup', searchAmazonItemsView.unrender)
 
+    searchKPI = new Searchad.Views.SearchKPI.IndexView(
+      el: '#search-kpi'
+      paid_dom_selector: '.hcharts-paid'
+      unpaid_dom_selector: '.hcharts-unpaid'
+    )
+    searchKPI.listenTo(controller, 'search-kpi:index',
+      searchKPI.get_items)
+
   $('#dp3').on('changeDate', (e) ->
     dateStr = e.date.getMonth() + 1 + '-' + e.date.getDate() + '-' +
       e.date.getFullYear()

@@ -70,4 +70,6 @@ Searchad::Application.routes.draw do
   
   get 'test(/:action(.:format))', :to=>'test'
 
+  match 'search_kpi(/:action(.:format))',
+    :to => 'search_k_p_i', :via => [:get, :post]  
 end

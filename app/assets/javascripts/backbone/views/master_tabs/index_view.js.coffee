@@ -7,6 +7,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.bind('dashboard:index', @select_dashboard_tab)
     @controller.bind('poor-performing:index', @select_pp_tab)
     @controller.bind('search-rel:index', @select_sq_tab)
+    @controller.bind('search-kpi:index', @select_search_kpi_tab)
     @controller.bind('do-search', @select_search_tab)
     @widget_el =  $('div.modal')
     @widget_el.modal(
@@ -21,6 +22,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     'click a.save-widget': 'saveWidget'
     'click li.search-quality-tab': 'searchQuality'
     'click li.poor-performing-tab': 'poorPerforming'
+    'click li.search-kpi-tab': 'searchKPI'
     'click .dashboard-tab': 'dashBoard'
     'click button.btn': 'do_search'
     
@@ -41,6 +43,12 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.trigger('search-rel:index')
     @router.update_path('search_rel')
 
+  searchKPI: (e) =>
+    @controller.trigger('content-cleanup')
+    e.preventDefault()
+    @controller.trigger('search-kpi:index')
+    @router.update_path('search_kpi')
+  
   poorPerforming: (e) =>
     @controller.trigger('content-cleanup')
     e.preventDefault()
@@ -76,6 +84,11 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     e.target = @$el.find('li.search-quality-tab a').get(0)
     @toggleTab(e)
    
+  select_search_kpi_tab: =>
+    e = {}
+    e.target = @$el.find('li.search-kpi-tab a').get(0)
+    @toggleTab(e)
+  
   select_search_tab: =>
     e = {}
     e.target = @$el.find('li.search-tab a').get(0)
