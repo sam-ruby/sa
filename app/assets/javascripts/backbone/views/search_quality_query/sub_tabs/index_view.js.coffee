@@ -4,10 +4,10 @@ class Searchad.Views.SearchQualityQuery.SubTabs.IndexView extends Backbone.View
   initialize: (options) =>
     @controller = SearchQualityApp.Controller
     @controller.bind('content-cleanup', @unrender)
-    @controller.bind('search:sub-content-cleanup', @unrender)
-    @controller.bind('search:query-items:index',
+    @controller.bind('search-rel:sub-content-cleanup', @unrender)
+    @controller.bind('search-rel:query-items:index',
       @select_first_tab)
-    @controller.bind('search:query-items:set-tab-content',
+    @controller.bind('search-rel:query-items:set-tab-content',
       @set_tab_content)
  
   events:
@@ -17,7 +17,7 @@ class Searchad.Views.SearchQualityQuery.SubTabs.IndexView extends Backbone.View
   
   pre_render: (e) =>
     e.preventDefault()
-    @controller.trigger('search:sub-content-cleanup')
+    @controller.trigger('search-rel:sub-content-cleanup')
 
   select_first_tab: =>
     unless @$el.find('ul.nav').length > 0

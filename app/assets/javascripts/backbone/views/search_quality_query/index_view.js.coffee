@@ -10,7 +10,6 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
       new Searchad.Collections.SearchQualityQueryCollection()
     @initTable()
 
-    @controller.bind('search-quality-query:index', @get_items)
     @controller.bind('date-changed', =>
       @get_items() if @active)
     @controller.bind('content-cleanup', @unrender)
@@ -22,7 +21,6 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     class QueryCell extends Backgrid.Cell
       controller: SearchQualityApp.Controller
       router: SearchQualityApp.Router
-
       events:
         click: 'handleQueryClick'
 
@@ -36,15 +34,16 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
           id: id
           query_items: @model.get('query_items')
           top_rev_items: @model.get('top_rev_items')
-        
-        @controller.trigger('search:query-items:index', data)
-        @controller.trigger('search:query-items:set-tab-content', query)
+       
+        @controller.trigger('search-rel:sub-content-cleanup')
+        @controller.trigger('search-rel:query-items:index', data)
+        @controller.trigger('search-rel:query-items:set-tab-content', query)
         new_path = 'search_rel/item_id/' + id
         @router.update_path(new_path)
 
       render: ->
         value = @model.get(@column.get('name'))
-        formatted_value = '<a href="#">' + value + '</a>'
+        formatted_value = '<a class="query" href="#">' + value + '</a>'
         @$el.html(formatted_value)
         @delegateEvents()
         return this

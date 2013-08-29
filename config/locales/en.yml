@@ -195,7 +195,7 @@ en:
       template: "Template"
            
   perf_monitor:
-      add_to_cart_rate: "Add to Cart Rate"
+      add_to_cart_rate: "ATC Rate"
       add_to_cart_rate_l: "add to cart rate"
       conversion_rate: "Conversion Rate"
       conversion_rate_l: "conversion rate"

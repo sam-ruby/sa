@@ -8,7 +8,8 @@ class Searchad.Views.SearchQualityQuery.QueryItems.IndexView extends Backbone.Vi
     @collection = new Searchad.Collections.QueryItemsCollection()
     @initTable()
     
-    @controller.bind('search:query-items:index', @get_items)
+    @controller.bind('search-rel:query-items:index', @get_items)
+    @controller.bind('search-rel:sub-content-cleanup', @unrender)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
 

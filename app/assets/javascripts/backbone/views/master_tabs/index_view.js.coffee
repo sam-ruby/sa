@@ -6,7 +6,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @router = SearchQualityApp.Router
     @controller.bind('dashboard:index', @select_dashboard_tab)
     @controller.bind('poor-performing:index', @select_pp_tab)
-    @controller.bind('search-quality-query:index', @select_sq_tab)
+    @controller.bind('search-rel:index', @select_sq_tab)
     @controller.bind('do-search', @select_search_tab)
     @widget_el =  $('div.modal')
     @widget_el.modal(
@@ -38,7 +38,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
   searchQuality: (e) =>
     @controller.trigger('content-cleanup')
     e.preventDefault()
-    @controller.trigger('search-quality-query:index')
+    @controller.trigger('search-rel:index')
     @router.update_path('search_rel')
 
   poorPerforming: (e) =>

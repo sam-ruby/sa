@@ -66,10 +66,14 @@ $ ->
     Router: searchQualityRouter
 
   do ->
+    router = SearchQualityApp.Router
     controller = SearchQualityApp.Controller
     searchQualityQueryView =
       new Searchad.Views.SearchQualityQuery.IndexView(
-        el: '#search-quality-queries')
+        el: '#search-quality-queries'
+      )
+    searchQualityQueryView.listenTo(controller,
+      'search-rel:index', searchQualityQueryView.get_items)
 
     searchQualitySubtabsView =
       new Searchad.Views.SearchQualityQuery.SubTabs.IndexView(
@@ -79,7 +83,17 @@ $ ->
       el: '#query-items-content')
     
     poorPerformingView = new Searchad.Views.PoorPerforming.IndexView(
-      el: '#poor-performing-queries')
+      el: '#poor-performing-queries'
+      events:
+        'click a.query': (e) ->
+          query = $(e.target).text()
+          controller.trigger('pp:stats', query: query)
+          new_path = 'poor_performing/stats/query/' + query
+          router.update_path(new_path)
+    )
+
+    poorPerformingView.listenTo(
+      controller, 'poor-performing:index', poorPerformingView.get_items)
     
     dashboardView = new Searchad.Views.Dashboard.IndexView(
         el: '#dashboard')

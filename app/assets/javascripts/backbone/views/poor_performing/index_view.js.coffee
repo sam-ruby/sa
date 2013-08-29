@@ -11,7 +11,6 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
 
     @$el.find('.ajax-loader').hide()
     
-    @controller.bind('poor-performing:index', @get_items)
     @controller.bind('date-changed', =>
       @get_items() if @active)
     @controller.bind('content-cleanup', @unrender)
@@ -33,13 +32,10 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
         $(e.target).parents('tr').addClass('selected')
         id = @model.get('id')
         @controller.trigger('pp:content-cleanup')
-        @controller.trigger('pp:stats', query: @model.get('query'))
-        new_path = 'poor_performing/stats/query/' + @model.get('query')
-        @router.update_path(new_path)
 
       render: ->
         value = @model.get(@column.get('name'))
-        formatted_value = '<a href="#">' + value + '</a>'
+        formatted_value = '<a class="query" href="#">' + value + '</a>'
         @$el.html(formatted_value)
         @delegateEvents()
         return this
@@ -83,7 +79,6 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
     )
 
   make_tab_active: =>
-
 
   get_items: (data) =>
     @$el.find('.ajax-loader').css('display', 'block')

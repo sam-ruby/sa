@@ -27,7 +27,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
 
   search_rel: (date) =>
     @controller.set_date(date)
-    @controller.trigger('search-quality-query:index')
+    @controller.trigger('search-rel:index')
 
   search: (query, date) =>
     @controller.set_date(date)
@@ -40,8 +40,8 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   
   search_query_items: (id, date) =>
     @controller.set_date(date)
-    @controller.trigger('search-quality-query:index')
-    @controller.trigger('search:query-items:index', id: id)
+    @controller.trigger('search-rel:index')
+    @controller.trigger('search-rel:query-items:index', id: id)
   
   dashboard: (date) =>
     @controller.set_date(date)
@@ -55,14 +55,12 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.set_date(date)
     @controller.trigger('poor-performing:index')
     @controller.trigger('pp:stats',
-      date: date
       query: query)
  
   pp_walmart_items: (query, date) =>
     @controller.set_date(date)
     @controller.trigger('poor-performing:index')
     @controller.trigger('pp:walmart-items:index',
-      date: date
       query: query)
   
   pp_amazon_items: (query, date) =>
