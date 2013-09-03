@@ -1,5 +1,4 @@
 $ ->
- 
   $('div.content').css('height', ($(window).height() + 50) + 'px')
   $('p.notice').hide()
   $('p.alert').hide()

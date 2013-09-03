@@ -8,7 +8,8 @@ class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
       @get_items() if @active)
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('pp:content-cleanup', @unrender)
-
+    @data = {}
+  
   active: false
 
   seriesTypes: [{
@@ -71,6 +72,10 @@ class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
     @$el.children().remove()
 
   get_items: (data) ->
+    if data and data.query
+      @data.query = data.query
+    else
+      data = @data
     @unrender()
     image =$('<img>').addClass('ajax-loader').attr(
       'src', '/assets/ajax_loader.gif').css('display', 'block')
