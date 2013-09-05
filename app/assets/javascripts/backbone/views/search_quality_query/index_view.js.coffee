@@ -56,7 +56,8 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     {name: 'query_revenue',
     label: I18n.t('search_analytics.revenue'),
     editable: false,
-    cell: 'number'},
+    cell: 'number',
+    formatter: Utils.CurrencyFormatter},
     {name: 'query_str',
     label: I18n.t('search_analytics.query_string'),
     editable: false,
@@ -64,7 +65,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     {name: 'query_count',
     label: I18n.t('search_analytics.query_count'),
     editable: false,
-    cell: 'number'}]
+    cell: 'integer'}]
 
     columns
 

@@ -41,15 +41,42 @@ $ ->
       else
         newPath = updateParam(pathURL, fName, fValue)
         return newPath + 'filters/' + filterURL
+     
+    class PercentFormatter extends Backgrid.NumberFormatter
+      decimals: 2
+      decimalSeparator: '.'
+      orderSeparator: ','
+
+      fromRaw: (rawValue) ->
+        super(rawValue) + '%'
+
+    class CurrencyFormatter extends Backgrid.NumberFormatter
+      decimals: 2
+      decimalSeparator: '.'
+      orderSeparator: ','
+
+      fromRaw: (rawValue) ->
+        if rawValue == 0
+          '$' + rawValue.toFixed(0)
+        else
+          '$' + super(rawValue)
 
     UpdateURLParam: updateURLParam
+    PercentFormatter: PercentFormatter
+    CurrencyFormatter: CurrencyFormatter
   
   window.SearchQualityApp = do ->
     controller = _.extend({}, Backbone.Events)
-    controller.set_date = (date) =>
-      @date = date
+    controller.set_date = (@date) =>
+    controller.set_week = (@week) =>
+    controller.set_year = (@year) =>
+    controller.set_cat_id = (@cat_id) =>
+
     controller.get_filter_params = =>
       date: @date
+      week: @week
+      year: @year
+      cat_id: @cat_id
 
     searchQualityRouter = new Searchad.Routers.SearchQualityQuery(
       controller: controller)
@@ -67,6 +94,9 @@ $ ->
   do ->
     router = SearchQualityApp.Router
     controller = SearchQualityApp.Controller
+    topTabsView = new Searchad.Views.TopTabs.IndexView(
+      el: '#top-nav')
+
     searchQualityQueryView =
       new Searchad.Views.SearchQualityQuery.IndexView(
         el: '#search-quality-queries'
@@ -97,9 +127,6 @@ $ ->
     dashboardView = new Searchad.Views.Dashboard.IndexView(
         el: '#dashboard')
  
-    masterTabView = new Searchad.Views.MasterTab.IndexView(
-        el: 'div.master-tab')
-
     ppSubtabsView =
       new Searchad.Views.PoorPerforming.SubTabs.IndexView(
         el: '#poor-performing-subtabs'
@@ -126,6 +153,20 @@ $ ->
       controller, 'pp:amazon-items:index', ppAmazonItemsView.get_items)
     ppAmazonItemsView.listenTo(
       controller, 'pp:content-cleanup', ppAmazonItemsView.unrender)
+   
+    # Comp Analysis
+    caView = new Searchad.Views.CompAnalysis.IndexView(
+      el: '#ca-queries'
+      events:
+        'click a.query': (e) ->
+          query = $(e.target).text()
+          controller.trigger('ca:walmart-items:index', query: query)
+          new_path = 'comp_analysis/walmart_items/query/' + query
+          router.update_path(new_path)
+    )
+
+    caView.listenTo(
+      controller, 'comp-analysis:index', caView.get_items)
     
     searchSubtabsView =
       new Searchad.Views.Search.SubTabs.IndexView(

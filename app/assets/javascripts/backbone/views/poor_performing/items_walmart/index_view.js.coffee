@@ -13,6 +13,7 @@ class Searchad.Views.PoorPerforming.WalmartItems.IndexView extends Backbone.View
       @get_items() if @active)
     @collection.bind('reset', @render)
     @controller.bind('content-cleanup', @unrender)
+    @weekly = true if options.view == 'weekly'
 
   active: false
 
@@ -42,23 +43,27 @@ class Searchad.Views.PoorPerforming.WalmartItems.IndexView extends Backbone.View
     {name: 'item_revenue',
     label: I18n.t('dashboard2.revenue'),
     editable: false,
-    cell: 'number'},
+    cell: 'number',
+    formatter: Utils.CurrencyFormatter},
     {name: 'shown_count',
     label: I18n.t('dashboard2.shown_count'),
     editable: false,
-    cell: 'string'},
+    cell: 'integer'},
     {name: 'item_con',
     label: I18n.t('perf_monitor2.conversion_rate'),
     editable: false,
-    cell: 'number'},
+    cell: 'number',
+    formatter: Utils.PercentFormatter},
     {name: 'item_atc',
     label: I18n.t('perf_monitor2.add_to_cart_rate'),
     editable: false,
-    cell: 'number'},
+    cell: 'number',
+    formatter: Utils.PercentFormatter},
     {name: 'item_pvr',
     label: I18n.t('perf_monitor.product_view_rate'),
     editable: false,
-    cell: 'number'}]
+    cell: 'number',
+    formatter: Utils.PercentFormatter}]
     
     columns
 
@@ -76,6 +81,8 @@ class Searchad.Views.PoorPerforming.WalmartItems.IndexView extends Backbone.View
     @$el.find('.ajax-loader').hide()
 
   get_items: (data) =>
+    data = {} unless data
+    data.view = 'weekly' if @weekly
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items(data)
 

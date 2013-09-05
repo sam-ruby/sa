@@ -1,4 +1,4 @@
-class SearchQualityQueryController < BaseController
+class SearchRelController < BaseController
 
   before_filter :set_common_data
 
@@ -19,7 +19,6 @@ class SearchQualityQueryController < BaseController
   end
   
   def get_query_items
-    @date = '2013-08-05'
     id = params[:id]
     query_items = params[:query_items]
     top_rev_items = params[:top_rev_items]
@@ -57,4 +56,19 @@ class SearchQualityQueryController < BaseController
     end
   end
 
+  def get_comp_analysis
+    @search_words = QueryPerformance.get_comp_analysis(
+      @week, @year, @page, @sort_by, @order, @limit)
+    if @search_words.nil? or @search_words.empty?
+      render :json => [{:total_entries => 0}, @search_words]
+    else
+      respond_to do |format|
+        format.json do 
+          render :json => [
+            {:total_entries => @search_words.total_pages * @limit,
+             :date => @date}, @search_words]
+        end
+      end
+    end
+  end
 end

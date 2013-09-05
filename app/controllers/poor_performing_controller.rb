@@ -20,8 +20,14 @@ class PoorPerformingController < BaseController
   
   def get_walmart_items
     query = params['query']
-    @walmart_items = ItemQueryCatMetricsDaily.get_walmart_items(
-      query, @cat_id, @date)
+    view = params['view']
+    if view == 'weekly'
+      @walmart_items = ItemQueryCatMetricsWeekly.get_walmart_items(
+        query, @cat_id, @week, @year)
+    else
+      @walmart_items = ItemQueryCatMetricsDaily.get_walmart_items(
+        query, @cat_id, @date)
+    end
     
     respond_to do |format|
       format.json do 

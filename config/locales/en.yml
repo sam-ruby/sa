@@ -98,6 +98,9 @@ en:
       subcategories: "Subcategories"
       title: "Search Dashboard"
       weekly_view: "Weekly View"
+      catalog_overlap: "Catalog Overlap"
+      results_shown_in_search: "Results Shown in Search"
+      overall_relevance_score: "Overall Relevance Score"
  
   dashboard2:
       all_departments: "All Departments"

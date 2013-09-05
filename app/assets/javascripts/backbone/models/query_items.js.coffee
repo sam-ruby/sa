@@ -18,7 +18,7 @@ class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollect
     @controller = SearchQualityApp.Controller
 
   model: Searchad.Models.QueryItem
-  url: '/search_quality_query/get_query_items.json'
+  url: '/search_rel/get_query_items.json'
   filters:
     date: null
   data:

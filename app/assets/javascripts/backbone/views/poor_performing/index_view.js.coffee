@@ -48,23 +48,27 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
     {name: 'query_revenue',
     label: I18n.t('search_analytics.revenue'),
     editable: false,
-    cell: 'number'},
+    cell: 'number',
+    formatter: Utils.CurrencyFormatter},
     {name: 'query_count',
     label: I18n.t('search_analytics.queries'),
     editable: false,
-    cell: 'number'},
+    cell: 'integer'},
     {name: 'query_con',
     label: I18n.t('perf_monitor.conversion_rate'),
     editable: false,
-    cell: 'number'},
+    cell: 'number',
+    formatter: Utils.PercentFormatter},
     {name: 'query_atc',
     label: I18n.t('perf_monitor.add_to_cart_rate'),
     editable: false,
-    cell: 'number'},
+    cell: 'number',
+    formatter: Utils.PercentFormatter},
     {name: 'query_pvr',
     label: I18n.t('perf_monitor.product_view_rate'),
     editable: false,
-    cell: 'number'}]
+    cell: 'number'
+    formatter: Utils.PercentFormatter}]
 
     columns
 

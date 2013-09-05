@@ -4,29 +4,16 @@
       = image_tag 'walmart-transparent.png', {:class=>'walmart_logo'}
       Search Analytics Dashboard
 
+    %ul#top-nav.nav
+      %li.active.relevance-tab
+        %a{:href=>'#'}
+          Search Relevance
+      
+      %li.explore-tab
+        %a{:href=>'#'}
+          Explore
+
     %ul.nav.pull-right
-      %li.dropdown
-        %a.dropdown-toggle{"data-toggle"=>"dropdown", :href=>'#'}
-          %i.icon-briefcase
-          Dashboards
-          %b.caret
-        %ul.dropdown-menu
-          %li
-            %a{:href=>'#'} Dashboard 1
-          %li
-            %a{:href=>'#'} Dashboard 2
-
-      %li.dropdown
-        %a.dropdown-toggle{"data-toggle"=>"dropdown"}
-          %i.icon-share-alt
-          Shortcuts
-          %b.caret 
-        %ul.dropdown-menu
-          %li
-            %a{:href=>'#'} Shortcut 1
-          %li
-            %a{:href=>'#'} Shortcut 2
-
       %li
         #dp3.input-append.date{'data-date-format'=>'mm-dd-yyyy',
           'data-date-autoclose' => 'true',
