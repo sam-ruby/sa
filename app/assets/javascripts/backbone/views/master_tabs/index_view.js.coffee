@@ -34,7 +34,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
   get_tab_el: (data) ->
     css_classes = data.class.join(' ')
     tab =
-      $("<li class='tab-title #{css_classes}'><a href='#{data.href}'>#{data.title}</a></li>")
+      $("<li class='#{css_classes}'><a href='#{data.href}'>#{data.title}</a></li>")
   
   init_relevance: =>
     @clean_tabs()
