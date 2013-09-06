@@ -8,7 +8,8 @@ class Searchad.Views.SearchQualityQuery.QueryItems.IndexView extends Backbone.Vi
     @collection = new Searchad.Collections.QueryItemsCollection()
     @initTable()
     
-    @controller.bind('search-rel:query-items:index', @get_items)
+    @controller.bind('date-changed', =>
+      @unrender() if @active)
     @controller.bind('search-rel:sub-content-cleanup', @unrender)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
@@ -44,13 +45,12 @@ class Searchad.Views.SearchQualityQuery.QueryItems.IndexView extends Backbone.Vi
       columns: @gridColumns()
       collection: @collection
     )
+    @paginator = new Backgrid.Extension.Paginator(
+      collection: @collection)
   
   get_items: (data) =>
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items(data)
-    
-    @paginator = new Backgrid.Extension.Paginator(
-      collection: @collection)
 
   render: =>
     @active = true

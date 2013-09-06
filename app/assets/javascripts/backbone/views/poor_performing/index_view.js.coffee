@@ -4,6 +4,7 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
   initialize: (options) =>
     
     _.bindAll(this, 'render', 'initTable')
+    @trigger = false
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @collection = new Searchad.Collections.PoorPerformingCollection()
@@ -15,7 +16,7 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
       @get_items() if @active)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
-  
+     
   active: false
 
   gridColumns:  ->
@@ -99,4 +100,7 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
     @$el.find('.ajax-loader').hide()
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
-    return this
+    if @trigger
+      @trigger = false
+      @$el.find('td a.query').first().trigger('click')
+    this

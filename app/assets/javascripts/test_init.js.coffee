@@ -97,57 +97,46 @@ $ ->
     topTabsView = new Searchad.Views.TopTabs.IndexView(
       el: '#top-nav')
 
-    searchQualityQueryView =
-      new Searchad.Views.SearchQualityQuery.IndexView(
-        el: '#search-quality-queries'
-      )
-    searchQualityQueryView.listenTo(controller,
-      'search-rel:index', searchQualityQueryView.get_items)
-
-    searchQualitySubtabsView =
-      new Searchad.Views.SearchQualityQuery.SubTabs.IndexView(
-        el: '#query-items-tab')
-    
-    queryItemsView = new Searchad.Views.SearchQualityQuery.QueryItems.IndexView(
-      el: '#query-items-content')
+    searchQualityQueryView = new Searchad.Views.SearchQualityQuery.IndexView(
+        el: '#search-quality-queries')
+    searchQualityQueryView.listenTo(
+      controller, 'search-rel:index', searchQualityQueryView.get_items)
     
     poorPerformingView = new Searchad.Views.PoorPerforming.IndexView(
       el: '#poor-performing-queries'
       events:
         'click a.query': (e) ->
           query = $(e.target).text()
-          controller.trigger('pp:stats', query: query)
+          controller.trigger('pp:stats:index', query: query)
           new_path = 'poor_performing/stats/query/' + query
           router.update_path(new_path)
     )
-
     poorPerformingView.listenTo(
       controller, 'poor-performing:index', poorPerformingView.get_items)
+    poorPerformingView.listenTo(
+      controller, 'poor-performing-stats:index', ->
+        poorPerformingView.trigger = true
+        poorPerformingView.get_items()
+    )
     
-    dashboardView = new Searchad.Views.Dashboard.IndexView(
-        el: '#dashboard')
- 
-    ppSubtabsView =
-      new Searchad.Views.PoorPerforming.SubTabs.IndexView(
-        el: '#poor-performing-subtabs'
-      )
+    ppSubtabsView = new Searchad.Views.PoorPerforming.SubTabs.IndexView(
+        el: '#poor-performing-subtabs')
     
-    ppWalmartItemsView =
-      new Searchad.Views.PoorPerforming.WalmartItems.IndexView(
+    ppWalmartItemsView = new Searchad.Views.PoorPerforming.WalmartItems.IndexView(
         el: '#poor-performing-subtabs-content')
     ppWalmartItemsView.listenTo(
       controller, 'pp:walmart-items:index', ppWalmartItemsView.get_items)
     ppWalmartItemsView.listenTo(
       controller, 'pp:content-cleanup', ppWalmartItemsView.unrender)
     
-    ppStatsView =
-      new Searchad.Views.PoorPerforming.Stats.IndexView(
+    ppStatsView = new Searchad.Views.PoorPerforming.Stats.IndexView(
         el: '#hcharts')
     ppStatsView.listenTo(
-      controller, 'pp:stats', ppStatsView.get_items)
-
-    ppAmazonItemsView =
-      new Searchad.Views.PoorPerforming.AmazonItems.IndexView(
+      controller, 'pp:stats:index', ppStatsView.get_items)
+    ppStatsView.listenTo(
+      controller, 'pp:content-cleanup', ppStatsView.unrender)
+    
+    ppAmazonItemsView = new Searchad.Views.PoorPerforming.AmazonItems.IndexView(
         el: '#poor-performing-subtabs-content')
     ppAmazonItemsView.listenTo(
       controller, 'pp:amazon-items:index', ppAmazonItemsView.get_items)
@@ -164,7 +153,6 @@ $ ->
           new_path = 'comp_analysis/walmart_items/query/' + query
           router.update_path(new_path)
     )
-
     caView.listenTo(
       controller, 'comp-analysis:index', caView.get_items)
     

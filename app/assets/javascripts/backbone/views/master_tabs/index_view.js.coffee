@@ -8,7 +8,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.bind('explore:app', @init_explore)
 
     @controller.bind('dashboard:index', @select_dashboard_tab)
-    @controller.bind('poor-performing:index', @select_pp_tab)
+    @controller.bind('poor-performing-stats:index', @select_pp_tab)
     @controller.bind('search-rel:index', @select_sq_tab)
     @controller.bind('search-kpi:index', @select_search_kpi_tab)
     @controller.bind('do-search', @select_search_tab)
@@ -89,8 +89,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
   poorPerforming: (e) =>
     @controller.trigger('content-cleanup')
     e.preventDefault()
-    @controller.trigger('poor-performing:index')
-    @router.update_path('poor_performing')
+    @controller.trigger('poor-performing-stats:index')
 
   dashBoard: (e) =>
     @controller.trigger('content-cleanup')

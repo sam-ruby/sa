@@ -28,8 +28,7 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
     @controller.trigger('content-cleanup')
     e.preventDefault()
     @controller.trigger('explore:app')
-    @controller.trigger('poor-performing:index')
-    @router.update_path('poor_performing')
+    @controller.trigger('poor-performing-stats:index')
   
   select_rel_app: =>
     e = {}

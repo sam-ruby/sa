@@ -135,5 +135,8 @@ class BaseController < ApplicationController
     @most_recent_date ||= CatMetricsDaily.maximum(:date)
     CatMetricsWeek.where('year = ?', @most_recent_date.year).maximum(:week)
   end
+
+  def get_available_weeks
+  end
  
 end

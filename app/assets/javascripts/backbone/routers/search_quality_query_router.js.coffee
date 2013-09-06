@@ -33,6 +33,11 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.trigger('relevance:app')
     @controller.trigger('search-rel:index')
 
+  search_query_items: (id, date) =>
+    @controller.set_date(date)
+    @controller.trigger('relevance:app')
+    @controller.trigger('search-rel:index', id: id)
+  
   search_kpi: (date) =>
     @controller.set_date(date)
     @controller.trigger('relevance:app')
@@ -49,12 +54,6 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.trigger('do-search', query: query)
     @controller.trigger('search:amazon-items:index', query: query)
   
-  search_query_items: (id, date) =>
-    @controller.set_date(date)
-    @controller.trigger('relevance:app')
-    @controller.trigger('search-rel:index')
-    @controller.trigger('search-rel:query-items:index', id: id)
-  
   dashboard: (date) =>
     @controller.set_date(date)
     @controller.trigger('dashboard:index')
@@ -62,15 +61,14 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   poor_performing: (date) =>
     @controller.set_date(date)
     @controller.trigger('explore:app')
-    @controller.trigger('poor-performing:index')
+    @controller.trigger('poor-performing-stats:index')
 
   pp_stats: (query, date) =>
     @controller.set_date(date)
     @controller.trigger('explore:app')
     @controller.trigger('poor-performing:index')
-    @controller.trigger('pp:stats',
-      query: query)
- 
+    @controller.trigger('pp:stats:index', query: query)
+
   pp_walmart_items: (query, date) =>
     @controller.set_date(date)
     @controller.trigger('explore:app')
@@ -92,8 +90,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   ca_walmart_items: (query, date) =>
     @controller.set_date(date)
     @controller.trigger('explore:app')
-    @controller.trigger('comp-analysis:index')
-    @controller.trigger('ca:walmart-items:index',
+    @controller.trigger('comp-analysis:index',
       query: query)
   
   ca_amazon_items: (query, date) =>

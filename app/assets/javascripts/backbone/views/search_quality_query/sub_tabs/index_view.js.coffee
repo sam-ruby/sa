@@ -4,9 +4,6 @@ class Searchad.Views.SearchQualityQuery.SubTabs.IndexView extends Backbone.View
   initialize: (options) =>
     @controller = SearchQualityApp.Controller
     @controller.bind('content-cleanup', @unrender)
-    @controller.bind('search-rel:sub-content-cleanup', @unrender)
-    @controller.bind('search-rel:query-items:index',
-      @select_first_tab)
     @controller.bind('search-rel:query-items:set-tab-content',
       @set_tab_content)
  
@@ -31,4 +28,4 @@ class Searchad.Views.SearchQualityQuery.SubTabs.IndexView extends Backbone.View
     @$el.find('.ajax-loader').hide()
 
   set_tab_content: (query) =>
-    @$el.find('i.tab-query').text(query)
+    @$el.find('.tab-query').text(query)

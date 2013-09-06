@@ -4,6 +4,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
   initialize: (options) =>
     
     _.bindAll(this, 'render', 'initTable')
+    @trigger = false
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @collection =
@@ -15,6 +16,20 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
   
+    searchQualitySubtabsView =
+      new Searchad.Views.SearchQualityQuery.SubTabs.IndexView(
+        el: '#query-items-tab')
+    searchQualitySubtabsView.listenTo(
+      @controller, 'search-rel:query-items:index',
+      searchQualitySubtabsView.select_first_tab)
+    
+    queryItemsView = new Searchad.Views.SearchQualityQuery.QueryItems.IndexView(
+      el: '#query-items-content')
+    queryItemsView.listenTo(
+      @controller, 'search-rel:query-items:index', (data) ->
+        queryItemsView.get_items(data)
+    )
+    
   active: false
 
   gridColumns: ->
@@ -40,6 +55,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
         @controller.trigger('search-rel:query-items:set-tab-content', query)
         new_path = 'search_rel/item_id/' + id
         @router.update_path(new_path)
+        false
 
       render: ->
         value = @model.get(@column.get('name'))
@@ -49,7 +65,11 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
         return this
     
     columns = [{
-    name: 'search_rev_rank_correlation',
+    name: 'query_str',
+    label: I18n.t('search_analytics.query_string'),
+    editable: false,
+    cell: QueryCell},
+    {name: 'search_rev_rank_correlation',
     label: I18n.t('search_analytics.rev_rank_correlation'),
     editable: false,
     cell: 'number'},
@@ -58,10 +78,6 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     editable: false,
     cell: 'number',
     formatter: Utils.CurrencyFormatter},
-    {name: 'query_str',
-    label: I18n.t('search_analytics.query_string'),
-    editable: false,
-    cell: QueryCell},
     {name: 'query_count',
     label: I18n.t('search_analytics.query_count'),
     editable: false,
@@ -82,6 +98,10 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
   get_items: (data) =>
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items(data)
+    if data and data.id
+      @controller.trigger('search-rel:query-items:index', data)
+    else
+      @trigger = true
 
   unrender: =>
     @active = false
@@ -95,4 +115,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @$el.find('.ajax-loader').hide()
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
+    if @trigger
+      @trigger = false
+      @$el.find('td a.query').first().trigger('click')
     this

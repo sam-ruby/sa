@@ -4,6 +4,7 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
   initialize: (options) =>
     
     _.bindAll(this, 'render', 'initTable')
+    @trigger = false
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @collection = new Searchad.Collections.CompAnalysisCollection()
@@ -96,6 +97,10 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
   get_items: (data) =>
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items(data)
+    if data and data.query
+      @controller.trigger('ca:walmart-items:index', data)
+    else
+      @trigger = true
 
   unrender: =>
     @active = false
@@ -108,4 +113,7 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
     @$el.find('.ajax-loader').hide()
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
-    return this
+    if @trigger
+      @trigger = false
+      @$el.find('td a.query').first().trigger('click')
+    this

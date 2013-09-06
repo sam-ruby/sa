@@ -5,7 +5,7 @@ class Searchad.Views.PoorPerforming.SubTabs.IndexView extends Backbone.View
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @controller.bind('content-cleanup', @unrender)
-    @controller.bind('pp:stats', @select_stats_tab)
+    @controller.bind('pp:stats:index', @select_stats_tab)
     @controller.bind('pp:walmart-items:index', @select_walmart_tab)
     @controller.bind('pp:amazon-items:index', @select_amazon_tab)
   data:
@@ -37,7 +37,7 @@ class Searchad.Views.PoorPerforming.SubTabs.IndexView extends Backbone.View
   stats: (e) =>
     @controller.trigger('pp:content-cleanup')
     e.preventDefault()
-    @controller.trigger('pp:stats', @data)
+    @controller.trigger('pp:stats:index', @data)
     @router.update_path('poor_performing/stats/query/' + @data.query)
 
   amazon_items: (e) =>
