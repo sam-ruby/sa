@@ -12,7 +12,7 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
 
     @$el.find('.ajax-loader').hide()
     
-    @controller.bind('date-changed', =>
+    @controller.bind('year-week-changed', =>
       @get_items() if @active)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)

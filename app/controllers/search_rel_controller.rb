@@ -57,8 +57,9 @@ class SearchRelController < BaseController
   end
 
   def get_comp_analysis
+    week = params[:week] || QueryPerformance.available_weeks.first[:week]
     @search_words = QueryPerformance.get_comp_analysis(
-      @week, @year, @page, @sort_by, @order, @limit)
+      week, @year, @page, @sort_by, @order, @limit)
     if @search_words.nil? or @search_words.empty?
       render :json => [{:total_entries => 0}, @search_words]
     else

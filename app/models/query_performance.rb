@@ -13,4 +13,9 @@ class QueryPerformance < BaseModel
       show_rate<0.5 and rel_score is not null}, week, year).order(
         order_str).page(page).per(limit)
   end
+  
+  def self.available_weeks
+    QueryPerformance.select('distinct week, year').order('week desc').map {|x|
+      {week: x.week, year: x.year}}
+  end
 end

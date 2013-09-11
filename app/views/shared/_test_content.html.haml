@@ -1,3 +1,8 @@
+:javascript
+  var Selected_Date = new Date('#{@date.to_datetime.strftime("%m-%d-%Y")}');
+  var Selected_Week = #{QueryPerformance.available_weeks.first[:week]};
+  var Selected_Year = #{@year};
+  
 #dashboard.row-fluid
   .span6
     #dashboard-search-quality-container

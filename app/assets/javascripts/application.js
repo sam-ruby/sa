@@ -8,6 +8,7 @@
 //= require jquery_ujs
 //= require jquery.ui.draggable
 // require highcharts
+//= require date
 //= require highstocks/js/highstock
 //= require i18n
 //= require i18n/translations

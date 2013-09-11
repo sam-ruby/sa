@@ -30,11 +30,11 @@ class Searchad.Views.SearchQualityQuery.QueryItems.IndexView extends Backbone.Vi
     
     columns = [{
     name: 'walmart_item',
-    label: 'Store item',
+    label: 'Relevance Order',
     editable: false,
     cell: ItemCell},
     {name: 'rev_based_item',
-    label: 'Top Rev Item',
+    label: 'Best Seller Order',
     editable: false,
     cell: ItemCell}]
 

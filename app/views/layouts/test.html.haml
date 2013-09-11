@@ -79,6 +79,9 @@
         margin-top: -13px;
         margin-bottom: -9px;
       }
+      .date {
+        margin-right: 1em;
+      }
       .date-picker-container {
         display:inline-block;
         position:absolute;
@@ -92,6 +95,11 @@
       }
       tr.selected {
         background-color: rgba(47, 126, 216, .07);
+      }
+      .selected-week {
+        color: white;
+        margin-right: 1em;
+        line-height: 3em;
       }
     = yield :stylesheets
     = csrf_meta_tag 

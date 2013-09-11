@@ -32,7 +32,9 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
         $(e.target).parents('table').find('tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
         id = @model.get('id')
+        query = @model.get('query')
         @controller.trigger('pp:content-cleanup')
+        @controller.trigger('pp:stats:index', query: query)
 
       render: ->
         value = @model.get(@column.get('name'))
@@ -88,6 +90,10 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
   get_items: (data) =>
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items(data)
+    if data and data.query
+      @controller.trigger('pp:stats:index', query: data.query)
+    else if data and data.trigger
+      @trigger = data.trigger
 
   unrender: =>
     @active = false

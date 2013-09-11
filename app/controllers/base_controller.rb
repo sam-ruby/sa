@@ -61,46 +61,18 @@ class BaseController < ApplicationController
     @cat_id = @categories.last[:c_id]
 
     @year = @month = @week = @date = nil
-    @most_recent_date ||= Rails.cache.fetch(
-      'max_date', :expires_in => 4.hours) do 
-        PipelineLogDaily.maximum('date')
-      end
+    @most_recent_date ||= SearchQualityDaily.maximum('query_date')
     
     @view = params[:view] || 'weekly'
     @date = params[:date] ? Date.strptime(params[:date], '%m-%d-%Y') :
-      Date.parse(@most_recent_date) 
-    
-    @weekly_ts = PipelineLogWeekly.maximum(:timestamp).to_i.to_s
-    @daily_ts = PipelineLogDaily.maximum(:timestamp).to_i.to_s
-
-    @year = if params[:year].nil? 
-      Rails.cache.fetch('max_year' + @weekly_ts, :expires_in => 4.hours) do
-        PipelineLogWeekly.maximum(:year)
-      end
-    else
+      @most_recent_date 
+    @year = params[:year].nil? ? PipelineLogWeekly.maximum(:year) :
       params[:year].to_i
-    end
+    
     @page = params[:page].to_i || 1
     @limit = params[:per_page].to_i || 10
     @sort_by = params[:sort_by]
     @order = params[:order]
-    
-    @all_weeks = Rails.cache.fetch('all_weeks' + @weekly_ts,
-                                   :expires_in => 4.hours) do
-      PipelineLogWeekly.select("distinct week").order(
-      "week DESC").map {|x| x.week}
-    end
-
-    @available_weeks = Rails.cache.fetch('available_weeks' + @weekly_ts,
-                                         :expires_in => 4.hours) do
-      PipelineLogWeekly.select("distinct week").where([
-      %q{year = ? AND week NOT IN (SELECT DISTINCT week FROM 
-      pipeline_log_weekly WHERE status != 1)}, @year]).order(
-        "week DESC").map {|x| x.week}
-    end
-    @unavailable_weeks = @all_weeks - @available_weeks
-    @week = params[:week].nil? ?
-      (@available_weeks.first) : params[:week].to_i
   end 
   
   def get_categories_map(cat_id_str)
@@ -137,6 +109,34 @@ class BaseController < ApplicationController
   end
 
   def get_available_weeks
+    QueryPerformance.available_weeks.map do |curr_week|
+      start_date = convert_to_dod_week(curr_week[:week], curr_week[:year])
+      curr_week[:start_date] = start_date
+      curr_week[:end_date] = start_date + 6.days
+      curr_week[:fiscal_week] = curr_week[:week] - 3
+      curr_week
+    end
   end
- 
+
+  def available_weeks
+    respond_to do |format|
+      format.json {render :json => get_available_weeks}
+    end 
+  end
+
+  def convert_to_dod_week(week, year)
+    first_day_of_jan = Date.new(year,1,5)
+    dod_date = first_day_of_jan + (week - 1).weeks
+    return dod_date
+  end
+
+  def convert_to_merchant_week(week, year)
+    first_week_of_feb = Date.new(year,1,31)
+    if (first_week_of_feb.wday > 6)
+      last_sat_of_jan = (first_week_of_feb - first_week_of_feb.wday) + 6
+    else
+      last_sat_of_jan = (first_week_of_feb - first_week_of_feb.wday - 7) + 6
+    end
+    last_sat_of_jan + (week - 1).weeks
+  end
 end

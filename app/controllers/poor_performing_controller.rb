@@ -21,9 +21,10 @@ class PoorPerformingController < BaseController
   def get_walmart_items
     query = params['query']
     view = params['view']
+    week = params[:week] || QueryPerformance.available_weeks.first[:week]
     if view == 'weekly'
       @walmart_items = ItemQueryCatMetricsWeekly.get_walmart_items(
-        query, @cat_id, @week, @year)
+        query, @cat_id, week, @year)
     else
       @walmart_items = ItemQueryCatMetricsDaily.get_walmart_items(
         query, @cat_id, @date)

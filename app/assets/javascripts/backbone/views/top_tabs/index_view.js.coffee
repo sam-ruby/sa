@@ -21,14 +21,15 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
     @controller.trigger('content-cleanup')
     e.preventDefault()
     @controller.trigger('relevance:app')
-    @controller.trigger('search-rel:index')
+    @controller.trigger('search-kpi:index')
     @router.update_path('search_rel')
 
   explore: (e) =>
     @controller.trigger('content-cleanup')
     e.preventDefault()
     @controller.trigger('explore:app')
-    @controller.trigger('poor-performing-stats:index')
+    @controller.trigger('comp-analysis:index')
+    @router.update_path('comp_analysis')
   
   select_rel_app: =>
     e = {}

@@ -2,15 +2,6 @@ $ ->
   $('div.content').css('height', ($(window).height() + 50) + 'px')
   $('p.notice').hide()
   $('p.alert').hide()
-  $('#dp3').datepicker()
-  
-  $('#dashboard-search-quality-container').draggable(
-    snap: true
-  )
-  
-  $('#dashboard-poorly-performing-container').draggable(
-    snap: true
-  )
 
   window.Utils = do ->
     updateParam = (str, pName, pValue) ->
@@ -87,6 +78,13 @@ $ ->
       if (date)
         $('#dp3').datepicker('update', date[1])
     )
+
+    controller.on('all', (name) ->
+      if name.match(/comp-analysis:index|ca:amazon-items:index/)
+        controller.trigger('view-change', view: 'weekly')
+      else if name.match(/search-rel:index|search-kpi|do-search|poor-performing-stats:index|poor-performing:index|pp:stats:index|pp:walmart-items:index|pp:amazon-items:index/)
+        controller.trigger('view-change', view: 'daily')
+    )
     
     Controller: controller
     Router: searchQualityRouter
@@ -94,6 +92,12 @@ $ ->
   do ->
     router = SearchQualityApp.Router
     controller = SearchQualityApp.Controller
+    controller.set_date(Selected_Date.toString('M-d-yyyy'))
+    controller.set_week(Selected_Week)
+    controller.set_year(Selected_Year)
+    weekView = new Searchad.Views.WeekPicker.IndexView(
+      el: '#dp3')
+
     topTabsView = new Searchad.Views.TopTabs.IndexView(
       el: '#top-nav')
 
@@ -113,11 +117,6 @@ $ ->
     )
     poorPerformingView.listenTo(
       controller, 'poor-performing:index', poorPerformingView.get_items)
-    poorPerformingView.listenTo(
-      controller, 'poor-performing-stats:index', ->
-        poorPerformingView.trigger = true
-        poorPerformingView.get_items()
-    )
     
     ppSubtabsView = new Searchad.Views.PoorPerforming.SubTabs.IndexView(
         el: '#poor-performing-subtabs')
@@ -194,14 +193,5 @@ $ ->
     )
     searchKPI.listenTo(controller, 'search-kpi:index',
       searchKPI.get_items)
-
-  $('#dp3').on('changeDate', (e) ->
-    dateStr = e.date.getMonth() + 1 + '-' + e.date.getDate() + '-' +
-      e.date.getFullYear()
-    currentPath = window.location.hash.replace('#', '')
-    newPath = Utils.UpdateURLParam(currentPath, 'date', dateStr, true)
-    SearchQualityApp.Router.navigate(newPath)
-    SearchQualityApp.Controller.set_date(dateStr)
-    SearchQualityApp.Controller.trigger('date-changed')
-  )
+  
   Backbone.history.start()
