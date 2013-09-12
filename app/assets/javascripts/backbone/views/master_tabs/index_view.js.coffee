@@ -39,7 +39,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       title: 'Poor Performing Intents'},
       {class: ['search-quality-tab']
       href: '/#search_rel'
-      title: 'Relevance'}]
+      title: 'Relevance Revenue Rank Comparison'}]
     
     @$el.find('ul').prepend(@get_tab_el(tabs[2]))
     @$el.find('ul').prepend(@get_tab_el(tabs[1]))

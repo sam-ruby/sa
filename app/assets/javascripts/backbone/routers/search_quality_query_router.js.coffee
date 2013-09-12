@@ -104,15 +104,16 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   ca_walmart_items: (query, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('explore:app')
-    @controller.trigger('comp-analysis:index',
+    @controller.trigger('comp-analysis:index')
+    @controller.trigger('ca:walmart-items:index',
       query: decodeURIComponent(query))
   
   ca_amazon_items: (query, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('explore:app')
-    @controller.trigger('comp-analysis:index')
-    @controller.trigger('ca:amazon-items:index',
+    @controller.trigger('comp-analysis:index',
       query: decodeURIComponent(query))
+    
   
   update_path: (path) =>
     url_parts = window.location.hash.replace('#', '').split('filters')

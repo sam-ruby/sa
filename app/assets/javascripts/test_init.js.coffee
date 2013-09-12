@@ -1,8 +1,4 @@
 $ ->
-  $('div.content').css('height', ($(window).height() + 50) + 'px')
-  $('p.notice').hide()
-  $('p.alert').hide()
-
   window.Utils = do ->
     updateParam = (str, pName, pValue) ->
       if str is ''
@@ -80,7 +76,7 @@ $ ->
 
     controller.on('all', (name) ->
       current_view = controller.get_view()
-      if name.match(/comp-analysis:index|ca:amazon-items:index/)
+      if name.match(/comp-analysis:index|ca:walmart-items:index/)
         if not current_view or current_view != 'weekly'
           controller.set_view('weekly')
           controller.trigger('view-change', view: 'weekly')
@@ -149,8 +145,9 @@ $ ->
       events:
         'click a.query': (e) ->
           query = $(e.target).text()
-          controller.trigger('ca:walmart-items:index', query: query)
-          new_path = 'comp_analysis/walmart_items/query/' + encodeURIComponent(query)
+          controller.trigger('ca:amazon-items:index', query: query)
+          new_path = 'comp_analysis/amazon_items/query/' +
+            encodeURIComponent(query)
           router.update_path(new_path)
     )
     caView.listenTo(
@@ -196,3 +193,13 @@ $ ->
       searchKPI.get_items)
   
   Backbone.history.start()
+  
+  $('div.content').css('height', ($(window).height() + 50) + 'px')
+  $('p.notice').hide()
+  $('p.alert').hide()
+  $('a.home-page').on('click', (e) ->
+    e.preventDefault()
+    SearchQualityApp.Controller.trigger('content-cleanup')
+    SearchQualityApp.Router.navigate('/', trigger: true)
+  )
+

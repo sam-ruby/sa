@@ -98,7 +98,7 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items(data)
     if data and data.query
-      @controller.trigger('ca:walmart-items:index', data)
+      @controller.trigger('ca:amazon-items:index', data)
     else
       @trigger = true
 

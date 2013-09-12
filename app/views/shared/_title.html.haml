@@ -1,8 +1,8 @@
 .navbar
   .navbar-inner
-    %a.brand{:href=>'#'}
+    %a.brand.home-page{:href=>'#'}
       = image_tag 'walmart-transparent.png', {:class=>'walmart_logo'}
-      Search Analytics Dashboard
+      Consumer Analytics Dashboard
 
     %ul#top-nav.nav
       %li.active.relevance-tab
@@ -11,30 +11,30 @@
       
       %li.explore-tab
         %a{:href=>'#'}
-          Comparitive Analysis
+          Competitive Analysis
 
     %ul.nav.pull-right
       %li.date-week-holder
       %li{:style=>'margin-right: 1em'}
         %i#dp3.icon-th{:style=>'line-height:2em; font-size:1.5em; color: white;', 'data-date-format'=>'mm-dd-yyyy'}
-          
-      - if user_signed_in?
-        %li.dropdown
-          %a.dropdown-toggle{"data-toggle" => "dropdown"}
-            %i.icon-user>
-             #{session[:user_id]} 
-            %b.caret
-          %ul.dropdown-menu.pull-right
+      /    
+        - if user_signed_in?
+          %li.dropdown
+            %a.dropdown-toggle{"data-toggle" => "dropdown"}
+              %i.icon-user>
+               #{session[:user_id]} 
+              %b.caret
+            %ul.dropdown-menu.pull-right
+              %li
+                = link_to 'Settings', :controller => 'dept_analysis/user_prefs',
+                    :action => :index
+              %li
+                %a{:href => "https://jira.kosmix.com/browse/MODULATOR", 
+                :target => "_blank"} Report Bug
+              %li
+                %a{:href => "/user/logout"} Log Out
+        - else
+          - if params[:action] != 'login'
             %li
-              = link_to 'Settings', :controller => 'dept_analysis/user_prefs',
-                  :action => :index
-            %li
-              %a{:href => "https://jira.kosmix.com/browse/MODULATOR", 
-              :target => "_blank"} Report Bug
-            %li
-              %a{:href => "/user/logout"} Log Out
-      - else
-        - if params[:action] != 'login'
-          %li
-            %a{:href => "/user/login"} Log In
+              %a{:href => "/user/login"} Log In
 
