@@ -14,14 +14,10 @@
           Comparitive Analysis
 
     %ul.nav.pull-right
-      %li.selected-week
+      %li.date-week-holder
       %li{:style=>'margin-right: 1em'}
-        #dp3.input-append.date.datepicker{:style=>'padding-top:1em'}
-          %span.selected-week
-          %input.date-picker-input.span2{:size=>16,
-            :type=>:text, :readonly=>true}
-            %span.add-on
-              %i.icon-th
+        %i#dp3.icon-th{:style=>'line-height:2em; font-size:1.5em; color: white;', 'data-date-format'=>'mm-dd-yyyy'}
+          
       - if user_signed_in?
         %li.dropdown
           %a.dropdown-toggle{"data-toggle" => "dropdown"}

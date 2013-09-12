@@ -554,6 +554,7 @@
 				month = this.viewDate.getUTCMonth(),
 				currentDate = this.date.valueOf(),
 				today = new Date();
+      var my_date = this.date;
 			if (date.getUTCFullYear() < year || (date.getUTCFullYear() == year && date.getUTCMonth() < month)) {
 				cls.push('old');
 			} else if (date.getUTCFullYear() > year || (date.getUTCFullYear() == year && date.getUTCMonth() > month)) {

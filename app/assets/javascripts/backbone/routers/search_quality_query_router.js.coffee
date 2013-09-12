@@ -57,13 +57,14 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   search: (query, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('relevance:app')
-    @controller.trigger('do-search', query: query)
+    @controller.trigger('do-search', query: decodeURIComponent(query))
   
   search_amazon_items: (query, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('relevance:app')
     @controller.trigger('do-search', query: query)
-    @controller.trigger('search:amazon-items:index', query: query)
+    @controller.trigger('search:amazon-items:index',
+      query: decodeURIComponent(query))
   
   dashboard: (date_parts) =>
     @set_date_info(date_parts)
@@ -78,20 +79,22 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   pp_stats: (query, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('relevance:app')
-    @controller.trigger('poor-performing:index', query: query)
+    @controller.trigger('poor-performing:index',
+      query: decodeURIComponent(query))
 
   pp_walmart_items: (query, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('relevance:app')
     @controller.trigger('poor-performing:index', trigger: false)
     @controller.trigger('pp:walmart-items:index',
-      query: query)
+      query: decodeURIComponent(query))
   
   pp_amazon_items: (query, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('relevance:app')
     @controller.trigger('poor-performing:index', trigger: false)
-    @controller.trigger('pp:amazon-items:index', query: query)
+    @controller.trigger('pp:amazon-items:index',
+      query: decodeURIComponent(query))
   
   comp_analysis: (date_parts) =>
     @set_date_info(date_parts)
@@ -102,13 +105,14 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @set_date_info(date_parts)
     @controller.trigger('explore:app')
     @controller.trigger('comp-analysis:index',
-      query: query)
+      query: decodeURIComponent(query))
   
   ca_amazon_items: (query, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('explore:app')
     @controller.trigger('comp-analysis:index')
-    @controller.trigger('ca:amazon-items:index', query: query)
+    @controller.trigger('ca:amazon-items:index',
+      query: decodeURIComponent(query))
   
   update_path: (path) =>
     url_parts = window.location.hash.replace('#', '').split('filters')
@@ -120,5 +124,5 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       if new_path.indexOf('/') != (new_path.length - 1)
         new_path += '/'
       new_path += 'filters' + filters
-    @navigate(new_path)
+    @navigate(new_path, trigger: false)
 

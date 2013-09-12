@@ -58,6 +58,8 @@ $ ->
   
   window.SearchQualityApp = do ->
     controller = _.extend({}, Backbone.Events)
+    controller.set_view = (@view) =>
+    controller.get_view = => @view
     controller.set_date = (@date) =>
     controller.set_week = (@week) =>
     controller.set_year = (@year) =>
@@ -69,21 +71,23 @@ $ ->
       year: @year
       cat_id: @cat_id
 
+    controller.set_date(Selected_Date.toString('M-d-yyyy'))
+    controller.set_week(Selected_Week)
+    controller.set_year(Selected_Year)
+    
     searchQualityRouter = new Searchad.Routers.SearchQualityQuery(
       controller: controller)
 
-    searchQualityRouter.on('all', (name) ->
-      return unless name.match(/route:/)
-      date = window.location.hash.match(/filters\/date\/([^\/]+)/)
-      if (date)
-        $('#dp3').datepicker('update', date[1])
-    )
-
     controller.on('all', (name) ->
+      current_view = controller.get_view()
       if name.match(/comp-analysis:index|ca:amazon-items:index/)
-        controller.trigger('view-change', view: 'weekly')
+        if not current_view or current_view != 'weekly'
+          controller.set_view('weekly')
+          controller.trigger('view-change', view: 'weekly')
       else if name.match(/search-rel:index|search-kpi|do-search|poor-performing-stats:index|poor-performing:index|pp:stats:index|pp:walmart-items:index|pp:amazon-items:index/)
-        controller.trigger('view-change', view: 'daily')
+        if not current_view or current_view != 'daily'
+          controller.set_view('daily')
+          controller.trigger('view-change', view: 'daily')
     )
     
     Controller: controller
@@ -92,9 +96,6 @@ $ ->
   do ->
     router = SearchQualityApp.Router
     controller = SearchQualityApp.Controller
-    controller.set_date(Selected_Date.toString('M-d-yyyy'))
-    controller.set_week(Selected_Week)
-    controller.set_year(Selected_Year)
     weekView = new Searchad.Views.WeekPicker.IndexView(
       el: '#dp3')
 
@@ -112,7 +113,7 @@ $ ->
         'click a.query': (e) ->
           query = $(e.target).text()
           controller.trigger('pp:stats:index', query: query)
-          new_path = 'poor_performing/stats/query/' + query
+          new_path = 'poor_performing/stats/query/' + encodeURIComponent(query)
           router.update_path(new_path)
     )
     poorPerformingView.listenTo(
@@ -149,7 +150,7 @@ $ ->
         'click a.query': (e) ->
           query = $(e.target).text()
           controller.trigger('ca:walmart-items:index', query: query)
-          new_path = 'comp_analysis/walmart_items/query/' + query
+          new_path = 'comp_analysis/walmart_items/query/' + encodeURIComponent(query)
           router.update_path(new_path)
     )
     caView.listenTo(

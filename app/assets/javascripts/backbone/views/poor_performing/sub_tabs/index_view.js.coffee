@@ -32,22 +32,26 @@ class Searchad.Views.PoorPerforming.SubTabs.IndexView extends Backbone.View
     @controller.trigger('pp:content-cleanup')
     e.preventDefault()
     @controller.trigger('pp:walmart-items:index', @data)
-    @router.update_path('poor_performing/walmart_items/query/' + @data.query)
+    @router.update_path(
+      'poor_performing/walmart_items/query/' + encodeURIComponent(@data.query))
   
   stats: (e) =>
     @controller.trigger('pp:content-cleanup')
     e.preventDefault()
     @controller.trigger('pp:stats:index', @data)
-    @router.update_path('poor_performing/stats/query/' + @data.query)
+    @router.update_path(
+      'poor_performing/stats/query/' + encodeURIComponent(@data.query))
 
   amazon_items: (e) =>
     @controller.trigger('pp:content-cleanup')
     e.preventDefault()
     @controller.trigger('pp:amazon-items:index', @data)
-    @router.update_path('poor_performing/amazon_items/query/' + @data.query)
+    @router.update_path(
+      'poor_performing/amazon_items/query/' + encodeURIComponent(@data.query))
 
   select_walmart_tab: (data) =>
     @data.query = data.query if data and data.query
+    console.log('in subtabs ', @data.query)
     unless @$el.find('ul.nav').length > 0
       @$el.append( @template())
     e = {}
