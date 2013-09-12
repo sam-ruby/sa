@@ -85,7 +85,7 @@ class Searchad.Views.SearchKPI.IndexView extends Backbone.View
     for k in data
       for p, i in @seriesTypes
         arr[i].push(
-          x: Date.parse(k.date)
+          x: k.date
           y: parseFloat(k[p.column])
         )
     series = []

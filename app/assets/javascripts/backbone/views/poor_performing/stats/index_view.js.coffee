@@ -96,7 +96,7 @@ class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
     for k in data
       for p, i in @seriesTypes
         arr[i].push(
-          x: Date.parse(k.query_date)
+          x: k.query_date
           y: parseFloat(k[p.column])
         )
     series = []
