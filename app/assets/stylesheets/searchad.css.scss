@@ -4,6 +4,28 @@ a.subcat {
 a.subcat:hover {
   color: #F7B800;
 }
+.adv-search-opener {
+  position: absolute;
+  top: 5px;
+  right: 12px;
+  z-index: 5;
+}
+.search-container {
+  position: relative;
+  display: inline-block;
+}
+.adv-search-form {
+  display: none;
+  z-index: 5;
+  position: absolute;
+  top: 30px;
+  background-color: white;
+  border: thin solid silver;
+  width: 95%;
+  padding: .55em;
+  @include border-radius(10px);
+}
+
 .base {
   font-family: Arial, sans-serif;
 }

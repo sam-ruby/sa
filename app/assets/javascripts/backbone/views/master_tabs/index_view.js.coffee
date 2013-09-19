@@ -14,6 +14,17 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.bind('comp-analysis:index', @select_ca_tab)
   
     @$el.find('.adv-search-form .datepicker').datepicker()
+    $('body').on('click', (e)=>
+      if not $(e.target).hasClass('adv-search-opener') and
+          $(e.target).parents('.adv-search-opener').length isnt 1 and
+          not $(e.target).hasClass('adv-search-form') and
+          $(e.target).parents('.adv-search-form').length isnt 1 and
+          not $(e.target).hasClass('day') and
+          $(e.target).parents('.datepicker').length isnt 1
+        
+        if @$el.find('.adv-search-form').css('display') isnt 'none'
+          @$el.find('.adv-search-form').hide()
+    )
 
   events:
     'click .add-widget': 'openWidgetDialog'
