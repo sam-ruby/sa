@@ -48,6 +48,26 @@
   #search-subtabs
   #search-subtabs-content
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+
+#search-comparison
+  #search-comparison-fcharts
+    .row
+      .span5
+        .before-data
+          .title
+          .chart
+          .table
+      .span5.offset2
+        .after-data
+          .title
+          .chart
+          .table
+    .row
+      .span6.offset3{:style=>'margin-top: 3em'}
+        .comparison-data
+
+  #search-comparison-content
+    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
     
 #comp-analysis
   #ca-queries

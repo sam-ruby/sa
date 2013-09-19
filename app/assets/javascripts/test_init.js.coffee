@@ -35,7 +35,7 @@ $ ->
       orderSeparator: ','
 
       fromRaw: (rawValue) ->
-        super(rawValue) + '%'
+        "#{super(rawValue)}%"
 
     class CurrencyFormatter extends Backgrid.NumberFormatter
       decimals: 2
@@ -45,6 +45,8 @@ $ ->
       fromRaw: (rawValue) ->
         if rawValue == 0
           '$' + rawValue.toFixed(0)
+        else if rawValue < 0
+          '- $' + super(Math.abs(rawValue))
         else
           '$' + super(rawValue)
 
@@ -152,7 +154,8 @@ $ ->
     )
     caView.listenTo(
       controller, 'comp-analysis:index', caView.get_items)
-    
+   
+    # Search
     searchSubtabsView =
       new Searchad.Views.Search.SubTabs.IndexView(
         el: '#search-subtabs'
@@ -184,6 +187,17 @@ $ ->
     searchAmazonItemsView.listenTo(
       controller, 'search:content-cleanup', searchAmazonItemsView.unrender)
 
+    # Search Comparison
+    searchComparisonView =
+      new Searchad.Views.SearchComparison.IndexView(
+        el: '#search-comparison-fcharts'
+        before_selector: '.before-data'
+        after_selector: '.after-data'
+        comparison_selector: '.comparison-data'
+      )
+    searchComparisonView.listenTo(controller, 'do-search-with-comparison',
+      searchComparisonView.get_items)
+
     searchKPI = new Searchad.Views.SearchKPI.IndexView(
       el: '#search-kpi'
       paid_dom_selector: '.hcharts-paid'
@@ -202,4 +216,3 @@ $ ->
     SearchQualityApp.Controller.trigger('content-cleanup')
     SearchQualityApp.Router.navigate('/', trigger: true)
   )
-

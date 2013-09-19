@@ -13,6 +13,8 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.bind('do-search', @select_search_tab)
     @controller.bind('comp-analysis:index', @select_ca_tab)
   
+    @$el.find('.adv-search-form .datepicker').datepicker()
+
   events:
     'click .add-widget': 'openWidgetDialog'
     'click a.cancel-widget': 'cancelWidgetDialog'
@@ -20,8 +22,13 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     'click li.search-quality-tab': 'searchQuality'
     'click li.poor-performing-tab': 'poorPerforming'
     'click li.search-kpi-tab': 'searchKPI'
-    'click button.btn': 'do_search'
+    'click button.search-btn': 'do_search'
     'click li.comp-analysis-tab': 'compAnalysis'
+    'click a.adv-search-opener': ->
+      @$el.find('.adv-search-form').show()
+    'click .adv-search-form .close': ->
+      @$el.find('.adv-search-form').hide()
+    'click .adv-search-form .adv-search-btn': 'advancedSearch'
     
   get_tab_el: (data) ->
     css_classes = data.class.join(' ')
@@ -57,6 +64,14 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @$el.find('li.active').removeClass('active')
     $(e.target).parents('li').addClass('active')
 
+  advancedSearch: (e) =>
+    query = @$el.find('.adv-search-form .search-field').val()
+    search_date = @$el.find('.adv-search-form .datepicker').val()
+    search_str = query + ' ' + ':date ' + search_date
+    @$el.find('.search-query').val(search_str)
+    @$el.find('.search-btn').trigger('click')
+    @$el.find('.adv-search-form').hide()
+  
   searchQuality: (e) =>
     @controller.trigger('content-cleanup')
     e.preventDefault()
@@ -77,11 +92,22 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
   do_search: (e) =>
     e.preventDefault()
     query = $('form.form-search input.search-query').val()
-    if query
-      @router.update_path('search/query/' + query)
-      @controller.trigger('content-cleanup')
-      @controller.trigger('do-search', query: query)
+    query_parts = query.match(/([^:]+):?(date)?:?(.*)/) if query
+    return unless query
+    data = {}
   
+    if query_parts and query_parts[2] != undefined
+      data.query = query_parts[1]
+      data.search_date = query_parts[3]
+      event = 'do-search-with-comparison'
+    else
+      data.query = query
+      event = 'do-search'
+    
+    @router.update_path('search/query/' + encodeURIComponent(data.query))
+    @controller.trigger('content-cleanup')
+    @controller.trigger(event, data)
+
   compAnalysis: (e) =>
     @controller.trigger('content-cleanup')
     e.preventDefault()

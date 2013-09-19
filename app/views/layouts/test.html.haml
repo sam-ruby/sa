@@ -106,6 +106,29 @@
       #dp3 {
         cursor: pointer;
       }
+      .funnel-title {
+        margin-right: 1em;
+      }
+      .search-container {
+        position: relative;
+        display: inline-block;
+      }
+      .adv-search-opener {
+        position: absolute;
+        top: 5px;
+        right: 12px;
+        z-index: 5;
+      }
+      .adv-search-form {
+        display: none;
+        z-index: 5;
+        position: absolute;
+        top: 37px;
+        background-color: white;
+        border: thin solid silver;
+        width: 95%;
+        padding: .55em;
+      }
     = yield :stylesheets
     = csrf_meta_tag 
   
@@ -116,10 +139,29 @@
         %ul.nav.nav-tabs
           %li.tab-title.search-tab.pull-right
             %form.form-search{:style=>'margin:0'}
-              %input.input-medium.search-query{:type=>:text,
-                :style=>'width:20em'}
-              %button.btn{:type=>:submit}
+              .search-container
+                %input.input-medium.search-query{:type=>:text,
+                  :style=>'width:20em'}
+                %a.adv-search-opener
+                  %img{:src=>'assets/down-arrow.png'}
+                .adv-search-form
+                  .close.pull-right{:style=>'cursor: pointer;font-size:small'} x
+                  %small Search
+                  %br
+                  %input.input-large.search-field{:type=>'text' }
+                  %br
+                  %small Date around 1 week of
+                  %br
+                  %input.input-small.datepicker{:type=>'text',
+                    'data-date-format'=>'M d, yyyy',
+                    'data-date-autoclose' => 'true'}
+                  %br
+                  %button.btn.btn-small.adv-search-btn{:type=>:submit,
+                    :style=>'margin-top:.2em'}
+                    Search
+              %button.btn.search-btn{:type=>:submit}
                 Search
+
 
         .modal.hide.fade
           .modal-header
