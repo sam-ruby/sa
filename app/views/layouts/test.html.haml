@@ -31,7 +31,7 @@
       .widget-header {
         color: black;
       }
-      .close {
+      .close1 {
         padding-right: 0.5em !important;
       }
       .ajax-loader {
@@ -126,10 +126,10 @@
                 %a.adv-search-opener
                   %img{:src=>'assets/down-arrow.png'}
                 .adv-search-form
-                  %p{:style=>'font-size:.90em; color:lightslategray'}
+                  %p{:style=>'font-size:.90em;'}
                     Week over Week Comparison
-                    %span.close.pull-right{:style=>'cursor: pointer;font-size:small'}
-                      x
+                    %span.close.pull-right{:style=>'font-size: 1em'}
+                      %i.icon-remove 
                   %small Search
                   %br
                   %input.input-large.search-field{:type=>'text' }
@@ -140,7 +140,7 @@
                     'data-date-format'=>'M d, yyyy',
                     'data-date-autoclose' => 'true'}
                   %br
-                  %button.btn.btn-small.adv-search-btn{:type=>:submit,
+                  %button.btn.btn-small.adv-search-btn.btn-primary{:type=>:submit,
                     :style=>'margin-top:.2em'}
                     Search
               %button.btn.search-btn{:type=>:submit}
