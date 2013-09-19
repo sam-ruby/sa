@@ -88,7 +88,7 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
           dataLabels:
             color: 'black'
             distance: 2
-            format: '<b>{point.name}</b> ({point.y:,.2f})'
+            format: '<b>{point.name}</b> ({point.y:,.2f}%)'
         series:
           neckWidth: '30%'
           neckHeight: '25%'
@@ -156,7 +156,7 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
       {name: 'Product View Rate'
       y: data.query_pvr
       dataLabels:
-        format: '<b>PVR</b> ({point.y:,.2f})'
+        format: '<b>PVR</b> ({point.y:,.2f}%)'
       },
       {name: 'Add to Cart Rate'
       y: data.query_atc
