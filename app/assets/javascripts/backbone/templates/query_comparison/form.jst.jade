@@ -1,0 +1,24 @@
+form.form-horizontal.query-form
+  .control-group
+    label.control-label(for='search-box') Search for
+    .controls
+      input.input-xlarge.search-query(type='text', value=query)
+  .control-group
+    label.control-label(for='date-picker') Date within
+    .controls
+      select
+        each val in [1, 2, 3, 4, 5, 6, 7, 8]
+          if selected_week == val
+            option(selected=true, value=val)
+              =val + ' Week'
+          else
+            option(value=val)
+              =val + ' Week'
+      | &nbsp;
+      | of
+      | &nbsp;
+      input.input-small.datepicker(type='text', 'data-date-format'='M d, yyyy',
+        'data-date-autoclose'='true', value=query_date)
+  .control-group
+    .controls
+      button.btn.search(type='submit') Search
