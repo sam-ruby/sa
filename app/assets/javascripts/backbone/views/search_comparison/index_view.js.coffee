@@ -3,16 +3,21 @@ Searchad.Views.SearchComparison||= {}
 class Searchad.Views.SearchComparison.IndexView extends Backbone.View
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
-    @controller.bind('date-changed', =>
-      @get_items() if @active)
+    @router = SearchQualityApp.Router
     @controller.bind('content-cleanup', @unrender)
     @collection = new Searchad.Collections.QueryCatMetricsDailyCollection()
-    @collection.bind('reset', @render)
-
+    @collection.bind('reset', @render_query_results)
+    
+    @query_form = @$el.find(options.form_selector)
     @before = @$el.find(options.before_selector)
     @after = @$el.find(options.after_selector)
     @comparison = @$el.find(options.comparison_selector)
-  
+
+  events:
+    'click button.search': 'handle_search'
+
+  form_template: JST['backbone/templates/query_comparison/form']
+
   active: false
 
   seriesTypes: [{
@@ -95,22 +100,45 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
       legend:
         enabled: false
       series: series)
+  
+  handle_search: =>
+    data =
+      query: @query_form.find('input.search-query').val()
+      selected_week: @query_form.find('select').val()
+      query_date: @query_form.find('input.datepicker').val()
     
-  get_items: (data) ->
-    @query = data.query if data and data.query
+    new_path = 'query_perf_comparison/query/' +
+      encodeURIComponent(data.query) + '/wks_apart/' +
+      data.selected_week + '/query_date/' + encodeURIComponent(data.query_date)
     
-    image =$('<img>').addClass('ajax-loader').attr(
-      'src', '/assets/ajax_loader.gif').css('display', 'block')
-    @before.find('.chart').append(image)
-    @after.find('.chart').append(image.clone())
-    
-    @collection.get_items(data)
+    @router.update_path(new_path)
+    @get_items(data, false)
+  
+  get_items: (data, refresh_form=true) ->
+    @clean_query_results()
+    unless data
+      data =
+        query: ''
+        selected_week: 1
+        query_date: ''
+    else
+      data.query_date = decodeURIComponent(data.query_date)
+      data.selected_week = parseInt(data.selected_week)
+   
+    if refresh_form
+      $(@query_form).html(@form_template(data))
+      @query_form.find('input.datepicker').datepicker()
+      @active = true
 
-  render: =>
-    @unrender()
-    @active = true
-    
+    if data and data.query
+      @query = data.query
+      image =$('<img>').addClass('ajax-loader').attr(
+        'src', '/assets/ajax_loader.gif').css('display', 'block')
+      @before.find('.chart').append(image)
+      @after.find('.chart').append(image.clone())
+      @collection.get_items(data)
 
+  render_query_results: =>
     before_data = @collection.first().get('before_week')
     after_data = @collection.first().get('after_week')
    
@@ -179,9 +207,13 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
   render_table: (data, dom) =>
     grid = @initRevQueryTable(data)
     dom.append(grid.render().$el)
-  
+ 
   unrender: =>
+    @query_form.children().remove()
+    @clean_query_results()
     @active = false
+
+  clean_query_results: =>
     @before.highcharts().destroy() if @before.highcharts()
     @after.highcharts().destroy() if @after.highcharts()
     @comparison.children().remove()

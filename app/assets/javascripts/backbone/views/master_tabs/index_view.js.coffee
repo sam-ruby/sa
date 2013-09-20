@@ -6,25 +6,14 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @router = SearchQualityApp.Router
     @controller.bind('relevance:app', @init_relevance)
     @controller.bind('explore:app', @init_explore)
+    @controller.bind('query-perf-comp:app', @init_query_perf_comp)
 
     @controller.bind('poor-performing:index', @select_pp_tab)
     @controller.bind('search-rel:index', @select_sq_tab)
     @controller.bind('search-kpi:index', @select_search_kpi_tab)
     @controller.bind('do-search', @select_search_tab)
     @controller.bind('comp-analysis:index', @select_ca_tab)
-  
-    @$el.find('.adv-search-form .datepicker').datepicker()
-    $('body').on('click', (e)=>
-      if not $(e.target).hasClass('adv-search-opener') and
-          $(e.target).parents('.adv-search-opener').length isnt 1 and
-          not $(e.target).hasClass('adv-search-form') and
-          $(e.target).parents('.adv-search-form').length isnt 1 and
-          not $(e.target).hasClass('day') and
-          $(e.target).parents('.datepicker').length isnt 1
-        
-        if @$el.find('.adv-search-form').css('display') isnt 'none'
-          @$el.find('.adv-search-form').hide()
-    )
+    @controller.bind('query-comparison', @select_query_comp_tab)
 
   events:
     'click .add-widget': 'openWidgetDialog'
@@ -35,11 +24,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     'click li.search-kpi-tab': 'searchKPI'
     'click button.search-btn': 'do_search'
     'click li.comp-analysis-tab': 'compAnalysis'
-    'click a.adv-search-opener': ->
-      @$el.find('.adv-search-form').show()
-    'click .adv-search-form .close': ->
-      @$el.find('.adv-search-form').hide()
-    'click .adv-search-form .adv-search-btn': 'advancedSearch'
+    'click li.query-comparison-details-tab': 'queryComparison'
     
   get_tab_el: (data) ->
     css_classes = data.class.join(' ')
@@ -71,18 +56,25 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       title: 'Amazon Relevance Comparison'}]
     @$el.find('ul').prepend(@get_tab_el(tabs[0]))
 
+  init_query_perf_comp: =>
+    @clean_tabs()
+    tabs = [{
+      class: ['query-comparison-details-tab']
+      href: '/#query_perf_comparison'
+      title: 'Details'}]
+    @$el.find('ul').prepend(@get_tab_el(tabs[0]))
+
   toggleTab: (e) =>
     @$el.find('li.active').removeClass('active')
     $(e.target).parents('li').addClass('active')
 
-  advancedSearch: (e) =>
-    query = @$el.find('.adv-search-form .search-field').val()
-    search_date = @$el.find('.adv-search-form .datepicker').val()
-    search_str = query + ' ' + ':date ' + search_date
-    @$el.find('.search-query').val(search_str)
-    @$el.find('.search-btn').trigger('click')
-    @$el.find('.adv-search-form').hide()
-  
+  queryComparison: (e) =>
+    @controller.trigger('content-cleanup')
+    e.preventDefault()
+    @controller.trigger('query-comparison')
+    @router.update_path('query_perf_comparison')
+
+
   searchQuality: (e) =>
     @controller.trigger('content-cleanup')
     e.preventDefault()
@@ -150,6 +142,11 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     e.target = @$el.find('li.comp-analysis-tab a').get(0)
     @toggleTab(e)
  
+ select_query_comp_tab: =>
+    e = {}
+    e.target = @$el.find('li.query-comparison-details-tab a').get(0)
+    @toggleTab(e)
+ 
   saveWidget: =>
     $('#main-content .modal', @el).modal('hide')
     # Trigger additional widgets from here.
@@ -162,3 +159,5 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
 
   clean_tabs: =>
     @$el.find('li').not('li.search-tab').remove()
+
+

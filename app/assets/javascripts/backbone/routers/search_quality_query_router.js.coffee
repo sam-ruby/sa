@@ -28,6 +28,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "search/amazon_items/query/:query(/filters/*wday)":
       "search_amazon_items"
     
+    "query_perf_comparison(/query/:query/wks_apart/:weeks/query_date/:date)":
+      "query_perf_comparison"
+
   set_date_info: (date_part) =>
     return unless date_part
     date_parts = date_part.split('/')
@@ -39,6 +42,13 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       else if part == 'week'
         @controller.set_week(date_parts[i+1])
 
+  query_perf_comparison: (query, weeks, search_date) =>
+    @controller.trigger('query-perf-comp:app')
+    @controller.trigger('query-comparison',
+      query: query
+      selected_week: weeks
+      query_date: search_date)
+  
   search_rel: (date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('relevance:app')

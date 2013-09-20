@@ -190,12 +190,13 @@ $ ->
     # Search Comparison
     searchComparisonView =
       new Searchad.Views.SearchComparison.IndexView(
-        el: '#search-comparison-fcharts'
+        el: '#query-comparison-fcharts'
+        form_selector: '.query-form'
         before_selector: '.before-data'
         after_selector: '.after-data'
         comparison_selector: '.comparison-data'
       )
-    searchComparisonView.listenTo(controller, 'do-search-with-comparison',
+    searchComparisonView.listenTo(controller, 'query-comparison',
       searchComparisonView.get_items)
 
     searchKPI = new Searchad.Views.SearchKPI.IndexView(

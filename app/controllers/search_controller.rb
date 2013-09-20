@@ -3,21 +3,23 @@ class SearchController < BaseController
   before_filter :set_common_data
   def get_data
     query = params[:query]
-    date = DateTime.parse(params[:search_date]) rescue DateTime.now
-   
-    before_date_a = date - 8.days
-    before_date_b = date - 1.day
+    date = DateTime.parse(params[:query_date]) rescue DateTime.now
+    days_range = params[:selected_week] ? Integer(params[:selected_week]) * 7 :
+      7
+    before_start_date = date - 1.day
+    after_start_date = date + 1.day
+
+    before_end_date = before_start_date - days_range.days
     before_week = QueryCatMetricsDaily.get_week_average(
-      query, before_date_a, before_date_b).first
-    before_title = "#{before_date_a.strftime('%b %d, %Y')} - " + 
-      "#{before_date_b.strftime('%b %d, %Y')}"
+      query, before_end_date, before_start_date).first
+    before_title = "#{before_end_date.strftime('%b %d, %Y')} - " + 
+      "#{before_start_date.strftime('%b %d, %Y')}"
    
-    after_date_a = date + 1.day
-    after_date_b = date + 8.days
+    after_end_date = after_start_date + days_range.days
     after_week = QueryCatMetricsDaily.get_week_average(
-      query, after_date_a, after_date_b).first
-    after_title = "#{after_date_a.strftime('%b %d, %Y')} - " +
-      "#{after_date_b.strftime('%b %d, %Y')}"
+      query, after_start_date, after_end_date).first
+    after_title = "#{after_start_date.strftime('%b %d, %Y')} - " +
+      "#{after_end_date.strftime('%b %d, %Y')}"
     
     respond_to do |format|
       format.json do 

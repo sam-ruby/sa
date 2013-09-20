@@ -6,12 +6,14 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
     @router = SearchQualityApp.Router
     @controller.bind('relevance:app', @select_rel_app)
     @controller.bind('explore:app', @select_explore_app)
+    @controller.bind('query-perf-comp:app', @select_query_comp_app)
     @masterTabView = new Searchad.Views.MasterTab.IndexView(
         el: 'div.master-tab')
 
   events:
     'click li.relevance-tab': 'relevance'
     'click li.explore-tab': 'explore'
+    'click li.query-comparison-tab': 'query_comparison'
     
   toggleTab: (e) =>
     @$el.find('li.active').removeClass('active')
@@ -31,6 +33,14 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
     @controller.trigger('comp-analysis:index')
     @router.update_path('comp_analysis')
   
+  query_comparison: (e) =>
+    @controller.trigger('content-cleanup')
+    e.preventDefault()
+    @controller.trigger('query-perf-comp:app')
+    @controller.trigger('query-comparison')
+    @router.update_path('query_perf_comparison')
+  
+
   select_rel_app: =>
     e = {}
     e.target = @$el.find('li.relevance-tab a').get(0)
@@ -39,4 +49,9 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
   select_explore_app: =>
     e = {}
     e.target = @$el.find('li.explore-tab a').get(0)
+    @toggleTab(e)
+    
+  select_query_comp_app: =>
+    e = {}
+    e.target = @$el.find('li.query-comparison-tab a').get(0)
     @toggleTab(e)
