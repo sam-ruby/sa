@@ -106,25 +106,28 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
       query: @query_form.find('input.search-query').val()
       selected_week: @query_form.find('select').val()
       query_date: @query_form.find('input.datepicker').val()
-    
-    new_path = 'query_perf_comparison/query/' +
-      encodeURIComponent(data.query) + '/wks_apart/' +
-      data.selected_week + '/query_date/' + encodeURIComponent(data.query_date)
-    
-    @router.update_path(new_path)
-    @get_items(data, false)
+   
+    if data.query
+      new_path = 'query_perf_comparison/query/' +
+        encodeURIComponent(data.query) + '/wks_apart/' +
+        data.selected_week + '/query_date/' +
+        encodeURIComponent(data.query_date)
+      
+      @router.update_path(new_path)
+      @get_items(data, false)
   
   get_items: (data, refresh_form=true) ->
     @clean_query_results()
-    unless data
+    if data and data.query
+      data.query = decodeURIComponent(data.query)
+      data.query_date = decodeURIComponent(data.query_date)
+      data.selected_week = parseInt(data.selected_week)
+    else
       data =
         query: ''
         selected_week: 1
         query_date: ''
-    else
-      data.query_date = decodeURIComponent(data.query_date)
-      data.selected_week = parseInt(data.selected_week)
-   
+       
     if refresh_form
       $(@query_form).html(@form_template(data))
       @query_form.find('input.datepicker').datepicker()
@@ -158,7 +161,6 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
     else
       data = @process_data(after_data.data)
       dom = @after.find('.title')
-      dom.addClass('pull-right')
       dom.append($("<span class='h4 rpadding-one-em'>" +
         after_data.title + '</div>'))
       dom.append($('<i>').addClass('icon-forward'))

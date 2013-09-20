@@ -28,7 +28,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "search/amazon_items/query/:query(/filters/*wday)":
       "search_amazon_items"
     
-    "query_perf_comparison(/query/:query/wks_apart/:weeks/query_date/:date)":
+    "query_perf_comparison(/query/:query/wks_apart/:weeks/query_date/:date)(/filters/*wday)":
       "query_perf_comparison"
 
   set_date_info: (date_part) =>

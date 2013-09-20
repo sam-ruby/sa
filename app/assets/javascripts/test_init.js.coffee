@@ -82,7 +82,7 @@ $ ->
         if not current_view or current_view != 'weekly'
           controller.set_view('weekly')
           controller.trigger('view-change', view: 'weekly')
-      else if name.match(/search-rel:index|search-kpi|do-search|poor-performing-stats:index|poor-performing:index|pp:stats:index|pp:walmart-items:index|pp:amazon-items:index/)
+      else if name.match(/search-rel:index|search-kpi|do-search|poor-performing-stats:index|poor-performing:index|pp:stats:index|pp:walmart-items:index|pp:amazon-items:index|query-comparison/)
         if not current_view or current_view != 'daily'
           controller.set_view('daily')
           controller.trigger('view-change', view: 'daily')
