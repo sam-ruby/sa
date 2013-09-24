@@ -195,6 +195,7 @@ $ ->
         before_selector: '.before-data'
         after_selector: '.after-data'
         comparison_selector: '.comparison-data'
+        recent_searches_selector: '.recent-searches'
       )
     searchComparisonView.listenTo(controller, 'query-comparison',
       searchComparisonView.get_items)

@@ -10,6 +10,13 @@ a.subcat:hover {
   right: 12px;
   z-index: 5;
 }
+.bg-no-boder {
+  border:0;
+}
+.bg-grid td, .bg-grid th, .bg-grid tr, .bg-grid table, .bg-grid {
+  border: 0 !important;
+  border-bottom:1px solid #ddd !important;
+}
 .search-container {
   position: relative;
   display: inline-block;

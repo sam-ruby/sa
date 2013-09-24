@@ -20,6 +20,10 @@ class SearchController < BaseController
       query, after_start_date, after_end_date).first
     after_title = "#{after_start_date.strftime('%b %d, %Y')} - " +
       "#{after_end_date.strftime('%b %d, %Y')}"
+ 
+    user_id = 101
+    QuerySearchList.store_query_words(
+      user_id, query, params[:query_date], params[:selected_week])
     
     respond_to do |format|
       format.json do 
@@ -32,6 +36,17 @@ class SearchController < BaseController
             :error => after_week.query_count.nil? ? 1 : 0,
             :data => after_week,
             :title => after_title}}
+      end
+    end
+  end
+
+  def get_recent_searches
+    result = QuerySearchList.get_query_words(101).sort do |a,b|
+      b['created_at'] <=> a['created_at']
+    end
+    respond_to do |format|
+      format.json do 
+        render :json => result
       end
     end
   end

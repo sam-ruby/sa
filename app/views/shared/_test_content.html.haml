@@ -60,21 +60,27 @@
     
 #query-perf-comparison
   #query-comparison-fcharts
-    .query-form
     .row
+      .span6
+        .query-form
+      .span5.offset1
+        .recent-searches
+          
+    .row
+      .span12
+        .comparison-data
+
+    .row{:style=>'margin-top: 2em;'}
       .span5
         .before-data
-          .title
+          .chart-title
           .chart
           .table
       .span5.offset2
         .after-data
-          .title{:style=>'text-align:right'}
+          .chart-title
           .chart
           .table
-    .row
-      .span6.offset3{:style=>'margin-top: 3em'}
-        .comparison-data
 
   #search-comparison-content
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
