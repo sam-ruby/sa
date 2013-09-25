@@ -4,7 +4,7 @@ class SearchController < BaseController
   def get_data
     query = params[:query]
     date = DateTime.parse(params[:query_date]) rescue DateTime.now
-    days_range = params[:selected_week] ? Integer(params[:selected_week]) * 7 :
+    days_range = params[:weeks_apart] ? Integer(params[:weeks_apart]) * 7 :
       7
     before_start_date = date - 1.day
     after_start_date = date + 1.day
@@ -23,7 +23,7 @@ class SearchController < BaseController
  
     user_id = 101
     QuerySearchList.store_query_words(
-      user_id, query, params[:query_date], params[:selected_week])
+      user_id, query, params[:query_date], params[:weeks_apart])
     
     respond_to do |format|
       format.json do 

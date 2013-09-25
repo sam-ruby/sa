@@ -46,7 +46,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.trigger('query-perf-comp:app')
     @controller.trigger('query-comparison',
       query: query
-      selected_week: weeks
+      weeks_apart: weeks
       query_date: search_date)
   
   search_rel: (date_parts) =>

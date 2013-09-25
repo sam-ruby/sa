@@ -11,6 +11,7 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
 
     @collection.bind('reset', @render_query_results)
     @recent_searches_collection.bind('reset', @render_recent_searches)
+    @recent_searches_collection.bind('add', @render_recent_searches)
     
     @query_form = @$el.find(options.form_selector)
     @before = @$el.find(options.before_selector)
@@ -44,7 +45,7 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
         that.do_search(
           query: @model.get(@column.get('name'))
           query_date: @model.get('query_date')
-          selected_week: @model.get('weeks_apart'))
+          weeks_apart: @model.get('weeks_apart'))
         
       render: ->
         value = @model.get(@column.get('name'))
@@ -53,7 +54,7 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
         @delegateEvents()
         return this
 
-    columns = [{name: 'query_word',
+    columns = [{name: 'query',
     label: 'Search Word',
     editable: false
     cell: SearchCell},
@@ -182,36 +183,35 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
     if data.query
       new_path = 'query_perf_comparison/query/' +
         encodeURIComponent(data.query) + '/wks_apart/' +
-        data.selected_week + '/query_date/' +
+        data.weeks_apart + '/query_date/' +
         encodeURIComponent(data.query_date)
       
       @router.update_path(new_path)
-      @get_items(data, false)
+      @get_items(data)
   
   handle_search: =>
     data =
       query: @query_form.find('input.search-query').val()
-      selected_week: @query_form.find('select').val()
+      weeks_apart: @query_form.find('select').val()
       query_date: @query_form.find('input.datepicker').val()
+    @recent_searches_collection.unshift(data)
     @do_search(data)
    
   get_items: (data, refresh_form=true) ->
     @clean_query_results()
-    @recent_searches.children().remove()
     if data and data.query
       data.query = decodeURIComponent(data.query)
       data.query_date = decodeURIComponent(data.query_date)
-      data.selected_week = parseInt(data.selected_week)
+      data.weeks_apart= parseInt(data.weeks_apart)
     else
       data =
         query: ''
-        selected_week: 1
+        weeks_apart: 1
         query_date: ''
        
     if refresh_form
       $(@query_form).html(@form_template(data))
       @query_form.find('input.datepicker').datepicker()
-      @active = true
 
     if data and data.query
       @query = data.query
@@ -219,8 +219,10 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
         'src', '/assets/ajax_loader.gif').css('display', 'block')
       @before.find('.chart').append(image)
       @after.find('.chart').append(image.clone())
-      @recent_searches_collection.fetch(reset: true)
       @collection.get_items(data)
+ 
+    @recent_searches_collection.fetch(reset: true) unless @active
+    @active = true
   
   render_query_results: =>
     before_data = @collection.first().get('before_week')

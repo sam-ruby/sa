@@ -7,7 +7,7 @@ class QuerySearch < RedisBase
   end
 
   def set_values(query_word, query_date, weeks_apart)
-    query_values[:query_word] = query_word
+    query_values[:query] = query_word
     query_values[:query_date] = query_date
     query_values[:weeks_apart] = weeks_apart
   end
