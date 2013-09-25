@@ -15,7 +15,7 @@ class ItemQueryCatMetricsDaily < BaseModel
         item.item_id = item_attrs.item_id}
       ItemQueryCatMetricsDaily.joins(join_stmt).select(
         item_selects).where(%q{item.query_date = ? AND item.query = ? 
-        AND item.cat_id = ? AND item.channel = "TOTAL"}, date, query, 
+        AND item.cat_id = ? AND item.channel = "ORGANIC"}, date, query, 
         cat_id).order('item_revenue DESC, shown_count DESC').limit(32)
   end
 end
