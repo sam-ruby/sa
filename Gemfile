@@ -18,10 +18,12 @@ gem "i18n-js"
 gem "backbone-rails-pageable"
 gem "backgridjs-rails"
 gem "kaminari"
+gem "thin"
 
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
+  gem 'therubyracer'
   gem 'sass-rails'
   gem 'coffee-rails'
   gem 'coffee-script-source', '1.5.0'
