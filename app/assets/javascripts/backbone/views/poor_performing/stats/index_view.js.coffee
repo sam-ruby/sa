@@ -4,8 +4,6 @@ class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
   initialize: (options) ->
     _.bindAll(this, 'render', 'get_items')
     @controller = SearchQualityApp.Controller
-    @controller.bind('date-changed', =>
-      @get_items() if @active)
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('pp:content-cleanup', @unrender)
     @data = {}

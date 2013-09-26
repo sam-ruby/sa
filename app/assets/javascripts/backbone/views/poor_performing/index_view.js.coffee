@@ -13,7 +13,7 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
     @$el.find('.ajax-loader').hide()
     
     @controller.bind('date-changed', =>
-      @get_items() if @active)
+      @get_items(trigger: true) if @active)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
      

@@ -13,8 +13,9 @@ class ItemQueryCatMetricsWeekly < BaseModel
         LEFT OUTER JOIN all_item_attrs AS item_attrs ON 
         item.item_id = item_attrs.item_id}
       self.joins(join_stmt).select(
-        item_selects).where(%q{item.year = ? AND item.week = ? AND item.query = ? 
-        AND item.cat_id = ? AND item.channel = "ORGANIC"}, year, week, query, 
-        cat_id).order('item_revenue DESC, shown_count DESC').limit(32)
+        item_selects).where(%q{item.year = ? AND item.week = ? AND 
+        item.query = ?  AND item.cat_id = ? AND (item.channel = "ORGANIC" or
+        item.channel = "ORGANIC_USER")}, year, week, query, cat_id).order(
+          'item_revenue DESC, shown_count DESC').limit(32)
   end
 end
