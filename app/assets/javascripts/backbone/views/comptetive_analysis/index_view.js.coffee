@@ -30,14 +30,39 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
       @controller, 'ca:walmart-items:index', walmartItemsView.get_items)
     walmartItemsView.listenTo(
       @controller, 'ca:content-cleanup', walmartItemsView.unrender)
-    
+   
     amazonItemsView =
       new Searchad.Views.PoorPerforming.AmazonItems.IndexView(
-        el: '#ca-subtabs-content')
+        el: '#ca-subtabs-content'
+        top_32_tab: '#ca-amazon-top-subtabs'
+        view: 'weekly')
     amazonItemsView.listenTo(
       @controller, 'ca:amazon-items:index', amazonItemsView.get_items)
     amazonItemsView.listenTo(
       @controller, 'ca:content-cleanup', amazonItemsView.unrender)
+    
+    amazonItemsView.listenTo(
+      @controller, 'ca:amazon-items:all-items',
+      amazonItemsView.render_all_items)
+    amazonItemsView.listenTo(
+      @controller, 'ca:amazon-items:in-top-32',
+      amazonItemsView.render_in_top_32)
+    amazonItemsView.listenTo(
+      @controller, 'ca:amazon-items:not-in-top-32',
+      amazonItemsView.render_not_in_top_32)
+    
+    @controller.bind('ca:amazon-items:in-top-32', @render_in_top_32)
+    @controller.bind('ca:amazon-items:not-in-top-32', @render_not_in_top_32)
+    
+    amazonStatsView =
+      new Searchad.Views.CompAnalysis.AmazonItems.IndexView(
+        el: '#ca-amazon-overlap'
+        chart_container: 'table.amazon-comparison'
+      )
+    amazonStatsView.listenTo(
+      @controller, 'ca:amazon-items:overlap', amazonStatsView.render)
+    amazonStatsView.listenTo(
+      @controller, 'ca:content-cleanup', amazonStatsView.unrender)
 
   active: false
 
