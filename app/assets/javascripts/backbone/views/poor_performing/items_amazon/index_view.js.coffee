@@ -28,9 +28,15 @@ class Searchad.Views.PoorPerforming.AmazonItems.IndexView extends Backbone.View
         JST["backbone/templates/poor_performing/amazon_item/item"]
       
       render: =>
+        url = @model.get('url')
+        unless url.match(/www.amazon.com/i)
+          if url.indexOf('/') == 0
+            url = 'http://www.amazon.com' + url
+          else
+            url = 'http://www.amazon.com/' + url
         item =
           image_url: @model.get('img_url')
-          url: @model.get('url')
+          url: url
           name: @model.get('name')
         
         formatted_value = @item_template(item)
