@@ -56,9 +56,7 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
     
     amazonStatsView =
       new Searchad.Views.CompAnalysis.AmazonItems.IndexView(
-        el: '#ca-amazon-overlap'
-        chart_container: 'table.amazon-comparison'
-      )
+        el: '#ca-amazon-overlap')
     amazonStatsView.listenTo(
       @controller, 'ca:amazon-items:overlap', amazonStatsView.render)
     amazonStatsView.listenTo(

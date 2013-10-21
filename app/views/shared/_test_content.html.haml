@@ -54,23 +54,7 @@
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
 
   #ca-subtabs
-  %table.amazon-comparison
-    %tbody
-      %tr
-        %td
-          %p.lead.text-info
-            In the top 32 Amazon search result, this chart shows the percentage of items also shown in Walmart top 32 search result.
-          %p.text-info
-            Cick on each pie slice to show the respective Walmart items.
-          %p.text-info.small
-            Any Amazon items that are not available in Walmart are filtered out here.
-        %td
-          %div.chart-container
-            %div.title
-              %span.text
-                Amazon Top 32 Items Comparison for
-                %em.placeholder
-            #ca-amazon-overlap{:style=>'height: 26em;'}
+  #ca-amazon-overlap{:style=>'height: 26em;'}
 
   #ca-amazon-top-subtabs{:style=>'display:none;'}
     %ul.nav.nav-pills

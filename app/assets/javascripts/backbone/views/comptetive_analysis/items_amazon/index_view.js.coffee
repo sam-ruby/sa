@@ -6,7 +6,6 @@ class Searchad.Views.CompAnalysis.AmazonItems.IndexView extends Backbone.View
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('ca:content-cleanup', @unrender)
     @data = {}
-    @chart_container = $(options.chart_container)
   
   active: false
 
@@ -18,7 +17,12 @@ class Searchad.Views.CompAnalysis.AmazonItems.IndexView extends Backbone.View
         plotBorderWidth: null
         plotShadow: false
       title:
-        text: null
+        text: "Amazon Top 32 Items Comparison for \"#{series.query}\""
+        useHTML: true
+        style:
+          '-moz-user-select': 'text'
+          '-webkit-user-select': 'text'
+          '-ms-user-select': 'text'
       tooltip:
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
       plotOptions:
@@ -30,7 +34,7 @@ class Searchad.Views.CompAnalysis.AmazonItems.IndexView extends Backbone.View
             color: '#000000'
             connectColor: '#000000'
             format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-      colors: ['rgb(47,126,216)', '#b84949'],
+      colors: ['rgba(139,188,33,.95)', 'rgba(160,0,0,.75)'],
       series: [
           type: 'pie'
           name: 'Assortment'
@@ -53,15 +57,13 @@ class Searchad.Views.CompAnalysis.AmazonItems.IndexView extends Backbone.View
     @active = false
     @$el.highcharts().destroy() if @$el.highcharts()
     @$el.children().remove()
-    @chart_container.hide()
 
   render: (data) ->
-    @chart_container.show()
-    @chart_container.find('em.placeholder').text(data.query)
     @$el.children().remove()
     collection = data.collection
     if collection and collection.length > 0
       @initChart(
+        query: data.query
         in_top_32: collection.at(0).get('in_top_32').length
         not_in_top_32: collection.at(0).get('not_in_top_32').length
       )
@@ -69,3 +71,5 @@ class Searchad.Views.CompAnalysis.AmazonItems.IndexView extends Backbone.View
       @$el.prepend(
         "<div><h1>No Walmart items found in Amazon Top 32.</h1></div>")
     return this
+
+
