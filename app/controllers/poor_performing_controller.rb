@@ -48,24 +48,11 @@ class PoorPerformingController < BaseController
 
   def get_amazon_items
     query = params['query']
-    week = params[:week]
-    search_dates = ''
-    get_available_weeks.each do |selected_week|
-      if week and selected_week[:week].to_s == week
-        search_dates = [selected_week[:end_date] + 1.day,
-                        selected_week[:end_date] + 2.days,
-                        selected_week[:end_date] + 3.days]
-        break
-      elsif !week
-        search_dates = [selected_week[:end_date] + 1.day,
-                        selected_week[:end_date] + 2.days,
-                        selected_week[:end_date] + 3.days]
-        break
-      end
-    end
+    week = params[:week] || get_available_weeks.first[:week]
     respond_to do |format|
       format.json do 
-        render :json => URLMapping.get_amazon_items(query, search_dates, @year)
+        render :json => URLMapping.get_amazon_items(
+          query, ((week.to_i-3)..week.to_i).to_a, @year)
       end
     end
   end

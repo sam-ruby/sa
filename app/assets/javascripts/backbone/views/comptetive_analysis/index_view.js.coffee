@@ -50,7 +50,13 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
     amazonItemsView.listenTo(
       @controller, 'ca:amazon-items:not-in-top-32',
       amazonItemsView.render_not_in_top_32)
-    
+
+    amazonItemsView.collection.on('reset', ->
+      if @collection.at(0).get('all_items').length > 0
+        @controller.trigger('ca:amazon-items:overlap',
+          query: @query
+          collection: @collection)
+    , amazonItemsView)
     @controller.bind('ca:amazon-items:in-top-32', @render_in_top_32)
     @controller.bind('ca:amazon-items:not-in-top-32', @render_not_in_top_32)
     

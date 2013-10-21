@@ -124,10 +124,6 @@ class Searchad.Views.PoorPerforming.AmazonItems.IndexView extends Backbone.View
     @top_32_tab.find('li.all-items').addClass('active')
     data = @collection.at(0).get('all_items')
     if data.length > 0
-      @controller.trigger('ca:amazon-items:overlap',
-        query: @query
-        collection: @collection
-      ) unless @active
       @processData(_.clone(data))
     else
       @$el.prepend(
