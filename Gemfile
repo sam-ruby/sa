@@ -24,26 +24,27 @@ gem "thin"
 # in production environments by default.
 group :assets do
   gem 'therubyracer'
-  gem 'sass-rails'
   gem 'coffee-rails'
   gem 'coffee-script-source', '1.5.0'
   # See https://github.com/sstephenson/execjs#readme for more
   # supported runtimes
   # gem 'therubyracer'
   gem 'uglifier', '>= 1.0.3'
-  gem "jade"
-  gem "jquery-ui-rails"
-
-  # sass version of bootstrap
-  gem 'bootstrap-sass'
-  gem 'font-awesome-sass-rails'
 end
 
 group :development do
   gem 'debugger'
 end
 
+gem 'sass-rails'
+gem "jade"
+gem "jquery-ui-rails"
+
+# sass version of bootstrap
+gem 'bootstrap-sass'
+gem 'font-awesome-sass-rails'
 gem 'jquery-rails'
+
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 

@@ -16,6 +16,7 @@ class Searchad.Collections.PoorPerfWalmartItemsCollection extends Backbone.Pagea
   
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
+    super(options)
   
   model: Searchad.Models.PoorPerfWalmartItem
   url: '/poor_performing/get_walmart_items.json'

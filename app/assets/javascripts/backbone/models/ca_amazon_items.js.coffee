@@ -1,25 +1,22 @@
-class Searchad.Models.PoorPerfAmazonItem extends Backbone.Model
+class Searchad.Models.CAAmazonItem extends Backbone.Model
   defaults:
-    position: null
-    name: null
-    brand: null
-    newprice: null
-    curr_item_price: null
+    all_items: null
+    in_top_32: null
+    not_in_top_32: null
 
-class Searchad.Collections.PoorPerfAmazonItemsCollection extends Backbone.PageableCollection
-  
+class Searchad.Collections.CAAmazonItemsCollection extends Backbone.PageableCollection
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     super(options)
-  
-  model: Searchad.Models.PoorPerfAmazonItem
+
+  model: Searchad.Models.CAAmazonItem
   url: '/poor_performing/get_amazon_items.json'
   state:
     pageSize: 6
   mode: 'client'
   data:
     query: null
-
+  
   get_items: (data) =>
     data = {} unless data
     if data.query
