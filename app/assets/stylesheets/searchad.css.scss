@@ -41,6 +41,11 @@ a.subcat:hover {
   margin-left: auto;
   margin-right: auto;
 }
+.chart-title {
+  -moz-user-select: text;
+  -webkit-user-select: text;
+  -ms-user-select: text;
+}
 .app-title {
   font-size:2em;
   font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;

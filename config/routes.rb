@@ -74,5 +74,7 @@ Searchad::Application.routes.draw do
     :to => 'search_k_p_i', :via => [:get, :post]  
   
   match 'search(/:action(.:format))',
-    :to => 'search', :via => [:get, :post]  
+    :to => 'search', :via => [:get, :post]
+
+  get 'amazon_overlap(/:action(.:format))', :to => 'amazon_overlap'
 end

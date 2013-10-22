@@ -2,8 +2,6 @@ Searchad.Views.PoorPerforming.WalmartItems ||= {}
 
 class Searchad.Views.PoorPerforming.WalmartItems.IndexView extends Backbone.View
   initialize: (options) =>
-    
-    _.bindAll(this, 'render')
     @controller = SearchQualityApp.Controller
     @collection =
       new Searchad.Collections.PoorPerfWalmartItemsCollection()
