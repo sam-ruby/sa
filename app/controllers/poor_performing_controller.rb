@@ -48,12 +48,11 @@ class PoorPerformingController < BaseController
 
   def get_amazon_items
     query = params['query']
+    week = params[:week] || get_available_weeks.first[:week]
     respond_to do |format|
       format.json do 
-        result = URLMapping.get_amazon_items(query).map do |record|
-          record.attributes.merge(:walmart_price => record.walmart_price)
-        end
-        render :json => result
+        render :json => URLMapping.get_amazon_items(
+          query, ((week.to_i-3)..week.to_i).to_a, @year)
       end
     end
   end
