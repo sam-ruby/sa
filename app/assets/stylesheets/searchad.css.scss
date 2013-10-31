@@ -326,6 +326,11 @@ a.cat-breadcrumb, a.daily, a.weekly {
   font-style:italic;
   padding-bottom:20px;
 }
+.filter-box {
+  form {
+    display: inline-block;
+  }
+}
 .filter-row {
   display: inline-block;
   margin-bottom: 5px;

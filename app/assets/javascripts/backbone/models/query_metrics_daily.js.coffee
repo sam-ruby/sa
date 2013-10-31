@@ -20,14 +20,20 @@ class Searchad.Models.QueryCatMetricsDaily extends Backbone.Model
       title: null
 
 class Searchad.Collections.QueryCatMetricsDailyCollection extends Backbone.PageableCollection
-  initialize: ->
+  initialize: (options) ->
     @controller = SearchQualityApp.Controller
+    super()
   
   model: Searchad.Models.QueryCatMetricsDaily
   url: '/search/get_data.json'
   mode: 'client'
 
   get_items: (data) =>
+    data = {} unless data
+    debugger
+    for k, v of @controller.get_filter_params()
+      continue unless v
+      data[k] = v
     @fetch(
       reset: true
       data: data

@@ -7,6 +7,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.bind('relevance:app', @init_relevance)
     @controller.bind('explore:app', @init_explore)
     @controller.bind('query-perf-comp:app', @init_query_perf_comp)
+    @controller.bind('search:app', @init_search)
 
     @controller.bind('poor-performing:index', @select_pp_tab)
     @controller.bind('search-rel:index', @select_sq_tab)
@@ -22,7 +23,6 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     'click li.search-quality-tab': 'searchQuality'
     'click li.poor-performing-tab': 'poorPerforming'
     'click li.search-kpi-tab': 'searchKPI'
-    'click button.search-btn': 'do_search'
     'click li.comp-analysis-tab': 'compAnalysis'
     'click li.query-comparison-details-tab': 'queryComparison'
     
@@ -55,6 +55,11 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       href: '/#comp_analysis'
       title: 'Amazon Relevance Comparison'}]
     @$el.find('ul').prepend(@get_tab_el(tabs[0]))
+
+  init_search: =>
+    @clean_tabs()
+    @$el.find('ul').hide()
+
 
   init_query_perf_comp: =>
     @clean_tabs()
@@ -92,25 +97,6 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     e.preventDefault()
     @controller.trigger('poor-performing:index', trigger: true)
 
-  do_search: (e) =>
-    e.preventDefault()
-    query = $('form.form-search input.search-query').val()
-    query_parts = query.match(/([^:]+):?(date)?:?(.*)/) if query
-    return unless query
-    data = {}
-  
-    if query_parts and query_parts[2] != undefined
-      data.query = query_parts[1]
-      data.search_date = query_parts[3]
-      event = 'do-search-with-comparison'
-    else
-      data.query = query
-      event = 'do-search'
-    
-    @router.update_path('search/query/' + encodeURIComponent(data.query))
-    @controller.trigger('content-cleanup')
-    @controller.trigger(event, data)
-
   compAnalysis: (e) =>
     @controller.trigger('content-cleanup')
     e.preventDefault()
@@ -142,7 +128,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     e.target = @$el.find('li.comp-analysis-tab a').get(0)
     @toggleTab(e)
  
- select_query_comp_tab: =>
+  select_query_comp_tab: =>
     e = {}
     e.target = @$el.find('li.query-comparison-details-tab a').get(0)
     @toggleTab(e)
@@ -158,6 +144,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @widget_el.modal('hide')
 
   clean_tabs: =>
-    @$el.find('li').not('li.search-tab').remove()
+    @$el.find('li').remove()
+    @$el.find('ul').show()
 
 

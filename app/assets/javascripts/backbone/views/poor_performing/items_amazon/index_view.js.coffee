@@ -9,16 +9,17 @@ class Searchad.Views.PoorPerforming.AmazonItems.IndexView extends Backbone.View
     @controller.bind('date-changed', =>
       @get_items() if @active)
     @controller.bind('content-cleanup', @unrender)
-    @top_32_tab = $(options.top_32_tab)
-    @top_32_tab.on('click', 'li.all-items', (e) =>
-      e.preventDefault()
-      @controller.trigger('ca:amazon-items:all-items'))
-    @top_32_tab.on('click', 'li.in-top-32', (e) =>
-      e.preventDefault()
-      @controller.trigger('ca:amazon-items:in-top-32'))
-    @top_32_tab.on('click', 'li.not-in-top-32', (e) =>
-      e.preventDefault()
-      @controller.trigger('ca:amazon-items:not-in-top-32'))
+    if options and options.top_32_tab
+      @top_32_tab = $(options.top_32_tab)
+      @top_32_tab.on('click', 'li.all-items', (e) =>
+        e.preventDefault()
+        @controller.trigger('ca:amazon-items:all-items'))
+      @top_32_tab.on('click', 'li.in-top-32', (e) =>
+        e.preventDefault()
+        @controller.trigger('ca:amazon-items:in-top-32'))
+      @top_32_tab.on('click', 'li.not-in-top-32', (e) =>
+        e.preventDefault()
+        @controller.trigger('ca:amazon-items:not-in-top-32'))
 
   active: false
 
@@ -102,7 +103,7 @@ class Searchad.Views.PoorPerforming.AmazonItems.IndexView extends Backbone.View
     @active = false
     @$el.children().not('.ajax-loader').remove()
     @$el.find('.ajax-loader').hide()
-    @top_32_tab.hide()
+    @top_32_tab.hide() if @top_32_tab
 
   get_items: (data) =>
     @query = data.query if data
