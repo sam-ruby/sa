@@ -85,8 +85,7 @@ $ ->
       else if name.match(/search-rel:index|search-kpi|do-search|poor-performing-stats:index|poor-performing:index|pp:stats:index|pp:walmart-items:index|pp:amazon-items:index|query-comparison/)
         if not current_view or current_view != 'daily'
           controller.set_view('daily')
-          controller.trigger('view-change', view: 'daily')
-    )
+          controller.trigger('view-change', view: 'daily'))
     
     Controller: controller
     Router: searchQualityRouter
@@ -143,50 +142,16 @@ $ ->
    
     # Comp Analysis
     caView = new Searchad.Views.CompAnalysis.IndexView(
-      el: '#ca-queries'
-      events:
-        'click a.query': (e) ->
-          query = $(e.target).text()
-          controller.trigger('ca:amazon-items:index', query: query)
-          new_path = 'comp_analysis/amazon_items/query/' +
-            encodeURIComponent(query)
-          router.update_path(new_path)
-    )
+      el: '#ca-queries')
     caView.listenTo(
       controller, 'comp-analysis:index', caView.get_items)
    
     # Search
-    searchSubtabsView =
-      new Searchad.Views.Search.SubTabs.IndexView(
-        el: '#search-subtabs'
-      )
+    searchView = new Searchad.Views.Search.SubTabs.IndexView(
+      el: '#search-form')
+    searchView.listenTo(
+      controller, 'search:form', searchView.render)
     
-    searchStatsView =
-      new Searchad.Views.PoorPerforming.Stats.IndexView(
-        el: '#search-stats-hcharts')
-    searchStatsView.listenTo(controller, 'do-search',
-      searchStatsView.get_items)
-
-    searchWalmartItemsView =
-      new Searchad.Views.PoorPerforming.WalmartItems.IndexView(
-        el: '#search-subtabs-content')
-    searchWalmartItemsView.listenTo(
-      controller, 'do-search', searchWalmartItemsView.get_items)
-    searchWalmartItemsView.listenTo(
-      controller, 'search:walmart-items:index',
-      searchWalmartItemsView.get_items)
-    searchWalmartItemsView.listenTo(
-      controller, 'search:content-cleanup',
-      searchWalmartItemsView.unrender)
-    
-    searchAmazonItemsView =
-      new Searchad.Views.PoorPerforming.AmazonItems.IndexView(
-        el: '#search-subtabs-content')
-    searchAmazonItemsView.listenTo(
-      controller, 'search:amazon-items:index', searchAmazonItemsView.get_items)
-    searchAmazonItemsView.listenTo(
-      controller, 'search:content-cleanup', searchAmazonItemsView.unrender)
-
     # Search Comparison
     searchComparisonView =
       new Searchad.Views.SearchComparison.IndexView(

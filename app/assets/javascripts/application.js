@@ -17,6 +17,7 @@
 //= require backbone
 //= require backbone-pageable
 //= require backgrid
+//= require lunr
 //= require backgrid-extensions/backgrid-paginator
 //= require jade/runtime
 //= require bootstrap-tooltip

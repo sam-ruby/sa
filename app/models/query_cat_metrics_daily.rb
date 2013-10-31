@@ -25,6 +25,15 @@ class QueryCatMetricsDaily < BaseModel
       ["query = ? AND cat_id = ? AND channel = 'TOTAL'", query,
        0]).order("query_date")
   end
+  
+  def self.get_query_stats_date(query, date)
+    selects = %q{unix_timestamp(query_date) * 1000 as query_date, query_count,
+      query_pvr, query_atc, query_con, query_revenue}
+    QueryCatMetricsDaily.select(selects).where(
+      ["query_date = ? AND query = ? AND cat_id = ? AND channel = 'TOTAL'",
+       date, query, 0])
+  end
+
 
   def self.get_week_average(query, date_start, date_end)
     select_cols = %q{sum(query_count) as query_count,

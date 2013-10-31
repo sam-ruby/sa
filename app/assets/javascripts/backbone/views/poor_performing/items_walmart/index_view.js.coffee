@@ -11,7 +11,7 @@ class Searchad.Views.PoorPerforming.WalmartItems.IndexView extends Backbone.View
       @get_items() if @active)
     @collection.bind('reset', @render)
     @controller.bind('content-cleanup', @unrender)
-    @weekly = true if options.view == 'weekly'
+    @weekly = true if options and options.view == 'weekly'
 
   active: false
 

@@ -3,8 +3,8 @@ Searchad.Views.CompAnalysis ||= {}
 class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
   initialize: (options) =>
     
-    _.bindAll(this, 'render', 'initTable')
     @trigger = false
+    @fuzzy_search = false
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @collection = new Searchad.Collections.CompAnalysisCollection()
@@ -69,6 +69,16 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
       @controller, 'ca:content-cleanup', amazonStatsView.unrender)
 
   active: false
+  events:
+    'click a.query': (e) ->
+      query = $(e.target).text()
+      @controller.trigger('ca:amazon-items:index', query: query)
+      new_path = 'comp_analysis/amazon_items/query/' +
+        encodeURIComponent(query)
+      @router.update_path(new_path)
+    'click .filter': 'filter'
+    'click .reset': 'reset'
+    'submit': 'filter'
 
   gridColumns:  ->
     class QueryCell extends Backgrid.Cell
@@ -110,23 +120,32 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
     cell: 'number'}]
     
     columns
+
+  initFilter: =>
+     _.template('<div class="input-prepend input-append filter-box pull-right"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type a query word"/></form><button class="btn btn-primary reset">Reset</button></div>')
   
   initTable: () =>
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
       collection: @collection
     )
-    
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection
     )
 
-  make_tab_active: =>
+  filter: (e) =>
+    e.preventDefault()
+    query = @$el.find(".filter-box input[type=text]").val()
+    @get_items(query: query, saveQuery: true) if query
+
+  reset: =>
+    @$el.find(".filter-box input[type=text]").val('')
+    @get_items(saveQuery: false)
 
   get_items: (data) =>
     @$el.find('.ajax-loader').css('display', 'block')
-    @collection.get_items(data)
-    if data and data.query
+    @collection.fetch(data)
+    if data and data.query and !data.saveQuery
       @controller.trigger('ca:amazon-items:index', data)
     else
       @trigger = true
@@ -137,12 +156,16 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
     @$el.find('.ajax-loader').hide()
 
   render: =>
-    @active = true
-    @$el.children().not('.ajax-loader').remove()
+    @$el.children().not('.ajax-loader, .filter-box').remove()
     @$el.find('.ajax-loader').hide()
+    unless @active
+      @$el.append( @initFilter()())
+      @delegateEvents()
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     if @trigger
       @trigger = false
+      @fuzzy_search = false
       @$el.find('td a.query').first().trigger('click')
+    @active = true
     this

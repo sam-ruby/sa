@@ -25,8 +25,6 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
 
     "search(/filters/*wday)": "search"
     "search/query/:query(/filters/*wday)": "search"
-    "search/amazon_items/query/:query(/filters/*wday)":
-      "search_amazon_items"
     
     "query_perf_comparison(/query/:query/wks_apart/:weeks/query_date/:date)(/filters/*wday)":
       "query_perf_comparison"
@@ -66,8 +64,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
 
   search: (query, date_parts) =>
     @set_date_info(date_parts)
-    @controller.trigger('relevance:app')
-    @controller.trigger('do-search', query: decodeURIComponent(query))
+    @controller.trigger('search:app')
+    @controller.trigger('search:form')
+    @controller.trigger('do-search', query: decodeURIComponent(query)) if query
   
   search_amazon_items: (query, date_parts) =>
     @set_date_info(date_parts)
@@ -122,9 +121,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @set_date_info(date_parts)
     @controller.trigger('explore:app')
     @controller.trigger('comp-analysis:index',
-      query: decodeURIComponent(query))
+      query: decodeURIComponent(query)
+      saveQuery: true)
     
-  
   update_path: (path) =>
     url_parts = window.location.hash.replace('#', '').split('filters')
     if url_parts.length > 0
