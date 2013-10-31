@@ -5,6 +5,7 @@
     %link{:rel=>:icon, :type=>'image/png',
       :href=>'assets/walmart-transparent.png'}
     = stylesheet_link_tag 'application'
+    = javascript_include_tag 'http://mdw.dev.walmartlabs.com/mdw.js'
     :scss
       .test {
         width: 100%;
@@ -122,6 +123,7 @@
     = csrf_meta_tag 
   
   %body
+    #mdw-toolbar
     = render 'shared/title'
     .container
       .row.master-tab
