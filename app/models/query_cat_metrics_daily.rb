@@ -27,11 +27,11 @@ class QueryCatMetricsDaily < BaseModel
   end
   
   def self.get_query_stats_date(query, date)
-    selects = %q{unix_timestamp(query_date) * 1000 as query_date, query_count,
-      query_pvr, query_atc, query_con, query_revenue}
+    selects = %q{query, unix_timestamp(query_date) * 1000 as query_date,
+    query_count, query_pvr, query_atc, query_con, query_revenue}
     QueryCatMetricsDaily.select(selects).where(
-      ["query_date = ? AND query = ? AND cat_id = ? AND channel = 'TOTAL'",
-       date, query, 0])
+      ["query_date = ? AND query like ? AND cat_id = ? AND channel = 'TOTAL'",
+       date, '%' + query + '%', 0])
   end
 
 

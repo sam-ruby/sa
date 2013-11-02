@@ -55,7 +55,7 @@ class SearchController < BaseController
   def get_query_stats_date
     query = params[:query]
     query_stats = QueryCatMetricsDaily.get_query_stats_date(
-      query, @date).first
+      query, @date)
     
     respond_to do |format|
       format.json do 
