@@ -14,6 +14,8 @@ class Searchad.Collections.QueryStatsDailyCollection extends Backbone.PageableCo
   model: Searchad.Models.QueryStatsDaily
   url: '/search/get_query_stats_date.json'
   mode: 'client'
+  state:
+    pageSize: 10
 
   get_items: (data) =>
     data = {} unless data

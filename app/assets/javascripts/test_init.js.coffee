@@ -148,7 +148,10 @@ $ ->
    
     # Search
     searchView = new Searchad.Views.Search.SubTabs.IndexView(
-      el: '#search-form')
+      el: '#search-form'
+      el_results: '#search-results'
+      el_sub_tab: '#search-sub-tabs'
+      el_sub_content: '#search-sub-content')
     searchView.listenTo(
       controller, 'search:form', searchView.render)
     
