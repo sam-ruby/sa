@@ -1,4 +1,4 @@
-class PoorPerformingController < BaseController
+class CompAnalysisController < BaseController
   before_filter :set_common_data
   def get_search_words
     @search_words = QueryCatMetricsDaily.get_search_words(
@@ -19,19 +19,10 @@ class PoorPerformingController < BaseController
   
   def get_walmart_items
     query = params['query']
-    view = params['view']
-    week = params[:week] || QueryPerformance.available_weeks.first[:week]
-    if view == 'weekly'
-      @walmart_items = ItemQueryCatMetricsWeekly.get_walmart_items(
-        query, @cat_id, week, @year)
-    else
-      @walmart_items = SearchQualityDaily.get_walmart_items(
-        query, @cat_id, @date)
-    end
-    
+    walmart_items = WalmartTop32Items.get_items(query, @year, @week)
     respond_to do |format|
       format.json do 
-        render :json => @walmart_items
+        render :json => walmart_items
       end
     end
   end

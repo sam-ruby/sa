@@ -1,6 +1,6 @@
-Searchad.Views.CompAnalysis.AmazonItems||= {}
+Searchad.Views.CompAnalysis.AmazonItemsChart||= {}
 
-class Searchad.Views.CompAnalysis.AmazonItems.IndexView extends Backbone.View
+class Searchad.Views.CompAnalysis.AmazonItemsChart.IndexView extends Backbone.View
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     @controller.bind('content-cleanup', @unrender)

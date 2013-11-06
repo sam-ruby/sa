@@ -20,12 +20,16 @@ class SearchRelController < BaseController
   
   def get_query_items
     id = params[:id]
+    query_str = params[:query_str]
     query_items = params[:query_items]
     top_rev_items = params[:top_rev_items]
     query = ''
     
-    if query_items.nil?  or top_rev_items.nil? or 
-      query_items.empty? or top_rev_items.empty?
+    if query_str
+      results = SearchQualityDaily.get_search_relevance_data_by_word(
+        query_str, @date)
+    elsif query_items.nil?  or top_rev_items.nil? or 
+        query_items.empty? or top_rev_items.empty?
       results = SearchQualityDaily.get_search_relevance_data_by_id(id)
       unless results.empty?
         query_items = results.first['query_items']
@@ -33,8 +37,9 @@ class SearchRelController < BaseController
         query = results.first['query_str']
       end
     end
-
+    
     return render :nothing => true if query_items.nil? or top_rev_items.nil?
+    
     query_items_list = query_items.split(',')
     top_rev_items_list = top_rev_items.split(',')
 

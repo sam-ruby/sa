@@ -61,6 +61,8 @@ class BaseController < ApplicationController
     @cat_id = @categories.last[:c_id]
 
     @year = @month = @week = @date = nil
+    #TBD: Is this an efficient way to get the maximum date. Do we
+    #need this for every call.
     @most_recent_date ||= SearchQualityDaily.maximum('query_date')
     
     @view = params[:view] || 'weekly'
@@ -68,6 +70,7 @@ class BaseController < ApplicationController
       @most_recent_date 
     @year = params[:year].nil? ? PipelineLogWeekly.maximum(:year) :
       params[:year].to_i
+    @week = params[:week] || get_available_weeks(@year).first[:week]
     
     @page = params[:page].to_i || 1
     @limit = params[:per_page].to_i || 10
@@ -103,13 +106,8 @@ class BaseController < ApplicationController
     Date.ordinal(year, ordinal)
   end
   
-  def most_recent_week
-    @most_recent_date ||= CatMetricsDaily.maximum(:date)
-    CatMetricsWeek.where('year = ?', @most_recent_date.year).maximum(:week)
-  end
-
-  def get_available_weeks
-    QueryPerformance.available_weeks.map do |curr_week|
+  def get_available_weeks(year)
+    Week.available_weeks(year).map do |curr_week|
       start_date = convert_to_dod_week(curr_week[:week], curr_week[:year])
       curr_week[:start_date] = start_date
       curr_week[:end_date] = start_date + 6.days

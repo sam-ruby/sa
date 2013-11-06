@@ -77,6 +77,11 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
     @select_amazon_tab()
     @controller.trigger('search:amazon-items', query: @query)
 
+  rev_rel: =>
+    @controller.trigger('search:sub-content-cleanup')
+    @select_rev_rel_tab()
+    @controller.trigger('search-rel:query-items:index', data)
+  
   bind_sub_tab_click: =>
     that = this
     @$search_sub_tab.on(
@@ -88,6 +93,8 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
           that.amazon_items()
         else if $(e.target).parents('li.search-stats-tab').length > 0
           that.stats()
+        else if $(e.target).parents('li.rev-rel-tab').length > 0
+          that.rev_rel()
     )
 
   select_stats_tab: (data) =>
@@ -113,7 +120,15 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
     e = {}
     e.target = @$search_sub_tab.find('li.search-amazon-items-tab a').get(0)
     @toggleTab(e)
- 
+    
+  select_rev_rel_tab: (data) =>
+    @data.query = data.query if data and data.query
+    unless @$search_sub_tab.find('ul.nav').length > 0
+      @$search_sub_tab.append(@template())
+    e = {}
+    e.target = @$search_sub_tab.find('li.rev-rel-tab a').get(0)
+    @toggleTab(e)
+
   do_search: (e) =>
     e.preventDefault()
     @search_results_cleanup()
