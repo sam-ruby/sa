@@ -35,7 +35,18 @@ $ ->
       orderSeparator: ','
 
       fromRaw: (rawValue) ->
+        return '-' unless rawValue
         "#{super(rawValue)}%"
+        
+    class CustomNumberFormatter extends Backgrid.NumberFormatter
+      decimals: 2
+      decimalSeparator: '.'
+      orderSeparator: ','
+
+      fromRaw: (rawValue) ->
+        return '-' unless rawValue
+        "#{super(rawValue)}%"
+
 
     class CurrencyFormatter extends Backgrid.NumberFormatter
       decimals: 2
@@ -47,12 +58,14 @@ $ ->
           '$' + rawValue.toFixed(0)
         else if rawValue < 0
           '- $' + super(Math.abs(rawValue))
-        else
+        else if rawValue > 0
           '$' + super(rawValue)
-
+        else
+          '-'
     UpdateURLParam: updateURLParam
     PercentFormatter: PercentFormatter
     CurrencyFormatter: CurrencyFormatter
+    CustomNumberFormatter: CustomNumberFormatter
   
   window.SearchQualityApp = do ->
     controller = _.extend({}, Backbone.Events)
@@ -100,7 +113,7 @@ $ ->
       el: '#top-nav')
 
     searchQualityQueryView = new Searchad.Views.SearchQualityQuery.IndexView(
-        el: '#search-quality-queries')
+      el: '#search-quality-queries')
     searchQualityQueryView.listenTo(
       controller, 'search-rel:index', searchQualityQueryView.get_items)
     

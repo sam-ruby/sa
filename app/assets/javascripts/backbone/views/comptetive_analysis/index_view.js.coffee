@@ -23,7 +23,7 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
       )
     
     walmartItemsView =
-      new Searchad.Views.PoorPerforming.WalmartItems.IndexView(
+      new Searchad.Views.CompAnalysis.WalmartItems.IndexView(
         el: '#ca-subtabs-content'
         view: 'weekly')
     walmartItemsView.listenTo(
@@ -61,7 +61,7 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
     @controller.bind('ca:amazon-items:not-in-top-32', @render_not_in_top_32)
     
     amazonStatsView =
-      new Searchad.Views.CompAnalysis.AmazonItems.IndexView(
+      new Searchad.Views.CompAnalysis.AmazonItemsChart.IndexView(
         el: '#ca-amazon-overlap')
     amazonStatsView.listenTo(
       @controller, 'ca:amazon-items:overlap', amazonStatsView.render)
@@ -122,7 +122,7 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
     columns
 
   initFilter: =>
-     _.template('<div class="input-prepend input-append filter-box pull-right"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type a query word"/></form><button class="btn btn-primary reset">Reset</button></div>')
+     _.template('<div class="input-prepend input-append filter-box pull-right"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type a query word for."/></form><button class="btn btn-primary reset">Reset</button></div>')
   
   initTable: () =>
     @grid = new Backgrid.Grid(
