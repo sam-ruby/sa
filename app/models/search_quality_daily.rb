@@ -6,7 +6,7 @@ class SearchQualityDaily < BaseModel
    order_str = order_col.nil? ? nil :
      order.nil? ? order_col : order_col + ' ' + order  
    
-   self.select(%q{id, query_str, query_date, query_count, query_revenue, 
+   select(%q{id, query_str, query_date, query_count, query_revenue, 
                search_rev_rank_correlation, query_items, rev_ranks,
                top_rev_items}).where(
                  'query_date = ? ', query_date).order(order_str).page(
@@ -14,8 +14,11 @@ class SearchQualityDaily < BaseModel
  end
  
  def self.get_search_relevance_data_by_id(id)
-   self.select(%q{id, query_str, query_items, top_rev_items}).where(
+   select(%q{id, query_str, query_items, top_rev_items}).where(
      'id = ?', id)
  end
 
+ def self.get_max_min_dates
+   select(%q{max(query_date) as max_date, min(query_date) as min_date})
+ end
 end
