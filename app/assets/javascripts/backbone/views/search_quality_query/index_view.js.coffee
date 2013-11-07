@@ -15,24 +15,11 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
       @get_items() if @active)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
-  
-    searchQualitySubtabsView =
-      new Searchad.Views.SearchQualityQuery.SubTabs.IndexView(
-        el: '#query-items-tab')
-    searchQualitySubtabsView.listenTo(
-      @controller, 'search-rel:query-items:index',
-      searchQualitySubtabsView.select_first_tab)
-    
-    queryItemsView = new Searchad.Views.SearchQualityQuery.QueryItems.IndexView(
-      el: '#query-items-content')
-    queryItemsView.listenTo(
-      @controller, 'search-rel:query-items:index', (data) ->
-        queryItemsView.get_items(data)
-    )
-    
+        
   active: false
 
   gridColumns: ->
+    that = this
     class QueryCell extends Backgrid.Cell
       controller: SearchQualityApp.Controller
       router: SearchQualityApp.Router
@@ -46,15 +33,13 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
         id = @model.get('id')
         query = @model.get('query_str')
         data =
-          id: id
+          query: query
           query_items: @model.get('query_items')
           top_rev_items: @model.get('top_rev_items')
-       
-        @controller.trigger('search-rel:sub-content-cleanup')
-        @controller.trigger('search-rel:query-items:index', data)
-        @controller.trigger('search-rel:query-items:set-tab-content', query)
-        new_path = 'search_rel/item_id/' + id
-        @router.update_path(new_path)
+        that.controller.trigger('sub-content-cleanup')
+        that.controller.trigger('search:stats', data)
+        new_path = 'search_rel/query/' + query
+        that.router.update_path(new_path)
         false
 
       render: ->
@@ -98,8 +83,8 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
   get_items: (data) =>
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items(data)
-    if data and data.id
-      @controller.trigger('search-rel:query-items:index', data)
+    if data and data.query
+      @controller.trigger('search:rel-rev', data)
     else
       @trigger = true
 

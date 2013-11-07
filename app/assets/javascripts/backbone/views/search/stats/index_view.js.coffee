@@ -1,10 +1,11 @@
-Searchad.Views.PoorPerforming.Stats ||= {}
+Searchad.Views.Search ||= {}
+Searchad.Views.Search.Stats ||= {}
 
-class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
+class Searchad.Views.Search.Stats.IndexView extends Backbone.View
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     @controller.bind('content-cleanup', @unrender)
-    @controller.bind('pp:content-cleanup', @unrender)
+    @controller.bind('subcontent-cleanup', @unrender)
     @data = {}
   
   active: false
@@ -66,17 +67,12 @@ class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
   unrender: ->
     @active = false
     @$el.highcharts().destroy()
-    @$el.children().remove()
+    @$el.children().not('.ajax-loader').remove()
 
   get_items: (data) ->
-    if data and data.query
-      @data.query = data.query
-    else
-      data = @data
     @unrender()
-    image =$('<img>').addClass('ajax-loader').attr(
-      'src', '/assets/ajax_loader.gif').css('display', 'block')
-    @$el.append(image)
+    @controller.trigger('search:sub-content:show-spin')
+    @$el.find('.ajax-loader').show()
     $.ajax(
       url: '/poor_performing/get_query_stats.json'
       data:
@@ -111,11 +107,12 @@ class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
 
   render: (query, data) ->
     @active = true
-    @$el.children().remove()
+    @$el.children().not('.ajax-loader').remove()
+    @controller.trigger('search:sub-content:hide-spin')
     @initChart(query, data)
     return this
   
   unrender: =>
     @active = false
     @$el.children().not('.ajax-loader').remove()
-    @$el.find('img.ajax-loader').hide()
+    @controller.trigger('search:sub-content:hide-spin')

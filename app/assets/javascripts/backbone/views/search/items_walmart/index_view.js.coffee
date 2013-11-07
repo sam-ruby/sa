@@ -1,27 +1,25 @@
-Searchad.Views.PoorPerforming.WalmartItems ||= {}
+Searchad.Views.Search ||= {}
+Searchad.Views.Search.WalmartItems ||= {}
 
-class Searchad.Views.PoorPerforming.WalmartItems.IndexView extends Backbone.View
+class Searchad.Views.Search.WalmartItems.IndexView extends Backbone.View
   initialize: (options) =>
     @controller = SearchQualityApp.Controller
     @collection =
-      new Searchad.Collections.PoorPerfWalmartItemsCollection()
+      new Searchad.Collections.CAWalmartItemsCollection()
     @initTable()
     
     @controller.bind('date-changed', =>
       @get_items() if @active)
     @collection.bind('reset', @render)
     @controller.bind('content-cleanup', @unrender)
-    @weekly = true if options and options.view == 'weekly'
+    @controller.bind('sub-content-cleanup', @unrender)
 
   active: false
 
-  template: JST["backbone/templates/query_items/tabs"]
-  
-  tab_el: $('#query-items-tab')
-
   gridColumns: =>
     class ItemCell extends Backgrid.Cell
-      item_template: JST["backbone/templates/poor_performing/walmart_items/item"]
+      item_template:
+        JST["backbone/templates/poor_performing/walmart_items/item"]
       
       render: =>
         item =
@@ -46,6 +44,7 @@ class Searchad.Views.PoorPerforming.WalmartItems.IndexView extends Backbone.View
     {name: 'shown_count',
     label: I18n.t('dashboard2.shown_count'),
     editable: false,
+    formatter: Utils.CustomNumberFormatter,
     cell: 'integer'},
     {name: 'item_con',
     label: I18n.t('perf_monitor2.conversion_rate'),
@@ -75,19 +74,18 @@ class Searchad.Views.PoorPerforming.WalmartItems.IndexView extends Backbone.View
     
   unrender: =>
     @active = false
-    @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').hide()
-
+    @controller.trigger('search:sub-content:hide-spin')
+  
   get_items: (data) =>
     data = {} unless data
     data.view = 'weekly' if @weekly
-    @$el.find('.ajax-loader').css('display', 'block')
+    @controller.trigger('search:sub-content:show-spin')
     @collection.get_items(data)
 
   render: =>
     @active = true
     @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').hide()
+    @controller.trigger('search:sub-content:hide-spin')
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     return this

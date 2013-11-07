@@ -1,10 +1,12 @@
-Searchad.Views.CompAnalysis.AmazonItemsChart||= {}
+Searchad.Views.Search ||= {}
+Searchad.Views.Search.AmazonItems ||= {}
+Searchad.Views.Search.AmazonItems.Stats ||= {}
 
-class Searchad.Views.CompAnalysis.AmazonItemsChart.IndexView extends Backbone.View
+class Searchad.Views.Search.AmazonItems.Stats.IndexView extends Backbone.View
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     @controller.bind('content-cleanup', @unrender)
-    @controller.bind('ca:content-cleanup', @unrender)
+    @controller.bind('sub-content-cleanup', @unrender)
     @data = {}
   
   active: false
@@ -43,13 +45,13 @@ class Searchad.Views.CompAnalysis.AmazonItemsChart.IndexView extends Backbone.Vi
             y: series['in_top_32'],
             events:
               click: (e) =>
-                @controller.trigger('ca:amazon-items:in-top-32')
+                @controller.trigger('search:amazon-items:in-top-32')
             },{
               name: 'Walmart Items Not Shown in Top 32',
               y: series['not_in_top_32'],
               events:
                 click: (e) =>
-                  @controller.trigger('ca:amazon-items:not-in-top-32')
+                  @controller.trigger('search:amazon-items:not-in-top-32')
             }]
       ])
     

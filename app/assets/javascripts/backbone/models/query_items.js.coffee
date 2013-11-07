@@ -46,8 +46,3 @@ class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollect
       type: 'post'
     )
 
-  parse: (response) =>
-    if response and response.query
-      @controller.trigger('search-rel:query-items:set-tab-content', response.query)
-    if response and response.results
-      response.results
