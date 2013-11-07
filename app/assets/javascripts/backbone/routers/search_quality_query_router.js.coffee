@@ -18,10 +18,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       "pp_amazon_items"
 
     "comp_analysis(/filters/*wday)": "comp_analysis"
-    "comp_analysis/walmart_items/query/:query(/filters/*wday)":
-      "ca_walmart_items"
-    "comp_analysis/amazon_items/query/:query(/filters/*wday)":
-      "ca_amazon_items"
+    "comp_analysis/query/:query(/filters/*wday)": "comp_analysis_stats"
 
     "search(/filters/*wday)": "search"
     "search/query/:query(/filters/*wday)": "search"
@@ -110,11 +107,12 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.trigger('explore:app')
     @controller.trigger('comp-analysis:index')
 
-  ca_walmart_items: (query, date_parts) =>
+  comp_analysis_stats: (query, date_parts) =>
+    console.log('here is the query' + query)
     @set_date_info(date_parts)
     @controller.trigger('explore:app')
-    @controller.trigger('comp-analysis:index')
-    @controller.trigger('ca:walmart-items:index',
+    @controller.trigger('comp-analysis:index',
+      saveQuery: true
       query: decodeURIComponent(query))
   
   ca_amazon_items: (query, date_parts) =>

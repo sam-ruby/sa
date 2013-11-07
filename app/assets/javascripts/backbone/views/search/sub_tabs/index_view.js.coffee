@@ -1,44 +1,14 @@
+Searchad.Views.Search ||= {}
 Searchad.Views.Search.SubTabs ||= {}
 
 class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
-    
-    @$search_results = $(options.el_results)
-    @$search_sub_content = $(options.el_sub_content)
-    @$search_sub_tab = $(options.el_sub_tab)
-    @bind_sub_tab_click()
-
     @controller.bind('content-cleanup', @unrender)
-    @controller.bind('search:walmart-items:index', @select_walmart_tab)
-    @controller.bind('search:amazon-items:index', @select_amazon_tab)
-    
-    @searchStatsView = new Searchad.Views.PoorPerforming.Stats.IndexView(
-      el: options.el_sub_content)
-    @searchStatsView.listenTo(
-      @controller, 'search:stats', @searchStatsView.get_items)
-    @searchStatsView.listenTo(
-      @controller, 'search:sub-content-cleanup', @searchStatsView.unrender)
-
-    @searchWalmartItemsView =
-      new Searchad.Views.PoorPerforming.WalmartItems.IndexView(
-        el: options.el_sub_content)
-    @searchWalmartItemsView.listenTo(
-      @controller, 'search:walmart-items', @searchWalmartItemsView.get_items)
-    @searchWalmartItemsView.listenTo(
-      @controller, 'search:sub-content-cleanup', @searchWalmartItemsView.unrender)
-    
-    @searchAmazonItemsView =
-      new Searchad.Views.PoorPerforming.AmazonItems.IndexView(
-        el: options.el_sub_content)
-    @searchAmazonItemsView.listenTo(
-      @controller, 'search:amazon-items', @searchAmazonItemsView.get_items)
-    @searchStatsView.listenTo(
-      @controller, 'search:sub-content-cleanup', @searchStatsView.unrender)
-
-    @queryStatsCollection = new Searchad.Collections.QueryStatsDailyCollection()
-    @queryStatsCollection.bind('reset', @render_search_results)
+    @controller.bind('search:sub-content:show-spin', @show_spin)
+    @controller.bind('search:sub-content:hide-spin', @hide_spin)
+    @active = false
   
   data:
     query: null
@@ -46,11 +16,10 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
   events:
     'click li.search-stats-tab': 'stats'
     'click li.search-amazon-items-tab': 'amazon_items'
-    'submit': 'do_search'
-    'click button.search-btn': 'do_search'
+    'click li.search-walmart-items-tab': 'walmart_items'
+    'click li.rev-rel-tab': 'rev_rel'
 
   template: JST['backbone/templates/poor_performing/search_sub_tabs']
-  search_form_template: JST['backbone/templates/search/form']
 
   update_url: (path) =>
     if @data.query
@@ -59,184 +28,77 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
       @router.navigate(path + newPath)
 
   toggleTab: (e) =>
-    @$search_sub_tab.find('li.active').removeClass('active')
+    @$el.find('li.active').removeClass('active')
     $(e.target).parents('li').addClass('active')
 
-  stats: =>
-    @controller.trigger('search:sub-content-cleanup')
+  stats: (e) =>
+    e.preventDefault()
+    @controller.trigger('sub-content-cleanup')
     @select_stats_tab()
     @controller.trigger('search:stats', query: @query)
   
-  walmart_items: =>
-    @controller.trigger('search:sub-content-cleanup')
+  walmart_items: (e) =>
+    e.preventDefault()
+    @controller.trigger('sub-content-cleanup')
     @select_walmart_tab()
     @controller.trigger('search:walmart-items', query: @query)
   
-  amazon_items: =>
-    @controller.trigger('search:sub-content-cleanup')
+  amazon_items: (e) =>
+    e.preventDefault()
+    @controller.trigger('sub-content-cleanup')
     @select_amazon_tab()
     @controller.trigger('search:amazon-items', query: @query)
 
-  rev_rel: =>
-    @controller.trigger('search:sub-content-cleanup')
-    @select_rev_rel_tab()
-    @controller.trigger('search-rel:query-items:index', data)
-  
-  bind_sub_tab_click: =>
-    that = this
-    @$search_sub_tab.on(
-      'click', 'a', (e) ->
-        e.preventDefault()
-        if $(e.target).parents('li.search-walmart-items-tab').length > 0
-          that.walmart_items()
-        else if $(e.target).parents('li.search-amazon-items-tab').length > 0
-          that.amazon_items()
-        else if $(e.target).parents('li.search-stats-tab').length > 0
-          that.stats()
-        else if $(e.target).parents('li.rev-rel-tab').length > 0
-          that.rev_rel()
-    )
-
-  select_stats_tab: (data) =>
-    @data.query = data.query if data and data.query
-    unless @$search_sub_tab.find('ul.nav').length > 0
-      @$search_sub_tab.append(@template())
-    e = {}
-    e.target = @$search_sub_tab.find('li.search-stats-tab a').get(0)
-    @toggleTab(e)
-
-  select_walmart_tab: (data) =>
-    @data.query = data.query if data and data.query
-    unless @$search_sub_tab.find('ul.nav').length > 0
-      @$search_sub_tab.append(@template())
-    e = {}
-    e.target = @$search_sub_tab.find('li.search-walmart-items-tab a').get(0)
-    @toggleTab(e)
-  
-  select_amazon_tab: (data) =>
-    @data.query = data.query if data and data.query
-    unless @$search_sub_tab.find('ul.nav').length > 0
-      @$search_sub_tab.append(@template())
-    e = {}
-    e.target = @$search_sub_tab.find('li.search-amazon-items-tab a').get(0)
-    @toggleTab(e)
-    
-  select_rev_rel_tab: (data) =>
-    @data.query = data.query if data and data.query
-    unless @$search_sub_tab.find('ul.nav').length > 0
-      @$search_sub_tab.append(@template())
-    e = {}
-    e.target = @$search_sub_tab.find('li.rev-rel-tab a').get(0)
-    @toggleTab(e)
-
-  do_search: (e) =>
+  rev_rel: (e) =>
     e.preventDefault()
-    @search_results_cleanup()
-    @controller.trigger('search:sub-content-cleanup')
-    @$search_sub_tab.children().remove()
-    @search_term = @$el.find('input.search-query').val()
-    @router.update_path('search/query/' + encodeURIComponent(@search_term))
+    @controller.trigger('sub-content-cleanup')
+    @select_rev_rel_tab()
+    @controller.trigger('search:rel-rev',
+      query: @query
+      id: @query_id
+      query_items: @query_items
+      top_rev_items: @top_rev_items
+    )
+  
+  select_stats_tab: () =>
+    e = {}
+    e.target = @$el.find('li.search-stats-tab a').get(0)
+    @toggleTab(e)
+
+  select_walmart_tab: () =>
+    e = {}
+    e.target = @$el.find('li.search-walmart-items-tab a').get(0)
+    @toggleTab(e)
+  
+  select_amazon_tab: () =>
+    e = {}
+    e.target = @$el.find('li.search-amazon-items-tab a').get(0)
+    @toggleTab(e)
     
-    # render the overall results, sub tabs, amazon comp, walmart items
-    @queryStatsCollection.get_items(query: @search_term)
-    @trigger = true
+  select_rev_rel_tab: () =>
+    e = {}
+    e.target = @$el.find('li.rev-rel-tab a').get(0)
+    @toggleTab(e)
 
   unrender: =>
     @active = false
     @$el.children().not('.ajax-loader').remove()
-    @$search_results.children().not('.ajax-loader').remove()
-    @$search_sub_tab.children().remove()
-    @$el.find('.ajax-loader').hide()
+    @hide_spin()
 
-  render: =>
-    @active = true
-    @$el.append(@search_form_template())
-    @delegateEvents()
-
-  cleanup: =>
-    @$el.children().remove()
-
-  search_results_cleanup: =>
-    @$search_results.children().remove()
-
-  query_cell: ->
-    that = this
-    class QueryCell extends Backgrid.Cell
-      controller: SearchQualityApp.Controller
-      events:
-        'click': 'handleQueryClick'
-      handleQueryClick: (e) =>
-        e.preventDefault()
-        $(e.target).parents('table').find('tr.selected').removeClass('selected')
-        $(e.target).parents('tr').addClass('selected')
-        that.controller.trigger('search:sub-content-cleanup')
-        that.select_stats_tab()
-        that.query = $(e.target).text()
-        that.controller.trigger('search:stats', query: that.query)
-      render: ->
-        value = @model.get(@column.get('name'))
-        formatted_value = '<a class="query" href="#">' + value + '</a>'
-        @$el.html(formatted_value)
-        @delegateEvents()
-        return this
-
-    return QueryCell
-
-  render_search_results: =>
-    @search_results_cleanup()
-    if @queryStatsCollection.length == 0
-      @$search_results.append(
-        '<p class="text-error">No data available for "' +
-        @search_term + '"')
+  render: (data) =>
+    @query = data.query if data.query
+    @query_id = data.id if data.id
+    @query_items = data.query_items if data.query_items
+    @top_rev_itemss = data.top_rev_items if data.top_rev_items
+    if @active
+      @select_stats_tab()
       return
+    @$el.prepend(@template())
+    @delegateEvents()
+    @active = true
 
-    @select_stats_tab()
-    paginator = new Backgrid.Extension.Paginator(
-      collection: @queryStatsCollection
-    )
-    grid = new Backgrid.Grid(
-      columns: [{
-        name: 'query'
-        label: 'Query'
-        editable: false
-        cell: @query_cell()},
-        {name: 'query_count'
-        label: 'Query Count'
-        editable: false
-        cell: 'number'},
-        {name: 'query_pvr'
-        label: 'Query PVR'
-        editable: false
-        cell: 'number'},
-        {name: 'query_atc'
-        label: 'Query ATC'
-        editable: false
-        cell: 'number'},
-        {name: 'query_con'
-        label: 'Query Conversion Rate'
-        editable: false
-        cell: 'number'},
-        {name: 'query_revenue'
-        label: 'Query Revenue'
-        editable: false
-        cell: 'number'}]
-      collection: @queryStatsCollection)
-    
-    @$search_results.append($('<div>').css('text-align', 'left').css(
-      'margin-bottom': '1em').append(
-      $('<i>').addClass('icon-search').css(
-        'font-size', 'large').append(
-        '&nbsp; Results for : ' + @search_term)))
-    @$search_results.append( grid.render().$el )
-    @$search_results.append( paginator.render().$el )
-    if @trigger
-      @trigger = false
-      @$search_results.find('td a.query').first().trigger('click')
-    
-  render_sub_tabs: =>
-
-  render_query_stats: =>
-
-  render_amazon_comp: =>
-
-  render_walmart_items: =>
+  show_spin: =>
+    @$el.find('.ajax-loader').css('display', 'block')
+  
+  hide_spin: =>
+    @$el.find('.ajax-loader').hide()

@@ -2,9 +2,7 @@ Searchad.Views.CompAnalysis ||= {}
 
 class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
   initialize: (options) =>
-    
     @trigger = false
-    @fuzzy_search = false
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @collection = new Searchad.Collections.CompAnalysisCollection()
@@ -17,82 +15,27 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
     
-    subtabsView =
-      new Searchad.Views.CompAnalysis.SubTabs.IndexView(
-        el: '#ca-subtabs'
-      )
-    
-    walmartItemsView =
-      new Searchad.Views.CompAnalysis.WalmartItems.IndexView(
-        el: '#ca-subtabs-content'
-        view: 'weekly')
-    walmartItemsView.listenTo(
-      @controller, 'ca:walmart-items:index', walmartItemsView.get_items)
-    walmartItemsView.listenTo(
-      @controller, 'ca:content-cleanup', walmartItemsView.unrender)
-   
-    amazonItemsView =
-      new Searchad.Views.PoorPerforming.AmazonItems.IndexView(
-        el: '#ca-subtabs-content'
-        top_32_tab: '#ca-amazon-top-subtabs'
-        view: 'weekly')
-    amazonItemsView.listenTo(
-      @controller, 'ca:amazon-items:index', amazonItemsView.get_items)
-    amazonItemsView.listenTo(
-      @controller, 'ca:content-cleanup', amazonItemsView.unrender)
-    
-    amazonItemsView.listenTo(
-      @controller, 'ca:amazon-items:all-items',
-      amazonItemsView.render_all_items)
-    amazonItemsView.listenTo(
-      @controller, 'ca:amazon-items:in-top-32',
-      amazonItemsView.render_in_top_32)
-    amazonItemsView.listenTo(
-      @controller, 'ca:amazon-items:not-in-top-32',
-      amazonItemsView.render_not_in_top_32)
-
-    amazonItemsView.collection.on('reset', ->
-      if @collection.at(0).get('all_items').length > 0
-        @controller.trigger('ca:amazon-items:overlap',
-          query: @query
-          collection: @collection)
-    , amazonItemsView)
-    @controller.bind('ca:amazon-items:in-top-32', @render_in_top_32)
-    @controller.bind('ca:amazon-items:not-in-top-32', @render_not_in_top_32)
-    
-    amazonStatsView =
-      new Searchad.Views.CompAnalysis.AmazonItemsChart.IndexView(
-        el: '#ca-amazon-overlap')
-    amazonStatsView.listenTo(
-      @controller, 'ca:amazon-items:overlap', amazonStatsView.render)
-    amazonStatsView.listenTo(
-      @controller, 'ca:content-cleanup', amazonStatsView.unrender)
-
   active: false
   events:
-    'click a.query': (e) ->
-      query = $(e.target).text()
-      @controller.trigger('ca:amazon-items:index', query: query)
-      new_path = 'comp_analysis/amazon_items/query/' +
-        encodeURIComponent(query)
-      @router.update_path(new_path)
     'click .filter': 'filter'
     'click .reset': 'reset'
     'submit': 'filter'
 
-  gridColumns:  ->
+  gridColumns: =>
+    that = this
     class QueryCell extends Backgrid.Cell
-      controller: SearchQualityApp.Controller
-
       events:
         'click': 'handleQueryClick'
-
+      
       handleQueryClick: (e) =>
         e.preventDefault()
+        query = $(e.target).text()
         $(e.target).parents('table').find('tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
-        id = @model.get('id')
-        @controller.trigger('ca:content-cleanup')
+        that.controller.trigger('sub-content-cleanup')
+        that.controller.trigger('search:stats', query: query)
+        new_path = 'comp_analysis/query/' + encodeURIComponent(query)
+        that.router.update_path(new_path)
 
       render: ->
         value = @model.get(@column.get('name'))
@@ -122,7 +65,7 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
     columns
 
   initFilter: =>
-     _.template('<div class="input-prepend input-append filter-box pull-right"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type a query word for."/></form><button class="btn btn-primary reset">Reset</button></div>')
+    _.template('<div class="input-prepend input-append filter-box pull-right"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type to filter results"/></form><button class="btn btn-primary reset">Reset</button></div>')
   
   initTable: () =>
     @grid = new Backgrid.Grid(
@@ -145,8 +88,8 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
   get_items: (data) =>
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.fetch(data)
-    if data and data.query and !data.saveQuery
-      @controller.trigger('ca:amazon-items:index', data)
+    if data and data.query # and !data.saveQuery
+      @controller.trigger('search:stats', data)
     else
       @trigger = true
 
