@@ -69,7 +69,10 @@ class BaseController < ApplicationController
       @most_recent_date 
     @year = params[:year].nil? ? PipelineLogWeekly.maximum(:year) :
       params[:year].to_i
-    @week = params[:week] || get_available_weeks(@year).first[:week]
+    @available_weeks = get_available_weeks
+    @week = params[:week] || @available_weeks.first[:week]
+    max_min_dates = SearchQualityDaily.get_max_min_dates.first
+    @max_date, @min_date = max_min_dates.max_date, max_min_dates.min_date
     
     @page = params[:page].to_i || 1
     @limit = params[:per_page].to_i || 10
@@ -105,8 +108,8 @@ class BaseController < ApplicationController
     Date.ordinal(year, ordinal)
   end
   
-  def get_available_weeks(year)
-    Week.available_weeks(year).map do |curr_week|
+  def get_available_weeks
+    Week.available_weeks(@year).map do |curr_week|
       start_date = convert_to_dod_week(curr_week[:week], curr_week[:year])
       curr_week[:start_date] = start_date
       curr_week[:end_date] = start_date + 6.days

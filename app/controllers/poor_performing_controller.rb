@@ -20,7 +20,6 @@ class PoorPerformingController < BaseController
   def get_walmart_items
     query = params['query']
     view = params['view']
-    week = params[:week] || QueryPerformance.available_weeks.first[:week]
     if view == 'weekly'
       @walmart_items = ItemQueryCatMetricsWeekly.get_walmart_items(
         query, @cat_id, week, @year)
@@ -47,11 +46,10 @@ class PoorPerformingController < BaseController
 
   def get_amazon_items
     query = params['query']
-    week = params[:week] || get_available_weeks.first[:week]
     respond_to do |format|
       format.json do 
         render :json => URLMapping.get_amazon_items(
-          query, ((week.to_i-3)..week.to_i).to_a, @year)
+          query, ((@week.to_i-3)..@week.to_i).to_a, @year)
       end
     end
   end

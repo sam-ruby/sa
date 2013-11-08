@@ -12,31 +12,30 @@ class Searchad.Views.WeekPicker.IndexView extends Backbone.View
 
     @listenTo(@controller, "set_latest_week_day", @setLatestWeekDay)
     @listenTo(@controller, 'view-change', @setView)
-    @available_weeks = new Searchad.Collections.WeeksCollection()
-    @available_weeks.fetch(
-      success: (collection) =>
-        end_date = collection.at(0).get('end_date')
-        @end_date = Date.parse(end_date)
-        start_date = collection.at(collection.length - 1).get('start_date')
-        @start_date = Date.parse(start_date)
-       
-        filter_params = @controller.get_filter_params()
-        week = collection.where(week: parseInt(filter_params.week))
-        if week.length > 0
-          @week_date = Date.parse(week[0].get('end_date'))
-        
-        if @weekly
-          @$el.datepicker('setStartDate', @start_date)
-          @$el.datepicker('setEndDate', @end_date)
-          @setDate(@week_date)
-          @showWeekInfo()
-        else
-          @daily_date = Date.parse(filter_params.date)
-          @setDate(@daily_date)
-      
-        @week = filter_params.week if filter_params.week
-        @year = filter_params.year if filter_params.year
-    )
+    @available_weeks = new Searchad.Collections.WeeksCollection(Available_weeks)
+    
+    @end_date = Date.parse(@available_weeks.at(0).get('end_date'))
+    @start_date = Date.parse(
+      @available_weeks.at(@available_weeks.length - 1).get('start_date'))
+   
+    filter_params = @controller.get_filter_params()
+    week = @available_weeks.where(week: parseInt(filter_params.week))
+    if week.length > 0
+      @week_date = Date.parse(week[0].get('end_date'))
+    
+    if @weekly
+      @$el.datepicker('setStartDate', @start_date)
+      @$el.datepicker('setEndDate', @end_date)
+      @setDate(@week_date)
+      @showWeekInfo()
+    else
+      @daily_date = Date.parse(filter_params.date)
+      @$el.datepicker('setStartDate', Min_date)
+      @$el.datepicker('setEndDate', Max_date)
+      @setDate(@daily_date)
+  
+    @week = filter_params.week if filter_params.week
+    @year = filter_params.year if filter_params.year
 
   setView: (data) ->
     f_params = @controller.get_filter_params()
@@ -49,11 +48,10 @@ class Searchad.Views.WeekPicker.IndexView extends Backbone.View
         @week_date = Date.parse(week[0].get('end_date'))
         @setDate(@week_date)
       @showWeekInfo()
-    
     else
       @weekly = false
-      @$el.datepicker('setStartDate', null)
-      @$el.datepicker('setEndDate', null)
+      @$el.datepicker('setStartDate', Min_date)
+      @$el.datepicker('setEndDate', Max_date)
       @daily_date = Date.parse(f_params.date)
       @setDate(@daily_date)
       @showDateInfo()
