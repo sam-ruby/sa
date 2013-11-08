@@ -47,11 +47,17 @@ class Searchad.Views.Search.RelRev.IndexView extends Backbone.View
       collection: @collection)
   
   get_items: (data) =>
+    @query = data.query if data.query
     @controller.trigger('search:sub-content:show-spin')
     @collection.get_items(data)
 
+  render_error: (query) ->
+    @controller.trigger('search:sub-content:hide-spin')
+    @$el.append( $('<span>').addClass('label label-important').append(
+      "No data available for #{query}") )
+  
   render: =>
-    console.log 'Yes I am the render'
+    return @render_error(@query) if @collection.size() == 0
     @active = true
     @controller.trigger('search:sub-content:hide-spin')
     @$el.children().remove()

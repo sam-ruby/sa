@@ -17,51 +17,42 @@ class SearchRelController < BaseController
       end
     end
   end
-  
+
   def get_query_items
-    id = params[:id]
-    query_str = params[:query]
-    query_items = params[:query_items]
-    top_rev_items = params[:top_rev_items]
-    query = ''
-  
-   if query_items.nil?  or top_rev_items.nil? or 
-     query_items.empty? or top_rev_items.empty?
-      if query_str
-        results = SearchQualityDaily.get_search_relevance_data_by_word(
-          query_str, @date)
-      elsif id
-        results = SearchQualityDaily.get_search_relevance_data_by_id(id)
-      end
-
-      unless results.empty?
-        query_items = results.first['query_items']
-        top_rev_items = results.first['top_rev_items']
-        query = results.first['query_str']
-      end
-    end
-    
-    result = []
-    if !query_items.nil? and !top_rev_items.nil?
-      query_items_list = query_items.split(',')
-      top_rev_items_list = top_rev_items.split(',')
-
-      item_details = {}
-      AllItemAttrs.get_item_details(
-        (query_items_list + top_rev_items_list).uniq).each do |item|
-          item_details[item.item_id] = item
-        end
-      query_items_list.zip(top_rev_items_list) do |items|
-        result.push({:walmart_item => item_details[items[0]],
-                     :rev_based_item => item_details[items[1]]})
-      end
-    end
-
     respond_to do |format|
       format.json do 
-        render :json => result
+        render :json => get_items
       end
     end
+  end
+  
+  def get_items
+    query_str = params[:query]
+    result = []
+    return result unless query_str
+
+    results = SearchQualityDaily.get_search_relevance_data_by_word(
+      query_str, @date)
+    return result if results.empty?
+    
+    query_items = results.first['32_query_items']
+    top_rev_items = results.first['top_rev_items']
+    
+    return result if query_items.nil? or top_rev_items.nil?
+    query_items_list = query_items.split(',')[0..15]
+    top_rev_items_list = top_rev_items.split(',')
+    
+    item_details = {}
+    AllItemAttrs.get_item_details(
+      (query_items_list + top_rev_items_list).uniq).each do |item|
+        item_details[item.item_id] = item
+      end
+    
+    query_items_list.zip(top_rev_items_list) do |items|
+      result.push({:walmart_item => item_details[items[0]],
+                   :rev_based_item => item_details[items[1]]})
+    end
+    result
   end
 
   def get_comp_analysis

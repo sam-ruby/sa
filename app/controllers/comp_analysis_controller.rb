@@ -19,7 +19,13 @@ class CompAnalysisController < BaseController
   
   def get_walmart_items
     query = params['query']
-    walmart_items = WalmartTop32Items.get_items(query, @year, @week)
+    view = params[:view]
+    if view == 'daily'
+      walmart_items = SearchQualityDaily.get_walmart_items(query, @date)
+    else
+      walmart_items = WalmartTop32Items.get_items(query, @year, @week)
+    end
+    
     respond_to do |format|
       format.json do 
         render :json => walmart_items

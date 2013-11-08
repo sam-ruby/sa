@@ -116,6 +116,7 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
     @active = false
     @$el.children().not('ul').remove()
     @$el.hide()
+    @controller.trigger('search:sub-content:hide-spin')
 
   get_items: (data) =>
     @query = data.query if data
@@ -138,6 +139,11 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
     @$el.append( @paginator.render().$el)
     return this
 
+  render_error: (query) ->
+    @controller.trigger('search:sub-content:hide-spin')
+    @$el.append( $('<span>').addClass('label label-important').append(
+      "No data available for #{query}") )
+  
   render_all_items: =>
     @controller.trigger('search:sub-content:hide-spin')
     @$el.find('li.active').removeClass('active')
@@ -146,8 +152,7 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
     if data.length > 0
       @processData(_.clone(data))
     else
-      @$el.prepend(
-        "<div><h1>No Walmart items available for this search term.</h1></div>")
+      @render_error(@query)
 
   render_in_top_32: =>
     @$el.find('li.active').removeClass('active')
@@ -156,7 +161,7 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
     if data.length > 0
       @processData(_.clone(data))
     else
-      @$el.prepend("<div><h1>No Walmart items found.</h1></div>")
+      @render_error(@query)
 
   render_not_in_top_32: =>
     @$el.find('li.active').removeClass('active')

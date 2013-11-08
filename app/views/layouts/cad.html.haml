@@ -1,7 +1,8 @@
 !!!
 %html
   %head
-    %title= @title
+    %title
+      Consumer Analytics Dashboard
     %link{:rel=>:icon, :type=>'image/png',
       :href=>'assets/walmart-transparent.png'}
     = stylesheet_link_tag 'application'
@@ -124,7 +125,7 @@
         %ul.nav.nav-tabs
       .row
         #data-container
-          = yield :test_content
+          = yield :main_content
     
     = javascript_include_tag :application
     = yield :javascript
