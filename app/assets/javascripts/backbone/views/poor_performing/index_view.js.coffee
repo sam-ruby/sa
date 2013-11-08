@@ -34,7 +34,9 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
         $(e.target).parents('table').find('tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
         that.controller.trigger('sub-content-cleanup')
-        that.controller.trigger('search:stats', query: query)
+        that.controller.trigger('search:stats',
+          query: query
+          view: 'daily')
         new_path = 'poor_performing/query/' + encodeURIComponent(query)
         that.router.update_path(new_path)
 

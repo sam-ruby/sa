@@ -14,35 +14,25 @@ class Searchad.Models.QueryItem extends Backbone.Model
       curr_item_price: null
 
 class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollection
-  initialize: ->
+  initialize: (options) ->
     @controller = SearchQualityApp.Controller
+    super(options)
 
   model: Searchad.Models.QueryItem
   url: '/search_rel/get_query_items.json'
   filters:
     date: null
-  data:
-    id: null
-    query_items: null
-    top_rev_items: null
 
   state:
     pageSize: 5
   mode: 'client'
 
   get_items: (data) =>
-    if data
-      for k, v of data
-        @data[k] = v
-    else
-      data = @data
-    @filters.date = data.date if data.date
-    for k, v of @filters
+    data = {} unless data
+    for k, v of @controller.get_filter_params()
       continue unless v
       data[k] = v
     @fetch(
       reset: true
-      data: @data
-      type: 'post'
-    )
+      data: data)
 

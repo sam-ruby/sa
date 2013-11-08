@@ -21,7 +21,7 @@ class ItemQueryCatMetricsDaily < BaseModel
   end
   
   def self.get_walmart_items_by_item_ids(
-    query, cat_id, item_ids, date=nil, year=nil, week=nil)
+    query, item_ids, date=nil, year=nil, week=nil)
       item_selects = %q{item.item_id, item.item_revenue,
         item.shown_count, item.item_con, item.item_atc, item.item_pvr,
         total.revenue as site_revenue, item_attrs.title,

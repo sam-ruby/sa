@@ -41,7 +41,9 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
     e.preventDefault()
     @controller.trigger('sub-content-cleanup')
     @select_walmart_tab()
-    @controller.trigger('search:walmart-items', query: @query)
+    @controller.trigger('search:walmart-items',
+      query: @query
+      view: @view)
   
   amazon_items: (e) =>
     e.preventDefault()
@@ -55,10 +57,7 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
     @select_rev_rel_tab()
     @controller.trigger('search:rel-rev',
       query: @query
-      id: @query_id
-      query_items: @query_items
-      top_rev_items: @top_rev_items
-    )
+      view: @view)
   
   select_stats_tab: () =>
     e = {}
@@ -87,9 +86,8 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
 
   render: (data) =>
     @query = data.query if data.query
-    @query_id = data.id if data.id
-    @query_items = data.query_items if data.query_items
-    @top_rev_itemss = data.top_rev_items if data.top_rev_items
+    @view = data.view if data.view
+
     if @active
       @select_stats_tab()
       return

@@ -20,15 +20,15 @@ class SearchQualityDaily < BaseModel
   
   def self.get_search_relevance_data_by_word(query_str, query_date)
     select(%q{id, query_str, query_date, query_count, query_revenue,
-    search_rev_rank_correlation, query_items, rev_ranks, top_rev_items}).where(
-      'query_date = ? and query_str = ?', query_date, query_str)
+    search_rev_rank_correlation, 32_query_items, rev_ranks, top_rev_items}
+    ).where('query_date = ? and query_str = ?', query_date, query_str)
   end
   
-  def self.get_walmart_items(query, cat_id, query_date)
+  def self.get_walmart_items(query, query_date)
     results = get_search_relevance_data_by_word(query, query_date)
     return results if results.empty?
     
-    query_items = results.first['query_items']
-    ItemQueryCatMetricsDaily(query, cat_id, query_items.split(','), query_date)
+    query_items = results.first['32_query_items']
+    AllItemAttrs.get_items(query, query_items.split(','), query_date)
   end
 end

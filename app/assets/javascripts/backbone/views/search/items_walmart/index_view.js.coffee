@@ -74,17 +74,22 @@ class Searchad.Views.Search.WalmartItems.IndexView extends Backbone.View
     
   unrender: =>
     @active = false
+    @$el.children().not('.ajax-loader').remove()
     @controller.trigger('search:sub-content:hide-spin')
   
   get_items: (data) =>
-    data = {} unless data
-    data.view = 'weekly' if @weekly
+    @query = data.query if data.query
     @controller.trigger('search:sub-content:show-spin')
     @collection.get_items(data)
 
+  render_error: (query) ->
+    @controller.trigger('search:sub-content:hide-spin')
+    @$el.append( $('<span>').addClass('label label-important').append(
+      "No data available for #{query}") )
+  
   render: =>
+    return @render_error(@query) if @collection.size() == 0
     @active = true
-    @$el.children().not('.ajax-loader').remove()
     @controller.trigger('search:sub-content:hide-spin')
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)

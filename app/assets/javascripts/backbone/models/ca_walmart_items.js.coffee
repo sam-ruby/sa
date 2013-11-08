@@ -17,20 +17,12 @@ class Searchad.Collections.CAWalmartItemsCollection extends Backbone.PageableCol
   state:
     pageSize: 6
   mode: 'client'
-  data:
-    query: null
 
   get_items: (data) =>
     data = {} unless data
-    if data.query
-      @data.query = data.query
-    else
-      data.query = @data.query
-
     for k, v of @controller.get_filter_params()
       continue unless v
       data[k] = v
-
     @fetch(
       reset: true
       data: data

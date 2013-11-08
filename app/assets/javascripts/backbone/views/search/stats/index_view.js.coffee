@@ -67,8 +67,8 @@ class Searchad.Views.Search.Stats.IndexView extends Backbone.View
   unrender: ->
     @active = false
     @$el.highcharts().destroy()
-    @$el.children().not('.ajax-loader').remove()
-
+    @controller.trigger('search:sub-content:hide-spin')
+  
   get_items: (data) ->
     @unrender()
     @controller.trigger('search:sub-content:show-spin')
@@ -78,8 +78,11 @@ class Searchad.Views.Search.Stats.IndexView extends Backbone.View
       data:
         query: data.query
       success: (json, status) =>
-        series = @process_data(json)
-        @render(data.query, series)
+        if json.length > 0
+          series = @process_data(json)
+          @render(data.query, series)
+        else
+          @render_error(data.query)
     )
 
   process_data: (data) ->
@@ -105,12 +108,16 @@ class Searchad.Views.Search.Stats.IndexView extends Backbone.View
     series[1].fillOpacity = .3
     series
 
+  render_error: (query) ->
+    @controller.trigger('search:sub-content:hide-spin')
+    @$el.append( $('<span>').class('label label-important').append(
+      "No data available for #{query}") )
+
   render: (query, data) ->
     @active = true
-    @$el.children().not('.ajax-loader').remove()
     @controller.trigger('search:sub-content:hide-spin')
     @initChart(query, data)
-    return this
+    this
   
   unrender: =>
     @active = false

@@ -28,14 +28,12 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
 
       handleQueryClick: (e) ->
         e.preventDefault()
-        $(e.target).parents('table').find('tr.selected').removeClass('selected')
+        $(e.target).parents('table').find('tr.selected').removeClass(
+          'selected')
         $(e.target).parents('tr').addClass('selected')
-        id = @model.get('id')
         query = @model.get('query_str')
         data =
           query: query
-          query_items: @model.get('query_items')
-          top_rev_items: @model.get('top_rev_items')
         that.controller.trigger('sub-content-cleanup')
         that.controller.trigger('search:stats', data)
         new_path = 'search_rel/query/' + query

@@ -27,4 +27,4 @@
 //= require bootstrap-transition
 //= require bootstrap-dropdown
 //= require backbone/searchad
-//= require test_init
+//= require cad_init
