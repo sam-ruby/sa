@@ -1,8 +1,13 @@
 :javascript
-  var Selected_Date = new Date(#{@date.year}, #{@date.month - 1}, #{@date.day})
-  var Selected_Week = #{QueryPerformance.available_weeks.first[:week]};
+  var Selected_Date = new Date(#{@date.year}, #{@date.month - 1}, #{@date.day});
+  var Selected_Week = #{@week};
   var Selected_Year = #{@year};
-  
+  var Available_weeks = #{@available_weeks.to_json} 
+  var Min_date = new Date(
+    #{@min_date.year}, #{@min_date.month - 1}, #{@min_date.day});
+  var Max_date = new Date(
+    #{@max_date.year}, #{@max_date.month - 1}, #{@max_date.day});
+
 #dashboard.row-fluid
   .span6
     #dashboard-search-quality-container
