@@ -32,10 +32,10 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
           'selected')
         $(e.target).parents('tr').addClass('selected')
         query = @model.get('query_str')
-        data =
+        that.controller.trigger('search:sub-content',
           query: query
-        that.controller.trigger('sub-content-cleanup')
-        that.controller.trigger('search:stats', data)
+          view: 'daily'
+          tab: 'rel-rev-analysis')
         new_path = 'search_rel/query/' + query
         that.router.update_path(new_path)
         false

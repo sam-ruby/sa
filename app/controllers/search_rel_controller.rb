@@ -28,11 +28,18 @@ class SearchRelController < BaseController
   
   def get_items
     query_str = params[:query]
+    view = params[:view]
     result = []
     return result unless query_str
+    
+    if view == 'weekly'
+      date = get_date_from_week(@week)
+    else
+      date = @date
+    end
 
     results = SearchQualityDaily.get_search_relevance_data_by_word(
-      query_str, @date)
+      query_str, date)
     return result if results.empty?
     
     query_items = results.first['32_query_items']
@@ -57,8 +64,14 @@ class SearchRelController < BaseController
 
   def get_comp_analysis
     query = params[:query]
+    if params[:fuzzy]
+      fuzzy = !params[:fuzzy].match(/true/i).nil?
+    else
+      fuzzy = false
+    end
+
     @search_words = QueryPerformance.get_comp_analysis(
-      query, @week, @year, @page, @sort_by, @order, @limit)
+      query, @week, @year, fuzzy, @page, @sort_by, @order, @limit)
     if @search_words.nil? or @search_words.empty?
       render :json => [{:total_entries => 0}, @search_words]
     else

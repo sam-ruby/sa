@@ -1,5 +1,5 @@
 class URLMapping < BaseModel
-  self.table_name 'url_mapping'
+  self.table_name = 'url_mapping'
   attr_accessor :walmart_price
 
   def self.get_amazon_items(query_str, weeks, year=nil)

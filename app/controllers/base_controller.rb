@@ -97,15 +97,33 @@ class BaseController < ApplicationController
     end
     categories
   end
-  
-  def get_date_from_week(year, week)
-    return Date.new(year, 1, 1) if week == 0
+
+  def get_week_from_date(date)
+    return @available_weeks.first[:week] if date >= 
+      @available_weeks.first[:end_date]
     
-    new_year = Date.ordinal(year, 1)
-    wday = new_year.wday
-    first_sat = 6 - wday + 1
-    ordinal = (first_sat > 1 ? week-1 : week) * 7 + first_sat
-    Date.ordinal(year, ordinal)
+    @available_weeks.each do |week| 
+      return week[:week] if date >= week[:start_date] and 
+        date <= week[:end_date]
+    end
+    -1
+  end
+  
+  def get_date_from_week(week)
+    min_date = @min_date.to_datetime.to_i
+    max_date = @max_date.to_datetime.to_i
+    selected_week = @available_weeks.select {
+      |wk| wk[:week].to_i == week.to_i}.first
+    return selected_week[:start_date] if selected_week and
+      (min_date..max_date).include?(
+        selected_week[:start_date].to_datetime.to_i)
+
+    @available_weeks.each do |wk|
+      next unless (min_date..max_date).include?(
+        wk[:start_date].to_datetime.to_i)
+      return wk[:start_date] 
+    end
+    -1
   end
   
   def get_available_weeks

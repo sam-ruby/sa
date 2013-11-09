@@ -32,8 +32,10 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
         query = $(e.target).text()
         $(e.target).parents('table').find('tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
-        that.controller.trigger('sub-content-cleanup')
-        that.controller.trigger('search:stats', query: query)
+        that.controller.trigger('search:sub-content',
+          view: 'weekly'
+          tab: 'amazon'
+          query: query)
         new_path = 'comp_analysis/query/' + encodeURIComponent(query)
         that.router.update_path(new_path)
 
@@ -79,19 +81,23 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
   filter: (e) =>
     e.preventDefault()
     query = @$el.find(".filter-box input[type=text]").val()
-    @get_items(query: query, saveQuery: true) if query
+    @$el.find('.ajax-loader').css('display', 'block')
+    @collection.fetch(query: query, fuzzy: true) if query
+    @trigger = true
 
   reset: =>
     @$el.find(".filter-box input[type=text]").val('')
-    @get_items(saveQuery: false)
+    @$el.find('.ajax-loader').css('display', 'block')
+    @collection.fetch()
+    @trigger = true
 
   get_items: (data) =>
     @$el.find('.ajax-loader').css('display', 'block')
-    @collection.fetch(data)
-    if data and data.query # and !data.saveQuery
-      @controller.trigger('search:stats', data)
+    if data and data.query
+      @collection.fetch(fuzzy: false, query: data.query)
     else
-      @trigger = true
+      @collection.fetch()
+    @trigger = true
 
   unrender: =>
     @active = false
@@ -108,7 +114,6 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
     @$el.append( @paginator.render().$el)
     if @trigger
       @trigger = false
-      @fuzzy_search = false
       @$el.find('td a.query').first().trigger('click')
     @active = true
     this

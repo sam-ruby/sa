@@ -49,7 +49,9 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
     e.preventDefault()
     @controller.trigger('sub-content-cleanup')
     @select_amazon_tab()
-    @controller.trigger('search:amazon-items', query: @query)
+    @controller.trigger('search:amazon-items',
+      query: @query
+      view: @view)
 
   rev_rel: (e) =>
     e.preventDefault()
@@ -87,12 +89,15 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
   render: (data) =>
     @query = data.query if data.query
     @view = data.view if data.view
-
-    if @active
-      @select_stats_tab()
-      return
-    @$el.prepend(@template())
+    @$el.prepend(@template()) unless @active
     @delegateEvents()
+    
+    if data.tab == 'rel-rev-analysis'
+      @$el.find('li.rev-rel-tab').first().trigger('click')
+    else if data.tab == 'amazon'
+      @$el.find('li.search-amazon-items-tab').first().trigger('click')
+    else
+      @$el.find('li.search-stats-tab').first().trigger('click')
     @active = true
 
   show_spin: =>
