@@ -46,10 +46,16 @@ class PoorPerformingController < BaseController
 
   def get_amazon_items
     query = params['query']
+    view = params['view']
+    if view == 'daily'
+      week = get_week_from_date(@date)
+    else
+      week = @week
+    end
     respond_to do |format|
       format.json do 
         render :json => URLMapping.get_amazon_items(
-          query, ((@week.to_i-3)..@week.to_i).to_a, @year)
+          query, ((week.to_i-3)..week.to_i).to_a, @year)
       end
     end
   end

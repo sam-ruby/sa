@@ -146,7 +146,7 @@ $ ->
     subtabsView =
       new Searchad.Views.Search.SubTabs.IndexView(el: '#search-sub-tabs')
     subtabsView.listenTo(
-      controller, 'search:stats', subtabsView.render)
+      controller, 'search:sub-content', subtabsView.render)
    
     searchStatsView = new Searchad.Views.Search.Stats.IndexView(
       el: '#search-sub-content')

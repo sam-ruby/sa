@@ -21,21 +21,10 @@ class Searchad.Collections.CompAnalysisCollection extends Backbone.PageableColle
       @controller.get_filter_params().week
     year: ->
       @controller.get_filter_params().year
-  data:
-    query: null
   mode: 'server'
 
   fetch: (data) =>
     data = {} unless data
-    if data.query and data.saveQuery
-      @data.query = data.query
-      console.log 'saved the query'
-    else if data.saveQuery == false
-      @data.query = null
-      data.query = null
-    else
-      data.query = @data.query
-      console.log 'retrieving the query part ', data.query
     for k, v of @controller.get_filter_params()
       continue unless v
       data[k] = v
