@@ -18,7 +18,9 @@ form.form-horizontal.query-form
       | of
       | &nbsp;
       input.input-small.datepicker(type='text', 'data-date-format'='M d, yyyy',
-        'data-date-autoclose'='true', value=query_date)
+        'data-date-autoclose'='true')
   .control-group
     .controls
       button.btn.search(type='submit') Search
+      | &nbsp;
+      button.btn.reset(type='reset') Reset 

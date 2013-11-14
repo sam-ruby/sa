@@ -39,25 +39,29 @@ class SearchRelController < BaseController
     else
       date = @date
     end
+    query_dates = (date-7.days..date-1.days).to_a.map {|d|
+      "'#{d.strftime('%Y-%m-%d')}'"}
 
     results = SearchQualityDaily.get_search_relevance_data_by_word(
       query_str, date)
     return result if results.empty?
     
     query_items = results.first['32_query_items']
+    rev_ranks = results.first['rev_ranks']
     top_rev_items = results.first['top_rev_items']
     
     return result if query_items.nil? or top_rev_items.nil?
     query_items_list = query_items.split(',')[0..15]
     top_rev_items_list = top_rev_items.split(',')
+    rev_ranks = rev_ranks.split(',')
     
     item_details = {}
     AllItemAttrs.get_item_details(query_str,
-      (query_items_list + top_rev_items_list).uniq, date).each do |item|
-        item_details[item.item_id] = item
-      end
+      (query_items_list + top_rev_items_list).uniq, date, query_dates).each do 
+      |item| item_details[item.item_id] = item end
+
     index = 1
-    query_items_list.zip(top_rev_items_list) do |items|
+    query_items_list.zip(top_rev_items_list, rev_ranks) do |items|
       if item_details[items[0]].nil? 
         walmart_item = {:item_id => items[0],
                         :image_url => nil}
@@ -76,7 +80,8 @@ class SearchRelController < BaseController
       result.push({:position => index,
                    :walmart_item => walmart_item,
                    :rev_based_item => rev_item,
-                   :revenue => revenue})
+                   :revenue => revenue,
+                   :rev_rank => items[2].to_i + 1})
       index += 1
     end
     result

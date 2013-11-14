@@ -86,6 +86,10 @@ a.subcat:hover {
 .fcolor-white {
   color: white;
 }
+.form-search {
+  margin: 2em 0 1em;
+  display: inline-block;
+}
 #week-selector {
   font-size: small;
   margin: 0;
@@ -377,7 +381,6 @@ a.cat-breadcrumb, a.daily, a.weekly {
   width:100%;
 }
 .item-image {
-  float:left;
   padding-right:5px;
   width:80px;
   height:80px;
