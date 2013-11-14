@@ -27,8 +27,7 @@ class QueryCatMetricsDaily < BaseModel
   end
 
   def self.get_query_stats_date(
-    query, year, week, query_date, page=1, order_col='search_daily.id',
-    order='asc', limit=10)
+    query, year, week, query_date, page=1, order_col=nil, order='asc', limit=10)
     
     order_str = order_col.nil? ? 'query_daily.query_count desc' : 
       order.nil? ?  order_col : order_col + ' ' + order  

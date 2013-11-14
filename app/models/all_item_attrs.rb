@@ -1,20 +1,21 @@
 class AllItemAttrs < BaseModel
   self.table_name = 'all_item_attrs'
 
-  def self.get_item_details(query, item_id_list, query_date)
+  def self.get_item_details(query, item_id_list, query_date, query_dates)
     selects = %q{item_attrs.item_id, item_attrs.title, 
     item_attrs.image_url, item_attrs.curr_item_price, 
     item_metrics.item_revenue}
-    join_stmt = %Q{as item_attrs left outer join 
-    item_query_cat_metrics_daily as item_metrics on
-    item_metrics.item_id = item_attrs.item_id and
-    item_metrics.query_date = '#{query_date}' and
-    item_metrics.cat_id = 0 and (item_metrics.channel = 
-    "ORGANIC" or item_metrics.channel = "ORGANIC_USER") and 
-    item_metrics.query = '#{query}'}
+
+    join_stmt = %Q{as item_attrs left outer join
+    (select item_id, sum(item_revenue)/7 as item_revenue from 
+    item_query_cat_metrics_daily 
+    where query_date in (#{query_dates.join(',')}) and
+    cat_id = 0 and (channel = "ORGANIC" or channel = "ORGANIC_USER")
+    and query = '#{query}' group by item_id) as item_metrics on
+    item_metrics.item_id = item_attrs.item_id}
 
     joins(join_stmt).select(selects).where(
-    %q{item_metrics.item_id in (?)}, item_id_list)
+    %q{item_attrs.item_id in (?)}, item_id_list)
   end
   
   def self.get_items(query, items, query_date)
