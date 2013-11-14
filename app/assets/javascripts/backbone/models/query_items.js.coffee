@@ -2,6 +2,7 @@ class Searchad.Models.QueryItem extends Backbone.Model
   paramRoot: 'query'
 
   defaults:
+    position: null
     walmart_item:
       item_id: null
       title: null
@@ -12,6 +13,7 @@ class Searchad.Models.QueryItem extends Backbone.Model
       title: null
       image_url: null
       curr_item_price: null
+    revenue: null
 
 class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollection
   initialize: (options) ->

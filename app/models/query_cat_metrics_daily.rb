@@ -25,15 +25,35 @@ class QueryCatMetricsDaily < BaseModel
     [%q{query = ? AND cat_id = ? AND (channel = 'ORGANIC' OR channel = 
     'ORGANIC_USER')}, query, 0]).order("query_date")
   end
-  
-  def self.get_query_stats_date(query, date)
-    selects = %q{query, unix_timestamp(query_date) * 1000 as query_date,
-    query_count, query_pvr, query_atc, query_con, query_revenue}
-    QueryCatMetricsDaily.select(selects).where(
-      ["query_date = ? AND query like ? AND cat_id = ? AND channel = 'TOTAL'",
-       date, '%' + query + '%', 0])
-  end
 
+  def self.get_query_stats_date(
+    query, year, week, query_date, page=1, order_col='search_daily.id',
+    order='asc', limit=10)
+    
+    order_str = order_col.nil? ? 'query_daily.query_count desc' : 
+      order.nil? ?  order_col : order_col + ' ' + order  
+    
+    join_stmt = %Q{as query_daily
+    left outer join search_quality_daily as search_daily on
+    search_daily.query_date = query_daily.query_date and
+    search_daily.query_str = query_daily.query 
+    left outer join (select query_str, cat_rate, show_rate, rel_score from
+    query_performance where year = #{year} and week = #{week} and
+    query_str like '%#{query}%') as qp on
+    qp.query_str = query_daily.query} 
+    
+    selects = %q{search_daily.id, query_daily.query,
+    search_daily.search_rev_rank_correlation, query_daily.query_count,
+    query_daily.query_pvr, query_daily.query_atc, query_daily.query_con,
+    query_daily.query_revenue, (qp.cat_rate * 100) as cat_rate, 
+    (qp.show_rate * 100) as show_rate, qp.rel_score}
+
+    joins(join_stmt).select(selects).where(
+    %q{query_daily.query_date = ? and query_daily.cat_id = 0 and 
+    query_daily.query like ? and (query_daily.channel = "ORGANIC" or 
+    query_daily.channel = "ORGANIC_USER")}, query_date, '%'+query+'%').order(
+      order_str).page(page).per(limit)
+  end
 
   def self.get_week_average(query, date_start, date_end)
     select_cols = %q{sum(query_count) as query_count,

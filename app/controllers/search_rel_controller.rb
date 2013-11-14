@@ -3,8 +3,10 @@ class SearchRelController < BaseController
   before_filter :set_common_data
 
   def get_search_words
-    @search_words = SearchQualityDaily.get_search_relevance_data(
-      @date, @page, @sort_by, @order, @limit)
+    week = get_week_from_date(@date)
+    @search_words = SearchQualityDaily.get_query_stats(
+      @year, week, @date, @page, @sort_by, @order, @limit)
+
     if @search_words.nil? or @search_words.empty?
       render :json => [{:total_entries => 0}, @search_words]
     else
@@ -50,14 +52,32 @@ class SearchRelController < BaseController
     top_rev_items_list = top_rev_items.split(',')
     
     item_details = {}
-    AllItemAttrs.get_item_details(
-      (query_items_list + top_rev_items_list).uniq).each do |item|
+    AllItemAttrs.get_item_details(query_str,
+      (query_items_list + top_rev_items_list).uniq, date).each do |item|
         item_details[item.item_id] = item
       end
-    
+    index = 1
     query_items_list.zip(top_rev_items_list) do |items|
-      result.push({:walmart_item => item_details[items[0]],
-                   :rev_based_item => item_details[items[1]]})
+      if item_details[items[0]].nil? 
+        walmart_item = {:item_id => items[0],
+                        :image_url => nil}
+      else
+        walmart_item = item_details[items[0]]
+      end
+
+      if item_details[items[1]].nil? 
+        rev_item = {:item_id => items[1],
+                    :image_url => nil}
+      else
+        rev_item = item_details[items[1]]
+      end
+
+      revenue = rev_item.item_revenue rescue 0
+      result.push({:position => index,
+                   :walmart_item => walmart_item,
+                   :rev_based_item => rev_item,
+                   :revenue => revenue})
+      index += 1
     end
     result
   end
