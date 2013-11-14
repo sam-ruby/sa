@@ -30,7 +30,6 @@ class Searchad.Collections.QueryCatMetricsDailyCollection extends Backbone.Pagea
 
   get_items: (data) =>
     data = {} unless data
-    debugger
     for k, v of @controller.get_filter_params()
       continue unless v
       data[k] = v

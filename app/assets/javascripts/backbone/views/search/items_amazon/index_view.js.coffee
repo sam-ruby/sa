@@ -140,7 +140,9 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
     return this
 
   render_error: (query) ->
+    @$el.children().not('ul').remove()
     @controller.trigger('search:sub-content:hide-spin')
+    @$el.show()
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
   
@@ -170,4 +172,4 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
     if data.length > 0
       @processData(_.clone(data))
     else
-      @$el.prepend("<div><h1>No Walmart items found.</h1></div>")
+      @render_error(@query)

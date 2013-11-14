@@ -27,14 +27,23 @@ class Searchad.Views.Search.RelRev.IndexView extends Backbone.View
         return this
     
     columns = [{
-    name: 'walmart_item',
+    name: 'position',
+    label: 'Position',
+    editable: false,
+    cell: 'integer'},
+    {name: 'walmart_item',
     label: 'Relevance Order',
     editable: false,
     cell: ItemCell},
     {name: 'rev_based_item',
     label: 'Best Seller Order',
     editable: false,
-    cell: ItemCell}]
+    cell: ItemCell},
+    {name: 'revenue',
+    label: 'Revenue',
+    editable: false,
+    formatter: Utils.CurrencyFormatter,
+    cell: 'number'}]
 
     columns
 

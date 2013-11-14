@@ -40,22 +40,10 @@ class SearchController < BaseController
     end
   end
   
-  def get_data
-    query = params[:query]
-    date = DateTime.parse(params[:query_date]) rescue DateTime.now
-    query_stats = QueryCatMetricsDaily.get_week_average(query, before_end_date, before_start_date).first
-    
-    respond_to do |format|
-      format.json do 
-        render :json => query_stats
-      end
-    end
-  end
-
   def get_query_stats_date
     query = params[:query]
     query_stats = QueryCatMetricsDaily.get_query_stats_date(
-      query, @date)
+      query, @year, get_week_from_date(@date), @date)
     
     respond_to do |format|
       format.json do 

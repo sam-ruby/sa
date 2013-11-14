@@ -35,7 +35,7 @@ $ ->
       orderSeparator: ','
 
       fromRaw: (rawValue) ->
-        return '-' unless rawValue
+        return '-' if !rawValue?
         "#{super(rawValue)}%"
         
     class CustomNumberFormatter extends Backgrid.NumberFormatter
@@ -46,7 +46,6 @@ $ ->
       fromRaw: (rawValue) ->
         return '-' unless rawValue
         super(rawValue)
-
 
     class CurrencyFormatter extends Backgrid.NumberFormatter
       decimals: 2
@@ -95,7 +94,7 @@ $ ->
         if not current_view or current_view != 'weekly'
           controller.set_view('weekly')
           controller.trigger('view-change', view: 'weekly')
-      else if name.match(/search-rel:index|search-kpi|do-search|poor-performing-stats:index|poor-performing:index|pp:stats:index|pp:walmart-items:index|pp:amazon-items:index|query-comparison/)
+      else if name.match(/search-rel:index|search-kpi|do-search|poor-performing-stats:index|poor-performing:index|pp:stats:index|pp:walmart-items:index|pp:amazon-items:index|query-comparison|search:app/)
         if not current_view or current_view != 'daily'
           controller.set_view('daily')
           controller.trigger('view-change', view: 'daily'))
@@ -177,8 +176,6 @@ $ ->
         queryItemsView.get_items(data)
     )
 
-    
-    ###
     # Search Comparison
     searchComparisonView =
       new Searchad.Views.SearchComparison.IndexView(
@@ -191,8 +188,8 @@ $ ->
       )
     searchComparisonView.listenTo(controller, 'query-comparison',
       searchComparisonView.get_items)
-
     
+    ###
     searchStatsView = new Searchad.Views.Search.Stats.IndexView(
       el: '#search-sub-content')
     searchStatsView.listenTo(

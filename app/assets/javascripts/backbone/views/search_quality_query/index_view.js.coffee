@@ -52,6 +52,20 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     label: I18n.t('search_analytics.query_string'),
     editable: false,
     cell: QueryCell},
+    {name: 'cat_rate',
+    label: I18n.t('dashboard.catalog_overlap'),
+    editable: false,
+    cell: 'number',
+    formatter: Utils.PercentFormatter},
+    {name: 'show_rate',
+    label: I18n.t('dashboard.results_shown_in_search'),
+    editable: false,
+    cell: 'number',
+    formatter: Utils.PercentFormatter},
+    {name: 'rel_score',
+    label: I18n.t('dashboard.overall_relevance_score'),
+    editable: false,
+    cell: 'number'},
     {name: 'search_rev_rank_correlation',
     label: I18n.t('search_analytics.rev_rank_correlation'),
     editable: false,
@@ -64,10 +78,15 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     {name: 'query_count',
     label: I18n.t('search_analytics.query_count'),
     editable: false,
-    cell: 'integer'}]
+    cell: 'integer'},
+    {name: 'query_con',
+    label: 'Conversion',
+    editable: false,
+    cell: 'number'
+    formatter: Utils.PercentFormatter}]
 
     columns
-
+  
   initTable: () =>
     @grid = new Backgrid.Grid(
       columns: @gridColumns()

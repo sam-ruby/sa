@@ -30,9 +30,10 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     e.preventDefault()
     @search_results_cleanup()
     @controller.trigger('sub-content-cleanup')
+    @controller.trigger('search:sub-tab-cleanup')
     @search_term = @$el.find('input.search-query').val()
     @router.update_path('search/query/' + encodeURIComponent(@search_term))
-    
+    @$search_results.find('.ajax-loader').css('display', 'block')
     @queryStatsCollection.get_items(query: @search_term)
     @trigger = true
 
@@ -48,7 +49,7 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     @delegateEvents()
 
   search_results_cleanup: =>
-    @$search_results.children().remove()
+    @$search_results.children().not('.ajax-loader').remove()
 
   query_cell: ->
     that = this
@@ -60,9 +61,9 @@ class Searchad.Views.Search.IndexView extends Backbone.View
         e.preventDefault()
         $(e.target).parents('table').find('tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
-        that.controller.trigger('sub-content-cleanup')
-        that.query = $(e.target).text()
-        that.controller.trigger('search:stats', query: that.query)
+        that.controller.trigger('search:sub-content',
+          query: $(e.target).text()
+          view: 'daily')
       render: ->
         value = @model.get(@column.get('name'))
         formatted_value = '<a class="query" href="#">' + value + '</a>'
@@ -74,6 +75,8 @@ class Searchad.Views.Search.IndexView extends Backbone.View
 
   render_search_results: =>
     @search_results_cleanup()
+    @$search_results.find('.ajax-loader').hide()
+
     if @queryStatsCollection.length == 0
       @$search_results.append(
         '<p class="text-error">No data available for "' +
@@ -85,32 +88,43 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     )
     grid = new Backgrid.Grid(
       columns: [{
-        name: 'query'
-        label: 'Query'
-        editable: false
+        name: 'query',
+        label: I18n.t('search_analytics.query_string'),
+        editable: false,
         cell: @query_cell()},
-        {name: 'query_count'
-        label: 'Query Count'
-        editable: false
+        {name: 'cat_rate',
+        label: I18n.t('dashboard.catalog_overlap'),
+        editable: false,
+        cell: 'number',
+        formatter: Utils.PercentFormatter},
+        {name: 'show_rate',
+        label: I18n.t('dashboard.results_shown_in_search'),
+        editable: false,
+        cell: 'number',
+        formatter: Utils.PercentFormatter},
+        {name: 'rel_score',
+        label: I18n.t('dashboard.overall_relevance_score'),
+        editable: false,
         cell: 'number'},
-        {name: 'query_pvr'
-        label: 'Query PVR'
-        editable: false
+        {name: 'search_rev_rank_correlation',
+        label: I18n.t('search_analytics.rev_rank_correlation'),
+        editable: false,
         cell: 'number'},
-        {name: 'query_atc'
-        label: 'Query ATC'
-        editable: false
-        cell: 'number'},
-        {name: 'query_con'
-        label: 'Query Conversion Rate'
-        editable: false
-        cell: 'number'},
-        {name: 'query_revenue'
-        label: 'Query Revenue'
-        editable: false
-        cell: 'number'}]
+        {name: 'query_revenue',
+        label: I18n.t('search_analytics.revenue'),
+        editable: false,
+        cell: 'number',
+        formatter: Utils.CurrencyFormatter},
+        {name: 'query_count',
+        label: I18n.t('search_analytics.query_count'),
+        editable: false,
+        cell: 'integer'},
+        {name: 'query_con',
+        label: 'Conversion',
+        editable: false,
+        cell: 'number'
+        formatter: Utils.PercentFormatter}]
       collection: @queryStatsCollection)
-    
     @$search_results.append($('<div>').css('text-align', 'left').css(
       'margin-bottom': '1em').append(
       $('<i>').addClass('icon-search').css(
