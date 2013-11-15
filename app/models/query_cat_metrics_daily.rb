@@ -32,20 +32,21 @@ class QueryCatMetricsDaily < BaseModel
     order_str = order_col.nil? ? 'query_daily.query_count desc' : 
       order.nil? ?  order_col : order_col + ' ' + order  
     
-    join_stmt = %Q{as query_daily
+    join_stmt = %q{as query_daily
     left outer join search_quality_daily as search_daily on
     search_daily.query_date = query_daily.query_date and
-    search_daily.query_str = query_daily.query 
-    left outer join (select query_str, cat_rate, show_rate, rel_score from
-    query_performance where year = #{year} and week = #{week} and
-    query_str like '%#{query}%') as qp on
-    qp.query_str = query_daily.query} 
+    search_daily.query_str = query_daily.query} 
     
-    selects = %q{search_daily.id, query_daily.query,
+    selects = %Q{search_daily.id, query_daily.query,
     search_daily.search_rev_rank_correlation, query_daily.query_count,
     query_daily.query_pvr, query_daily.query_atc, query_daily.query_con,
-    query_daily.query_revenue, (qp.cat_rate * 100) as cat_rate, 
-    (qp.show_rate * 100) as show_rate, qp.rel_score}
+    query_daily.query_revenue,
+    (select cat_rate * 100 from query_performance where year = #{year}
+      and week = #{week} and query_str = query_daily.query) as cat_rate, 
+    (select show_rate * 100 from query_performance where year = #{year}
+      and week = #{week} and query_str = query_daily.query) as show_rate, 
+    (select rel_score from query_performance where year = #{year}
+      and week = #{week} and query_str = query_daily.query) as rel_score}
 
     joins(join_stmt).select(selects).where(
     %q{query_daily.query_date = ? and query_daily.cat_id = 0 and 

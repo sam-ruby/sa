@@ -38,25 +38,30 @@ class SearchQualityDaily < BaseModel
   end
 
   def self.get_query_stats(
-    year, week, query_date, page=1, order_col='search_daily.id', order='asc', limit=10)
+    year, week, query_date, page=1, order_col=nil, order='asc', limit=10)
     
-    order_str = order_col.nil? ? 'query_daily.query_count desc, search_daily.search_rev_rank_correlation asc' : order.nil? ? order_col : order_col + ' ' + order  
+    order_str = order_col.nil? ? 'query_daily.query_count desc' : 
+      order.nil? ? order_col : order_col + ' ' + order  
     
-    join_stmt = %Q{as search_daily
-    join query_cat_metrics_daily 
-    as query_daily on search_daily.query_date = query_daily.query_date and
-    search_daily.query_str = query_daily.query 
-    left outer join query_performance as qp on 
-    qp.query_str = search_daily.query_str}
-    selects = %q{search_daily.id, search_daily.query_str,
+    join_stmt = %Q{as search_daily join query_cat_metrics_daily as query_daily 
+    on search_daily.query_date = query_daily.query_date and
+    search_daily.query_str = query_daily.query}
+
+    selects = %Q{search_daily.id, search_daily.query_str,
     search_daily.search_rev_rank_correlation, query_daily.query_count,
     query_daily.query_pvr, query_daily.query_atc, query_daily.query_con,
-    query_daily.query_revenue, (qp.cat_rate * 100) as cat_rate, 
-    (qp.show_rate * 100) as show_rate, qp.rel_score}
+    query_daily.query_revenue, 
+    (select cat_rate * 100 from query_performance where year = #{year}
+      and week = #{week} and query_str = search_daily.query_str) as cat_rate, 
+    (select show_rate * 100 from query_performance where year = #{year}
+      and week = #{week} and query_str = search_daily.query_str) as show_rate, 
+    (select rel_score from query_performance where year = #{year}
+      and week = #{week} and query_str = search_daily.query_str) as rel_score}
+    
     joins(join_stmt).select(selects).where(
     %q{query_daily.cat_id = 0 and (query_daily.channel = "ORGANIC" or 
-    query_daily.channel = "ORGANIC_USER") and qp.year = ? and qp.week = ? and
-    search_daily.query_date = ?}, year, week, query_date).order(
+    query_daily.channel = "ORGANIC_USER") and
+    search_daily.query_date = ?}, query_date).order(
       order_str).page(page).per(limit)
   end
 end
