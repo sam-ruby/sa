@@ -16,6 +16,8 @@ class Searchad.Models.SearchQualityQuery extends Backbone.Model
 class Searchad.Collections.SearchQualityQueryCollection extends Backbone.PageableCollection
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
+    @query = null
+    super(options)
 
   get_date: ->
     @date
@@ -30,6 +32,8 @@ class Searchad.Collections.SearchQualityQueryCollection extends Backbone.Pageabl
     pageSize: 'per_page'
     date: ->
       @controller.get_filter_params().date
+    query: ->
+      @query
 
   mode: 'server'
 

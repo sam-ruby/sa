@@ -15,8 +15,17 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
       @get_items() if @active)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
+    @collection.bind('request', =>
+      @unrender_search_results()
+      @$el.find('.ajax-loader').css('display', 'block')
+      @controller.trigger('sub-content-cleanup')
+    )
         
   active: false
+  events:
+    'click .filter': 'filter'
+    'click .reset': 'reset'
+    'submit': 'filter'
 
   gridColumns: ->
     that = this
@@ -36,7 +45,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
           query: query
           view: 'daily'
           tab: 'rel-rev-analysis')
-        new_path = 'search_rel/query/' + query
+        new_path = 'search_rel/query/' + encodeURIComponent(query)
         that.router.update_path(new_path)
         false
 
@@ -87,6 +96,27 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
 
     columns
   
+  initFilter: =>
+    _.template('<div class="input-prepend input-append filter-box pull-right"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type to filter results"/></form><button class="btn btn-primary reset">Reset</button></div>')
+  
+  filter: (e) =>
+    e.preventDefault()
+    query = @$el.find(".filter-box input[type=text]").val()
+    @collection.query = query
+    @collection.get_items() if query
+    @trigger = true
+
+  reset: (e) =>
+    e.preventDefault()
+    @router.update_path('/search_rel')
+    @$el.find(".filter-box input[type=text]").val('')
+    @collection.query = null
+    @collection.get_items()
+    @trigger = true
+
+  unrender_search_results: =>
+    @$el.children().not('.ajax-loader, .filter-box').remove()
+  
   initTable: () =>
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
@@ -98,12 +128,11 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     )
 
   get_items: (data) =>
+    @collection.query = null
+    @unrender()
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items(data)
-    if data and data.query
-      @controller.trigger('search:rel-rev', data)
-    else
-      @trigger = true
+    @trigger = true
 
   unrender: =>
     @active = false
@@ -111,13 +140,22 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @$el.find('.ajax-loader').hide()
     this
 
+  render_error: (query) ->
+    @controller.trigger('search:sub-tab-cleanup')
+    @$el.append( $('<span>').addClass('label label-important').append(
+      "No data available for #{query}") )
+  
   render: =>
-    @active = true
-    @$el.children().not('.ajax-loader').remove()
     @$el.find('.ajax-loader').hide()
+    return @render_error(@collection.query) if @collection.size() == 0
+    unless @active
+      @$el.prepend(@initFilter()())
+      @delegateEvents()
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     if @trigger
       @trigger = false
       @$el.find('td a.query').first().trigger('click')
+    @active = true
     this
+

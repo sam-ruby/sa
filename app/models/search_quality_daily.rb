@@ -38,7 +38,8 @@ class SearchQualityDaily < BaseModel
   end
 
   def self.get_query_stats(
-    year, week, query_date, page=1, order_col=nil, order='asc', limit=10)
+    query, year, week, query_date, 
+    page=1, order_col=nil, order='asc', limit=10)
     
     order_str = order_col.nil? ? 'query_daily.query_count desc' : 
       order.nil? ? order_col : order_col + ' ' + order  
@@ -57,11 +58,27 @@ class SearchQualityDaily < BaseModel
       and week = #{week} and query_str = search_daily.query_str) as show_rate, 
     (select rel_score from query_performance where year = #{year}
       and week = #{week} and query_str = search_daily.query_str) as rel_score}
-    
-    joins(join_stmt).select(selects).where(
-    %q{query_daily.cat_id = 0 and (query_daily.channel = "ORGANIC" or 
-    query_daily.channel = "ORGANIC_USER") and
-    search_daily.query_date = ?}, query_date).order(
+  
+    where_conditions = []
+    if !query.nil? and query.include?('*')
+      query = query.gsub('*', '%')
+      where_conditions = sanitize_sql_array([
+        %q{query_daily.cat_id = 0 and (query_daily.channel = "ORGANIC" or 
+        query_daily.channel = "ORGANIC_USER") and search_daily.query_date = 
+        '%s' and search_daily.query_str like '%s'}, query_date, query])
+    elsif !query.nil? and !query.empty?
+      where_conditions = sanitize_sql_array([
+        %q{query_daily.cat_id = 0 and (query_daily.channel = "ORGANIC" or 
+        query_daily.channel = "ORGANIC_USER") and search_daily.query_date = 
+        '%s' and search_daily.query_str = '%s'}, query_date, query])
+    else
+      where_conditions = sanitize_sql_array([
+        %q{query_daily.cat_id = 0 and (query_daily.channel = "ORGANIC" or 
+        query_daily.channel = "ORGANIC_USER") and search_daily.query_date = 
+        '%s'}, query_date])
+    end
+
+    joins(join_stmt).select(selects).where(where_conditions).order(
       order_str).page(page).per(limit)
   end
 end

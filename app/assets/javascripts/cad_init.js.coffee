@@ -130,18 +130,21 @@ $ ->
       controller, 'search-rel:index', searchQualityQueryView.get_items)
     
     # Comp Analysis
+    ###
     caView = new Searchad.Views.CompAnalysis.IndexView(
       el: '#ca-queries')
     caView.listenTo(
       controller, 'comp-analysis:index', caView.get_items)
-   
+    ###
     # Search
     searchView = new Searchad.Views.Search.IndexView(
       el: '#search-form'
       el_results: '#search-results')
     searchView.listenTo(
       controller, 'search:form', searchView.render)
-    
+    searchView.listenTo(
+      controller, 'load-search-results', searchView.load_search_results)
+
     subtabsView =
       new Searchad.Views.Search.SubTabs.IndexView(el: '#search-sub-tabs')
     subtabsView.listenTo(

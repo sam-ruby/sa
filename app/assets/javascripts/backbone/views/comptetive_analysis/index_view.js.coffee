@@ -80,12 +80,15 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
 
   filter: (e) =>
     e.preventDefault()
+    @unrender_search_results()
     query = @$el.find(".filter-box input[type=text]").val()
     @$el.find('.ajax-loader').css('display', 'block')
-    @collection.fetch(query: query, fuzzy: true) if query
+    @collection.fetch(query: query) if query
     @trigger = true
 
   reset: =>
+    e.preventDefault()
+    @unrender_search_results()
     @$el.find(".filter-box input[type=text]").val('')
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.fetch()
@@ -99,13 +102,15 @@ class Searchad.Views.CompAnalysis.IndexView extends Backbone.View
       @collection.fetch()
     @trigger = true
 
+  unrender_search_results: =>
+    @$el.children().not('.ajax-loader, .filter-box').remove()
+
   unrender: =>
     @active = false
     @$el.children().not('.ajax-loader').remove()
     @$el.find('.ajax-loader').hide()
 
   render: =>
-    @$el.children().not('.ajax-loader, .filter-box').remove()
     @$el.find('.ajax-loader').hide()
     unless @active
       @$el.append( @initFilter()())
