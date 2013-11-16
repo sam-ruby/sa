@@ -3,9 +3,10 @@ class SearchRelController < BaseController
   before_filter :set_common_data
 
   def get_search_words
+    query = params[:query]
     week = get_week_from_date(@date)
     @search_words = SearchQualityDaily.get_query_stats(
-      @year, week, @date, @page, @sort_by, @order, @limit)
+      query, @year, week, @date, @page, @sort_by, @order, @limit)
 
     if @search_words.nil? or @search_words.empty?
       render :json => [{:total_entries => 0}, @search_words]

@@ -43,11 +43,18 @@ class SearchController < BaseController
   def get_query_stats_date
     query = params[:query]
     query_stats = QueryCatMetricsDaily.get_query_stats_date(
-      query, @year, get_week_from_date(@date), @date)
+      query, @year, get_week_from_date(@date), @date, 
+      @page, @sort_by, @order, @limit)
     
     respond_to do |format|
       format.json do 
-        render :json => query_stats
+        if query_stats.nil? or query_stats.empty?
+          render :json => [{:total_entries => 0}, query_stats]
+        else
+          render :json => [
+            {:total_entries => query_stats.total_pages * @limit,
+             :date => @date}, query_stats]
+        end
       end
     end
   end

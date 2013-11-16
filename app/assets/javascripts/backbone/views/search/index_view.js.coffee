@@ -10,7 +10,12 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     
     @queryStatsCollection = new Searchad.Collections.QueryStatsDailyCollection()
     @queryStatsCollection.bind('reset', @render_search_results)
-  
+    @queryStatsCollection.bind('request', =>
+      @search_results_cleanup()
+      @$search_results.find('.ajax-loader').css('display', 'block')
+      @controller.trigger('sub-content-cleanup')
+    )
+
   data:
     query: null
 
@@ -26,15 +31,22 @@ class Searchad.Views.Search.IndexView extends Backbone.View
         @data.query)
       @router.navigate(path + newPath)
 
+  load_search_results: (query) =>
+    @query = @$el.find('input.search-query').val(query)
+    @$el.find('button.search-btn').first().trigger('click')
+
   do_search: (e) =>
     e.preventDefault()
     @search_results_cleanup()
+
     @controller.trigger('sub-content-cleanup')
-    @controller.trigger('search:sub-tab-cleanup')
-    @search_term = @$el.find('input.search-query').val()
-    @router.update_path('search/query/' + encodeURIComponent(@search_term))
+    @query = @$el.find('input.search-query').val()
+
+    @router.update_path('search/query/' + encodeURIComponent(@query))
     @$search_results.find('.ajax-loader').css('display', 'block')
-    @queryStatsCollection.get_items(query: @search_term)
+    
+    @queryStatsCollection.query = @query
+    @queryStatsCollection.get_items()
     @trigger = true
 
   unrender: =>
@@ -43,6 +55,11 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     @$search_results.children().not('.ajax-loader').remove()
     @$el.find('.ajax-loader').hide()
 
+  render_error: ->
+    @controller.trigger('search:sub-tab-cleanup')
+    @$search_results.append($('<span>').addClass(
+      'label label-important').append("No data available for #{@query}"))
+  
   render: =>
     @active = true
     @$el.append(@search_form_template())
@@ -57,13 +74,18 @@ class Searchad.Views.Search.IndexView extends Backbone.View
       controller: SearchQualityApp.Controller
       events:
         'click': 'handleQueryClick'
+
       handleQueryClick: (e) =>
         e.preventDefault()
         $(e.target).parents('table').find('tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
+        query = $(e.target).text()
         that.controller.trigger('search:sub-content',
-          query: $(e.target).text()
+          query: query
           view: 'daily')
+        new_path = 'search/query/' + encodeURIComponent(query)
+        that.router.update_path(new_path)
+      
       render: ->
         value = @model.get(@column.get('name'))
         formatted_value = '<a class="query" href="#">' + value + '</a>'
@@ -77,11 +99,7 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     @search_results_cleanup()
     @$search_results.find('.ajax-loader').hide()
 
-    if @queryStatsCollection.length == 0
-      @$search_results.append(
-        '<p class="text-error">No data available for "' +
-        @search_term + '"')
-      return
+    return @render_error() if @queryStatsCollection.length == 0
 
     paginator = new Backgrid.Extension.Paginator(
       collection: @queryStatsCollection
@@ -129,7 +147,7 @@ class Searchad.Views.Search.IndexView extends Backbone.View
       'margin-bottom': '1em').append(
       $('<i>').addClass('icon-search').css(
         'font-size', 'large').append(
-        '&nbsp; Results for : ' + @search_term)))
+        '&nbsp; Results for : ' + @query)))
     @$search_results.append( grid.render().$el )
     @$search_results.append( paginator.render().$el )
     if @trigger
