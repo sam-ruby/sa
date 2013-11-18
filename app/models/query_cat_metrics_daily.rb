@@ -42,11 +42,14 @@ class QueryCatMetricsDaily < BaseModel
     query_daily.query_pvr, query_daily.query_atc, query_daily.query_con,
     query_daily.query_revenue,
     (select cat_rate * 100 from query_performance where year = #{year}
-      and week = #{week} and query_str = query_daily.query) as cat_rate, 
+      and week = #{week} and query_str = query_daily.query
+      limit 1) as cat_rate, 
     (select show_rate * 100 from query_performance where year = #{year}
-      and week = #{week} and query_str = query_daily.query) as show_rate, 
+      and week = #{week} and query_str = query_daily.query 
+      limit 1) as show_rate, 
     (select rel_score from query_performance where year = #{year}
-      and week = #{week} and query_str = query_daily.query) as rel_score}
+      and week = #{week} and query_str = query_daily.query
+      limit 1) as rel_score}
 
     
     where_conditions = []
