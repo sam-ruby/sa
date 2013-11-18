@@ -49,16 +49,6 @@ class BaseController < ApplicationController
   end
   
   def set_common_data
-    if !session[:user_id].nil? and !params[:cat_id]
-      user = User.get_item_with_name(session[:user_id])
-      @cat_ids = user.get_val(User::DOD_PREF_DEF_CAT_KEY)
-    else
-      @cat_ids = params[:cat_id]
-    end
-
-    @categories = get_categories_map(@cat_ids)
-    @cat_id = @categories.last[:c_id]
-
     @year = @month = @week = @date = nil
     #TBD: Is this an efficient way to get the maximum date. Do we
     #need this for every call.
@@ -80,24 +70,6 @@ class BaseController < ApplicationController
     @order = params[:order]
   end 
   
-  def get_categories_map(cat_id_str)
-    cat_ids = (cat_id_str || '0').split(/,/).map {|x| x.to_i}
-    
-    temp_cats = {}
-    Category.where(:c_category_id => cat_ids).each do |cat|
-      temp_cats[cat.c_category_id] = cat.c_category_name
-    end
-
-    cat_ids.unshift(0) unless cat_ids.include?(0)
-    temp_cats[0] = t('dashboard.all_departments')
-
-    categories = []
-    cat_ids.each do |c_id| 
-      categories << {:c_id => c_id, :c_name => temp_cats[c_id]} 
-    end
-    categories
-  end
-
   def get_week_from_date(date)
     return @available_weeks.first[:week] if date >= 
       @available_weeks.first[:end_date]
