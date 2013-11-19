@@ -2,7 +2,7 @@ class PoorPerformingController < BaseController
   before_filter :set_common_data
   def get_search_words
     @search_words = QueryCatMetricsDaily.get_search_words(
-      @date, @cat_id, @page, @sort_by, @order, @limit)
+      @date, @page, @sort_by, @order, @limit)
       
     respond_to do |format|
       format.json do 
