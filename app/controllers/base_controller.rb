@@ -1,7 +1,6 @@
 class BaseController < ApplicationController
 
-  layout 'test'
-
+  layout 'cad'
   def login_user
     user = User.get_item_with_name(session[:user_id].to_s)
     session[:user_id] = nil if user.to_s.empty?
@@ -50,17 +49,9 @@ class BaseController < ApplicationController
   end
   
   def set_common_data
-    if !session[:user_id].nil? and !params[:cat_id]
-      user = User.get_item_with_name(session[:user_id])
-      @cat_ids = user.get_val(User::DOD_PREF_DEF_CAT_KEY)
-    else
-      @cat_ids = params[:cat_id]
-    end
-
-    @categories = get_categories_map(@cat_ids)
-    @cat_id = @categories.last[:c_id]
-
     @year = @month = @week = @date = nil
+    #TBD: Is this an efficient way to get the maximum date. Do we
+    #need this for every call.
     @most_recent_date ||= SearchQualityDaily.maximum('query_date')
     
     @view = params[:view] || 'weekly'
@@ -68,6 +59,10 @@ class BaseController < ApplicationController
       @most_recent_date 
     @year = params[:year].nil? ? PipelineLogWeekly.maximum(:year) :
       params[:year].to_i
+    @available_weeks = get_available_weeks
+    @week = params[:week] || @available_weeks.first[:week]
+    max_min_dates = SearchQualityDaily.get_max_min_dates.first
+    @max_date, @min_date = max_min_dates.max_date, max_min_dates.min_date
     
     @page = params[:page].to_i || 1
     @limit = params[:per_page].to_i || 10
@@ -75,41 +70,36 @@ class BaseController < ApplicationController
     @order = params[:order]
   end 
   
-  def get_categories_map(cat_id_str)
-    cat_ids = (cat_id_str || '0').split(/,/).map {|x| x.to_i}
+  def get_week_from_date(date)
+    return @available_weeks.first[:week] if date >= 
+      @available_weeks.first[:end_date]
     
-    temp_cats = {}
-    Category.where(:c_category_id => cat_ids).each do |cat|
-      temp_cats[cat.c_category_id] = cat.c_category_name
+    @available_weeks.each do |week| 
+      return week[:week] if date >= week[:start_date] and 
+        date <= week[:end_date]
     end
-
-    cat_ids.unshift(0) unless cat_ids.include?(0)
-    temp_cats[0] = t('dashboard.all_departments')
-
-    categories = []
-    cat_ids.each do |c_id| 
-      categories << {:c_id => c_id, :c_name => temp_cats[c_id]} 
-    end
-    categories
+    -1
   end
   
-  def get_date_from_week(year, week)
-    return Date.new(year, 1, 1) if week == 0
-    
-    new_year = Date.ordinal(year, 1)
-    wday = new_year.wday
-    first_sat = 6 - wday + 1
-    ordinal = (first_sat > 1 ? week-1 : week) * 7 + first_sat
-    Date.ordinal(year, ordinal)
+  def get_date_from_week(week)
+    min_date = @min_date.to_datetime.to_i
+    max_date = @max_date.to_datetime.to_i
+    selected_week = @available_weeks.select {
+      |wk| wk[:week].to_i == week.to_i}.first
+    return selected_week[:start_date] if selected_week and
+      (min_date..max_date).include?(
+        selected_week[:start_date].to_datetime.to_i)
+
+    @available_weeks.each do |wk|
+      next unless (min_date..max_date).include?(
+        wk[:start_date].to_datetime.to_i)
+      return wk[:start_date] 
+    end
+    -1
   end
   
-  def most_recent_week
-    @most_recent_date ||= CatMetricsDaily.maximum(:date)
-    CatMetricsWeek.where('year = ?', @most_recent_date.year).maximum(:week)
-  end
-
   def get_available_weeks
-    QueryPerformance.available_weeks.map do |curr_week|
+    Week.available_weeks(@year).map do |curr_week|
       start_date = convert_to_dod_week(curr_week[:week], curr_week[:year])
       curr_week[:start_date] = start_date
       curr_week[:end_date] = start_date + 6.days

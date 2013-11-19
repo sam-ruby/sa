@@ -1,29 +1,19 @@
-class Searchad.Models.SearchQualityQuery extends Backbone.Model
-  paramRoot: 'search_quality_query'
-
+class Searchad.Models.QueryStatsDaily extends Backbone.Model
   defaults:
-    id: null
-    query_str: null
-    query_date: null
     query_count: null
+    query_pvr: null
+    query_atc: null
+    query_con: null
     query_revenue: null
-    search_rev_rank_correlation: null
-    ctr_ranks: null
-    top_ctr_item: null
-    query_items: null
-    top_rev_items: null
 
-class Searchad.Collections.SearchQualityQueryCollection extends Backbone.PageableCollection
+class Searchad.Collections.QueryStatsDailyCollection extends Backbone.PageableCollection
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
-    @query = null
     super(options)
-
-  get_date: ->
-    @date
-
-  model: Searchad.Models.SearchQualityQuery
-  url: '/search_rel/get_search_words.json'
+  
+  model: Searchad.Models.QueryStatsDaily
+  url: '/search/get_query_stats_date.json'
+  mode: 'server'
   state:
     pageSize: 10
 

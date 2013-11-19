@@ -69,6 +69,7 @@ Searchad::Application.routes.draw do
     :to => 'poor_performing', :via => [:get, :post]  
   
   get 'test(/:action(.:format))', :to=>'test'
+  get 'comp_analysis(/:action(.:format))', :to=>'comp_analysis'
 
   match 'search_kpi(/:action(.:format))',
     :to => 'search_k_p_i', :via => [:get, :post]  

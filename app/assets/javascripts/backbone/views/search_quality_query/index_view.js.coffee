@@ -15,24 +15,20 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
       @get_items() if @active)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
-  
-    searchQualitySubtabsView =
-      new Searchad.Views.SearchQualityQuery.SubTabs.IndexView(
-        el: '#query-items-tab')
-    searchQualitySubtabsView.listenTo(
-      @controller, 'search-rel:query-items:index',
-      searchQualitySubtabsView.select_first_tab)
-    
-    queryItemsView = new Searchad.Views.SearchQualityQuery.QueryItems.IndexView(
-      el: '#query-items-content')
-    queryItemsView.listenTo(
-      @controller, 'search-rel:query-items:index', (data) ->
-        queryItemsView.get_items(data)
+    @collection.bind('request', =>
+      @unrender_search_results()
+      @$el.find('.ajax-loader').css('display', 'block')
+      @controller.trigger('sub-content-cleanup')
     )
-    
+        
   active: false
+  events:
+    'click .filter': 'filter'
+    'click .reset': 'reset'
+    'submit': 'filter'
 
   gridColumns: ->
+    that = this
     class QueryCell extends Backgrid.Cell
       controller: SearchQualityApp.Controller
       router: SearchQualityApp.Router
@@ -41,20 +37,16 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
 
       handleQueryClick: (e) ->
         e.preventDefault()
-        $(e.target).parents('table').find('tr.selected').removeClass('selected')
+        $(e.target).parents('table').find('tr.selected').removeClass(
+          'selected')
         $(e.target).parents('tr').addClass('selected')
-        id = @model.get('id')
         query = @model.get('query_str')
-        data =
-          id: id
-          query_items: @model.get('query_items')
-          top_rev_items: @model.get('top_rev_items')
-       
-        @controller.trigger('search-rel:sub-content-cleanup')
-        @controller.trigger('search-rel:query-items:index', data)
-        @controller.trigger('search-rel:query-items:set-tab-content', query)
-        new_path = 'search_rel/item_id/' + id
-        @router.update_path(new_path)
+        that.controller.trigger('search:sub-content',
+          query: query
+          view: 'daily'
+          tab: 'rel-rev-analysis')
+        new_path = 'search_rel/query/' + encodeURIComponent(query)
+        that.router.update_path(new_path)
         false
 
       render: ->
@@ -69,6 +61,20 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     label: I18n.t('search_analytics.query_string'),
     editable: false,
     cell: QueryCell},
+    {name: 'cat_rate',
+    label: I18n.t('dashboard.catalog_overlap'),
+    editable: false,
+    cell: 'number',
+    formatter: Utils.PercentFormatter},
+    {name: 'show_rate',
+    label: I18n.t('dashboard.results_shown_in_search'),
+    editable: false,
+    cell: 'number',
+    formatter: Utils.PercentFormatter},
+    {name: 'rel_score',
+    label: I18n.t('dashboard.overall_relevance_score'),
+    editable: false,
+    cell: 'number'},
     {name: 'search_rev_rank_correlation',
     label: I18n.t('search_analytics.rev_rank_correlation'),
     editable: false,
@@ -81,10 +87,36 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     {name: 'query_count',
     label: I18n.t('search_analytics.query_count'),
     editable: false,
-    cell: 'integer'}]
+    cell: 'integer'},
+    {name: 'query_con',
+    label: 'Conversion',
+    editable: false,
+    cell: 'number'
+    formatter: Utils.PercentFormatter}]
 
     columns
+  
+  initFilter: =>
+    _.template('<div class="input-prepend input-append filter-box pull-right"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type to filter results"/></form><button class="btn btn-primary reset">Reset</button></div>')
+  
+  filter: (e) =>
+    e.preventDefault()
+    query = @$el.find(".filter-box input[type=text]").val()
+    @collection.query = query
+    @collection.get_items() if query
+    @trigger = true
 
+  reset: (e) =>
+    e.preventDefault()
+    @router.update_path('/search_rel')
+    @$el.find(".filter-box input[type=text]").val('')
+    @collection.query = null
+    @collection.get_items()
+    @trigger = true
+
+  unrender_search_results: =>
+    @$el.children().not('.ajax-loader, .filter-box').remove()
+  
   initTable: () =>
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
@@ -96,12 +128,11 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     )
 
   get_items: (data) =>
+    @collection.query = null
+    @unrender()
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items(data)
-    if data and data.id
-      @controller.trigger('search-rel:query-items:index', data)
-    else
-      @trigger = true
+    @trigger = true
 
   unrender: =>
     @active = false
@@ -109,13 +140,22 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @$el.find('.ajax-loader').hide()
     this
 
+  render_error: (query) ->
+    @controller.trigger('search:sub-tab-cleanup')
+    @$el.append( $('<span>').addClass('label label-important').append(
+      "No data available for #{query}") )
+  
   render: =>
-    @active = true
-    @$el.children().not('.ajax-loader').remove()
     @$el.find('.ajax-loader').hide()
+    return @render_error(@collection.query) if @collection.size() == 0
+    unless @active
+      @$el.prepend(@initFilter()())
+      @delegateEvents()
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     if @trigger
       @trigger = false
       @$el.find('td a.query').first().trigger('click')
+    @active = true
     this
+

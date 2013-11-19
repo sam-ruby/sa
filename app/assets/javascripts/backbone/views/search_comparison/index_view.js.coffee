@@ -21,6 +21,7 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
 
   events:
     'click button.search': 'handle_search'
+    'click button.reset': 'handle_reset'
 
   form_template: JST['backbone/templates/query_comparison/form']
 
@@ -189,29 +190,48 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
       @router.update_path(new_path)
       @get_items(data)
   
-  handle_search: =>
+  handle_search: (e) =>
+    e.preventDefault()
+    @clean_query_results()
     data =
       query: @query_form.find('input.search-query').val()
       weeks_apart: @query_form.find('select').val()
       query_date: @query_form.find('input.datepicker').val()
-    @recent_searches_collection.unshift(data)
-    @do_search(data)
+    if data.query
+      @recent_searches_collection.unshift(data)
+      @do_search(data)
    
-  get_items: (data, refresh_form=true) ->
+  handle_reset: (e) =>
+    e.preventDefault()
     @clean_query_results()
+    query_date = @controller.get_filter_params()['date']
+    query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
+
+    @query_form.find('input.search-query').val('')
+    @query_form.find('.controls select').val('1')
+    @query_form.find('input.datepicker').datepicker(
+      'update', query_date.toString('M-d-yyyy'))
+  
+  get_items: (data, refresh_form=true) ->
+    query_date = @controller.get_filter_params()['date']
+    query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
+    @clean_query_results()
+
     if data and data.query
       data.query = decodeURIComponent(data.query)
-      data.query_date = decodeURIComponent(data.query_date)
+      query_date = new Date(decodeURIComponent(data.query_date))
       data.weeks_apart= parseInt(data.weeks_apart)
     else
       data =
         query: ''
         weeks_apart: 1
-        query_date: ''
        
     if refresh_form
       $(@query_form).html(@form_template(data))
       @query_form.find('input.datepicker').datepicker()
+    
+    @query_form.find('input.datepicker').datepicker(
+      'update', query_date.toString('M-d-yyyy'))
 
     if data and data.query
       @query = data.query

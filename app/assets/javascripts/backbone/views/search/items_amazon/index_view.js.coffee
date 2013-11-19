@@ -1,26 +1,40 @@
-Searchad.Views.PoorPerforming.AmazonItems ||= {}
+Searchad.Views.Search ||= {}
+Searchad.Views.Search.AmazonItems ||= {}
 
-class Searchad.Views.PoorPerforming.AmazonItems.IndexView extends Backbone.View
+class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
   initialize: (options) =>
     @controller = SearchQualityApp.Controller
     @collection = new Searchad.Collections.CAAmazonItemsCollection()
     @collection.bind('reset', @render_all_items)
+    @collection.bind('reset', (collection) =>
+      that = this
+      if collection.at(0).get('all_items').length > 0
+        that.controller.trigger('search:amazon-items:stats',
+          query: that.query
+          collection: collection)
+    )
     @query = ''
+    
+    @controller.bind('search:amazon-items:in-top-32', @render_in_top_32)
+    @controller.bind('search:amazon-items:not-in-top-32', @render_not_in_top_32)
     @controller.bind('date-changed', =>
       @get_items() if @active)
-    @controller.bind('content-cleanup', @unrender)
-    @top_32_tab = $(options.top_32_tab)
-    @top_32_tab.on('click', 'li.all-items', (e) =>
-      e.preventDefault()
-      @controller.trigger('ca:amazon-items:all-items'))
-    @top_32_tab.on('click', 'li.in-top-32', (e) =>
-      e.preventDefault()
-      @controller.trigger('ca:amazon-items:in-top-32'))
-    @top_32_tab.on('click', 'li.not-in-top-32', (e) =>
-      e.preventDefault()
-      @controller.trigger('ca:amazon-items:not-in-top-32'))
 
-  active: false
+    @controller.bind('content-cleanup', @unrender)
+    @controller.bind('sub-content-cleanup', @unrender)
+    @active = false
+  
+  events: =>
+    that = this
+    'click li.all-items': (e) ->
+      e.preventDefault()
+      that.render_all_items()
+    'click li.in-top-32': (e) ->
+      e.preventDefault()
+      that.render_in_top_32()
+    'click li.not-in-top-32': (e) ->
+      e.preventDefault()
+      that.render_not_in_top_32()
 
   gridColumns: =>
     class ItemCell extends Backgrid.Cell
@@ -100,13 +114,13 @@ class Searchad.Views.PoorPerforming.AmazonItems.IndexView extends Backbone.View
     
   unrender: =>
     @active = false
-    @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').hide()
-    @top_32_tab.hide()
+    @$el.children().not('ul').remove()
+    @$el.hide()
+    @controller.trigger('search:sub-content:hide-spin')
 
   get_items: (data) =>
     @query = data.query if data
-    @$el.find('.ajax-loader').css('display', 'block')
+    @controller.trigger('search:sub-content:show-spin')
     @collection.get_items(data)
 
   processData: (data) =>
@@ -118,38 +132,44 @@ class Searchad.Views.PoorPerforming.AmazonItems.IndexView extends Backbone.View
 
   render: =>
     @active = true
-    @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').hide()
-    @top_32_tab.show()
+    @$el.children().not('ul').remove()
+    @controller.trigger('search:sub-content:hide-spin')
+    @$el.show()
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     return this
 
+  render_error: (query) ->
+    @$el.children().not('ul').remove()
+    @controller.trigger('search:sub-content:hide-spin')
+    @$el.show()
+    @$el.append( $('<span>').addClass('label label-important').append(
+      "No data available for #{query}") )
+  
   render_all_items: =>
-    @top_32_tab.find('li.active').removeClass('active')
-    @top_32_tab.find('li.all-items').addClass('active')
+    @controller.trigger('search:sub-content:hide-spin')
+    @$el.find('li.active').removeClass('active')
+    @$el.find('li.all-items').addClass('active')
     data = @collection.at(0).get('all_items')
     if data.length > 0
       @processData(_.clone(data))
     else
-      @$el.prepend(
-        "<div><h1>No Walmart items available for this search term.</h1></div>")
+      @render_error(@query)
 
   render_in_top_32: =>
-    @top_32_tab.find('li.active').removeClass('active')
-    @top_32_tab.find('li.in-top-32').addClass('active')
+    @$el.find('li.active').removeClass('active')
+    @$el.find('li.in-top-32').addClass('active')
     data = @collection.at(0).get('in_top_32')
     if data.length > 0
       @processData(_.clone(data))
     else
-      @$el.prepend("<div><h1>No Walmart items found.</h1></div>")
+      @render_error(@query)
 
   render_not_in_top_32: =>
-    @top_32_tab.find('li.active').removeClass('active')
-    @top_32_tab.find('li.not-in-top-32').addClass('active')
+    @$el.find('li.active').removeClass('active')
+    @$el.find('li.not-in-top-32').addClass('active')
     data = @collection.at(0).get('not_in_top_32')
     if data.length > 0
       @processData(_.clone(data))
     else
-      @$el.prepend("<div><h1>No Walmart items found.</h1></div>")
-
+      @render_error(@query)

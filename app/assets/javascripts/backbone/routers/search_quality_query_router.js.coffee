@@ -3,12 +3,13 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller = options.controller
 
   routes:
-    "search_rel(/filters/*wday)": "search_rel"
+    "search_rel(/query/:query)(/filters/*wday)": "search_rel"
     "search_rel/item_id/:id(/filters/*wday)": "search_query_items"
-    "(filters/*wday)": "search_rel"
-
-    "search_kpi(/filters/*wday)": "search_kpi"
     
+    "search_kpi(/filters/*wday)": "search_kpi"
+    "(filters/*wday)": "search_kpi"
+    
+    ### 
     "poor_performing(/filters/*wday)": "poor_performing"
     "poor_performing/stats/query/:query(/filters/*wday)":
       "pp_stats"
@@ -16,17 +17,11 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       "pp_walmart_items"
     "poor_performing/amazon_items/query/:query(/filters/*wday)":
       "pp_amazon_items"
-
     "comp_analysis(/filters/*wday)": "comp_analysis"
-    "comp_analysis/walmart_items/query/:query(/filters/*wday)":
-      "ca_walmart_items"
-    "comp_analysis/amazon_items/query/:query(/filters/*wday)":
-      "ca_amazon_items"
-
-    "search(/filters/*wday)": "search"
-    "search/query/:query(/filters/*wday)": "search"
-    "search/amazon_items/query/:query(/filters/*wday)":
-      "search_amazon_items"
+    "comp_analysis/query/:query(/filters/*wday)": "comp_analysis_stats"
+    ###
+    
+    "search(/query/:query)(/filters/*wday)": "search"
     
     "query_perf_comparison(/query/:query/wks_apart/:weeks/query_date/:date)(/filters/*wday)":
       "query_perf_comparison"
@@ -49,16 +44,11 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       weeks_apart: weeks
       query_date: search_date)
   
-  search_rel: (date_parts) =>
+  search_rel: (query, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('relevance:app')
-    @controller.trigger('search-kpi:index')
+    @controller.trigger('search-rel:index', query: query)
 
-  search_query_items: (id, date_parts) =>
-    @set_date_info(date_parts)
-    @controller.trigger('relevance:app')
-    @controller.trigger('search-rel:index', id: id)
-  
   search_kpi: (date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('relevance:app')
@@ -66,8 +56,10 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
 
   search: (query, date_parts) =>
     @set_date_info(date_parts)
-    @controller.trigger('relevance:app')
-    @controller.trigger('do-search', query: decodeURIComponent(query))
+    @controller.trigger('search:app')
+    @controller.trigger('search:form')
+    @controller.trigger(
+      'load-search-results', decodeURIComponent(query)) if query
   
   search_amazon_items: (query, date_parts) =>
     @set_date_info(date_parts)
@@ -111,20 +103,21 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.trigger('explore:app')
     @controller.trigger('comp-analysis:index')
 
-  ca_walmart_items: (query, date_parts) =>
+  comp_analysis_stats: (query, date_parts) =>
+    console.log('here is the query' + query)
     @set_date_info(date_parts)
     @controller.trigger('explore:app')
-    @controller.trigger('comp-analysis:index')
-    @controller.trigger('ca:walmart-items:index',
+    @controller.trigger('comp-analysis:index',
+      saveQuery: true
       query: decodeURIComponent(query))
   
   ca_amazon_items: (query, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('explore:app')
     @controller.trigger('comp-analysis:index',
-      query: decodeURIComponent(query))
+      query: decodeURIComponent(query)
+      saveQuery: true)
     
-  
   update_path: (path) =>
     url_parts = window.location.hash.replace('#', '').split('filters')
     if url_parts.length > 0
