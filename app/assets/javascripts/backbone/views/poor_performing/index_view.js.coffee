@@ -20,6 +20,7 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
   active: false
 
   gridColumns:  ->
+    that = this
     class QueryCell extends Backgrid.Cell
       controller: SearchQualityApp.Controller
       router: SearchQualityApp.Router
@@ -29,9 +30,14 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
 
       handleQueryClick: (e) =>
         e.preventDefault()
+        query = $(e.target).text()
         $(e.target).parents('table').find('tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
-        @controller.trigger('pp:content-cleanup')
+        that.controller.trigger('search:sub-content',
+          query: query
+          view: 'daily')
+        new_path = 'poor_performing/query/' + encodeURIComponent(query)
+        that.router.update_path(new_path)
 
       render: ->
         value = @model.get(@column.get('name'))

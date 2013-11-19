@@ -1,6 +1,7 @@
-Searchad.Views.SearchQualityQuery.QueryItems ||= {}
+Searchad.Views.Search ||= {}
+Searchad.Views.Search.RelRev ||= {}
 
-class Searchad.Views.SearchQualityQuery.QueryItems.IndexView extends Backbone.View
+class Searchad.Views.Search.RelRev.IndexView extends Backbone.View
   initialize: (options) =>
     
     _.bindAll(this, 'render', 'initTable')
@@ -10,18 +11,15 @@ class Searchad.Views.SearchQualityQuery.QueryItems.IndexView extends Backbone.Vi
     
     @controller.bind('date-changed', =>
       @unrender() if @active)
-    @controller.bind('search-rel:sub-content-cleanup', @unrender)
+    @controller.bind('sub-content-cleanup', @unrender)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
 
   active: false
 
-  tab_el: $('#query-items-tab')
-
   gridColumns: =>
     class ItemCell extends Backgrid.Cell
       item_template: JST["backbone/templates/search_quality_query/query_items/item"]
-      
       render: =>
         item = @model.get(@column.get('name'))
         formatted_value = @item_template(item)
@@ -29,14 +27,32 @@ class Searchad.Views.SearchQualityQuery.QueryItems.IndexView extends Backbone.Vi
         return this
     
     columns = [{
-    name: 'walmart_item',
+    name: 'position',
+    label: 'Position',
+    editable: false,
+    sortable: false,
+    cell: 'integer'},
+    {name: 'walmart_item',
     label: 'Relevance Order',
     editable: false,
+    sortable: false,
     cell: ItemCell},
+    {name: 'rev_rank',
+    label: 'Revenue Rank',
+    editable: false,
+    sortable: false,
+    cell: 'integer'},
     {name: 'rev_based_item',
     label: 'Best Seller Order',
     editable: false,
-    cell: ItemCell}]
+    sortable: false,
+    cell: ItemCell},
+    {name: 'revenue',
+    label: 'Revenue',
+    editable: false,
+    sortable: false,
+    formatter: Utils.CurrencyFormatter,
+    cell: 'number'}]
 
     columns
 
@@ -49,13 +65,20 @@ class Searchad.Views.SearchQualityQuery.QueryItems.IndexView extends Backbone.Vi
       collection: @collection)
   
   get_items: (data) =>
-    @$el.find('.ajax-loader').css('display', 'block')
+    @query = data.query if data.query
+    @controller.trigger('search:sub-content:show-spin')
     @collection.get_items(data)
 
+  render_error: (query) ->
+    @controller.trigger('search:sub-content:hide-spin')
+    @$el.append( $('<span>').addClass('label label-important').append(
+      "No data available for #{query}") )
+  
   render: =>
+    return @render_error(@query) if @collection.size() == 0
     @active = true
-    @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').hide()
+    @controller.trigger('search:sub-content:hide-spin')
+    @$el.children().remove()
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     this
