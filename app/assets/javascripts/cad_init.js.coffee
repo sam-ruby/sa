@@ -296,5 +296,5 @@ $ ->
     SearchQualityApp.Controller.trigger('content-cleanup')
     SearchQualityApp.Router.navigate('/', trigger: true)
   )
-  MDW.init({appId: 8880394})
+  MDW.init({appId: 429415118})
 
