@@ -119,6 +119,7 @@
     = csrf_meta_tag 
   
   %body
+    #mdw-toolbar
     = render 'shared/title'
     .container
       .row.master-tab
@@ -128,4 +129,5 @@
           = yield :main_content
     
     = javascript_include_tag :application
+    = javascript_include_tag 'http://mdw.dev.walmartlabs.com/mdw.js'
     = yield :javascript
