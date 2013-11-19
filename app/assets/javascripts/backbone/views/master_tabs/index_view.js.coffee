@@ -34,7 +34,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       title: 'KPI'},
       {class: ['search-quality-tab']
       href: '/#search_rel'
-      title: 'Relevance Revenue Analysis'},
+      title: 'Query Analysis'},
       {class: ['poor-performing-tab']
       href: '#poor_performing'
       title: 'Poor Performing Intents'}]
