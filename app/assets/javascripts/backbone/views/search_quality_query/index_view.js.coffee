@@ -2,8 +2,6 @@ Searchad.Views.SearchQualityQuery ||= {}
 
 class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
   initialize: (options) =>
-    
-    _.bindAll(this, 'render', 'initTable')
     @trigger = false
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router

@@ -66,28 +66,15 @@ $ ->
     CurrencyFormatter: CurrencyFormatter
     CustomNumberFormatter: CustomNumberFormatter
   
-  window.SearchQualityApp = do ->
-    controller = _.extend({}, Backbone.Events)
-    controller.set_view = (@view) =>
-    controller.get_view = => @view
-    controller.set_date = (@date) =>
-    controller.set_week = (@week) =>
-    controller.set_year = (@year) =>
-    controller.set_cat_id = (@cat_id) =>
-
-    controller.get_filter_params = =>
-      date: @date
-      week: @week
-      year: @year
-      cat_id: @cat_id
-
+  do ->
+    router = new Searchad.Routers.SearchQualityQuery()
+    SearchQualityApp.Router = router
+    controller = SearchQualityApp.Controller
+    
     controller.set_date(Selected_Date.toString('M-d-yyyy'))
     controller.set_week(Selected_Week)
     controller.set_year(Selected_Year)
     
-    searchQualityRouter = new Searchad.Routers.SearchQualityQuery(
-      controller: controller)
-
     controller.on('all', (name) ->
       current_view = controller.get_view()
       if name.match(/comp-analysis:index|ca:walmart-items:index/)
@@ -99,12 +86,7 @@ $ ->
           controller.set_view('daily')
           controller.trigger('view-change', view: 'daily'))
     
-    Controller: controller
-    Router: searchQualityRouter
 
-  do ->
-    router = SearchQualityApp.Router
-    controller = SearchQualityApp.Controller
     weekView = new Searchad.Views.WeekPicker.IndexView(
       el: '#dp3')
 
@@ -138,8 +120,9 @@ $ ->
     ###
     # Search
     searchView = new Searchad.Views.Search.IndexView(
-      el: '#search-form'
-      el_results: '#search-results')
+      el: '#search'
+      el_results: '#search-results'
+      el_form: '#search-form')
     searchView.listenTo(
       controller, 'search:form', searchView.render)
     searchView.listenTo(
