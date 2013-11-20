@@ -1,6 +1,4 @@
 class Searchad.Models.SearchQualityQuery extends Backbone.Model
-  paramRoot: 'search_quality_query'
-
   defaults:
     id: null
     query_str: null
