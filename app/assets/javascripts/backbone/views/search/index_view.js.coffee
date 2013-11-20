@@ -17,7 +17,7 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     @queryStatsCollection.bind('reset', @render_s_results)
     @queryStatsCollection.bind('request', =>
       @search_results_cleanup()
-      @$el.find('.ajax-loader').css('display', 'block')
+      @$search_results.find('.ajax-loader').css('display', 'block')
       @controller.trigger('sub-content-cleanup')
     )
 
@@ -28,8 +28,6 @@ class Searchad.Views.Search.IndexView extends Backbone.View
   search_form_template: JST['backbone/templates/search/form']
 
   load_search_results: (query) =>
-    @query = query
-    @trigger = true
     @$search_form.find('input.search-query').val(query)
     @$search_form.find('button.search-btn').first().trigger('click')
   
