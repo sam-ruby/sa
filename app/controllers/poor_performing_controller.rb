@@ -57,6 +57,11 @@ class PoorPerformingController < BaseController
         render :json => URLMapping.get_amazon_items(
           query, ((week.to_i-3)..week.to_i).to_a, @year)
       end
+
+      format.csv do 
+        render :json => URLMapping.get_amazon_items(
+          query, ((week.to_i-3)..week.to_i).to_a, @year)[:all_items]
+      end
     end
   end
 end
