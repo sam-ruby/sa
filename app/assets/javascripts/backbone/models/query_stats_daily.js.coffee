@@ -9,6 +9,7 @@ class Searchad.Models.QueryStatsDaily extends Backbone.Model
 class Searchad.Collections.QueryStatsDailyCollection extends Backbone.PageableCollection
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
+    @query = null
     super(options)
   
   model: Searchad.Models.QueryStatsDaily
@@ -33,6 +34,5 @@ class Searchad.Collections.QueryStatsDailyCollection extends Backbone.PageableCo
       continue unless v
       data[k] = v
     @fetch(
-      reset: true
       data: data
-    )
+      reset: true)

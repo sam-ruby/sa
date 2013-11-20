@@ -22,6 +22,7 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
 
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('sub-content-cleanup', @unrender)
+    @$el.find('li.export-csv').addClass('active')
     @active = false
   
   events: =>
@@ -35,6 +36,8 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
     'click li.not-in-top-32': (e) ->
       e.preventDefault()
       that.render_not_in_top_32()
+    'click li.export-csv': (e) ->
+      that.export_csv($(e.target))
 
   gridColumns: =>
     class ItemCell extends Backgrid.Cell
@@ -111,7 +114,18 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
     @paginator = new Backgrid.Extension.Paginator(
       collection: @amazonCollection
     )
-    
+   
+  export_csv: (el) =>
+    url = "/poor_performing/get_amazon_items.csv"
+    query = @query.replace(/\s+/g, '_')
+    query = query.replace(/"|'/, '')
+    fileName = "amazon_compare_items_" + query + ".csv"
+    data =
+      query: @query
+      view: 'daily'
+      date: @date
+    MDW.CSVExport.genDownloadCSVFromUrl(el, fileName, url, data)
+
   unrender: =>
     @active = false
     @$el.children().not('ul').remove()
@@ -135,6 +149,7 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
     @$el.children().not('ul').remove()
     @controller.trigger('search:sub-content:hide-spin')
     @$el.show()
+    @$el.children('ul').show()
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     return this
@@ -143,12 +158,13 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
     @$el.children().not('ul').remove()
     @controller.trigger('search:sub-content:hide-spin')
     @$el.show()
+    @$el.children('ul').hide()
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
   
   render_all_items: =>
     @controller.trigger('search:sub-content:hide-spin')
-    @$el.find('li.active').removeClass('active')
+    @$el.find('li.active').not('li.export-csv').removeClass('active')
     @$el.find('li.all-items').addClass('active')
     data = @collection.at(0).get('all_items')
     if data.length > 0
@@ -157,7 +173,7 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
       @render_error(@query)
 
   render_in_top_32: =>
-    @$el.find('li.active').removeClass('active')
+    @$el.find('li.active').not('li.export-csv').removeClass('active')
     @$el.find('li.in-top-32').addClass('active')
     data = @collection.at(0).get('in_top_32')
     if data.length > 0
@@ -166,7 +182,7 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
       @render_error(@query)
 
   render_not_in_top_32: =>
-    @$el.find('li.active').removeClass('active')
+    @$el.find('li.active').not('li.export-csv').removeClass('active')
     @$el.find('li.not-in-top-32').addClass('active')
     data = @collection.at(0).get('not_in_top_32')
     if data.length > 0

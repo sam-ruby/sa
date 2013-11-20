@@ -1,6 +1,7 @@
 class Searchad.Routers.SearchQualityQuery extends Backbone.Router
+  
   initialize: (options) ->
-    @controller = options.controller
+    @controller = SearchQualityApp.Controller
 
   routes:
     "search_rel(/query/:query)(/filters/*wday)": "search_rel"
