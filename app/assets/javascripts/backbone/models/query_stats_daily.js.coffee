@@ -33,4 +33,6 @@ class Searchad.Collections.QueryStatsDailyCollection extends Backbone.PageableCo
     for k, v of @controller.get_filter_params()
       continue unless v
       data[k] = v
-    @fetch(reset: true)
+    @fetch(
+      data: data
+      reset: true)
