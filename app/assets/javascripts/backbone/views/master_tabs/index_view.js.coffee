@@ -144,6 +144,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     e.preventDefault()
     @controller.trigger('query-perf-comp:app')
     @controller.trigger('query-comparison')
+    @router.update_path('query_perf_comparison')
 
   
   select_pp_tab: =>
