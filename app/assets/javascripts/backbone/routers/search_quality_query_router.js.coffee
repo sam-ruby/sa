@@ -59,7 +59,6 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @set_date_info(date_parts)
     @controller.trigger('query-perf-comp:app')
     @controller.trigger('adhoc-search:index')
-    @controller.trigger('search:app')
     @controller.trigger('search:form')
     @controller.trigger(
       'load-search-results', decodeURIComponent(query)) if query
