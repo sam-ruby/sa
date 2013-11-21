@@ -29,6 +29,7 @@
 
 #search-quality
   #search-quality-queries
+    #search-quality-filter
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
    
 #poor-performing
@@ -66,6 +67,8 @@
   #search-form{:style=>'text-align:center'}
   #search-results
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+
+#search-view
   #search-sub-tabs
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
   #search-sub-content
@@ -80,14 +83,7 @@
       %li.not-in-top-32
         %a{:href=>'#'}
           Items Not In Top 32
-      %li.export-csv{:style=>'display:inline-block;float:right'}
-        %a#download-csv-btn{:href=>'#'}
-          %i.icon-download-alt
-          &nbsp;
-          Export to CSV
 
-
-    
 #query-perf-comparison
   #query-comparison-fcharts
     .row
