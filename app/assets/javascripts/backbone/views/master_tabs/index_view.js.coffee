@@ -7,16 +7,12 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.bind('relevance:app', @init_relevance)
     @controller.bind('explore:app', @init_explore)
     @controller.bind('query-perf-comp:app', @init_query_perf_comp)
-    #@controller.bind('search:app', @init_search)
-
     @controller.bind('poor-performing:index', @select_pp_tab)
     @controller.bind('search-rel:index', @select_sq_tab)
     @controller.bind('search-kpi:index', @select_search_kpi_tab)
     @controller.bind('comp-analysis:index', @select_ca_tab)
     @controller.bind('query-perf-comp:index', @select_query_perf_comparison_tab)
     @controller.bind('adhoc-search:index', @select_search_tab)
-    # @controller.bind('query-comparison', @select_query_perf_comparison_tab)
-    # @controller.bind('search', @select_search_tab)
 
   events:
     #events on overview page
@@ -79,17 +75,22 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @$el.find('ul').prepend(@get_tab_el(tabs[1]))
     @$el.find('ul').prepend(@get_tab_el(tabs[0]))
 
-    ###
+  init_search_app: =>  
+    @clean_tabs()
     tabs = [{
-      class: ['query-comparison-details-tab']
-      href: '/#query_perf_comparison'
-      title: 'Details'}]
+      class: ['query-perf-comparison-tab']
+      href: '#query-perf-comparison'
+      title: 'Query Performace Analysis'},
+      {class: ['adhoc-search-tab','active']
+      href: '#search'
+      title: 'Search'}]
+    @$el.find('ul').prepend(@get_tab_el(tabs[1]))
     @$el.find('ul').prepend(@get_tab_el(tabs[0]))
-    ###
-   # @$el.find('ul').hide()
   
   toggleTab: (e) =>
+    console.log(@$el);
     @$el.find('li.active').removeClass('active')
+    console.log(e.target);
     $(e.target).parents('li').addClass('active')
 
   queryComparison: (e) =>
@@ -130,7 +131,6 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.trigger('content-cleanup')
     e.preventDefault()
     #switch to search app
-    @controller.trigger('search:app')
     @controller.trigger('search:form')
     @router.update_path('search')
   
@@ -176,11 +176,14 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
   select_query_perf_comparison_tab:=>
     e = {}
     e.target = @$el.find('li.query-perf-comparison-tab a').get(0)
+    console.log(e.target);
     @toggleTab(e)
 
   select_search_tab:=>
+    console.log("select search tab");
     e = {}
     e.target = @$el.find('li.adhoc-search-tab a').get(0)
+    console.log(e.target);
     @toggleTab(e)
 
   clean_tabs: =>
