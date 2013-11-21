@@ -88,9 +88,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @$el.find('ul').prepend(@get_tab_el(tabs[0]))
   
   toggleTab: (e) =>
-    console.log(@$el);
     @$el.find('li.active').removeClass('active')
-    console.log(e.target);
     $(e.target).parents('li').addClass('active')
 
   queryComparison: (e) =>
@@ -124,7 +122,6 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
 
   #adhoc query page
   adhocSearchQuery: (e)=>
-    console.log("clicked search query")
     e.preventDefault()
     #switch to search tab
     @controller.trigger('adhoc-search:index')
@@ -176,14 +173,11 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
   select_query_perf_comparison_tab:=>
     e = {}
     e.target = @$el.find('li.query-perf-comparison-tab a').get(0)
-    console.log(e.target);
     @toggleTab(e)
 
   select_search_tab:=>
-    console.log("select search tab");
     e = {}
     e.target = @$el.find('li.adhoc-search-tab a').get(0)
-    console.log(e.target);
     @toggleTab(e)
 
   clean_tabs: =>
