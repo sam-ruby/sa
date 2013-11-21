@@ -14,12 +14,25 @@ class Searchad.Views.Search.RelRev.IndexView extends Backbone.View
     @controller.bind('sub-content-cleanup', @unrender)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
+    Utils.InitExportCsv(this, '/search_rel/get_query_items.csv')
+    @undelegateEvents()
+    @active = false
 
-  active: false
-
+  events: =>
+    'click .export-csv a': (e) ->
+      date = @controller.get_filter_params().date
+      query = @query.replace(/\s+/g, '_')
+      query = query.replace(/"|'/, '')
+      fileName = "relevance_best_seller_#{query}_#{date}.csv"
+      data =
+        date: date
+        query: @query
+      @export_csv($(e.target), fileName, data)
+  
   gridColumns: =>
     class ItemCell extends Backgrid.Cell
-      item_template: JST["backbone/templates/search_quality_query/query_items/item"]
+      item_template:
+        JST["backbone/templates/search_quality_query/query_items/item"]
       render: =>
         item = @model.get(@column.get('name'))
         formatted_value = @item_template(item)
@@ -75,16 +88,17 @@ class Searchad.Views.Search.RelRev.IndexView extends Backbone.View
       "No data available for #{query}") )
   
   render: =>
+    @unrender()
     return @render_error(@query) if @collection.size() == 0
     @active = true
-    @controller.trigger('search:sub-content:hide-spin')
-    @$el.children().remove()
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
+    @$el.append( @export_csv_button() )
+    @delegateEvents()
     this
   
   unrender: =>
     @active = false
     @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').hide()
-    this
+    @controller.trigger('search:sub-content:hide-spin')
+    @undelegateEvents()

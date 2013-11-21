@@ -7,23 +7,36 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @router = SearchQualityApp.Router
     @collection =
       new Searchad.Collections.SearchQualityQueryCollection()
+    @$filter = @$el.find(options.el_filter)
     @initTable()
 
     @controller.bind('date-changed', =>
       @get_items() if @active)
     @controller.bind('content-cleanup', @unrender)
+    @controller.bind('content-cleanup', @clear_filter)
+
     @collection.bind('reset', @render)
     @collection.bind('request', =>
       @unrender_search_results()
       @$el.find('.ajax-loader').css('display', 'block')
       @controller.trigger('sub-content-cleanup')
     )
+    
+    Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
+    @undelegateEvents()
+    @active = false
         
-  active: false
   events:
     'click .filter': 'filter'
     'click .reset': 'reset'
     'submit': 'filter'
+    'click .export-csv a': (e) ->
+      date = @controller.get_filter_params().date
+      fileName = "query_analysis_#{date}.csv"
+      data =
+        date: date
+      data['query'] = @collection.query if @collection.query
+      @export_csv($(e.target), fileName, data)
 
   gridColumns: ->
     that = this
@@ -95,7 +108,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     columns
   
   initFilter: =>
-    _.template('<div class="input-prepend input-append filter-box pull-right"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type to filter results"/></form><button class="btn btn-primary reset">Reset</button></div>')
+    _.template('<div class="input-prepend input-append filter-box"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type to filter results"/></form><button class="btn btn-primary reset">Reset</button></div>')
   
   filter: (e) =>
     e.preventDefault()
@@ -113,7 +126,8 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @trigger = true
 
   unrender_search_results: =>
-    @$el.children().not('.ajax-loader, .filter-box').remove()
+    @$el.children().not('.ajax-loader, #' + @$filter.attr('id')).remove()
+    @$el.find('.ajax-loader').hide()
   
   initTable: () =>
     @grid = new Backgrid.Grid(
@@ -126,16 +140,23 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     )
 
   get_items: (data) =>
-    @collection.query = null
+    if data and data.query
+      @collection.query = data.query
+    else
+      @collection.query = null
+
     @unrender()
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items(data)
     @trigger = true
 
+  clear_filter: =>
+    @$filter.children().remove()
+
   unrender: =>
     @active = false
-    @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').hide()
+    @unrender_search_results()
+    @undelegateEvents()
     this
 
   render_error: (query) ->
@@ -144,13 +165,15 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
       "No data available for #{query}") )
   
   render: =>
-    @$el.find('.ajax-loader').hide()
+    @unrender_search_results()
     return @render_error(@collection.query) if @collection.size() == 0
     unless @active
-      @$el.prepend(@initFilter()())
-      @delegateEvents()
+      @$filter.append(@initFilter()())
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
+    @$el.append( @export_csv_button() )
+    @delegateEvents()
+    
     if @trigger
       @trigger = false
       @$el.find('td a.query').first().trigger('click')

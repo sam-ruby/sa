@@ -20,10 +20,26 @@ class Searchad.Views.Search.IndexView extends Backbone.View
       @$search_results.find('.ajax-loader').css('display', 'block')
       @controller.trigger('sub-content-cleanup')
     )
+    Utils.InitExportCsv(this, "/search/get_query_stats_date.csv")
+    @undelegateEvents()
 
-  events:
+  events: =>
     'submit': 'do_search'
     'click button.search-btn': 'do_search'
+    'click .export-csv a': (e) ->
+      date = @controller.get_filter_params().date
+      if @query
+        query = @query.replace(/\s+/g, '_')
+        query = query.replace(/"|'/, '')
+        fileName = "search_#{query}_#{date}.csv"
+        data =
+          date: date
+          query: @query
+      else
+        data =
+          date: date
+        fileName = "search_#{date}.csv"
+      @export_csv($(e.target), fileName, data)
 
   search_form_template: JST['backbone/templates/search/form']
 
@@ -46,6 +62,7 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     @$search_form.children().remove()
     @$search_results.children().not('.ajax-loader').remove()
     @$el.find('.ajax-loader').hide()
+    @undelegateEvents()
 
   render_error: ->
     @controller.trigger('search:sub-tab-cleanup')
@@ -56,6 +73,7 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     @active = true
     @$search_form.append(@search_form_template())
     @delegateEvents()
+    this
 
   search_results_cleanup: =>
     @$search_results.children().not('.ajax-loader').remove()
@@ -140,6 +158,8 @@ class Searchad.Views.Search.IndexView extends Backbone.View
         '&nbsp; Results for : ' + @query)))
     @$search_results.append(@grid.render().$el)
     @$search_results.append(@paginator.render().$el)
+    @$search_results.append(@export_csv_button())
+    
     if @trigger
       @trigger = false
       @$search_results.find('td a.query').first().trigger('click')

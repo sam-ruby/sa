@@ -13,11 +13,19 @@ class QueryCatMetricsDaily < BaseModel
       order_str = order_column
       order_str << ' ' << order
     end
-    
-   QueryCatMetricsDaily.select(selects).where([
-      %q{query_date = ? AND cat_id = ? AND (channel = "ORGANIC" OR 
-      channel = "ORGANIC_USER")}, query_date, 0]).order(
-        order_str).page(page).per(limit)
+
+    if page > 0 
+      QueryCatMetricsDaily.select(selects).where([
+         %q{query_date = ? AND cat_id = ? AND (channel = "ORGANIC" OR 
+         channel = "ORGANIC_USER")}, query_date, 0]).order(
+           order_str).page(page).per(limit)
+    else
+      limit = 10000
+      QueryCatMetricsDaily.select(selects).where([
+         %q{query_date = ? AND cat_id = ? AND (channel = "ORGANIC" OR 
+         channel = "ORGANIC_USER")}, query_date, 0]).order(
+           order_str).limit(limit)
+    end
   end
 
   def self.get_query_stats(query)
@@ -76,8 +84,14 @@ class QueryCatMetricsDaily < BaseModel
         query_daily.cat_id = 0}, query_date])
     end
 
-    joins(join_stmt).select(selects).where(where_conditions).order(
-      order_str).page(page).per(limit)
+    if page > 0
+      joins(join_stmt).select(selects).where(where_conditions).order(
+        order_str).page(page).per(limit)
+    else
+      limit = 10000
+      joins(join_stmt).select(selects).where(where_conditions).order(
+        order_str).limit(limit)
+    end
   end
 
   def self.get_week_average(query, date_start, date_end)

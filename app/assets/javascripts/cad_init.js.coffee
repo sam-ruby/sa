@@ -28,6 +28,11 @@ $ ->
       else
         newPath = updateParam(pathURL, fName, fValue)
         return newPath + 'filters/' + filterURL
+
+    init_csv_export_feature = (view, url) ->
+      view.export_csv_button = _.template('<span class="label label-info export-csv pull-right"><a href="#" id="download-csv-btn"><i class="icon icon-download-alt">&nbsp;</i>Download</a></span>')
+      view.export_csv = view.export_csv || (el, fileName, data) =>
+        MDW.CSVExport.genDownloadCSVFromUrl(el, fileName, url, data)
      
     class PercentFormatter extends Backgrid.NumberFormatter
       decimals: 2
@@ -65,6 +70,7 @@ $ ->
     PercentFormatter: PercentFormatter
     CurrencyFormatter: CurrencyFormatter
     CustomNumberFormatter: CustomNumberFormatter
+    InitExportCsv: init_csv_export_feature
   
   do ->
     router = new Searchad.Routers.SearchQualityQuery()
@@ -107,7 +113,9 @@ $ ->
       controller, 'poor-performing:index', poorPerformingView.get_items)
 
     searchQualityQueryView = new Searchad.Views.SearchQualityQuery.IndexView(
-      el: '#search-quality-queries')
+      el: '#search-quality-queries'
+      el_filter: '#search-quality-filter'
+    )
     searchQualityQueryView.listenTo(
       controller, 'search-rel:index', searchQualityQueryView.get_items)
     

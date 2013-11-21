@@ -1,5 +1,4 @@
 class Searchad.Routers.SearchQualityQuery extends Backbone.Router
-  
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
 
@@ -10,14 +9,8 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "search_kpi(/filters/*wday)": "search_kpi"
     "(filters/*wday)": "search_kpi"
     
-    ### 
-    "poor_performing(/filters/*wday)": "poor_performing"
-    "poor_performing/stats/query/:query(/filters/*wday)":
-      "pp_stats"
-    "poor_performing/walmart_items/query/:query(/filters/*wday)":
-      "pp_walmart_items"
-    "poor_performing/amazon_items/query/:query(/filters/*wday)":
-      "pp_amazon_items"
+    "poor_performing(/query/:query)(/filters/*wday)": "poor_performing"
+    ###
     "comp_analysis(/filters/*wday)": "comp_analysis"
     "comp_analysis/query/:query(/filters/*wday)": "comp_analysis_stats"
     ###
@@ -48,7 +41,8 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   search_rel: (query, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('relevance:app')
-    @controller.trigger('search-rel:index', query: query)
+    @controller.trigger(
+      'search-rel:index', query: decodeURIComponent(query)) if query
 
   search_kpi: (date_parts) =>
     @set_date_info(date_parts)
@@ -74,7 +68,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.set_date(date)
     @controller.trigger('dashboard:index')
   
-  poor_performing: (date_parts) =>
+  poor_performing: (search_rel, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('relevance:app')
     @controller.trigger('poor-performing:index', trigger: true)
