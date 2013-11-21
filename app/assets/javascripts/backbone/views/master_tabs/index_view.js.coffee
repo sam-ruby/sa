@@ -74,18 +74,6 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       title: 'Search'}]
     @$el.find('ul').prepend(@get_tab_el(tabs[1]))
     @$el.find('ul').prepend(@get_tab_el(tabs[0]))
-
-  init_search_app: =>  
-    @clean_tabs()
-    tabs = [{
-      class: ['query-perf-comparison-tab']
-      href: '#query-perf-comparison'
-      title: 'Query Performace Analysis'},
-      {class: ['adhoc-search-tab','active']
-      href: '#search'
-      title: 'Search'}]
-    @$el.find('ul').prepend(@get_tab_el(tabs[1]))
-    @$el.find('ul').prepend(@get_tab_el(tabs[0]))
   
   toggleTab: (e) =>
     @$el.find('li.active').removeClass('active')
