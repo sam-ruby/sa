@@ -13,9 +13,21 @@ class Searchad.Views.Search.WalmartItems.IndexView extends Backbone.View
     @collection.bind('reset', @render)
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('sub-content-cleanup', @unrender)
+    Utils.InitExportCsv(this, '/comp_analysis/get_walmart_items.json')
+    @undelegateEvents()
+    @active = false
 
-  active: false
-
+  events: =>
+    'click .export-csv a': (e) ->
+      date = @controller.get_filter_params().date
+      query = @query.replace(/\s+/g, '_')
+      query = query.replace(/"|'/, '')
+      fileName = "walmart_search_results_#{query}_#{date}.csv"
+      data =
+        date: date
+        query: @query
+      @export_csv($(e.target), fileName, data)
+  
   gridColumns: =>
     class ItemCell extends Backgrid.Cell
       item_template:
@@ -76,6 +88,7 @@ class Searchad.Views.Search.WalmartItems.IndexView extends Backbone.View
     @active = false
     @$el.children().not('.ajax-loader').remove()
     @controller.trigger('search:sub-content:hide-spin')
+    @undelegateEvents()
   
   get_items: (data) =>
     @query = data.query if data.query
@@ -88,9 +101,11 @@ class Searchad.Views.Search.WalmartItems.IndexView extends Backbone.View
       "No data available for #{query}") )
   
   render: =>
+    @unrender()
     return @render_error(@query) if @collection.size() == 0
     @active = true
-    @controller.trigger('search:sub-content:hide-spin')
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
+    @$el.append( @export_csv_button() )
+    @delegateEvents()
     return this

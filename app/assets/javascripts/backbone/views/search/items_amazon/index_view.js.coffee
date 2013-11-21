@@ -22,22 +22,29 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
 
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('sub-content-cleanup', @unrender)
-    @$el.find('li.export-csv').addClass('active')
+    Utils.InitExportCsv(this, "/poor_performing/get_amazon_items.csv")
+    @undelegateEvents()
     @active = false
-  
+ 
   events: =>
-    that = this
     'click li.all-items': (e) ->
       e.preventDefault()
-      that.render_all_items()
+      @render_all_items()
     'click li.in-top-32': (e) ->
       e.preventDefault()
-      that.render_in_top_32()
+      @render_in_top_32()
     'click li.not-in-top-32': (e) ->
       e.preventDefault()
-      that.render_not_in_top_32()
-    'click li.export-csv': (e) ->
-      that.export_csv($(e.target))
+      @render_not_in_top_32()
+    'click .export-csv a': (e) ->
+      query = @query.replace(/\s+/g, '_')
+      query = query.replace(/"|'/, '')
+      fileName = "competitive_analysis_" + query + ".csv"
+      data =
+        query: @query
+        view: 'daily'
+        date: @controller.get_filter_params().date
+      @export_csv($(e.target), fileName, data)
 
   gridColumns: =>
     class ItemCell extends Backgrid.Cell
@@ -83,13 +90,17 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
 
     columns = [{
     name: 'position',
-    label: I18n.t('rank'),
+    label: 'Amazon Position'
     editable: false,
     cell: 'integer'},
     {name: 'name',
     label: I18n.t('dashboard.item'),
     editable: false,
     cell: ItemCell},
+    {name: 'walmart_position',
+    label: 'Walmart Position'
+    editable: false,
+    cell: 'integer'},
     {name: 'brand',
     label: I18n.t('dashboard2.brand'),
     editable: false,
@@ -115,22 +126,12 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
       collection: @amazonCollection
     )
    
-  export_csv: (el) =>
-    url = "/poor_performing/get_amazon_items.csv"
-    query = @query.replace(/\s+/g, '_')
-    query = query.replace(/"|'/, '')
-    fileName = "amazon_compare_items_" + query + ".csv"
-    data =
-      query: @query
-      view: 'daily'
-      date: @date
-    MDW.CSVExport.genDownloadCSVFromUrl(el, fileName, url, data)
-
   unrender: =>
     @active = false
     @$el.children().not('ul').remove()
     @$el.hide()
     @controller.trigger('search:sub-content:hide-spin')
+    @undelegateEvents()
 
   get_items: (data) =>
     @query = data.query if data
@@ -145,14 +146,15 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
     @render()
 
   render: =>
+    @unrender()
     @active = true
-    @$el.children().not('ul').remove()
-    @controller.trigger('search:sub-content:hide-spin')
     @$el.show()
     @$el.children('ul').show()
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
-    return this
+    @$el.append( @export_csv_button() )
+    @delegateEvents()
+    this
 
   render_error: (query) ->
     @$el.children().not('ul').remove()
@@ -164,7 +166,7 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
   
   render_all_items: =>
     @controller.trigger('search:sub-content:hide-spin')
-    @$el.find('li.active').not('li.export-csv').removeClass('active')
+    @$el.find('li.active').removeClass('active')
     @$el.find('li.all-items').addClass('active')
     data = @collection.at(0).get('all_items')
     if data.length > 0
@@ -173,7 +175,7 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
       @render_error(@query)
 
   render_in_top_32: =>
-    @$el.find('li.active').not('li.export-csv').removeClass('active')
+    @$el.find('li.active').removeClass('active')
     @$el.find('li.in-top-32').addClass('active')
     data = @collection.at(0).get('in_top_32')
     if data.length > 0
@@ -182,7 +184,7 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
       @render_error(@query)
 
   render_not_in_top_32: =>
-    @$el.find('li.active').not('li.export-csv').removeClass('active')
+    @$el.find('li.active').removeClass('active')
     @$el.find('li.not-in-top-32').addClass('active')
     data = @collection.at(0).get('not_in_top_32')
     if data.length > 0
