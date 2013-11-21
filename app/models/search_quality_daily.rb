@@ -81,7 +81,13 @@ class SearchQualityDaily < BaseModel
         '%s'}, query_date])
     end
 
-    joins(join_stmt).select(selects).where(where_conditions).order(
-      order_str).page(page).per(limit)
+    if page > 0
+      joins(join_stmt).select(selects).where(where_conditions).order(
+        order_str).page(page).per(limit)
+    else
+      limit = 10000
+      joins(join_stmt).select(selects).where(where_conditions).order(
+        order_str).limit(limit)
+    end
   end
 end

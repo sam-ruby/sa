@@ -5,18 +5,21 @@ class SearchRelController < BaseController
   def get_search_words
     query = params[:query]
     week = get_week_from_date(@date)
-    @search_words = SearchQualityDaily.get_query_stats(
-      query, @year, week, @date, @page, @sort_by, @order, @limit)
-
-    if @search_words.nil? or @search_words.empty?
-      render :json => [{:total_entries => 0}, @search_words]
-    else
-      respond_to do |format|
-        format.json do 
+    respond_to do |format|
+      format.json do 
+        @search_words = SearchQualityDaily.get_query_stats(
+          query, @year, week, @date, @page, @sort_by, @order, @limit)
+        if @search_words.nil? or @search_words.empty?
+          render :json => [{:total_entries => 0}, @search_words]
+        else
           render :json => [
             {:total_entries => @search_words.total_pages * @limit,
              :date => @date}, @search_words]
         end
+      end
+      format.csv do |format|
+        render :json => SearchQualityDaily.get_query_stats(
+          query, @year, week, @date, 0)
       end
     end
   end
@@ -26,10 +29,13 @@ class SearchRelController < BaseController
       format.json do 
         render :json => get_items
       end
+      format.csv do 
+        render :json => get_items(:csv)
+      end
     end
   end
   
-  def get_items
+  def get_items(mode=:json)
     query_str = params[:query]
     view = params[:view]
     result = []
@@ -78,11 +84,26 @@ class SearchRelController < BaseController
       end
 
       revenue = rev_item.item_revenue rescue 0
-      result.push({:position => index,
-                   :walmart_item => walmart_item,
-                   :rev_based_item => rev_item,
-                   :revenue => revenue,
-                   :rev_rank => items[2].to_i + 1})
+      if mode == :json
+        result.push({:position => index,
+                     :walmart_item => walmart_item,
+                     :rev_based_item => rev_item,
+                     :revenue => revenue,
+                     :rev_rank => items[2].to_i + 1})
+      else
+        result.push({:position => index,
+                     :walmart_item_id => walmart_item[:item_id],
+                     :walmart_item_title => walmart_item[:title],
+                     :walmart_item_image_url => walmart_item[:image_url],
+                     :walmart_item_price => walmart_item[:curr_item_price],
+                     :walmart_item_revenue => walmart_item[:item_revenue],
+                     :rev_based_item_id => rev_item[:item_id],
+                     :rev_based_item_title => rev_item[:title],
+                     :rev_based_item_image_url => rev_item[:image_url],
+                     :rev_based_item_price => rev_item[:curr_item_price],
+                     :rev_based_item_revenue => rev_item[:item_revenue],
+                     :rev_rank => items[2].to_i + 1})
+      end
       index += 1
     end
     result
