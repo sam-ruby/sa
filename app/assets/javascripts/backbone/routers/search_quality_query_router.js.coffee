@@ -15,7 +15,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "comp_analysis/query/:query(/filters/*wday)": "comp_analysis_stats"
     ###
     
-    "search(/query/:query)(/filters/*wday)": "search"
+    "search(/query/:query)(/filters/*wday)": "adhoc_search"
     
     "query_perf_comparison(/query/:query/wks_apart/:weeks/query_date/:date)(/filters/*wday)":
       "query_perf_comparison"
@@ -49,9 +49,10 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.trigger('relevance:app')
     @controller.trigger('search-kpi:index')
 
-  search: (query, date_parts) =>
+  adhoc_search: (query, date_parts) =>
     @set_date_info(date_parts)
-    @controller.trigger('search:app')
+    @controller.trigger('query-perf-comp:app')
+    @controller.trigger('adhoc-search:index')
     @controller.trigger('search:form')
     @controller.trigger(
       'load-search-results', decodeURIComponent(query)) if query
