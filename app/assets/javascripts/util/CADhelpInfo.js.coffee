@@ -2,7 +2,7 @@ Searchad.helpInfo =
   rank_metric:
     id:"rand_metric"
     name:"Rank Metric"
-    description:"Sqrt(Qquerycout)(1-conversionrate)(catoverlap- show rate)"
+    description:"Sqrt(query_cout)(1-conversion_rate)(cat_overlap - show_rate)"
   # query_revenue:
   #   id: "query_revenue"
   #   name: "Query Revenue"
