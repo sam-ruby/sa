@@ -38,3 +38,11 @@ a i:hover {
 .backgrid td {
   border: 0;
 }
+
+div[class="tooltip-inner"] {
+    text-align: left;
+    margin-bottom: 6px;
+    white-space: pre-wrap;
+    font-size: 12px;
+    max-width: 250px;
+}
