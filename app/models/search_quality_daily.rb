@@ -41,7 +41,7 @@ class SearchQualityDaily < BaseModel
     query, year, week, query_date, 
     page=1, order_col=nil, order='asc', limit=10)
     
-    order_str = order_col.nil? ? 'query_daily.query_count desc' : 
+    order_str = order_col.nil? ? 'rank_metric desc' : 
       order.nil? ? order_col : order_col + ' ' + order  
     
     join_stmt = %Q{as search_daily join query_cat_metrics_daily as query_daily 
@@ -60,7 +60,11 @@ class SearchQualityDaily < BaseModel
       limit 1) as show_rate, 
     (select rel_score from query_performance where year = #{year}
       and week = #{week} and query_str = search_daily.query_str
-      limit 1) as rel_score}
+      limit 1) as rel_score,    
+    (select SQRT(query_daily.query_count)*(1-query_daily.query_con)*(cat_rate/100-show_rate/100)) 
+    as rank_metric}
+
+    #rank_metric_caltulation:sqrt(Qquerycout)(1-conversionrate)(catoverlap- show rate);
   
     where_conditions = []
     if !query.nil? and query.include?('*')
