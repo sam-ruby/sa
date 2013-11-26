@@ -147,7 +147,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
 
     @unrender()
     @$el.find('.ajax-loader').css('display', 'block')
-    @collection.get_items(data)
+    @collection.get_items()
     @trigger = true
 
   clear_filter: =>
@@ -156,6 +156,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
   unrender: =>
     @active = false
     @unrender_search_results()
+    @clear_filter()
     @undelegateEvents()
     this
 

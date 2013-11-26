@@ -15,7 +15,7 @@ class Searchad.Collections.CAWalmartItemsCollection extends Backbone.PageableCol
   model: Searchad.Models.CAWalmartItem
   url: '/comp_analysis/get_walmart_items.json'
   state:
-    pageSize: 6
+    pageSize: 8
   mode: 'client'
 
   get_items: (data) =>

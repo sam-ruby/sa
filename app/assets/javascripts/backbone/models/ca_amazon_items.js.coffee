@@ -12,7 +12,7 @@ class Searchad.Collections.CAAmazonItemsCollection extends Backbone.PageableColl
   model: Searchad.Models.CAAmazonItem
   url: '/poor_performing/get_amazon_items.json'
   state:
-    pageSize: 6
+    pageSize: 8
   mode: 'client'
   data:
     query: null
