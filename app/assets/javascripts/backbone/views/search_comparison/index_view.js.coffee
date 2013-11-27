@@ -191,6 +191,7 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
       @get_items(data)
   
   handle_search: (e) =>
+    console.log("handle_search");
     e.preventDefault()
     @clean_query_results()
     data =

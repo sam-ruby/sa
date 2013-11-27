@@ -1,0 +1,27 @@
+form.form-horizontal.cvr-dropped-query-form
+  .control-group
+    label.control-label(for='date-picker') Date within (before and after)
+    .controls
+      select
+        each val in [1, 2, 3, 4, 5, 6, 7, 8]
+          if weeks_apart == val
+            option(selected=true, value=val)
+              =val + ' Week'
+          else
+            option(value=val)
+              =val + ' Week'
+      | &nbsp;
+      | of
+      | &nbsp;
+      input.input-small.datepicker(type='text', 'data-date-format'='M d, yyyy',
+        'data-date-autoclose'='true')
+
+  .control-group
+     label.control-label(for='sum-count') Sum Count (Bigger sum count have faster result)
+     .controls
+       input.input-xlarge.sum-count(type='text', value=5000)
+  .control-group
+    .controls
+      button.btn.search(type='submit') Search
+      | &nbsp;
+      button.btn.reset(type='reset') Reset 

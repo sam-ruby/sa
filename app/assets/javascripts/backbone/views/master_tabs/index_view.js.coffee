@@ -13,6 +13,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.bind('comp-analysis:index', @select_ca_tab)
     @controller.bind('query-perf-comp:index', @select_query_perf_comparison_tab)
     @controller.bind('adhoc-search:index', @select_search_tab)
+    @controller.bind('cvr-dropped-query:index', @select_cvr_dropped_query_tab)
 
   events:
     #events on overview page
@@ -23,6 +24,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     #tab on adhoc query analysis page
     'click li.query-perf-comparison-tab':'queryPerfComp'
     'click li.adhoc-search-tab':'adhocSearchQuery'
+    'click li.cvr-dropped-query-tab':'cvrDroppedQuery'
     
   get_tab_el: (data) ->
     css_classes = data.class.join(' ')
@@ -71,7 +73,12 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       title: 'Query Performace Analysis'},
       {class: ['adhoc-search-tab']
       href: '#search'
-      title: 'Search'}]
+      title: 'Search'},
+      {class: ['cvr-dropped-query-tab']
+      href: '#cvr-dropped-query'
+      title: 'Conversion Rate Dropped Query'}
+    ]
+    @$el.find('ul').prepend(@get_tab_el(tabs[2]))
     @$el.find('ul').prepend(@get_tab_el(tabs[1]))
     @$el.find('ul').prepend(@get_tab_el(tabs[0]))
   
@@ -131,6 +138,14 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.trigger('query-comparison')
     @router.update_path('query_perf_comparison')
 
+  cvrDroppedQuery:(e)=>
+    #update the content
+    @controller.trigger('content-cleanup')
+    #switch to cvr_dropped_query in adhoc page
+    @controller.trigger('cvr-dropped-query:index')
+    e.preventDefault()
+    #triggerring cvr-dropped-query:form will load cvr_dropeed_query view(binds in cad_init.js)
+    @controller.trigger('cvr-dropped-query:form')
   
   select_pp_tab: =>
     e = {}
@@ -166,6 +181,11 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
   select_search_tab:=>
     e = {}
     e.target = @$el.find('li.adhoc-search-tab a').get(0)
+    @toggleTab(e)
+
+  select_cvr_dropped_query_tab:=>
+    e = {}
+    e.target = @$el.find('li.cvr-dropped-query-tab a').get(0)
     @toggleTab(e)
 
   clean_tabs: =>
