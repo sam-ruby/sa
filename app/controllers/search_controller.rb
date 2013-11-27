@@ -48,6 +48,7 @@ class SearchController < BaseController
         query_stats = QueryCatMetricsDaily.get_query_stats_date(
           query, @year, get_week_from_date(@date), @date, 
           @page, @sort_by, @order, @limit)
+        p 'query_stats', query_stats.total_pages, query_stats
         if query_stats.nil? or query_stats.empty?
           render :json => [{:total_entries => 0}, query_stats]
         else
@@ -88,11 +89,18 @@ class SearchController < BaseController
     before_end_date = date-1.day
     after_start_date = date
     after_end_date = date + days_range-1.day
-    result= QueryCatMetricsDaily.get_cvr_dropped_query(before_stare_date,before_end_date,after_start_date,after_end_date,sum_count,@page,@limit)
-    p result;
+    
     respond_to do |format|
       format.json do 
-        render :json => result
+        result= QueryCatMetricsDaily.get_cvr_dropped_query(before_stare_date,before_end_date,after_start_date,after_end_date,sum_count,@page,@limit)
+        p 'result', result.total_pages, result;
+        if result.nil? or result.empty?
+          render :json => [{:total_entries => 0}, result]
+        else
+        render :json => [
+            {:total_entries => result.total_pages * @limit,
+             :date => @date}, result]
+        end
       end
     end
   end
