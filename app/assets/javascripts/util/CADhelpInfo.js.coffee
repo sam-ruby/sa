@@ -7,6 +7,10 @@ Searchad.helpInfo =
   #   id: "query_revenue"
   #   name: "Query Revenue"
   #   description: "weekly revenue from organic query"
+  query_score:
+    id: "query_score"
+    name: "Query Score"
+    description:"Square root of Query Count * (1 - Query Conv) * (diff between Query count and Alarm Threshold)"
 
   query_count:
     id: "query_count"
