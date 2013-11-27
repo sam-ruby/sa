@@ -93,13 +93,17 @@ class SearchController < BaseController
     respond_to do |format|
       format.json do 
         result= QueryCatMetricsDaily.get_cvr_dropped_query(before_stare_date,before_end_date,after_start_date,after_end_date,sum_count,@page,@limit)
-        p 'result', result.total_pages, result;
+        p 'result', result.length, result;
+        p @page, @limit
+
+        start_index = @limit * @page - @limit
+        end_index = start_index + @limit -1
         if result.nil? or result.empty?
           render :json => [{:total_entries => 0}, result]
         else
         render :json => [
-            {:total_entries => result.total_pages * @limit,
-             :date => @date}, result]
+            {:total_entries => result.length,
+             :date => @date}, result[start_index..end_index]]
         end
       end
     end
