@@ -88,7 +88,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     tabs = [{
       class: ['query-monitoring-count-tab','active']
       href: '#query_monitoring/count'
-      title: 'Count Monitoring'}]
+      title: 'Query Count Analysis'}]
     @$el.append(@get_tab_el(tabs[0]))
 
   toggleTab: (el) =>
