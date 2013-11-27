@@ -104,4 +104,55 @@ class QueryCatMetricsDaily < BaseModel
       (channel="ORGANIC_USER" or channel="ORGANIC") and query=? and
       query_date between ? and ?}, query, date_start, date_end)
   end
+
+  def self.get_cvr_dropped_query(before_start_date,before_end_date,after_start_date,after_end_date,sum_count,page=1, limit=10)
+    sqlStatement=
+    "select query, con_before, con_after, diff, rev_before, rev_after from 
+    (select b.query as query, b.con as con_before, d.con as con_after, b.con-d.con as diff, b.revenue as rev_before, d.revenue as rev_after 
+      from (select query, con, revenue from (select query, sum(query_count) as sum_count, sum(query_count*query_con)/sum(query_count) as con, sum(query_revenue) as revenue 
+        from query_cat_metrics_daily 
+        where query_date >= \"2013-09-20\" and query_date<=\"2013-09-26\" and cat_id=0 and (channel=\"ORGANIC_USER\" or channel=\"ORGANIC\") 
+        group by query)a where sum_count>=?)b 
+inner join (select query, con, revenue from (select query, sum(query_count) as sum_count, sum(query_count*query_con)/sum(query_count) as con, sum(query_revenue) as revenue from query_cat_metrics_daily where query_date >= \"2013-09-27\" and query_date<=\"2013-10-03\" and cat_id=0 and (channel=\"ORGANIC_USER\" or channel=\"ORGANIC\") group by query)c where sum_count>=?)d on b.query=d.query)f 
+    where diff>0 
+    order by diff desc;"
+
+     p "model.get_cvr_dropped_query"
+     p "sumcount", sum_count
+
+    result_data = find_by_sql([sqlStatement,sum_count,sum_count]) 
+    # baseSelects = %q{
+    #   query, 
+    #   sum(query_count) as sum_count, 
+    #   sum(query_count*query_con)/sum(query_count) as con, 
+    #   sum(query_revenue) as revenue
+    # }
+
+    # where_condition_before = sanitize_sql_array([
+    #     %q{query_daily.query_date >= '%s' and query_daily.query_date <= '%s' 
+    #     and (query_daily.channel = "ORGANIC" or 
+    #     query_daily.channel = "ORGANIC_USER") and 
+    #     query_daily.cat_id = 0}, before_start_date, before_end_date])
+
+    # where_condition_after = sanitize_sql_array([
+    #     %q{query_daily.query_date >= '%s' and query_daily.query_date <= '%s' 
+    #     and (query_daily.channel = "ORGANIC" or 
+    #     query_daily.channel = "ORGANIC_USER") and 
+    #     query_daily.cat_id = 0}, after_start_date, after_end_date])
+
+    # base_query_before =  QueryCatMetricsDaily.select(baseSelects).where(where_condition_before).group(query);
+    # base_query_after =  QueryCatMetricsDaily.select(baseSelects).where(where_condition_after).group(query);
+
+    # # get base_query where calculated sum count greater than sum_count, then join
+    # querySelects = %q{
+    #   query, con, revenue
+    # }
+    # where_condition_sum_count = sanitize_sql_array([
+    #     %q{sum_count >= '%s'}, sum_count])
+    # query_before =  base_query_before.select(querySelects).where(where_condition_sum_count);
+    # query_after = base_query_after.select(querySelects).where(where_condition_sum_count);
+
+ 
+   
+  end
 end

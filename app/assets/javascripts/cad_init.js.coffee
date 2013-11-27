@@ -182,6 +182,16 @@ $ ->
       )
     searchComparisonView.listenTo(controller, 'query-comparison',
       searchComparisonView.get_items)
+
+     #cvr dropped view
+    cvrDroppedQueryView = new Searchad.Views.CVRDroppedQuery.IndexView(
+      el: '#cvr-dropped-query'
+      el_results: '.cvr-dropped-query-results'
+      el_form: '.cvr-dropped-query-form')
+    cvrDroppedQueryView.listenTo(
+        controller, 'cvr-dropped-query:form', cvrDroppedQueryView.get_items)
+    # cvrDroppedQueryView.listenTo(
+    #   controller, 'load-search-results', searchView.load_search_results)
     
     ###
     searchStatsView = new Searchad.Views.Search.Stats.IndexView(

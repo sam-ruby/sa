@@ -2,7 +2,7 @@ class SearchController < BaseController
 
   before_filter :set_common_data
   def get_data
-    query = params[:query]
+    query = params[:/]
     date = DateTime.parse(params[:query_date]) rescue DateTime.now
     days_range = params[:weeks_apart] ? Integer(params[:weeks_apart]) * 7 :
       7
@@ -68,6 +68,28 @@ class SearchController < BaseController
     result = QuerySearchList.get_query_words(101).sort do |a,b|
       b['created_at'] <=> a['created_at']
     end
+    respond_to do |format|
+      format.json do 
+        render :json => result
+      end
+    end
+  end
+
+  def get_cvr_dropped_query
+    # query = params[:query ]
+    p "called get_cvr_dropped_query", params
+    date = DateTime.parse(params[:query_date]) rescue DateTime.now
+    days_range = params[:weeks_apart] ? Integer(params[:weeks_apart]) * 7 : 7
+    sum_count = params[:sum_count] ? Integer(params[:sum_count]) : 50
+    p "controller sum_count", sum_count
+    p "date", date
+    p "days_range", days_range
+    before_stare_date = date-1.day-days_range+1.day
+    before_end_date = date-1.day
+    after_start_date = date
+    after_end_date = date + days_range-1.day
+    result= QueryCatMetricsDaily.get_cvr_dropped_query(before_stare_date,before_end_date,after_start_date,after_end_date,sum_count,@page,@limit)
+    p result;
     respond_to do |format|
       format.json do 
         render :json => result
