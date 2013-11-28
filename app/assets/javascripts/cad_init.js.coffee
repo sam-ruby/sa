@@ -189,9 +189,9 @@ $ ->
       el_results: '.cvr-dropped-query-results'
       el_form: '.cvr-dropped-query-form')
     cvrDroppedQueryView.listenTo(
-        controller, 'cvr-dropped-query:form', cvrDroppedQueryView.get_items)
-    # cvrDroppedQueryView.listenTo(
-    #   controller, 'load-search-results', searchView.load_search_results)
+        controller, 'cvr-dropped-query:form',cvrDroppedQueryView.render_form)
+    cvrDroppedQueryView.listenTo(
+      controller, 'cvr-dropped-query:result', cvrDroppedQueryView.get_items)
     
     ###
     searchStatsView = new Searchad.Views.Search.Stats.IndexView(
