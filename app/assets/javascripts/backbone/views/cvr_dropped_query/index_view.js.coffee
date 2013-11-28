@@ -14,17 +14,8 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       @query_results.find('.ajax-loader').css('display', 'block')
       @controller.trigger('sub-content-cleanup')
     )
-
-    # @recent_searches_collection.bind('reset', @render_recent_searches)
-    # @recent_searches_collection.bind('add', @render_recent_searches)
-    
     @cvr_dropped_query_form = @$el.find(options.form_selector)
-    console.log("render");
-    # @before = @$el.find(options.before_selector)
-    # @after = @$el.find(options.after_selector)
-    # @comparison = @$el.find(options.comparison_selector)
-    # @recent_searches = @$el.find(options.recent_searches_selector)
-
+    
   events:
     'click button.search': 'handle_search'
     'click button.reset': 'handle_reset'
@@ -98,7 +89,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
 
   do_search: (data) =>
     if data
-      new_path = 'cvr_dropped_query' + '/wks_apart/' +
+      new_path = 'cvr_dropped_query' +'/sum_count/'+ data.sum_count+ '/wks_apart/' +
         data.weeks_apart + '/query_date/' +
         encodeURIComponent(data.query_date)
       
@@ -114,7 +105,6 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       sum_count:@query_form.find('input.sum-count').val()
 
     if data
-      # @recent_searches_collection.unshift(data)
       @do_search(data)
    
   handle_reset: (e) =>
@@ -122,19 +112,14 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @clean_query_results()
     query_date = @controller.get_filter_params()['date']
     query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
-
     @query_form.find('input.sum-count').val('5000')
     @query_form.find('.controls select').val('2')
     @query_form.find('input.datepicker').datepicker(
       'update', query_date.toString('M-d-yyyy'))
   
-  get_items: (data, refresh_form=true) ->
+  get_items: (data) ->
     query_date = @controller.get_filter_params()['date']
     query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
-    console.log("query_date", query_date);
-    # @clean_query_results()
-
-    console.log("data", data);
     if data 
       # data.query = decodeURIComponent(data.query)
       query_date = new Date(decodeURIComponent(data.query_date))
@@ -142,52 +127,55 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       data.sum_count = parseInt(data.sum_count)
     else
       data =
-        # query: ''
         weeks_apart: 2
-        sum_count:500
-       
-    if refresh_form
-      console.log('refresh form', data);
-      $(@query_form).html(@form_template(data))
-      $(@query_form).find('input.datepicker').datepicker()
-
-    
-    @query_form.find('input.datepicker').datepicker(
-      'update', query_date.toString('M-d-yyyy'))
+        sum_count:5000
 
     if data 
-      @query = data.query
       image =$('<img>').addClass('ajax-loader').attr(
         'src', '/assets/ajax_loader.gif').css('display', 'block')
-
       @collection.get_items(data)
     @active = true
  
-  # @ollection.fetch(reset: true)
+  render_form:=>
+    query_date = @controller.get_filter_params()['date']
+    query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
+    data =
+      query_date:query_date
+      weeks_apart: 2
+      sum_count:5000
+    $(@query_form).html(@form_template(data))
+    $(@query_form).find('input.datepicker').datepicker()    
+    @query_form.find('input.datepicker').datepicker(
+      'update', query_date.toString('M-d-yyyy'))
+    @active = true
 
   render_query_results: =>
     @query_results.find('.ajax-loader').hide()
     return @render_error() if @collection.length == 0
     
-    @query_results.append("result for niuniu")
+    @query_results.append($('<div>').css('text-align', 'left').css(
+      'margin-bottom': '1em').append(
+      $('<i>').addClass('icon-search').css(
+        'font-size', 'large').append(
+        '&nbsp; Results for : ' + 'Conversion Rate Dropped Query')))
     @initCvrDroppedQueryTable()
     @query_results.append(@grid.render().$el)
     @query_results.append(@paginator.render().$el)
     @query_results.append(@export_csv_button())
 
-  process_data: (data) ->
-    [{data: [
-      {name: 'Product View Rate'
-      y: data.query_pvr
-      dataLabels:
-        format: '<b>PVR</b> ({point.y:,.2f}%)'
-      },
-      {name: 'Add to Cart Rate'
-      y: data.query_atc
-      },
-      {name: 'Conversion Rate'
-      y: data.query_con
-      }]}]
+  # process_data: (data) ->
+  #   [{data: [
+  #     {name: 'Product View Rate'
+  #     y: data.query_pvr
+  #     dataLabels:
+  #       format: '<b>PVR</b> ({point.y:,.2f}%)'
+  #     },
+  #     {name: 'Add to Cart Rate'
+  #     y: data.query_atc
+  #     },
+  #     {name: 'Conversion Rate'
+  #     y: data.query_con
+  #     }]}]
 
   search_results_cleanup: =>
     @query_results.children().not('.ajax-loader').remove()
@@ -196,13 +184,6 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @controller.trigger('search:sub-tab-cleanup')
     @query_results.append($('<span>').addClass(
       'label label-important').append("No data available"))
-
-  # render_title: (title, css_class, dom) ->
-  #   dom.append($('<i>').addClass(css_class))
-  #   dom.append($("<div class='h4'>" + title + '</div>'))
-
-  # render_chart: (title, data, dom) ->
-  #   @generateChart(title, data, dom)
   
   render_table: (data, dom) =>
     grid = @initCvrDroppedQueryTable(data)
@@ -210,10 +191,9 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
  
   unrender: =>
     @query_form.children().remove()
-    # @recent_searches.children().remove()
-    # @clean_query_results()
+    @clean_query_results()
     @active = false
 
   clean_query_results: =>
-    console.log("clear_query_result");
+     @query_results.children().not('.ajax-loader').remove()
 

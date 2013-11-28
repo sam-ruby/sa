@@ -146,6 +146,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     e.preventDefault()
     #triggerring cvr-dropped-query:form will load cvr_dropeed_query view(binds in cad_init.js)
     @controller.trigger('cvr-dropped-query:form')
+    @router.update_path('cvr-dropped-query')
   
   select_pp_tab: =>
     e = {}

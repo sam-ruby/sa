@@ -20,6 +20,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "query_perf_comparison(/query/:query/wks_apart/:weeks/query_date/:date)(/filters/*wday)":
       "query_perf_comparison"
 
+    "cvr_dropped_query(/sum_count/:sum_count/wks_apart/:weeks/query_date/:date)(/filters/*wday)":
+      "cvr_dropped_query"
+
   set_date_info: (date_part) =>
     return unless date_part
     date_parts = date_part.split('/')
@@ -37,7 +40,20 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       query: query
       weeks_apart: weeks
       query_date: search_date)
-  
+
+  cvr_dropped_query: (sum_count, weeks, date) =>
+    @controller.trigger('query-perf-comp:app')
+    @controller.trigger('cvr-dropped-query:index')
+    # if there is no query param, then render the basic form
+    if sum_count==undefined
+      @controller.trigger('cvr-dropped-query:form') 
+    #if there is result then render the searched result
+    else
+      @controller.trigger('cvr-dropped-query:result',
+        sum_count:sum_count
+        weeks_apart: weeks
+        query_date: date)
+   
   search_rel: (query, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('relevance:app')
