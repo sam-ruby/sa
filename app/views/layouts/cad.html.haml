@@ -122,8 +122,8 @@
     #mdw-toolbar
     = render 'shared/title'
     .container
-      .row.master-tab
-        %ul.nav.nav-tabs
+      .row
+        %ul.nav.nav-tabs.master-tab{:style=>'display:none'}
       .row
         #data-container
           = yield :main_content
