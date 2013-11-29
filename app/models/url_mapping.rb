@@ -8,7 +8,9 @@ class URLMapping < BaseModel
        amazon.brand, amazon.position, walmart_items.position as 
        walmart_position,
        amazon.name, amazon.brand, amazon.imgurl as img_url, 
-       amazon.url, amazon.newprice, all_item_attrs.curr_item_price
+       amazon.url, amazon.newprice, 
+       (select curr_item_price from all_item_attrs
+       where item_id = concat(url_mapping.item_id) limit 1) as curr_item_price
        from url_mapping left outer join 
        (select item, position from walmart_query_top_32_items where 
        year = #{year} and week = #{weeks.last} and query = '#{query_str}') 
@@ -18,10 +20,9 @@ class URLMapping < BaseModel
        position,brand,name, imgurl, url,newprice from amazon_scrape_weekly 
        where check_year = ? and check_week in (?) and 
        query_str = ? group by idd) as 
-       amazon, all_item_attrs 
-       where url_mapping.retailer_id = amazon.idd and
-       all_item_attrs.item_id = concat(url_mapping.item_id) 
-      order by position}, year, weeks, query_str]) 
+       amazon 
+       where url_mapping.retailer_id = amazon.idd
+       group by amazon.idd order by position}, year, weeks, query_str]) 
    
     in_top_32 = amazon_comparison_items.select do |item| 
       !item.walmart_position.nil?  

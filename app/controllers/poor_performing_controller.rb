@@ -2,10 +2,11 @@ class PoorPerformingController < BaseController
   before_filter :set_common_data
   
   def get_search_words
+    query = params[:query]
     respond_to do |format|
       format.json do 
         @search_words = QueryCatMetricsDaily.get_search_words(
-          @date, @page, @sort_by, @order, @limit)
+          query, @date, @page, @sort_by, @order, @limit)
         if @search_words.nil? or @search_words.empty?
           render :json => [{:total_entries => 0}, @search_words]
         else
@@ -15,7 +16,8 @@ class PoorPerformingController < BaseController
         end
       end
       format.csv do
-        render :json => QueryCatMetricsDaily.get_search_words(@date, 0)
+        render :json => QueryCatMetricsDaily.get_search_words(
+          query, @date, 0)
       end
     end
   end

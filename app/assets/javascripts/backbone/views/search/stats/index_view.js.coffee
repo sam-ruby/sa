@@ -110,7 +110,7 @@ class Searchad.Views.Search.Stats.IndexView extends Backbone.View
 
   render_error: (query) ->
     @controller.trigger('search:sub-content:hide-spin')
-    @$el.append( $('<span>').class('label label-important').append(
+    @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
 
   render: (query, data) ->

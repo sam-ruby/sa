@@ -27,4 +27,6 @@
 //= require bootstrap-transition
 //= require bootstrap-dropdown
 //= require backbone/searchad
+//= require util/CADhelpInfo
+//= require util/backgrid.customize
 //= require cad_init

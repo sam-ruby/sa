@@ -10,6 +10,7 @@ class Searchad.Models.SearchQualityQuery extends Backbone.Model
     top_ctr_item: null
     query_items: null
     top_rev_items: null
+    rank_metric:null
 
 class Searchad.Collections.SearchQualityQueryCollection extends Backbone.PageableCollection
   initialize: (options) ->
