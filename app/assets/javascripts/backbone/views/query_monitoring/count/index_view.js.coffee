@@ -1,64 +1,60 @@
-Searchad.Views.SearchQualityQuery ||= {}
+Searchad.Views.QueryMonitoring ||= {}
+Searchad.Views.QueryMonitoring.Count ||= {}
 
-class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
+class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
   initialize: (options) =>
     @trigger = false
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
-    @collection =
-      new Searchad.Collections.SearchQualityQueryCollection()
+    @collection = new Searchad.Collections.QueryMonitoringCountCollection()
     @$filter = @$el.find(options.el_filter)
     @initTable()
 
+    @$el.find('.ajax-loader').hide()
+    
     @controller.bind('date-changed', =>
-      @get_items() if @active)
+      @get_items(trigger: true) if @active)
     @controller.bind('content-cleanup', @unrender)
-    @controller.bind('content-cleanup', @clear_filter)
-
     @collection.bind('reset', @render)
     @collection.bind('request', =>
-      @unrender_search_results()
       @$el.find('.ajax-loader').css('display', 'block')
-      @controller.trigger('sub-content-cleanup')
+      @controller.trigger('qm-count:sub-content-cleanup')
     )
-    
-    Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
+    Utils.InitExportCsv(this, "/monitoring/count/get_words.csv")
     @undelegateEvents()
     @active = false
-        
-  events:
+
+  events: =>
     'click .filter': 'filter'
     'click .reset': 'reset'
     'submit': 'filter'
     'click .export-csv a': (e) ->
       date = @controller.get_filter_params().date
-      fileName = "query_analysis_#{date}.csv"
+      fileName = "query_count_monitoring_#{date}.csv"
       data =
         date: date
       data['query'] = @collection.query if @collection.query
       @export_csv($(e.target), fileName, data)
-
-  gridColumns: ->
+  
+  gridColumns:  ->
     that = this
     class QueryCell extends Backgrid.Cell
       controller: SearchQualityApp.Controller
       router: SearchQualityApp.Router
-      events:
-        click: 'handleQueryClick'
 
-      handleQueryClick: (e) ->
+      events:
+        'click': 'handleQueryClick'
+
+      handleQueryClick: (e) =>
         e.preventDefault()
-        $(e.target).parents('table').find('tr.selected').removeClass(
-          'selected')
+        query = $(e.target).text()
+        $(e.target).parents('table').find('tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
-        query = @model.get('query_str')
-        that.controller.trigger('search:sub-content',
+        that.controller.trigger('qm-count:sub-content',
           query: query
-          view: 'daily'
-          tab: 'rel-rev-analysis')
-        new_path = 'search_rel/query/' + encodeURIComponent(query)
+          view: 'daily')
+        new_path = 'query_monitoring/count/query/' + encodeURIComponent(query)
         that.router.update_path(new_path)
-        false
 
       render: ->
         value = @model.get(@column.get('name'))
@@ -69,51 +65,43 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     
     columns = [{
     name: 'query_str',
-    label: I18n.t('search_analytics.query_string'),
+    label: I18n.t('query'),
     editable: false,
     cell: QueryCell},
-    {name: 'rank_metric',
-    label: "Rank Metric",
+    {name: 'query_score',
+    label: 'Query Score',
     editable: false,
-    cell: 'number',
-    headerCell: "custom"},
-    {name: 'cat_rate',
-    label: I18n.t('dashboard.catalog_overlap'),
-    editable: false,
-    cell: 'number',
-    formatter: Utils.PercentFormatter},
-    {name: 'show_rate',
-    label: I18n.t('dashboard.results_shown_in_search'),
-    editable: false,
-    cell: 'number',
-    formatter: Utils.PercentFormatter},
-    {name: 'rel_score',
-    label: I18n.t('dashboard.overall_relevance_score'),
-    editable: false,
-    cell: 'number'},
-    {name: 'search_rev_rank_correlation',
-    label: I18n.t('search_analytics.rev_rank_correlation'),
-    editable: false,
-    cell: 'number'},
-    {name: 'query_revenue',
-    label: I18n.t('search_analytics.revenue'),
-    editable: false,
-    cell: 'number',
-    formatter: Utils.CurrencyFormatter},
+    cell: 'integer',
+    headerCell: 'custom'},
     {name: 'query_count',
-    label: I18n.t('search_analytics.query_count'),
+    label: I18n.t('search_analytics.queries'),
     editable: false,
     cell: 'integer'},
     {name: 'query_con',
-    label: 'Conversion',
+    label: I18n.t('perf_monitor.conversion_rate'),
     editable: false,
-    cell: 'number'
+    cell: 'number',
+    formatter: Utils.PercentFormatter},
+    {name: 'query_con',
+    label: I18n.t('perf_monitor.add_to_cart_rate'),
+    editable: false,
+    cell: 'number',
     formatter: Utils.PercentFormatter}]
 
     columns
   
   initFilter: =>
     _.template('<div class="input-prepend input-append filter-box"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type to filter results"/></form><button class="btn btn-primary reset">Reset</button></div>')
+  
+  initTable: () =>
+    @grid = new Backgrid.Grid(
+      columns: @gridColumns()
+      collection: @collection
+    )
+    
+    @paginator = new Backgrid.Extension.Paginator(
+      collection: @collection
+    )
   
   filter: (e) =>
     e.preventDefault()
@@ -130,34 +118,22 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @collection.get_items()
     @trigger = true
 
-  unrender_search_results: =>
-    @$el.children().not('.ajax-loader, #' + @$filter.attr('id')).remove()
-    @$el.find('.ajax-loader').hide()
-  
-  initTable: () =>
-    @grid = new Backgrid.Grid(
-      columns: @gridColumns()
-      collection: @collection
-    )
-    
-    @paginator = new Backgrid.Extension.Paginator(
-      collection: @collection
-    )
-
   get_items: (data) =>
+    @$el.find('.ajax-loader').css('display', 'block')
     if data and data.query
       @collection.query = data.query
     else
       @collection.query = null
-
-    @unrender()
-    @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items()
     @trigger = true
 
   clear_filter: =>
     @$filter.children().remove()
-
+  
+  unrender_search_results: =>
+    @$el.children().not('.ajax-loader, #' + @$filter.attr('id')).remove()
+    @$el.find('.ajax-loader').hide()
+  
   unrender: =>
     @active = false
     @unrender_search_results()
@@ -166,7 +142,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     this
 
   render_error: (query) ->
-    @controller.trigger('search:sub-tab-cleanup')
+    @controller.trigger('qm-count:sub-tab-cleanup')
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
   
@@ -175,7 +151,9 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     return @render_error(@collection.query) if @collection.size() == 0
     unless @active
       @$filter.append(@initFilter()())
+    
     @$el.append( @grid.render().$el)
+    @$el.append( @paginator.render().$el)
     @$el.append( @paginator.render().$el)
     @$el.append( @export_csv_button() )
     @delegateEvents()
@@ -185,4 +163,3 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
       @$el.find('td a.query').first().trigger('click')
     @active = true
     this
-

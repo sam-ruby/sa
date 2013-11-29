@@ -83,11 +83,7 @@ $ ->
     
     controller.on('all', (name) ->
       current_view = controller.get_view()
-      if name.match(/comp-analysis:index|ca:walmart-items:index/)
-        if not current_view or current_view != 'weekly'
-          controller.set_view('weekly')
-          controller.trigger('view-change', view: 'weekly')
-      else if name.match(/search-rel:index|search-kpi|do-search|poor-performing-stats:index|poor-performing:index|pp:stats:index|pp:walmart-items:index|pp:amazon-items:index|query-comparison|search:app/)
+      if name.match(/search-rel:index|search-kpi|do-search|poor-performing-stats:index|poor-performing:index|pp:stats:index|pp:walmart-items:index|pp:amazon-items:index|query-comparison|search:form|query-monitoring-count:index/)
         if not current_view or current_view != 'daily'
           controller.set_view('daily')
           controller.trigger('view-change', view: 'daily'))
@@ -119,13 +115,6 @@ $ ->
     searchQualityQueryView.listenTo(
       controller, 'search-rel:index', searchQualityQueryView.get_items)
     
-    # Comp Analysis
-    ###
-    caView = new Searchad.Views.CompAnalysis.IndexView(
-      el: '#ca-queries')
-    caView.listenTo(
-      controller, 'comp-analysis:index', caView.get_items)
-    ###
     # Search
     searchView = new Searchad.Views.Search.IndexView(
       el: '#search'
@@ -180,9 +169,28 @@ $ ->
         comparison_selector: '.comparison-data'
         recent_searches_selector: '.recent-searches'
       )
-    searchComparisonView.listenTo(controller, 'query-comparison',
+    searchComparisonView.listenTo(controller, 'query-comparison:index',
       searchComparisonView.get_items)
     
+    queryMonitoringCountView =
+      new Searchad.Views.QueryMonitoring.Count.IndexView(
+        el: '#qm-count'
+        el_filter: '#qm-count-filter')
+    queryMonitoringCountView.listenTo(
+      controller, 'query-monitoring-count:index', (data) ->
+        queryMonitoringCountView.get_items(data)
+    )
+    qmCountSubtabsView =
+      new Searchad.Views.QueryMonitoring.SubTabs.IndexView(el: '#qm-count-sub-tabs')
+    qmCountSubtabsView.listenTo(
+      controller, 'qm-count:sub-content', qmCountSubtabsView.render)
+ 
+    qmCountStatsView =
+      new Searchad.Views.QueryMonitoring.Count.Stats.IndexView(
+        el: '#qm-count-sub-content')
+    qmCountStatsView.listenTo(
+      controller, 'qm-count:stats', qmCountStatsView.get_items)
+   
     ###
     searchStatsView = new Searchad.Views.Search.Stats.IndexView(
       el: '#search-sub-content')
