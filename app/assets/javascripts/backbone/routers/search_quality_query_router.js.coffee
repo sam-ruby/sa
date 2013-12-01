@@ -46,7 +46,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
 
 
   cvr_dropped_query: (sum_count, weeks, date) =>
-    @controller.trigger('query-perf-comp:app')
+    @controller.trigger('query-comparison:index')
     @controller.trigger('cvr-dropped-query:index')
     # if there is no query param, then render the basic form
     if sum_count==undefined
