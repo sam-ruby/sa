@@ -97,9 +97,23 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       href: '#cvr-dropped-query'
       title: 'Conversion Rate Dropped Query'}
     ]
-    @$el.find('ul').prepend(@get_tab_el(tabs[2]))
-    @$el.find('ul').prepend(@get_tab_el(tabs[1]))
-    @$el.find('ul').prepend(@get_tab_el(tabs[0]))
+    @$el.prepend(@get_tab_el(tabs[2]))
+    @$el.prepend(@get_tab_el(tabs[1]))
+    @$el.prepend(@get_tab_el(tabs[0]))
+    # tabs = [{
+    #   class: ['query-comparison-tab','active']
+    #   href: '#query_comparison'
+    #   title: 'Query Performace Analysis'},
+    #   {class: ['adhoc-search-tab']
+    #   href: '#search'
+    #   title: 'Search'},
+    #   {class: ['cvr-dropped-query-tab']
+    #   href: '#cvr-dropped-query'
+    #   title: 'Conversion Rate Dropped Query'}
+    # ]
+    # @$el.find('ul').prepend(@get_tab_el(tabs[2]))
+    # @$el.find('ul').prepend(@get_tab_el(tabs[1]))
+    # @$el.find('ul').prepend(@get_tab_el(tabs[0]))
   
   init_query_monitoring: =>
     tabs = [{
