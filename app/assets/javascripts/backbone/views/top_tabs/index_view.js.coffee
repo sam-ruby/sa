@@ -1,58 +1,57 @@
 Searchad.Views.TopTabs ||= {}
 
 class Searchad.Views.TopTabs.IndexView extends Backbone.View
- initialize: (options) =>
+  initialize: (options) =>
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
-    @controller.bind('relevance:app', @select_rel_app)
-    @controller.bind('explore:app', @select_explore_app)
-    @controller.bind('query-perf-comp:app', @select_adhoc_query_analysis_app)
+    @controller.bind('search-kpi:index', @overview)
+    @controller.bind('search-rel:index', @overview)
+    @controller.bind('poor-performing:index', @overview)
+    
+    @controller.bind('query-comparison:index', @adhoc)
+    @controller.bind('search:form', @adhoc)
+    
+    @controller.bind('query-monitoring-count:index', @query_monitoring)
+    @controller.bind('query-monitoring-metrics:index', @query_monitoring)
+    
     @masterTabView = new Searchad.Views.MasterTab.IndexView(
-        el: 'div.master-tab')
-
-  events:
-    'click li.relevance-tab': 'relevance'
-    'click li.explore-tab': 'explore'
-    'click li.adhoc-query-analysis-tab': 'adhoc_query_analysis'
-    
-  toggleTab: (e) =>
-    @$el.find('li.active').removeClass('active')
-    $(e.target).parents('li').addClass('active')
-
-  relevance: (e) =>
-    @controller.trigger('content-cleanup')
-    e.preventDefault()
-    @controller.trigger('relevance:app')
-    @controller.trigger('search-kpi:index')
-    @router.update_path('search_rel')
-
-  explore: (e) =>
-    @controller.trigger('content-cleanup')
-    e.preventDefault()
-    @controller.trigger('explore:app')
-    @controller.trigger('comp-analysis:index', saveQuery: false)
-    @router.update_path('comp_analysis')
+        el: 'ul.master-tab')
   
-  adhoc_query_analysis: (e) =>
-    @controller.trigger('content-cleanup')
-    e.preventDefault()
-    @controller.trigger('query-perf-comp:app')
-    @controller.trigger('query-comparison')
-    @router.update_path('query_perf_comparison')
-  
-  select_rel_app: =>
-    e = {}
-    e.target = @$el.find('li.relevance-tab a').get(0)
-    @toggleTab(e)
+  events: =>
+    'click li.overview-tab a': (e) =>
+      e.preventDefault()
+      @controller.trigger('master-tabs:cleanup')
+      @controller.trigger('content-cleanup')
+      @controller.trigger('search-kpi:index')
+      @router.update_path('/')
 
-  select_explore_app: =>
-    e = {}
-    e.target = @$el.find('li.explore-tab a').get(0)
-    @toggleTab(e)
-    
-  select_adhoc_query_analysis_app: =>
-    e = {}
-    e.target = @$el.find('li.adhoc-query-analysis-tab a').get(0)
-    @toggleTab(e)
-    
+    'click li.adhoc-query-tab a': (e) =>
+      e.preventDefault()
+      @controller.trigger('master-tabs:cleanup')
+      @controller.trigger('content-cleanup')
+      @controller.trigger('query-comparison:index')
+      @router.update_path('query_comparison')
+
+    'click li.query-monitoring-tab a': (e) =>
+      e.preventDefault()
+      @controller.trigger('master-tabs:cleanup')
+      @controller.trigger('content-cleanup')
+      @controller.trigger('query-monitoring-count:index')
+      @router.update_path('query_monitoring/count')
    
+  toggleTab: (el) =>
+    @$el.find('li.active').removeClass('active')
+    $(el).parents('li').addClass('active')
+
+  search_kpi: =>
+    @toggleTab(@$el.find('li.overview-tab a'))
+  
+  overview: (data) =>
+    @toggleTab(@$el.find('li.overview-tab a'))
+
+  adhoc: =>
+    @toggleTab(@$el.find('li.adhoc-query-tab a'))
+  
+  query_monitoring: (e, data) =>
+    @toggleTab(@$el.find('li.query-monitoring-tab a'))
+  

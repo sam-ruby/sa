@@ -43,9 +43,10 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
       
       handleSearchClick: (e) =>
         e.preventDefault()
+        query_date = @model.get('query_date')
         that.do_search(
           query: @model.get(@column.get('name'))
-          query_date: @model.get('query_date')
+          query_date: query_date
           weeks_apart: @model.get('weeks_apart'))
         
       render: ->
@@ -62,6 +63,10 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
     {name: 'query_date',
     label: 'Query Date',
     editable: false,
+    formatter: _.extend({}, Backgrid.CellFormatter.prototype,
+      fromRaw: (rawValue) ->
+        Date.parse(rawValue).toString('MMM d, yyyy')
+    ),
     cell: 'string'},
     {name: 'weeks_apart',
     label: 'Weeks Apart',
@@ -182,11 +187,9 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
  
   do_search: (data) =>
     if data.query
-      new_path = 'query_perf_comparison/query/' +
+      new_path = 'query_comparison/query/' +
         encodeURIComponent(data.query) + '/wks_apart/' +
-        data.weeks_apart + '/query_date/' +
-        encodeURIComponent(data.query_date)
-      
+        data.weeks_apart + '/query_date/' + data.query_date
       @router.update_path(new_path)
       @get_items(data)
   
@@ -194,10 +197,12 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
     console.log("handle_search");
     e.preventDefault()
     @clean_query_results()
+    query_date = @query_form.find('input.datepicker').datepicker('getDate')
     data =
       query: @query_form.find('input.search-query').val()
       weeks_apart: @query_form.find('select').val()
-      query_date: @query_form.find('input.datepicker').val()
+      query_date: query_date.toString('M-d-yyyy')
+
     if data.query
       @recent_searches_collection.unshift(data)
       @do_search(data)
@@ -220,7 +225,7 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
 
     if data and data.query
       data.query = decodeURIComponent(data.query)
-      query_date = new Date(decodeURIComponent(data.query_date))
+      query_date = new Date(data.query_date)
       data.weeks_apart= parseInt(data.weeks_apart)
     else
       data =
