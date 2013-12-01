@@ -2,7 +2,7 @@ class QueryCatMetricsDaily < BaseModel
   self.table_name = 'query_cat_metrics_daily'
 
   def self.get_search_words(
-    query_date, page=1, order_column='id', order='asc', limit=10)
+    query, query_date, page=1, order_column='id', order='asc', limit=10)
     
     selects = %q{id, query, channel, query_revenue, query_count, 
       query_pvr, query_atc, query_con, cat_id, query_date}
@@ -13,18 +13,33 @@ class QueryCatMetricsDaily < BaseModel
       order_str = order_column
       order_str << ' ' << order
     end
-
-    if page > 0 
-      QueryCatMetricsDaily.select(selects).where([
-         %q{query_date = ? AND cat_id = ? AND (channel = "ORGANIC" OR 
-         channel = "ORGANIC_USER")}, query_date, 0]).order(
-           order_str).page(page).per(limit)
+    
+    limit = 10000 if page == 0
+    
+    if query
+      if page > 0 
+        QueryCatMetricsDaily.select(selects).where([
+           %q{query_date = ? AND cat_id = ? AND (channel = "ORGANIC" OR 
+           channel = "ORGANIC_USER") and query = ?},
+           query_date, 0, query]).order(order_str).page(page).per(limit)
+      else
+        QueryCatMetricsDaily.select(selects).where([
+           %q{query_date = ? AND cat_id = ? AND (channel = "ORGANIC" OR 
+           channel = "ORGANIC_USER") and query = ?},
+           query_date, 0, query]).order(order_str).limit(limit)
+      end
     else
-      limit = 10000
-      QueryCatMetricsDaily.select(selects).where([
-         %q{query_date = ? AND cat_id = ? AND (channel = "ORGANIC" OR 
-         channel = "ORGANIC_USER")}, query_date, 0]).order(
-           order_str).limit(limit)
+      if page > 0 
+        QueryCatMetricsDaily.select(selects).where([
+           %q{query_date = ? AND cat_id = ? AND (channel = "ORGANIC" OR 
+           channel = "ORGANIC_USER")}, query_date, 0]).order(
+             order_str).page(page).per(limit)
+      else
+        QueryCatMetricsDaily.select(selects).where([
+           %q{query_date = ? AND cat_id = ? AND (channel = "ORGANIC" OR 
+           channel = "ORGANIC_USER")}, query_date, 0]).order(
+             order_str).limit(limit)
+      end
     end
   end
 
