@@ -89,8 +89,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
   do_search: (data) =>
     if data
       new_path = 'cvr_dropped_query' +'/sum_count/'+ data.sum_count+ '/wks_apart/' +
-        data.weeks_apart + '/query_date/' +
-        encodeURIComponent(data.query_date)
+        data.weeks_apart + '/query_date/' + data.query_date
       
       @router.update_path(new_path)
       @get_items(data)
@@ -98,9 +97,10 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
   handle_search: (e) =>
     e.preventDefault()
     @clean_query_results()
+    query_date = @query_form.find('input.datepicker').datepicker('getDate')
     data =
       weeks_apart: @query_form.find('select').val()
-      query_date: @query_form.find('input.datepicker').val()
+      query_date: query_date.toString('M-d-yyyy')
       sum_count:@query_form.find('input.sum-count').val()
 
     if data
@@ -115,19 +115,42 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @query_form.find('.controls select').val('2')
     @query_form.find('input.datepicker').datepicker(
       'update', query_date.toString('M-d-yyyy'))
+
+  #process data from router
+  process_query_data:(data) =>
+    data = data || {}
+    #set_week_apart
+    if data.weeks_apart
+      data.weeks_apart= parseInt(data.weeks_apart)
+    else
+      data.weeks_apart = 2;
+    #set sum_count
+    if  data.sum_count
+      data.sum_count= parseInt(data.sum_count)
+    else
+      data.sum_count = 5000;
+    #query_date
+    if data.query_date
+      query_date = new Date(data.query_date)
+    else
+      query_date= @controller.get_filter_params()['date']
+      query_date = new Date(new Date(query_date) - data.weeks_apart*7*24*60*60*1000);
+    data.query_date = query_date
+    return data
   
   get_items: (data) ->
-    query_date = @controller.get_filter_params()['date']
-    query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
-    if data 
-      # data.query = decodeURIComponent(data.query)
-      query_date = new Date(decodeURIComponent(data.query_date))
-      data.weeks_apart = parseInt(data.weeks_apart)
-      data.sum_count = parseInt(data.sum_count)
-    else
-      data =
-        weeks_apart: 2
-        sum_count:5000
+    # query_date = @controller.get_filter_params()['date']
+    # query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
+    # if data 
+    #   # data.query = decodeURIComponent(data.query)
+    #   query_date = new Date(decodeURIComponent(data.query_date))
+    #   data.weeks_apart = parseInt(data.weeks_apart)
+    #   data.sum_count = parseInt(data.sum_count)
+    # else
+    #   data =
+    #     weeks_apart: 2
+    #     sum_count:5000
+    data = @process_query_data(data);
 
     if data 
       image =$('<img>').addClass('ajax-loader').attr(
@@ -135,17 +158,14 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       @collection.get_items(data)
     @active = true
  
-  render_form:=>
-    query_date = @controller.get_filter_params()['date']
-    query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
-    data =
-      query_date:query_date
-      weeks_apart: 2
-      sum_count:5000
+  render_form: (data)=>
+    console.log(data);
+    data = @process_query_data(data);
+    console.log("processed", data);
     $(@query_form).html(@form_template(data))
     $(@query_form).find('input.datepicker').datepicker()    
     @query_form.find('input.datepicker').datepicker(
-      'update', query_date.toString('M-d-yyyy'))
+      'update', data.query_date.toString('M-d-yyyy'))
     @active = true
 
   render_query_results: =>
