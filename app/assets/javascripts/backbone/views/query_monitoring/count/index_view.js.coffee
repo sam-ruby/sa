@@ -81,11 +81,6 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     label: I18n.t('perf_monitor.conversion_rate'),
     editable: false,
     cell: 'number',
-    formatter: Utils.PercentFormatter},
-    {name: 'query_con',
-    label: I18n.t('perf_monitor.add_to_cart_rate'),
-    editable: false,
-    cell: 'number',
     formatter: Utils.PercentFormatter}]
 
     columns
