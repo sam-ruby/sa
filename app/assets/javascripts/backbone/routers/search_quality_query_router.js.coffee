@@ -46,17 +46,23 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
 
 
   cvr_dropped_query: (sum_count, weeks, date) =>
-    @controller.trigger('query-comparison:index')
-    @controller.trigger('cvr-dropped-query:index')
-    # if there is no query param, then render the basic form
-    if sum_count==undefined
-      @controller.trigger('cvr-dropped-query:form') 
-    #if there is result then render the searched result
-    else
-      @controller.trigger('cvr-dropped-query:result',
-        sum_count:sum_count
-        weeks_apart: weeks
-        query_date: date)
+    console.log("trigger cvr_droped")
+    #switch to cvr_dropped_query view
+    @controller.trigger('cvr-dropped-query:index') 
+    #get data from router
+    data=
+      sum_count:sum_count
+      weeks_apart: weeks
+      query_date: date
+    #render the basic form
+    @controller.trigger('cvr-dropped-query:form',data) 
+    #if there is query params, do the query
+    if sum_count && weeks && date
+      console.log('trigger result')
+      @controller.trigger('cvr-dropped-query:result',data) 
+
+    console.log(data);
+
 
   search_rel: (query, date_parts) =>
     @set_date_info(date_parts)
