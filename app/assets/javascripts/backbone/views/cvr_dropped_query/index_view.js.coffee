@@ -77,7 +77,6 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     ]
 
     @grid = new Backgrid.Grid(
-      className: 'backgrid bg-grid'
       columns: columns
       collection: @collection
     )
