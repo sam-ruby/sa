@@ -65,7 +65,14 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
     editable: false,
     formatter: _.extend({}, Backgrid.CellFormatter.prototype,
       fromRaw: (rawValue) ->
-        Date.parse(rawValue).toString('MMM d, yyyy')
+        if rawValue?
+          date = Date.parse(rawValue)
+          if date?
+            date.toString('MMM d, yyyy')
+          else
+            rawValue
+        else
+          rawValue
     ),
     cell: 'string'},
     {name: 'weeks_apart',
