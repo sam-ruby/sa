@@ -9,11 +9,10 @@ class Searchad.Models.CvrDroppedQuery extends Backbone.Model
 class Searchad.Collections.CvrDroppedQueryCollection extends Backbone.PageableCollection
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
-    @query = null
+    @dataParam={}
     super(options)
   
   model: Searchad.Models.CvrDroppedQuery
-  # url: '/search/get_query_stats_date.json'
   url: '/search/get_cvr_dropped_query.json'
   mode: 'server'
   state:
@@ -22,19 +21,15 @@ class Searchad.Collections.CvrDroppedQueryCollection extends Backbone.PageableCo
   queryParams:
     currentPage: 'page'
     pageSize: 'per_page'
-    date: ->
-      @controller.get_filter_params().date
-    query: ->
-      @query
-
+    sum_count: ->
+      @dataParam.sum_count
+    query_date:->
+      @dataParam.query_date
+    weeks_apart:->
+      @dataParam.weeks_apart
   mode: 'server'
 
   get_items: (data) =>
-    data = {} unless data
-    for k, v of @controller.get_filter_params()
-      continue unless v
-      data[k] = v
-    console.log(data);
     @fetch(
-      data: data
+      data: @dataParam
       reset: true)

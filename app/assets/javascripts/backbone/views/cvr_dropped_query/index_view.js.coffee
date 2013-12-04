@@ -20,7 +20,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     'click button.search': 'handle_search'
     'click button.reset': 'handle_reset'
 
-  form_template: JST['backbone/templates/query_comparison/cvr_dropped_query_form']
+  form_template: JST['backbone/templates/cvr_dropped_query/form']
 
   active: false
 
@@ -85,6 +85,8 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       collection: @collection
     )
 
+    console.log("collection", @collection);
+
 
   do_search: (data) =>
     if data
@@ -92,12 +94,14 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
         data.weeks_apart + '/query_date/' + data.query_date
       
       @router.update_path(new_path)
+      console.log("do_search_data", data);
       @get_items(data)
   
   handle_search: (e) =>
     e.preventDefault()
     @clean_query_results()
-    query_date = @query_form.find('input.datepicker').datepicker('getDate')
+    query_date = @query_form.find('input.datepicker').datepicker('getDate').toString('M-d-yyyy')
+
     data =
       weeks_apart: @query_form.find('select').val()
       query_date: query_date.toString('M-d-yyyy')
@@ -135,31 +139,26 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     else
       query_date= @controller.get_filter_params()['date']
       query_date = new Date(new Date(query_date) - data.weeks_apart*7*24*60*60*1000);
-    data.query_date = query_date
+    data.query_date = query_date.toString('M-d-yyyy')
+
+    @data = data
+    # set collection data(query params) for pagination. 
+    @collection.dataParam = data
+    console.log("process_query_data", data);
     return data
   
   get_items: (data) ->
-    # query_date = @controller.get_filter_params()['date']
-    # query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
-    # if data 
-    #   # data.query = decodeURIComponent(data.query)
-    #   query_date = new Date(decodeURIComponent(data.query_date))
-    #   data.weeks_apart = parseInt(data.weeks_apart)
-    #   data.sum_count = parseInt(data.sum_count)
-    # else
-    #   data =
-    #     weeks_apart: 2
-    #     sum_count:5000
     data = @process_query_data(data);
-
     if data 
       image =$('<img>').addClass('ajax-loader').attr(
         'src', '/assets/ajax_loader.gif').css('display', 'block')
+      @collection.reset();
       @collection.get_items(data)
+
+      console.log("after get_items", @collection)
     @active = true
  
   render_form: (data)=>
-    console.log(data);
     data = @process_query_data(data);
     console.log("processed", data);
     $(@query_form).html(@form_template(data))
