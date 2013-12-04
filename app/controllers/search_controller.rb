@@ -78,12 +78,12 @@ class SearchController < BaseController
 
   def get_cvr_dropped_query
     # query = params[:query ]
-    p "called get_cvr_dropped_query", params
-    date = DateTime.parse(params[:query_date]) rescue DateTime.now
+    p "controller called get_cvr_dropped_query params", params.to_yaml
+    date = DateTime.strptime(params[:query_date], "%m-%d-%Y") rescue DateTime.now
     days_range = params[:weeks_apart] ? Integer(params[:weeks_apart]) * 7 : 7
-    sum_count = params[:sum_count] ? Integer(params[:sum_count]) : 50
+    sum_count = params[:sum_count] ? Integer(params[:sum_count]) : 5000
     p "controller sum_count", sum_count
-    p "date", date
+    p "query_date", date
     p "days_range", days_range
     before_stare_date = date-1.day-days_range+1.day
     before_end_date = date-1.day
@@ -103,7 +103,7 @@ class SearchController < BaseController
         else
         render :json => [
             {:total_entries => result.length,
-             :date => @date}, result[start_index..end_index]]
+             :date => @date, :sum_count => sum_count}, result[start_index..end_index]]
         end
       end
     end
