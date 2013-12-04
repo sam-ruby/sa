@@ -2,8 +2,8 @@ class SearchController < BaseController
 
   before_filter :set_common_data
   def get_data
-    query = params[:/]
-    date = DateTime.parse(params[:query_date]) rescue DateTime.now
+    query = params[:query]
+    date = DateTime.strptime(params[:query_date], '%m-%d-%Y') rescue DateTime.now
     days_range = params[:weeks_apart] ? Integer(params[:weeks_apart]) * 7 :
       7
     before_start_date = date - 1.day
