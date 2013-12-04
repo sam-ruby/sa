@@ -39,6 +39,14 @@ production:
   username: srch_dash_ro
   password: l0rdy
   host:    shared-db.sv.walmartlabs.com 
+
+analytics_rw:
+  adapter:  mysql2
+  encoding: utf8
+  database: srch_dash
+  username: srch_dash_rw
+  password: c0rblimy
+  host:    shared-db.sv.walmartlabs.com 
   
 development:
   adapter:  mysql2
