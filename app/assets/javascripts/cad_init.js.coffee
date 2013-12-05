@@ -181,6 +181,15 @@ $ ->
         controller, 'cvr-dropped-query:form',cvrDroppedQueryView.render_form)
     cvrDroppedQueryView.listenTo(
       controller, 'cvr-dropped-query:result', cvrDroppedQueryView.get_items)
+
+    #cvr_dropped_view when click on q query show the item comparison regarding that query
+    cvrDroppedQueryItemComparisonView = new Searchad.Views.CVRDroppedQuery.ItemComparisonView {
+      el: '.cvr-dropped-query-item-comparison'
+    }
+    cvrDroppedQueryItemComparisonView.listenTo(
+      controller, 'cvr_dropped_query:item_comparison', (data) ->
+         cvrDroppedQueryItemComparisonView.get_items(data)
+    )
     
     queryMonitoringCountView =
       new Searchad.Views.QueryMonitoring.Count.IndexView(
