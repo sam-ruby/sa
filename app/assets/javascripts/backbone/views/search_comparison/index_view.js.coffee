@@ -21,6 +21,7 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
 
   events:
     'click button.search': 'handle_search'
+    'click button.reset': 'handle_reset'
 
   form_template: JST['backbone/templates/query_comparison/form']
 
@@ -42,9 +43,10 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
       
       handleSearchClick: (e) =>
         e.preventDefault()
+        query_date = @model.get('query_date')
         that.do_search(
           query: @model.get(@column.get('name'))
-          query_date: @model.get('query_date')
+          query_date: query_date
           weeks_apart: @model.get('weeks_apart'))
         
       render: ->
@@ -61,6 +63,17 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
     {name: 'query_date',
     label: 'Query Date',
     editable: false,
+    formatter: _.extend({}, Backgrid.CellFormatter.prototype,
+      fromRaw: (rawValue) ->
+        if rawValue?
+          date = Date.parse(rawValue)
+          if date?
+            date.toString('MMM d, yyyy')
+          else
+            rawValue
+        else
+          rawValue
+    ),
     cell: 'string'},
     {name: 'weeks_apart',
     label: 'Weeks Apart',
@@ -181,37 +194,56 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
  
   do_search: (data) =>
     if data.query
-      new_path = 'query_perf_comparison/query/' +
+      new_path = 'query_comparison/query/' +
         encodeURIComponent(data.query) + '/wks_apart/' +
-        data.weeks_apart + '/query_date/' +
-        encodeURIComponent(data.query_date)
-      
+        data.weeks_apart + '/query_date/' + data.query_date
       @router.update_path(new_path)
       @get_items(data)
   
-  handle_search: =>
+  handle_search: (e) =>
+    e.preventDefault()
+    @clean_query_results()
+    query_date = @query_form.find('input.datepicker').datepicker('getDate')
     data =
       query: @query_form.find('input.search-query').val()
       weeks_apart: @query_form.find('select').val()
-      query_date: @query_form.find('input.datepicker').val()
-    @recent_searches_collection.unshift(data)
-    @do_search(data)
+      query_date: query_date.toString('M-d-yyyy')
+
+    if data.query
+      @recent_searches_collection.unshift(data)
+      @do_search(data)
    
-  get_items: (data, refresh_form=true) ->
+  handle_reset: (e) =>
+    e.preventDefault()
     @clean_query_results()
+    query_date = @controller.get_filter_params()['date']
+    query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
+
+    @query_form.find('input.search-query').val('')
+    @query_form.find('.controls select').val('1')
+    @query_form.find('input.datepicker').datepicker(
+      'update', query_date.toString('M-d-yyyy'))
+  
+  get_items: (data, refresh_form=true) ->
+    query_date = @controller.get_filter_params()['date']
+    query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
+    @clean_query_results()
+
     if data and data.query
       data.query = decodeURIComponent(data.query)
-      data.query_date = decodeURIComponent(data.query_date)
+      query_date = new Date(data.query_date)
       data.weeks_apart= parseInt(data.weeks_apart)
     else
       data =
         query: ''
         weeks_apart: 1
-        query_date: ''
        
     if refresh_form
       $(@query_form).html(@form_template(data))
       @query_form.find('input.datepicker').datepicker()
+    
+    @query_form.find('input.datepicker').datepicker(
+      'update', query_date.toString('M-d-yyyy'))
 
     if data and data.query
       @query = data.query

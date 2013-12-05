@@ -4,160 +4,148 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
  initialize: (options) =>
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
-    @controller.bind('relevance:app', @init_relevance)
-    @controller.bind('explore:app', @init_explore)
-    @controller.bind('query-perf-comp:app', @init_query_perf_comp)
-
+    
     @controller.bind('poor-performing:index', @select_pp_tab)
     @controller.bind('search-rel:index', @select_sq_tab)
     @controller.bind('search-kpi:index', @select_search_kpi_tab)
-    @controller.bind('do-search', @select_search_tab)
-    @controller.bind('comp-analysis:index', @select_ca_tab)
-    @controller.bind('query-comparison', @select_query_comp_tab)
+    
+    @controller.bind('query-comparison:index',
+      @select_query_comparison_tab)
+    @controller.bind('search:form', @select_search_tab)
+    
+    @controller.bind('query-monitoring-count:index', @select_qmc_tab)
+    @controller.bind('query-monitoring-metrics:index', @select_qmm_tab)
+    
+    @controller.bind('master-tabs:cleanup', @unrender)
+    @active = false
 
-  events:
-    'click .add-widget': 'openWidgetDialog'
-    'click a.cancel-widget': 'cancelWidgetDialog'
-    'click a.save-widget': 'saveWidget'
-    'click li.search-quality-tab': 'searchQuality'
-    'click li.poor-performing-tab': 'poorPerforming'
-    'click li.search-kpi-tab': 'searchKPI'
-    'click button.search-btn': 'do_search'
-    'click li.comp-analysis-tab': 'compAnalysis'
-    'click li.query-comparison-details-tab': 'queryComparison'
+  events: =>
+    #events on overview page
+    'click li.search-quality-tab a': (e) =>
+      e.preventDefault()
+      @controller.trigger('content-cleanup')
+      @controller.trigger('search-rel:index')
+      @router.update_path('search_rel')
+
+    'click li.poor-performing-tab a': (e) =>
+      e.preventDefault()
+      @controller.trigger('content-cleanup')
+      @controller.trigger('poor-performing:index', trigger: true)
+      @router.update_path('poor_performing')
+
+    'click li.search-kpi-tab a': (e) =>
+      e.preventDefault()
+      @controller.trigger('content-cleanup')
+      @controller.trigger('search-kpi:index')
+      @router.update_path('search_kpi')
+
+    #tab on adhoc query analysis page
+    'click li.query-comparison-tab': (e) =>
+      e.preventDefault()
+      @controller.trigger('content-cleanup')
+      @controller.trigger('query-comparison:index')
+      @router.update_path('query_comparison')
+
+    'click li.adhoc-search-tab': (e) =>
+      e.preventDefault()
+      @controller.trigger('content-cleanup')
+      @controller.trigger('adhoc-search:index')
+      @controller.trigger('search:form')
+      @router.update_path('search')
     
   get_tab_el: (data) ->
     css_classes = data.class.join(' ')
     tab =
       $("<li class='#{css_classes}'><a href='#{data.href}'>#{data.title}</a></li>")
   
-  init_relevance: =>
-    @clean_tabs()
+  init_overview: =>
     tabs = [{
       class: ['active', 'search-kpi-tab']
       href: '#search_kpi'
       title: 'KPI'},
-      {class: ['poor-performing-tab']
-      href: '#poor_performing'
-      title: 'Poor Performing Intents'},
       {class: ['search-quality-tab']
       href: '/#search_rel'
-      title: 'Relevance Revenue Rank Comparison'}]
-    
-    @$el.find('ul').prepend(@get_tab_el(tabs[2]))
-    @$el.find('ul').prepend(@get_tab_el(tabs[1]))
-    @$el.find('ul').prepend(@get_tab_el(tabs[0]))
+      title: 'Query Analysis'},
+      {class: ['poor-performing-tab']
+      href: '#poor_performing'
+      title: 'Poor Performing Intents'}]
+    @$el.prepend(@get_tab_el(tabs[2]))
+    @$el.prepend(@get_tab_el(tabs[1]))
+    @$el.prepend(@get_tab_el(tabs[0]))
 
-  init_explore: =>
-    @clean_tabs()
+  init_query_comparison: =>
     tabs = [{
-      class: ['comp-analysis-tab']
-      href: '/#comp_analysis'
-      title: 'Amazon Relevance Comparison'}]
-    @$el.find('ul').prepend(@get_tab_el(tabs[0]))
-
-  init_query_perf_comp: =>
-    @clean_tabs()
+      class: ['query-comparison-tab','active']
+      href: '#query_comparison'
+      title: 'Query Performace Analysis'},
+      {class: ['adhoc-search-tab']
+      href: '#search'
+      title: 'Search'}]
+    @$el.prepend(@get_tab_el(tabs[1]))
+    @$el.prepend(@get_tab_el(tabs[0]))
+  
+  init_query_monitoring: =>
     tabs = [{
-      class: ['query-comparison-details-tab']
-      href: '/#query_perf_comparison'
-      title: 'Details'}]
-    @$el.find('ul').prepend(@get_tab_el(tabs[0]))
+      class: ['query-monitoring-count-tab','active']
+      href: '#query_monitoring/count'
+      title: 'Query Count Analysis'}]
+    @$el.append(@get_tab_el(tabs[0]))
 
-  toggleTab: (e) =>
+  toggleTab: (el) =>
     @$el.find('li.active').removeClass('active')
-    $(e.target).parents('li').addClass('active')
+    $(el).parents('li').addClass('active')
 
-  queryComparison: (e) =>
-    @controller.trigger('content-cleanup')
-    e.preventDefault()
-    @controller.trigger('query-comparison')
-    @router.update_path('query_perf_comparison')
-
-
-  searchQuality: (e) =>
-    @controller.trigger('content-cleanup')
-    e.preventDefault()
-    @controller.trigger('search-rel:index')
-    @router.update_path('search_rel')
-
-  searchKPI: (e) =>
-    @controller.trigger('content-cleanup')
-    e.preventDefault()
-    @controller.trigger('search-kpi:index')
-    @router.update_path('search_kpi')
-  
-  poorPerforming: (e) =>
-    @controller.trigger('content-cleanup')
-    e.preventDefault()
-    @controller.trigger('poor-performing:index', trigger: true)
-
-  do_search: (e) =>
-    e.preventDefault()
-    query = $('form.form-search input.search-query').val()
-    query_parts = query.match(/([^:]+):?(date)?:?(.*)/) if query
-    return unless query
-    data = {}
-  
-    if query_parts and query_parts[2] != undefined
-      data.query = query_parts[1]
-      data.search_date = query_parts[3]
-      event = 'do-search-with-comparison'
-    else
-      data.query = query
-      event = 'do-search'
-    
-    @router.update_path('search/query/' + encodeURIComponent(data.query))
-    @controller.trigger('content-cleanup')
-    @controller.trigger(event, data)
-
-  compAnalysis: (e) =>
-    @controller.trigger('content-cleanup')
-    e.preventDefault()
-    @controller.trigger('comp-analysis:index')
-    @router.update_path('comp_analysis')
-  
   select_pp_tab: =>
-    e = {}
-    e.target = @$el.find('li.poor-performing-tab a').get(0)
-    @toggleTab(e)
+    unless @active
+      @$el.css('display', 'block')
+      @init_overview()
+      @active = true
+    @toggleTab(@$el.find('li.poor-performing-tab a'))
  
   select_sq_tab: =>
-    e = {}
-    e.target = @$el.find('li.search-quality-tab a').get(0)
-    @toggleTab(e)
-   
+    unless @active
+      @$el.css('display', 'block')
+      @init_overview()
+      @active = true
+    @toggleTab(@$el.find('li.search-quality-tab a'))
+
   select_search_kpi_tab: =>
-    e = {}
-    e.target = @$el.find('li.search-kpi-tab a').get(0)
-    @toggleTab(e)
+    unless @active
+      @$el.css('display', 'block')
+      @init_overview()
+      @active = true
+    @toggleTab(@$el.find('li.search-kpi-tab a'))
   
-  select_search_tab: =>
-    e = {}
-    e.target = @$el.find('li.search-tab a').get(0)
-    @toggleTab(e)
- 
-  select_ca_tab: =>
-    e = {}
-    e.target = @$el.find('li.comp-analysis-tab a').get(0)
-    @toggleTab(e)
- 
- select_query_comp_tab: =>
-    e = {}
-    e.target = @$el.find('li.query-comparison-details-tab a').get(0)
-    @toggleTab(e)
- 
-  saveWidget: =>
-    $('#main-content .modal', @el).modal('hide')
-    # Trigger additional widgets from here.
+  #on ad-hoc analysis page
+  select_query_comparison_tab: =>
+    unless @active
+      @$el.css('display', 'block')
+      @init_query_comparison()
+      @active = true
+    @toggleTab(@$el.find('li.query-comparison-tab a'))
 
-  openWidgetDialog: =>
-    @widget_el.modal('show')
+  select_search_tab:=>
+    unless @active
+      @$el.css('display', 'block')
+      @init_query_comparison()
+      @active = true
+    @toggleTab(@$el.find('li.adhoc-search-tab a'))
 
-  cancelWidgetDialog: =>
-    @widget_el.modal('hide')
+  select_qmc_tab:=>
+    unless @active
+      @$el.css('display', 'block')
+      @init_query_monitoring()
+      @active = true
+    @toggleTab(@$el.find('li.query-monitoring-count-tab a'))
 
-  clean_tabs: =>
-    @$el.find('li').not('li.search-tab').remove()
+  select_qmm_tab:=>
+    unless @active
+      @$el.css('display', 'block')
+      @init_query_monitoring()
+      @active = true
+    @toggleTab(@$el.find('li.query-monitoring-metrics-tab a'))
 
-
+  unrender: =>
+    @$el.children().remove()
+    @$el.hide()
+    @active = false

@@ -69,6 +69,7 @@ Searchad::Application.routes.draw do
     :to => 'poor_performing', :via => [:get, :post]  
   
   get 'test(/:action(.:format))', :to=>'test'
+  get 'comp_analysis(/:action(.:format))', :to=>'comp_analysis'
 
   match 'search_kpi(/:action(.:format))',
     :to => 'search_k_p_i', :via => [:get, :post]  
@@ -77,4 +78,9 @@ Searchad::Application.routes.draw do
     :to => 'search', :via => [:get, :post]
 
   get 'amazon_overlap(/:action(.:format))', :to => 'amazon_overlap'
+ 
+  namespace :monitoring do
+    match 'count(/:action(.:format))',
+      :to => 'count', :via => [:get, :post]
+  end
 end

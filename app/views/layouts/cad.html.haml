@@ -1,7 +1,8 @@
 !!!
 %html
   %head
-    %title= @title
+    %title
+      Consumer Analytics Dashboard
     %link{:rel=>:icon, :type=>'image/png',
       :href=>'assets/walmart-transparent.png'}
     = stylesheet_link_tag 'application'
@@ -91,10 +92,6 @@
         top: 0em;
         margin-bottom: 1em;
       }
-      .input-append {
-        margin-bottom: 0px;
-        vertical-align: inherit;
-      }
       tr.selected {
         background-color: rgba(47, 126, 216, .07);
       }
@@ -122,72 +119,15 @@
     = csrf_meta_tag 
   
   %body
+    #mdw-toolbar
     = render 'shared/title'
     .container
-      .row.master-tab
-        %ul.nav.nav-tabs
-          %li.tab-title.search-tab.pull-right
-            %form.form-search{:style=>'margin:0'}
-              .search-container
-                %input.input-medium.search-query{:type=>:text,
-                  :style=>'width:20em'}
-                .adv-search-form
-                  %p{:style=>'font-size:.90em;'}
-                    Week over Week Comparison
-                    %span.close.pull-right{:style=>'font-size: 1em'}
-                      %i.icon-remove 
-                  %small Search
-                  %br
-                  %input.input-large.search-field{:type=>'text' }
-                  %br
-                  %small Date around 1 week of
-                  %br
-                  %input.input-small.datepicker{:type=>'text',
-                    'data-date-format'=>'M d, yyyy',
-                    'data-date-autoclose' => 'true'}
-                  %br
-                  %button.btn.btn-small.adv-search-btn.btn-primary{:type=>:submit,
-                    :style=>'margin-top:.2em'}
-                    Search
-              %button.btn.search-btn{:type=>:submit}
-                Search
-
-
-        .modal.hide.fade
-          .modal-header
-            .widget-header
-              Add a new Widget
-              %button.close.pull-right
-                &times;
-          .modal-body.fsize-small
-            %form#widget-dialog
-              %label
-                Widget Title
-              %input{:type=>:text, :placeholder=>'Widget Title',
-                :name=>:widget_title}
-              %label
-                Select a widget
-              %select
-                %option
-                  Search Quality Queries
-                %option
-                  Poorly Performing Product Intents
-              
-              %label
-                Filter this data
-              %a
-                Add a filter
-          .modal-footer
-            %a.btn.cancel-widget
-              Cancel
-            %a.btn.btn-primary.save-widget
-              Add Widget 
-
-
+      .row
+        %ul.nav.nav-tabs.master-tab{:style=>'display:none'}
       .row
         #data-container
-          = yield :test_content
-     
-        
+          = yield :main_content
+    
     = javascript_include_tag :application
+    = javascript_include_tag 'http://mdw.walmartlabs.com/mdw.js'
     = yield :javascript
