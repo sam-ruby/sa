@@ -94,4 +94,33 @@ class SearchQualityDaily < BaseModel
         order_str).limit(limit)
     end
   end
+
+  # get item comparisons based on a query from cvr_dropped_query table, small set, client side pagination
+  def self.get_cvr_dropped_query_item_comparisons(query, before_start_date,before_end_date,after_start_date,after_end_date)
+    # result: query_items: "21630182,19423472,4764723,14237607,4764726,10992861, there is no related rank for that sequence. 
+    # search_quality_daily
+    item_ids_two_week_before = find_by_sql(['select query_items from search_quality_daily where query_str="sewing machine" and query_date=(select max(query_date) from search_quality_daily where query_str="sewing machine" and query_date>"2013-09-12" and query_date<="2013-09-26")'])
+    item_ids_two_week_after = find_by_sql(['select query_items from search_quality_daily where query_str="sewing machine" and query_date=(select max(query_date) from search_quality_daily where query_str="sewing machine" and query_date>"2013-09-26" and query_date<="2013-10-10")'])
+    
+
+    # p 'item_ids_two_week_before_arr', item_ids_two_week_before[0]['query_items']
+    # p 'item_ids_two_week_after_arr', item_ids_two_week_after[0]['query_items']
+
+    item_ids_two_week_before_arr = item_ids_two_week_before[0]['query_items'].split(",")
+    item_ids_two_week_after_arr = item_ids_two_week_after[0]['query_items'].split(",")
+
+    p 'item_ids_two_week_before_arr', item_ids_two_week_before_arr
+    p 'item_ids_two_week_after_arr', item_ids_two_week_after_arr
+    
+    #find the items 
+    item_before_arr= find_by_sql(['select item_id, title, image_url, seller_id FROM all_item_attrs where item_id in (?)', item_ids_two_week_before_arr])
+    item_after_arr= find_by_sql(['select item_id, title, image_url, seller_id FROM all_item_attrs where item_id in (?)', item_ids_two_week_after_arr])
+
+    #since this is a small list, it is ok to process the merge
+
+
+
+    p "items_two_week_before, ", item_before_arr.to_yaml
+    p "items_two_week_after, ", item_after_arr.to_yaml
+  end
 end

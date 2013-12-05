@@ -14,7 +14,8 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       @query_results.find('.ajax-loader').css('display', 'block')
       @controller.trigger('sub-content-cleanup')
     )
-    @cvr_dropped_query_form = @$el.find(options.form_selector)
+    # @cvr_dropped_query_form = @$el.find(options.form_selector)
+    @data = {}
     
   events:
     'click button.search': 'handle_search'
@@ -26,7 +27,8 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
 
   initCvrDroppedQueryTable: ->
     that = this
-    console.log(@collection);
+    console.log('collection', @collection);
+    console.log('data:, ', @data);
     class SearchQueryCell extends Backgrid.Cell
       events:
         'click': 'handleQueryClick'
@@ -37,11 +39,17 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
           'selected')
         $(e.target).parents('tr').addClass('selected')
         query = $(e.target).text()
-        that.controller.trigger('search:sub-content',
+        dataParam = @model.collection.dataParam
+        # console.log('data in handle query click', @collection.dataParam);
+        that.controller.trigger('cvr_dropped_query:item_comparison',
           query: query
-          view: 'daily')
-        new_path = 'search/query/' + encodeURIComponent(query)
-        that.router.update_path(new_path)
+          query_date: dataParam.query_date
+          weeks_apart: dataParam.weeks_apart
+          # view: 'daily'
+        )
+        # new_path = 'cvr_dropped_query' +'/sum_count/'+ dataParam.sum_count+ '/wks_apart/' +
+        # dataParam.weeks_apart + '/query_date/' + dataParam.query_date + '/query/'+ encodeURIComponent(query)
+        # that.router.update_path(new_path)
       
       render: =>
         value = @model.get(@column.get('name'))
@@ -84,9 +92,6 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection
     )
-
-    console.log("collection", @collection);
-
 
   do_search: (data) =>
     if data
