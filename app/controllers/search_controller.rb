@@ -3,7 +3,7 @@ class SearchController < BaseController
   before_filter :set_common_data
   def get_data
     query = params[:query]
-    date = DateTime.parse(params[:query_date]) rescue DateTime.now
+    date = DateTime.strptime(params[:query_date], '%m-%d-%Y') rescue DateTime.now
     days_range = params[:weeks_apart] ? Integer(params[:weeks_apart]) * 7 :
       7
     before_start_date = date - 1.day
@@ -36,6 +36,30 @@ class SearchController < BaseController
             :error => after_week.query_count.nil? ? 1 : 0,
             :data => after_week,
             :title => after_title}}
+      end
+    end
+  end
+  
+  def get_query_stats_date
+    query = params[:query]
+    
+    respond_to do |format|
+      format.json do 
+        query_stats = QueryCatMetricsDaily.get_query_stats_date(
+          query, @year, get_week_from_date(@date), @date, 
+          @page, @sort_by, @order, @limit)
+        if query_stats.nil? or query_stats.empty?
+          render :json => [{:total_entries => 0}, query_stats]
+        else
+          render :json => [
+            {:total_entries => query_stats.total_pages * @limit,
+             :date => @date}, query_stats]
+        end
+      end
+      
+      format.csv do
+        render :json => QueryCatMetricsDaily.get_query_stats_date(
+          query, @year, get_week_from_date(@date), @date, 0)
       end
     end
   end

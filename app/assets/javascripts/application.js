@@ -17,6 +17,7 @@
 //= require backbone
 //= require backbone-pageable
 //= require backgrid
+//= require lunr
 //= require backgrid-extensions/backgrid-paginator
 //= require jade/runtime
 //= require bootstrap-tooltip
@@ -26,4 +27,6 @@
 //= require bootstrap-transition
 //= require bootstrap-dropdown
 //= require backbone/searchad
-//= require test_init
+//= require util/CADhelpInfo
+//= require util/backgrid.customize
+//= require cad_init

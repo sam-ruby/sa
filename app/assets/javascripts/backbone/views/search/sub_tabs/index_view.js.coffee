@@ -1,3 +1,4 @@
+Searchad.Views.Search ||= {}
 Searchad.Views.Search.SubTabs ||= {}
 
 class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
@@ -5,15 +6,19 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @controller.bind('content-cleanup', @unrender)
-    @controller.bind('do-search', @select_walmart_tab)
-    @controller.bind('search:walmart-items:index', @select_walmart_tab)
-    @controller.bind('search:amazon-items:index', @select_amazon_tab)
+    @controller.bind('search:sub-tab-cleanup', @unrender)
+    @controller.bind('search:sub-content:show-spin', @show_spin)
+    @controller.bind('search:sub-content:hide-spin', @hide_spin)
+    @active = false
+  
   data:
     query: null
 
   events:
-    'click li.search-walmart-items-tab': 'walmart_items'
+    'click li.search-stats-tab': 'stats'
     'click li.search-amazon-items-tab': 'amazon_items'
+    'click li.search-walmart-items-tab': 'walmart_items'
+    'click li.rev-rel-tab': 'rev_rel'
 
   template: JST['backbone/templates/poor_performing/search_sub_tabs']
 
@@ -27,35 +32,77 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
     @$el.find('li.active').removeClass('active')
     $(e.target).parents('li').addClass('active')
 
-  walmart_items: (e) =>
-    @controller.trigger('search:content-cleanup')
+  stats: (e) =>
     e.preventDefault()
-    @controller.trigger('search:walmart-items:index', @data)
-    @router.update_path('search/query/' + @data.query)
+    @controller.trigger('sub-content-cleanup')
+    @select_stats_tab()
+    @controller.trigger('search:stats', query: @query)
+  
+  walmart_items: (e) =>
+    e.preventDefault()
+    @controller.trigger('sub-content-cleanup')
+    @select_walmart_tab()
+    @controller.trigger('search:walmart-items',
+      query: @query
+      view: @view)
   
   amazon_items: (e) =>
-    @controller.trigger('search:content-cleanup')
     e.preventDefault()
-    @controller.trigger('search:amazon-items:index', @data)
-    @router.update_path('search/amazon_items/query/' + @data.query)
+    @controller.trigger('sub-content-cleanup')
+    @select_amazon_tab()
+    @controller.trigger('search:amazon-items',
+      query: @query
+      view: @view)
 
-  select_walmart_tab: (data) =>
-    @data.query = data.query if data and data.query
-    unless @$el.find('ul.nav').length > 0
-      @$el.append( @template())
+  rev_rel: (e) =>
+    e.preventDefault()
+    @controller.trigger('sub-content-cleanup')
+    @select_rev_rel_tab()
+    @controller.trigger('search:rel-rev',
+      query: @query
+      view: @view)
+  
+  select_stats_tab: () =>
+    e = {}
+    e.target = @$el.find('li.search-stats-tab a').get(0)
+    @toggleTab(e)
+
+  select_walmart_tab: () =>
     e = {}
     e.target = @$el.find('li.search-walmart-items-tab a').get(0)
     @toggleTab(e)
   
-  select_amazon_tab: (data) =>
-    @data.query = data.query if data and data.query
-    unless @$el.find('ul.nav').length > 0
-      @$el.append( @template())
+  select_amazon_tab: () =>
     e = {}
     e.target = @$el.find('li.search-amazon-items-tab a').get(0)
     @toggleTab(e)
     
+  select_rev_rel_tab: () =>
+    e = {}
+    e.target = @$el.find('li.rev-rel-tab a').get(0)
+    @toggleTab(e)
+
   unrender: =>
     @active = false
     @$el.children().not('.ajax-loader').remove()
+    @hide_spin()
+
+  render: (data) =>
+    @query = data.query if data.query
+    @view = data.view if data.view
+    @$el.prepend(@template()) unless @active
+    @delegateEvents()
+    
+    if data.tab == 'rel-rev-analysis'
+      @$el.find('li.rev-rel-tab').first().trigger('click')
+    else if data.tab == 'amazon'
+      @$el.find('li.search-amazon-items-tab').first().trigger('click')
+    else
+      @$el.find('li.search-stats-tab').first().trigger('click')
+    @active = true
+
+  show_spin: =>
+    @$el.find('.ajax-loader').css('display', 'block')
+  
+  hide_spin: =>
     @$el.find('.ajax-loader').hide()

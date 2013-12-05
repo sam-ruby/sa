@@ -16,10 +16,21 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
       @get_items(trigger: true) if @active)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
-     
-  active: false
+    Utils.InitExportCsv(this, "/poor_performing/get_search_words.csv")
+    @undelegateEvents()
+    @active = false
 
+  events: =>
+    'click .export-csv a': (e) ->
+      date = @controller.get_filter_params().date
+      fileName = "poor_performing_#{date}.csv"
+      data =
+        view: 'daily'
+        date: date
+      @export_csv($(e.target), fileName, data)
+  
   gridColumns:  ->
+    that = this
     class QueryCell extends Backgrid.Cell
       controller: SearchQualityApp.Controller
       router: SearchQualityApp.Router
@@ -29,9 +40,14 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
 
       handleQueryClick: (e) =>
         e.preventDefault()
+        query = $(e.target).text()
         $(e.target).parents('table').find('tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
-        @controller.trigger('pp:content-cleanup')
+        that.controller.trigger('search:sub-content',
+          query: query
+          view: 'daily')
+        new_path = 'poor_performing/query/' + encodeURIComponent(query)
+        that.router.update_path(new_path)
 
       render: ->
         value = @model.get(@column.get('name'))
@@ -81,28 +97,27 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection
     )
-
-  make_tab_active: =>
-
+  
   get_items: (data) =>
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items(data)
-    if data and data.query
-      @controller.trigger('pp:stats:index', query: data.query)
-    else if data and data.trigger
-      @trigger = data.trigger
+    @trigger = true
 
   unrender: =>
     @active = false
     @$el.children().not('.ajax-loader').remove()
     @$el.find('.ajax-loader').hide()
+    @undelegateEvents()
 
   render: =>
+    @unrender()
     @active = true
-    @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').hide()
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
+    @$el.append( @paginator.render().$el)
+    @$el.append( @export_csv_button() )
+    @delegateEvents()
+    
     if @trigger
       @trigger = false
       @$el.find('td a.query').first().trigger('click')

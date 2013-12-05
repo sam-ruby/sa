@@ -1,6 +1,4 @@
 class Searchad.Models.SearchQualityQuery extends Backbone.Model
-  paramRoot: 'search_quality_query'
-
   defaults:
     id: null
     query_str: null
@@ -12,10 +10,13 @@ class Searchad.Models.SearchQualityQuery extends Backbone.Model
     top_ctr_item: null
     query_items: null
     top_rev_items: null
+    rank_metric:null
 
 class Searchad.Collections.SearchQualityQueryCollection extends Backbone.PageableCollection
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
+    @query = null
+    super(options)
 
   get_date: ->
     @date
@@ -30,6 +31,8 @@ class Searchad.Collections.SearchQualityQueryCollection extends Backbone.Pageabl
     pageSize: 'per_page'
     date: ->
       @controller.get_filter_params().date
+    query: ->
+      @query
 
   mode: 'server'
 

@@ -1,11 +1,11 @@
-Searchad.Views.PoorPerforming.Stats ||= {}
+Searchad.Views.Search ||= {}
+Searchad.Views.Search.Stats ||= {}
 
-class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
+class Searchad.Views.Search.Stats.IndexView extends Backbone.View
   initialize: (options) ->
-    _.bindAll(this, 'render', 'get_items')
     @controller = SearchQualityApp.Controller
     @controller.bind('content-cleanup', @unrender)
-    @controller.bind('pp:content-cleanup', @unrender)
+    @controller.bind('subcontent-cleanup', @unrender)
     @data = {}
   
   active: false
@@ -67,24 +67,22 @@ class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
   unrender: ->
     @active = false
     @$el.highcharts().destroy()
-    @$el.children().remove()
-
+    @controller.trigger('search:sub-content:hide-spin')
+  
   get_items: (data) ->
-    if data and data.query
-      @data.query = data.query
-    else
-      data = @data
     @unrender()
-    image =$('<img>').addClass('ajax-loader').attr(
-      'src', '/assets/ajax_loader.gif').css('display', 'block')
-    @$el.append(image)
+    @controller.trigger('search:sub-content:show-spin')
+    @$el.find('.ajax-loader').show()
     $.ajax(
       url: '/poor_performing/get_query_stats.json'
       data:
         query: data.query
       success: (json, status) =>
-        series = @process_data(json)
-        @render(data.query, series)
+        if json.length > 0
+          series = @process_data(json)
+          @render(data.query, series)
+        else
+          @render_error(data.query)
     )
 
   process_data: (data) ->
@@ -110,13 +108,18 @@ class Searchad.Views.PoorPerforming.Stats.IndexView extends Backbone.View
     series[1].fillOpacity = .3
     series
 
+  render_error: (query) ->
+    @controller.trigger('search:sub-content:hide-spin')
+    @$el.append( $('<span>').addClass('label label-important').append(
+      "No data available for #{query}") )
+
   render: (query, data) ->
     @active = true
-    @$el.children().remove()
+    @controller.trigger('search:sub-content:hide-spin')
     @initChart(query, data)
-    return this
+    this
   
   unrender: =>
     @active = false
     @$el.children().not('.ajax-loader').remove()
-    @$el.find('img.ajax-loader').hide()
+    @controller.trigger('search:sub-content:hide-spin')
