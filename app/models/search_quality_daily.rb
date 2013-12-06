@@ -99,8 +99,12 @@ class SearchQualityDaily < BaseModel
   def self.get_cvr_dropped_query_item_comparisons(query, before_start_date,before_end_date,after_start_date,after_end_date)
     # result: query_items: "21630182,19423472,4764723,14237607,4764726,10992861, there is no related rank for that sequence. 
     # search_quality_daily
-    item_ids_two_week_before = find_by_sql(['select query_items from search_quality_daily where query_str="sewing machine" and query_date=(select max(query_date) from search_quality_daily where query_str="sewing machine" and query_date>"2013-09-12" and query_date<="2013-09-26")'])
-    item_ids_two_week_after = find_by_sql(['select query_items from search_quality_daily where query_str="sewing machine" and query_date=(select max(query_date) from search_quality_daily where query_str="sewing machine" and query_date>"2013-09-26" and query_date<="2013-10-10")'])
+    item_ids_two_week_before = find_by_sql(['select query_items from search_quality_daily where query_str= ?
+      and query_date=(select max(query_date) from search_quality_daily where query_str=? and
+       query_date>? and query_date<=?)', query,query,before_start_date,before_end_date])
+    item_ids_two_week_after = find_by_sql(['select query_items from search_quality_daily where query_str= ? 
+      and query_date=(select max(query_date) from search_quality_daily where query_str=? 
+        and query_date>? and query_date<=?)',query,query,after_start_date,after_end_date])
     
 
     # p 'item_ids_two_week_before_arr', item_ids_two_week_before[0]['query_items']
@@ -113,14 +117,36 @@ class SearchQualityDaily < BaseModel
     p 'item_ids_two_week_after_arr', item_ids_two_week_after_arr
     
     #find the items 
-    item_before_arr= find_by_sql(['select item_id, title, image_url, seller_id FROM all_item_attrs where item_id in (?)', item_ids_two_week_before_arr])
-    item_after_arr= find_by_sql(['select item_id, title, image_url, seller_id FROM all_item_attrs where item_id in (?)', item_ids_two_week_after_arr])
+    item_before_arr= find_by_sql(['select item_id as item_id_before, title as title_before, image_url as image_url_before, seller_id as seller_id_before FROM all_item_attrs where item_id in (?) order by item_id asc', item_ids_two_week_before_arr])
+    item_after_arr= find_by_sql(['select item_id as item_id_after, title as title_after, image_url as image_url_after, seller_id as seller_id_after FROM all_item_attrs where item_id in (?) order by item_id asc', item_ids_two_week_after_arr])
 
     #since this is a small list, it is ok to process the merge
 
+    # p "items_two_week_before, ", item_before_arr.to_yaml
+    # p "items_two_week_after, ", item_after_arr.to_yaml
+
+    result_arr = Array.new([item_before_arr.length, item_after_arr.length].max){Hash.new}
+    #result arr for each row should have item_id_before, item_title_before, image_url_before, seller_id_before item_id_after, item_title_after, image_url_after, seller_id after  
 
 
-    p "items_two_week_before, ", item_before_arr.to_yaml
-    p "items_two_week_after, ", item_after_arr.to_yaml
+    result_arr.each_with_index { |val, index| 
+      p 'index: ', index, ' val: ', val;
+      # val['item_id_before'] = index;
+      if (index < item_before_arr.length )
+        val['item_id_before'] = item_before_arr[index]['item_id_before']
+        val['item_title_before'] = item_before_arr[index]['title_before']
+        val['image_url_before'] = item_before_arr[index]['image_url_before']
+      end
+
+      if (index < item_after_arr.length)
+        val['item_id_after'] = item_after_arr[index]['item_id_after']
+        val['item_title_after'] = item_after_arr[index]['title_after']
+        val['image_url_after'] = item_after_arr[index]['image_url_after']
+      end
+    }
+
+
+    return result_arr;
+
   end
 end
