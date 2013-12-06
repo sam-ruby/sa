@@ -138,12 +138,24 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       data.sum_count= parseInt(data.sum_count)
     else
       data.sum_count = 5000;
+    
     #query_date
     if data.query_date
       query_date = new Date(data.query_date)
     else
-      query_date= @controller.get_filter_params()['date']
-      query_date = new Date(new Date(query_date) - data.weeks_apart*7*24*60*60*1000);
+      current_date= @controller.get_filter_params()['date']
+      query_date = new Date(new Date(current_date) - data.weeks_apart*7*24*60*60*1000);
+
+    # before_start_date these are for displaying selected info
+    data.before_start_date = new Date(new Date(query_date) - data.weeks_apart*7*24*60*60*1000).toString('MMM, d, yyyy'); 
+    data.before_end_date = new Date(new Date(query_date) - 24*60*60*1000).toString('MMM, d, yyyy'); 
+    data.after_start_date = query_date.toString('MMM, d, yyyy'); 
+    data.after_end_date = new Date(new Date(query_date) - (-(data.weeks_apart*7-1)*24*60*60*1000)).toString('MMM, d, yyyy'); 
+    a = (new Date(query_date)+24*60*60*1000);
+    console.log('><new Date(query_date)',  a, new Date(a).toString('MMM,d,yyyy'));
+    console.log('in +', data.weeks_apart*7*24*60*60*1000);
+    console.log('data.after_end_date', data.after_end_date)
+    #query_date is for query
     data.query_date = query_date.toString('M-d-yyyy')
 
     @data = data
