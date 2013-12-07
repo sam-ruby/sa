@@ -16,14 +16,22 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     )
     # @cvr_dropped_query_form = @$el.find(options.form_selector)
     @data = {}
+    @default_sum_count = 100
     
   events:
     'click button.search': 'handle_search'
     'click button.reset': 'handle_reset'
+    #reset the div alert for selected dates when date range changed
+    'change .datepicker': 're_render_time_range'
+    'change .select.weeks-apart-select' : 're_render_time_range'
 
   form_template: JST['backbone/templates/cvr_dropped_query/form']
 
   active: false
+
+
+  re_render_time_range: (e)->
+    console.log("changed")
 
   initCvrDroppedQueryTable: ->
     that = this
@@ -92,15 +100,6 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection
     )
-
-  do_search: (data) =>
-    if data
-      new_path = 'cvr_dropped_query' +'/sum_count/'+ data.sum_count+ '/wks_apart/' +
-        data.weeks_apart + '/query_date/' + data.query_date
-      
-      @router.update_path(new_path)
-      console.log("do_search_data", data);
-      @get_items(data)
   
   handle_search: (e) =>
     e.preventDefault()
@@ -112,18 +111,32 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       query_date: query_date.toString('M-d-yyyy')
       sum_count:@query_form.find('input.sum-count').val()
 
+    console.log("handle_search", data);
     if data
-      @do_search(data)
+      @do_search(data);
+
+
+  do_search: (data) =>
+    data = @process_query_data(data);
+    if data
+      new_path = 'cvr_dropped_query' +'/sum_count/'+ data.sum_count+ '/wks_apart/' +
+        data.weeks_apart + '/query_date/' + data.query_date
+      
+      @router.update_path(new_path)
+      console.log("do_search_data", data);
+      @get_items(data)
    
   handle_reset: (e) =>
     e.preventDefault()
     @clean_query_results()
     query_date = @controller.get_filter_params()['date']
     query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
-    @query_form.find('input.sum-count').val('5000')
+    @query_form.find('input.sum-count').val(@default_sum_count+'')
     @query_form.find('.controls select').val('2')
     @query_form.find('input.datepicker').datepicker(
       'update', query_date.toString('M-d-yyyy'))
+    # remove subcontent
+    @controller.trigger('sub-content-cleanup')
 
   #process data from router
   process_query_data:(data) =>
@@ -134,10 +147,10 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     else
       data.weeks_apart = 2;
     #set sum_count
-    if  data.sum_count
-      data.sum_count= parseInt(data.sum_count)
-    else
-      data.sum_count = 5000;
+    # if  data.sum_count
+    #   data.sum_count= parseInt(data.sum_count)
+    # else
+    data['sum_count'] = @default_sum_count;
     
     #query_date
     if data.query_date
@@ -152,9 +165,6 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     data.after_start_date = query_date.toString('MMM, d, yyyy'); 
     data.after_end_date = new Date(new Date(query_date) - (-(data.weeks_apart*7-1)*24*60*60*1000)).toString('MMM, d, yyyy'); 
     a = (new Date(query_date)+24*60*60*1000);
-    console.log('><new Date(query_date)',  a, new Date(a).toString('MMM,d,yyyy'));
-    console.log('in +', data.weeks_apart*7*24*60*60*1000);
-    console.log('data.after_end_date', data.after_end_date)
     #query_date is for query
     data.query_date = query_date.toString('M-d-yyyy')
 
@@ -197,20 +207,6 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @query_results.append(@grid.render().$el)
     @query_results.append(@paginator.render().$el)
     @query_results.append(@export_csv_button())
-
-  # process_data: (data) ->
-  #   [{data: [
-  #     {name: 'Product View Rate'
-  #     y: data.query_pvr
-  #     dataLabels:
-  #       format: '<b>PVR</b> ({point.y:,.2f}%)'
-  #     },
-  #     {name: 'Add to Cart Rate'
-  #     y: data.query_atc
-  #     },
-  #     {name: 'Conversion Rate'
-  #     y: data.query_con
-  #     }]}]
 
   search_results_cleanup: =>
     @query_results.children().not('.ajax-loader').remove()
