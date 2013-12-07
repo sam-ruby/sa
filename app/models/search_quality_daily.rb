@@ -117,8 +117,8 @@ class SearchQualityDaily < BaseModel
     p 'item_ids_two_week_after_arr', item_ids_two_week_after_arr
     
     #find the items 
-    item_before_arr= find_by_sql(['select item_id as item_id_before, title as title_before, image_url as image_url_before, seller_id as seller_id_before FROM all_item_attrs where item_id in (?) order by item_id asc', item_ids_two_week_before_arr])
-    item_after_arr= find_by_sql(['select item_id as item_id_after, title as title_after, image_url as image_url_after, seller_id as seller_id_after FROM all_item_attrs where item_id in (?) order by item_id asc', item_ids_two_week_after_arr])
+    item_before_arr= find_by_sql(['select item_id as item_id_before, title as title_before, image_url as image_url_before, seller_id as seller_id_before FROM all_item_attrs where item_id in (?)', item_ids_two_week_before_arr])
+    item_after_arr= find_by_sql(['select item_id as item_id_after, title as title_after, image_url as image_url_after, seller_id as seller_id_after FROM all_item_attrs where item_id in (?)', item_ids_two_week_after_arr])
 
     #since this is a small list, it is ok to process the merge
 
@@ -136,12 +136,14 @@ class SearchQualityDaily < BaseModel
         val['item_id_before'] = item_before_arr[index]['item_id_before']
         val['item_title_before'] = item_before_arr[index]['title_before']
         val['image_url_before'] = item_before_arr[index]['image_url_before']
+        # val['seller_id_before'] = item_before_arr[index]['seller_id_before']
       end
 
       if (index < item_after_arr.length)
         val['item_id_after'] = item_after_arr[index]['item_id_after']
         val['item_title_after'] = item_after_arr[index]['title_after']
         val['image_url_after'] = item_after_arr[index]['image_url_after']
+        # val['seller_id_after'] = item_after_arr[index]['seller_id_after']
       end
     }
 

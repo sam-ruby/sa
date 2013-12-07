@@ -19,6 +19,7 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
     @active = false
 
   events: =>
+    ''
     # 'click .export-csv a': (e) ->
     #   date = @controller.get_filter_params().date
     #   query = @query.replace(/\s+/g, '_')
@@ -70,7 +71,7 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
     },
     {
     name: 'seller_id_before',
-    label: 'Seller_ID Before',
+    label: 'Seller_ID',
     editable: false,
     cell: 'number'
     },
@@ -81,7 +82,7 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
     },
     {
     name: 'seller_id_after',
-    label: 'Seller_ID After',
+    label: 'Seller_ID',
     editable: false,
     cell: 'number'
     }
