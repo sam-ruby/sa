@@ -20,7 +20,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "query_comparison(/query/:query/wks_apart/:weeks/query_date/:date)(/filters/*wday)":
       "query_comparison"
 
-    "cvr_dropped_query(/sum_count/:sum_count/wks_apart/:weeks/query_date/:date)(/filters/*wday)":
+    "cvr_dropped_query(/wks_apart/:weeks/query_date/:date)(/filters/*wday)":
       "cvr_dropped_query"
 
   set_date_info: (date_part) =>
@@ -45,19 +45,19 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       @controller.trigger('query-comparison:index')
 
 
-  cvr_dropped_query: (sum_count, weeks, date) =>
+  cvr_dropped_query: (weeks, date) =>
     console.log("trigger cvr_droped")
     #switch to cvr_dropped_query view
     @controller.trigger('cvr-dropped-query:index') 
     #get data from router
     data=
-      sum_count:sum_count
+      # sum_count:sum_count
       weeks_apart: weeks
       query_date: date
     #render the basic form
     @controller.trigger('cvr-dropped-query:form',data) 
     #if there is query params, do the query
-    if sum_count && weeks && date
+    if weeks && date
       console.log('trigger result')
       @controller.trigger('cvr-dropped-query:result',data) 
 

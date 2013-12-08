@@ -119,49 +119,4 @@ class QueryCatMetricsDaily < BaseModel
       (channel="ORGANIC_USER" or channel="ORGANIC") and query=? and
       query_date between ? and ?}, query, date_start, date_end)
   end
-
-  def self.get_cvr_dropped_query(before_start_date,before_end_date,after_start_date,after_end_date,sum_count,page=1, limit=10)
-    sqlStatement=
-    'select query, con_before, con_after, diff, rev_before, rev_after from 
-  (select b.query as query, b.con as con_before, d.con as con_after, b.con-d.con as diff, b.revenue as rev_before, d.revenue as rev_after from 
-    (select query, con, revenue from (
-      select 
-        query, 
-        sum(query_count) as sum_count, 
-        sum(query_count*query_con)/sum(query_count) as con, 
-        sum(query_revenue) as revenue 
-       from query_cat_metrics_daily 
-       where query_date in (?) and 
-       cat_id=0 and (channel="ORGANIC_USER" or channel="ORGANIC") group by query having sum_count >= ? and con>0.02
-     )a 
-    )b 
-    inner join 
-    (select query,con, revenue from (
-       select 
-         query, 
-         sum(query_count) as sum_count, 
-         sum(query_count*query_con)/sum(query_count) as con, 
-         sum(query_revenue) as revenue from query_cat_metrics_daily 
-      where 
-        query_date in (?) and cat_id=0 and (channel="ORGANIC_USER" or channel="ORGANIC") group by query having sum_count >=?
-     )c 
-    )d 
-
-    on b.query=d.query)f where diff>0.02
-order by diff desc;'
-
-  p 'sum_count', sum_count
-  # date_months = date_range.map {|d| Date.new(d.year, d.month, 1) }.uniq
-  # date_months.map {|d| d.strftime "%d/%m/%Y" }
-    before_date_arr=(before_start_date..before_end_date).map{ |date| date.strftime("%Y-%m-%d")}
-    after_date_arr=(after_start_date..after_end_date).map{ |date| date.strftime("%Y-%m-%d")}
-
-    # before_date_arr=["2013-09-20", "2013-09-21", "2013-09-22", "2013-09-23", "2013-09-24", "2013-09-25", "2013-09-26"]
-    # after_date_arr=["2013-09-27", "2013-09-28", "2013-09-29", "2013-09-30", "2013-10-01", "2013-10-02", "2013-10-03"]
-
-    result_data = find_by_sql([sqlStatement,before_date_arr, sum_count, after_date_arr, sum_count]) 
-
- 
-   
-  end
 end
