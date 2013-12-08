@@ -1,7 +1,7 @@
 class QueryDroppingConversion < BaseModel
   self.table_name = 'queries_with_dropping_conversion'
 
-    def self.get_cvr_dropped_query(weeks_apart,query_date,page,limit)
+  def self.get_cvr_dropped_query(weeks_apart,query_date,page,limit)
    p 'weeks_apart', weeks_apart, 'query_date', query_date
 
     select_cols = %q{query, query_con_before, query_count_before, query_revenue_before,
@@ -10,31 +10,15 @@ class QueryDroppingConversion < BaseModel
     select(select_cols).where(%q{window_in_weeks = ? and data_date = ?}, weeks_apart, query_date).from('queries_with_dropping_conversion').page(page).per(limit)
   end
 
+
     # get item comparisons based on a query from cvr_dropped_query table, small set, client side pagination
   def self.get_cvr_dropped_query_item_comparisons(query, before_start_date,before_end_date,after_start_date,after_end_date)
     # reason for two separate resquest, need to merge two result into one row. Join(no join condition) and Union(will produce 15*15 results.) don't work. 
     # Plus, it is very small data set. total item count is 15
-    # result: query_items: "21630182,19423472,4764723,14237607,4764726,10992861, there is no related rank for that sequence. 
-    item_ids_two_week_before = find_by_sql(['select query_items from search_quality_daily where query_str= ?
-      and query_date=(select max(query_date) from search_quality_daily where query_str=? and
-       query_date>? and query_date<=?)', query,query,before_start_date,before_end_date])
-    item_ids_two_week_after = find_by_sql(['select query_items from search_quality_daily where query_str= ? 
-      and query_date=(select max(query_date) from search_quality_daily where query_str=? 
-        and query_date>? and query_date<=?)',query,query,after_start_date,after_end_date])
-
-    item_ids_two_week_before_arr = item_ids_two_week_before[0]['query_items'].split(",")
-    item_ids_two_week_after_arr = item_ids_two_week_after[0]['query_items'].split(",")
-
-    item_before_arr = find_by_sql(['select item_id, title, image_url, seller_id 
-      FROM all_item_attrs where item_id in (?)', item_ids_two_week_before_arr])
-    item_after_arr = find_by_sql(['select item_id, title, image_url, seller_id
-      FROM all_item_attrs where item_id in (?)', item_ids_two_week_after_arr])
-
+    item_before_arr = get_top_items_between_date(query, before_start_date, before_end_date) 
+    item_after_arr = get_top_items_between_date(query, after_start_date, after_end_date) 
     #since this is a small list, it is ok to process the merge
     result_arr = Array.new([item_before_arr.length, item_after_arr.length].max){Hash.new}
-    
-    #result arr for each row should have item_id_before, item_title_before, image_url_before, 
-    #seller_id_before item_id_after, item_title_after, image_url_after, seller_id after  
     result_arr.each_with_index { |val, index| 
       if (index < item_before_arr.length )
         val['item_id_before'] = item_before_arr[index]['item_id']
@@ -52,6 +36,28 @@ class QueryDroppingConversion < BaseModel
     }
    return result_arr;
   end
+
+
+  #out put array of top 15 item from a query between date range
+  def self.get_top_items_between_date(query, date_before, date_after)
+    # result: query_items: "21630182,19423472,4764723,14237607,4764726,10992861, there is no related rank for that sequence.
+    item_ids = find_by_sql(['select query_items from search_quality_daily where query_str= ?
+      and query_date=(select max(query_date) from search_quality_daily where query_str=? and
+       query_date>? and query_date<=?)', query,query,date_before,date_after])
+
+    if item_ids.length>0
+      #process the result, split the string to array
+      item_ids_arr=item_ids[0]['query_items'].split(",")
+      #query item which id are in processed arr
+      items = find_by_sql(['select item_id, title, image_url, seller_id 
+        FROM all_item_attrs where item_id in (?)', item_ids_arr])
+    else
+      items =[]
+    end
+    return items
+
+  end
+
 
   # this method is deprecated, but it is saved for performance improvement testing, don't remove now pls
   def self.get_cvr_dropped_query_slow(before_start_date,before_end_date,after_start_date,after_end_date,sum_count,page=1, limit=10)

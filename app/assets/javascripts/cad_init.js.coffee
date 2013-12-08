@@ -178,7 +178,7 @@ $ ->
       el_results: '.cvr-dropped-query-results'
       el_form: '.cvr-dropped-query-form')
     cvrDroppedQueryView.listenTo(
-        controller, 'cvr-dropped-query:form',cvrDroppedQueryView.render_form)
+        controller, 'cvr-dropped-query:index',cvrDroppedQueryView.render_form)
     cvrDroppedQueryView.listenTo(
       controller, 'cvr-dropped-query:result', cvrDroppedQueryView.get_items)
 
