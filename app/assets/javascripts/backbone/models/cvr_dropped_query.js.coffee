@@ -1,9 +1,14 @@
 class Searchad.Models.CvrDroppedQuery extends Backbone.Model
   defaults:
     query: null
-    con_before: null
-    con_after:null
-    weeks_apart:null
+    query_con_before: null
+    query_con_after:null
+    query_count_before:null
+    query_count_after:null
+    query_revenue_before:null
+    query_revenue_after:null
+    query_con_diff:null
+    query_score:null
 
 
 class Searchad.Collections.CvrDroppedQueryCollection extends Backbone.PageableCollection
@@ -21,8 +26,6 @@ class Searchad.Collections.CvrDroppedQueryCollection extends Backbone.PageableCo
   queryParams:
     currentPage: 'page'
     pageSize: 'per_page'
-    sum_count: ->
-      @dataParam.sum_count
     query_date:->
       @dataParam.query_date
     weeks_apart:->

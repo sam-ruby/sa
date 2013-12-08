@@ -77,7 +77,42 @@ class SearchController < BaseController
   end
 
   def get_cvr_dropped_query
-    # query = params[:query ]
+    p "controller called get_cvr_dropped_query params", params.to_yaml
+    query_date = DateTime.strptime(params[:query_date], "%m-%d-%Y") rescue DateTime.now
+    query_date = query_date.strftime("%Y-%m-%d")
+    #by_default, set to two week apart
+    weeks_apart = params[:weeks_apart] ? Integer(params[:weeks_apart]) : 2
+    respond_to do |format|
+      format.json do 
+        result= QueryDroppingConversion.get_cvr_dropped_query(weeks_apart,query_date,@page,@limit)
+          render :json => [
+            {:total_entries => result.total_pages * @limit,
+             :date => @date}, result]
+      end
+    end
+  end
+
+  def get_cvr_dropped_query_item_comparison
+    date = DateTime.strptime(params[:query_date], "%m-%d-%Y") rescue DateTime.now
+    days_range = params[:weeks_apart] ? Integer(params[:weeks_apart]) * 7 : 7
+    query = params[:query]
+
+    before_start_date = date-1.day-days_range+1.day
+    before_end_date = date-1.day
+    after_start_date = date
+    after_end_date = date + days_range-1.day
+    p 'before_start_date', before_start_date
+
+    respond_to do |format|
+      format.json do 
+        @cvr_dropped_query_item_comparison = QueryDroppingConversion.get_cvr_dropped_query_item_comparisons(query, before_start_date,before_end_date,after_start_date,after_end_date)
+        render :json => @cvr_dropped_query_item_comparison
+      end
+    end
+  end
+
+  # deprecated, save for caching performance testing, don't remove pls
+ def get_cvr_dropped_query_slow
     p "controller called get_cvr_dropped_query params", params.to_yaml
     date = DateTime.strptime(params[:query_date], "%m-%d-%Y") rescue DateTime.now
     days_range = params[:weeks_apart] ? Integer(params[:weeks_apart]) * 7 : 7
@@ -88,8 +123,7 @@ class SearchController < BaseController
     before_start_date = date-1.day-days_range+1.day
     before_end_date = date-1.day
     after_start_date = date
-    after_end_date = date + days_range-1.day
-    
+    after_end_date = date + days_range-1.day   
     respond_to do |format|
       format.json do 
         result= QueryCatMetricsDaily.get_cvr_dropped_query(before_start_date,before_end_date,after_start_date,after_end_date,sum_count,@page,@limit)
@@ -108,24 +142,5 @@ class SearchController < BaseController
       end
     end
   end
-
-  def get_cvr_dropped_query_item_comparison
-    date = DateTime.strptime(params[:query_date], "%m-%d-%Y") rescue DateTime.now
-    days_range = params[:weeks_apart] ? Integer(params[:weeks_apart]) * 7 : 7
-    query = params[:query]
-
-    before_start_date = date-1.day-days_range+1.day
-    before_end_date = date-1.day
-    after_start_date = date
-    after_end_date = date + days_range-1.day
-    p 'before_start_date', before_start_date
-
-    respond_to do |format|
-      format.json do 
-        @cvr_dropped_query_item_comparison = SearchQualityDaily.get_cvr_dropped_query_item_comparisons(query, before_start_date,before_end_date,after_start_date,after_end_date)
-        render :json => @cvr_dropped_query_item_comparison
-      end
-    end
-  end
-
+  #end of function get_cvr_dropped_query_slow
 end

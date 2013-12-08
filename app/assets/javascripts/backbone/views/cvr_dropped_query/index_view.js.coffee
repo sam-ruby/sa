@@ -16,7 +16,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     )
     # @cvr_dropped_query_form = @$el.find(options.form_selector)
     @data = {}
-    @default_sum_count = 100
+    # @default_sum_count = 100
     
   events:
     'click button.search': 'handle_search'
@@ -32,6 +32,18 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
 
   re_render_time_range: (e)->
     console.log("changed")
+    weeks_apart= @query_form.find('select').val()
+    query_date= @query_form.find('input.datepicker').datepicker('getDate').toString('MMM, d, yyyy')
+    console.log(query_date)
+          # before_start_date these are for displaying selected info
+    before_start_date = new Date(new Date(query_date) - weeks_apart*7*24*60*60*1000).toString('MMM, d, yyyy'); 
+    before_end_date = new Date(new Date(query_date) - 24*60*60*1000).toString('MMM, d, yyyy'); 
+    after_start_date = query_date 
+    after_end_date = new Date(new Date(query_date) - (-(weeks_apart*7-1)*24*60*60*1000)).toString('MMM, d, yyyy'); 
+    $('.alert').html('Investigage Conversion Rate Dropped Query between ['+ before_start_date+' to '+ before_end_date + '] and [' + after_start_date + ' to ' +  after_end_date + ']');
+
+    console.log(before_start_date, before_end_date, after_start_date, after_end_date)
+
 
   initCvrDroppedQueryTable: ->
     that = this
@@ -69,30 +81,48 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     columns = [{name: 'query',
     label: 'Search Word',
     editable: false
-    cell: SearchQueryCell},
-    {name:'con_before',
-    label:'Conversion Rate Before',
+    cell: SearchQueryCell
+    },
+    {name:'query_con_before',
+    label:'Conversion Before',
+    editable:false
+    cell:'number',
+    # className:'conversion-rate'
+    },
+    {name:'query_con_after',
+    label:'Conversion After',
     editable:false
     cell:'number'},
-    {name:'con_after',
-    label:'Conversion Rate After',
+    {name:'query_con_diff',
+    label:'Conversion Diff',
     editable:false
     cell:'number'},
-    {name:'diff',
-    label:'Conversion Rate Difference',
-    editable:false
-    cell:'number'},
-    {name:'rev_before',
+    {name:'query_revenue_before',
     label:'Revenue Before',
+    editable:false,
+    # formatter: Utils.CurrencyFormatter
+    cell:'number'},
+    {name:'query_revenue_after',
+    label:'Revenue After',
+    editable:false,
+    # formatter: Utils.CurrencyFormatter,
+    cell:'number'},
+    {name:'query_count_before',
+    label:'Query Count Before',
     editable:false
     cell:'number'},
-    {name:'rev_after',
-    label:'Revenue After',
+    {name:'query_count_after',
+    label:'Query Count After',
+    editable:false
+    cell:'number'},
+    {name:'query_score',
+    label:'Rank Metric',
     editable:false
     cell:'number'},
     ]
 
     @grid = new Backgrid.Grid(
+      className: "cvr_dropped_query_grid backgrid",
       columns: columns
       collection: @collection
     )
@@ -109,7 +139,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     data =
       weeks_apart: @query_form.find('select').val()
       query_date: query_date.toString('M-d-yyyy')
-      sum_count:@query_form.find('input.sum-count').val()
+      # sum_count:@query_form.find('input.sum-count').val()
 
     console.log("handle_search", data);
     if data
@@ -119,7 +149,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
   do_search: (data) =>
     data = @process_query_data(data);
     if data
-      new_path = 'cvr_dropped_query' +'/sum_count/'+ data.sum_count+ '/wks_apart/' +
+      new_path = 'cvr_dropped_query'+ '/wks_apart/' +
         data.weeks_apart + '/query_date/' + data.query_date
       
       @router.update_path(new_path)
@@ -131,7 +161,6 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @clean_query_results()
     query_date = @controller.get_filter_params()['date']
     query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
-    @query_form.find('input.sum-count').val(@default_sum_count+'')
     @query_form.find('.controls select').val('2')
     @query_form.find('input.datepicker').datepicker(
       'update', query_date.toString('M-d-yyyy'))
@@ -158,13 +187,6 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     else
       current_date= @controller.get_filter_params()['date']
       query_date = new Date(new Date(current_date) - data.weeks_apart*7*24*60*60*1000);
-
-    # before_start_date these are for displaying selected info
-    data.before_start_date = new Date(new Date(query_date) - data.weeks_apart*7*24*60*60*1000).toString('MMM, d, yyyy'); 
-    data.before_end_date = new Date(new Date(query_date) - 24*60*60*1000).toString('MMM, d, yyyy'); 
-    data.after_start_date = query_date.toString('MMM, d, yyyy'); 
-    data.after_end_date = new Date(new Date(query_date) - (-(data.weeks_apart*7-1)*24*60*60*1000)).toString('MMM, d, yyyy'); 
-    a = (new Date(query_date)+24*60*60*1000);
     #query_date is for query
     data.query_date = query_date.toString('M-d-yyyy')
 
@@ -186,6 +208,9 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @active = true
  
   render_form: (data)=>
+    # $('#data-container').children().not('#cvr-dropped-query').hide();
+    # console.log('this.renderel', @$el);
+    @$el.show();
     data = @process_query_data(data);
     console.log("processed", data);
     $(@query_form).html(@form_template(data))
@@ -221,6 +246,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     dom.append(grid.render().$el)
  
   unrender: =>
+    @$el.hide();
     @query_form.children().remove()
     @clean_query_results()
     @active = false

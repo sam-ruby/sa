@@ -73,7 +73,7 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
     name: 'seller_id_before',
     label: 'Seller_ID',
     editable: false,
-    cell: 'number'
+    cell: 'string'
     },
     {name: 'item_title_after',
     label: 'Item After', 
@@ -84,7 +84,7 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
     name: 'seller_id_after',
     label: 'Seller_ID',
     editable: false,
-    cell: 'number'
+    cell: 'string'
     }
     ]
     
@@ -92,6 +92,7 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
 
   initTable: =>
     @grid = new Backgrid.Grid(
+      className:'query-dropped-item-comparison backgrid'
       columns: @gridColumns()
       collection: @collection
     )
@@ -128,9 +129,19 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
       $('<i>').addClass('icon-eye-open').css(
         'font-size', 'large').append(
         '&nbsp; Item Comparison Results for  :  <strong>' + @query + '</strong>')))
-    # append('Item Comparison Results for '+ @query)
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
-    # @$el.append( @export_csv_button() )
+    # @repaint_column_before_after()
     @delegateEvents()
     return this
+
+  # due to request, specific column or tds show differently
+  # this happens after the grid is rendered
+   # repaint_column_before_after: =>
+   #   console.log('repainting');
+   #   td_arr = $(".cvr-dropped-query-item-comparison th .cvr-dropped-query-item-comparison td");
+   #   console.log(td_arr);
+   #   td_arr.forEach (i) ->
+   #      console.log(i);
+   #     $(this).css "background-color", ["red", "yellow", "blue"][i % 3]  if i > 0
+
