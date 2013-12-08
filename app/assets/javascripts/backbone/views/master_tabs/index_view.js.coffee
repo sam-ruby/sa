@@ -163,6 +163,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @toggleTab(@$el.find('li.adhoc-search-tab a'))
 
   select_cvr_dropped_query_tab:=>
+    console.log("selectcvr")
     unless @active
       @$el.css('display', 'block')
       @init_query_comparison()
