@@ -77,7 +77,6 @@ class SearchController < BaseController
   end
 
   def get_cvr_dropped_query
-    p "controller called get_cvr_dropped_query params", params.to_yaml
     query_date = DateTime.strptime(params[:query_date], "%m-%d-%Y") rescue DateTime.now
     query_date = query_date.strftime("%Y-%m-%d")
     #by_default, set to two week apart
@@ -89,6 +88,12 @@ class SearchController < BaseController
             {:total_entries => result.total_pages * @limit,
              :date => @date}, result]
       end
+      # since we know there are always total 500 entries. 
+      format.csv do
+        render :json => QueryDroppingConversion.get_cvr_dropped_query(
+          weeks_apart,query_date, 0, 500)
+      end
+      #end_format_csv
     end
   end
 
@@ -111,7 +116,7 @@ class SearchController < BaseController
     end
   end
 
-  # deprecated, save for caching performance testing, don't remove pls
+  # deprecated, save for caching performance testing, don't remove pls. -ljin
  def get_cvr_dropped_query_slow
     p "controller called get_cvr_dropped_query params", params.to_yaml
     date = DateTime.strptime(params[:query_date], "%m-%d-%Y") rescue DateTime.now
