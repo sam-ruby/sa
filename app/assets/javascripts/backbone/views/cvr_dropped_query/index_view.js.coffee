@@ -31,22 +31,6 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       fileName = "conversion_rate_dropped_query analysis_for #{@data.query_date}_week_apart_#{@data.weeks_apart}.csv"
       @export_csv($(e.target), fileName, @data)
 
-
-
-      # date = @controller.get_filter_params().date
-      # if @query
-      #   query = @query.replace(/\s+/g, '_')
-      #   query = query.replace(/"|'/, '')
-      #   fileName = "search_#{query}_#{date}.csv"
-      #   data =
-      #     date: date
-      #     query: @query
-      # else
-      #   data =
-      #     date: date
-      #   fileName = "search_#{date}.csv"
-      # @export_csv($(e.target), fileName, data)
-
   form_template: JST['backbone/templates/cvr_dropped_query/form']
 
   active: false
@@ -151,7 +135,6 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @initCvrDroppedQueryTable()
     @query_results.append(@grid.render().$el)
     @query_results.append(@paginator.render().$el)
-    # TODO need to add export_csv_button
     @query_results.append(@export_csv_button())
 
   search_results_cleanup: =>
@@ -192,30 +175,33 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     editable: false
     cell: SearchQueryCell
     },
+    {name:'query_con_diff',
+    label:'Conversion Diff',
+    editable:false
+    cell:'number'},
     {name:'query_con_before',
-    label:'Conversion Before',
+    label:'Con Before',
     editable:false
     cell:'number',
     # className:'conversion-rate'
     },
     {name:'query_con_after',
-    label:'Conversion After',
-    editable:false
-    cell:'number'},
-    {name:'query_con_diff',
-    label:'Conversion Diff',
+    label:'Con After',
     editable:false
     cell:'number'},
     {name:'query_revenue_before',
     label:'Revenue Before',
     editable:false,
-    # formatter: Utils.CurrencyFormatter
     cell:'number'},
     {name:'query_revenue_after',
     label:'Revenue After',
     editable:false,
-    # formatter: Utils.CurrencyFormatter,
     cell:'number'},
+    {name:'expected_revenue_diff',
+    label:'Expected Rev Diff',
+    editable:false,
+    cell:'number'
+    headerCell:'custom'},
     {name:'query_count_before',
     label:'Query Count Before',
     editable:false
@@ -231,6 +217,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     ]
 
     @grid = new Backgrid.Grid(
+      className:'cvr-dropped-query backgrid'
       columns: columns
       collection: @collection
     )

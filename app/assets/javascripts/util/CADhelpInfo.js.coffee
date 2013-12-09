@@ -31,3 +31,9 @@ Searchad.helpInfo =
     id: "query_pvr"
     name: "Product View Rate"
     description: "percentage of queries that customers clicked items recalled for a query"
+
+  #conversionrate dropped query
+  expected_revenue_diff:
+    id:"expected_revenue_diff"
+    name:"Revenue Difference compare with expected Revenue"
+    description:"If the conversion did not change, what is the difference between the roughly expected revenue and actual revenue.  "
