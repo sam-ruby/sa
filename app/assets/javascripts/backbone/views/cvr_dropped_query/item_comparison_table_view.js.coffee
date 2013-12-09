@@ -13,39 +13,33 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
     @collection.bind('changed', @render)
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('sub-content-cleanup', @unrender)
-    # Utils.InitExportCsv(this, '/comp_analysis/get_walmart_items.json')
+    Utils.InitExportCsv(this, '/search/get_cvr_dropped_query_item_comparison.json')
     @undelegateEvents()
-    @query = {}
+    @data = {}
     @active = false
 
   events: =>
-    ''
-    # 'click .export-csv a': (e) ->
-    #   date = @controller.get_filter_params().date
-    #   query = @query.replace(/\s+/g, '_')
-    #   query = query.replace(/"|'/, '')
-    #   fileName = "walmart_search_results_#{query}_#{date}.csv"
-    #   data =
-    #     date: date
-    #     query: @query
-    #   @export_csv($(e.target), fileName, data)
+    'click .export-csv a': (e) ->
+      data =
+         query_date:  @data.query_date
+         query: @data.query.replace(/\s+/g, '_').replace(/"|'/, '')
+         weeks_apart: @data.weeks_apart
+
+      fileName = "conversion_rate_dropped_item_comparison_for_#{data.query}_#{data.query_date}_week_apart_#{data.weeks_apart}.csv"
+      @export_csv($(e.target), fileName, @data)
   
   gridColumns: =>
     class ItemCellBefore extends Backgrid.Cell
       item_template:
-        JST["backbone/templates/poor_performing/walmart_items/item"]
-      
+        JST["backbone/templates/poor_performing/walmart_items/item"]     
       render: =>
         item =
           image_url: @model.get('image_url_before')
           item_id: @model.get('item_id_before')
-          title: @model.get('item_title_before')
-        
+          title: @model.get('item_title_before')     
         formatted_value = @item_template(item)
         $(@$el).html(formatted_value)
         return this
-
-    # Backgrid.WalmartItemCell.data = @model; 
 
     class ItemCellAfter extends Backgrid.Cell
       item_template:
@@ -55,13 +49,10 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
         item =
           image_url: @model.get('image_url_after')
           item_id: @model.get('item_id_after')
-          title: @model.get('item_title_after')
-        
+          title: @model.get('item_title_after')  
         formatted_value = @item_template(item)
         $(@$el).html(formatted_value)
         return this
-
-
 
     columns = [{
     name: 'item_title_before',
@@ -100,17 +91,13 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
       collection: @collection)
     
   unrender: =>
-    console.log('unrender');
-    console.log(@$el);
     @$el.children().not('.ajax-loader').remove()
     @$el.find('.ajax-loader').hide()
     @active = false
     @undelegateEvents()
   
   get_items: (data) =>
-    console.log('get_items')
-
-    @query = data.query if data.query
+    @data = data
     @unrender
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items(data)
@@ -122,26 +109,17 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
   
   render: =>
     @unrender()
-    return @render_error(@query) if @collection.size() == 0
+    return @render_error(@data.query) if @collection.size() == 0
     @active = true
     @$el.append($('<div>').css('text-align', 'left').css(
       'margin-bottom': '1em').append(
       $('<i>').addClass('icon-eye-open').css(
         'font-size', 'large').append(
-        '&nbsp; Item Comparison Results for  :  <strong>' + @query + '</strong>')))
+        '&nbsp; Item Comparison Results for  :  <strong>' + @data.query + '</strong>')))
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
-    # @repaint_column_before_after()
+    @$el.append( @export_csv_button() )
     @delegateEvents()
     return this
 
-  # due to request, specific column or tds show differently
-  # this happens after the grid is rendered
-   # repaint_column_before_after: =>
-   #   console.log('repainting');
-   #   td_arr = $(".cvr-dropped-query-item-comparison th .cvr-dropped-query-item-comparison td");
-   #   console.log(td_arr);
-   #   td_arr.forEach (i) ->
-   #      console.log(i);
-   #     $(this).css "background-color", ["red", "yellow", "blue"][i % 3]  if i > 0
 

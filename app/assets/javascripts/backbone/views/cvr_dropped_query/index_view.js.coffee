@@ -14,33 +14,39 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       @query_results.find('.ajax-loader').css('display', 'block')
       @controller.trigger('sub-content-cleanup')
     )
+    @available_end_date = new Date(new Date(@controller.get_filter_params()['date']) - 2*7*24*60*60*1000)
+    @default_week_apart = 2
+    @current_date = @controller.get_filter_params()['date']
     
   events:
     'click button.search': 'handle_search'
-    'click button.reset': 'handle_reset'
-    #reset the div alert for selected dates when date range changed
-    'change .datepicker': 're_render_time_range'
-    'change .select.weeks-apart-select' : 're_render_time_range'
+    'click button.reset': 'handle_reset'  
+    'change .datepicker': 'change_date_picked'  #reset the div alert for selected dates when date range changed
+    'change select.weeks-apart-select' : 'change_select'
 
   form_template: JST['backbone/templates/cvr_dropped_query/form']
 
   active: false
 
-
-  re_render_time_range: (e)->
-    console.log("changed")
+  #when changing selected date or week, repaint the alert info displayed. 
+  change_date_picked: ->
     weeks_apart= @query_form.find('select').val()
-    query_date= @query_form.find('input.datepicker').datepicker('getDate').toString('MMM, d, yyyy')
-    console.log(query_date)
-          # before_start_date these are for displaying selected info
+    query_date= @query_form.find('input.datepicker').datepicker('getDate')
+    #reset alert ino for selected dates;
     before_start_date = new Date(new Date(query_date) - weeks_apart*7*24*60*60*1000).toString('MMM, d, yyyy'); 
     before_end_date = new Date(new Date(query_date) - 24*60*60*1000).toString('MMM, d, yyyy'); 
-    after_start_date = query_date 
+    after_start_date = query_date .toString('MMM, d, yyyy')
     after_end_date = new Date(new Date(query_date) - (-(weeks_apart*7-1)*24*60*60*1000)).toString('MMM, d, yyyy'); 
-    $('.alert').html('Investigage Conversion Rate Dropped Query between ['+ before_start_date+' to '+ before_end_date + '] and [' + after_start_date + ' to ' +  after_end_date + ']');
+    $('.date_range_display').html('Investigage Conversion Rate Dropped Query between ['+ before_start_date+' to '+ before_end_date + '] and [' + after_start_date + ' to ' +  after_end_date + ']');
 
-    console.log(before_start_date, before_end_date, after_start_date, after_end_date)
-
+  
+  change_select: ->
+    weeks_apart= @query_form.find('select').val()
+    query_date= @query_form.find('input.datepicker').datepicker('getDate')
+    # set date_picker available dates. since week_range change
+    @change_date_picked()
+    available_end_date = new Date(new Date(@current_date) - weeks_apart*7*24*60*60*1000)
+    @init_date_picker(query_date, available_end_date)
 
   handle_search: (e) =>
     e.preventDefault()
@@ -58,14 +64,21 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
   handle_reset: (e) =>
     e.preventDefault()
     @clean_query_results()
-    query_date = @controller.get_filter_params()['date']
-    query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
-    @query_form.find('.controls select').val('2')
-    @query_form.find('input.datepicker').datepicker(
-      'update', query_date.toString('M-d-yyyy'))
-    # remove subcontent
+    query_date = new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
+    @query_form.find('.controls select').val(@default_week_apart+'')
+    console.log(query_date);
+    @init_date_picker(query_date);
     @controller.trigger('sub-content-cleanup')
-
+  
+  init_date_picker: (default_selected_date, available_end_date) =>
+    available_end_date = available_end_date || new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
+    my_date_picker = @query_form.find('input.datepicker')
+    # needs to remove first to make sure date_picker refreshes. 
+    my_date_picker.datepicker("remove");
+    my_date_picker.datepicker({
+      endDate: available_end_date})
+    my_date_picker.datepicker('update', default_selected_date)
+    
 
   #process data from router
   process_query_data:(data) =>
@@ -75,7 +88,6 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       data.weeks_apart= parseInt(data.weeks_apart)
     else
       data.weeks_apart = 2;
-    
     #query_date
     if !data.query_date
       current_date= @controller.get_filter_params()['date']
@@ -84,7 +96,6 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
 
     # set collection data(query params) for pagination. 
     @collection.dataParam = data
-    # console.log("process_query_data", data);
     return data
   
   get_items: (data) ->
@@ -99,8 +110,8 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     #if there is data, it should come from router
     data = @process_query_data(data);
     $(@query_form).html(@form_template(data))
-    @query_form.find('input.datepicker').datepicker(
-      'update', data.query_date.toString('M-d-yyyy'))
+    end_date = new Date(new Date(@current_date) - data.weeks_apart*7*24*60*60*1000)
+    @init_date_picker(data.query_date, end_date)
     @active = true
 
   render_query_results: =>
