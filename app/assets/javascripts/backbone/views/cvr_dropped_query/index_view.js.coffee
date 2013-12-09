@@ -198,7 +198,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     editable:false,
     cell:'number'},
     {name:'expected_revenue_diff',
-    label:'Expected Rev Diff',
+    label:'Rev Diff',
     editable:false,
     cell:'number'
     headerCell:'custom'},

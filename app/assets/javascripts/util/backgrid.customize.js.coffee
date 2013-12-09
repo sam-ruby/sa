@@ -1,6 +1,3 @@
-
-
-
 ###
 CAD Customize backgrid(same as DOD)
 @author Linghua Jin
@@ -49,4 +46,5 @@ Backgrid.CustomHeaderCell = Backgrid.HeaderCell.extend(
 
   hideDetails: (e) ->
     @$(".info").tooltip "hide"
+    
 )
