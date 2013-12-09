@@ -14,15 +14,38 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       @query_results.find('.ajax-loader').css('display', 'block')
       @controller.trigger('sub-content-cleanup')
     )
+    # class_variables
     @available_end_date = new Date(new Date(@controller.get_filter_params()['date']) - 2*7*24*60*60*1000)
     @default_week_apart = 2
     @current_date = @controller.get_filter_params()['date']
+    @data
+    # init_csv_export_button
+    Utils.InitExportCsv(this, "/search/get_cvr_dropped_query.csv");
     
   events:
     'click button.search': 'handle_search'
     'click button.reset': 'handle_reset'  
     'change .datepicker': 'change_date_picked'  #reset the div alert for selected dates when date range changed
     'change select.weeks-apart-select' : 'change_select'
+    'click .export-csv a': (e) ->
+      fileName = "conversion_rate_dropped_query analysis_for #{@data.query_date}_week_apart_#{@data.weeks_apart}.csv"
+      @export_csv($(e.target), fileName, @data)
+
+
+
+      # date = @controller.get_filter_params().date
+      # if @query
+      #   query = @query.replace(/\s+/g, '_')
+      #   query = query.replace(/"|'/, '')
+      #   fileName = "search_#{query}_#{date}.csv"
+      #   data =
+      #     date: date
+      #     query: @query
+      # else
+      #   data =
+      #     date: date
+      #   fileName = "search_#{date}.csv"
+      # @export_csv($(e.target), fileName, data)
 
   form_template: JST['backbone/templates/cvr_dropped_query/form']
 
@@ -96,6 +119,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
 
     # set collection data(query params) for pagination. 
     @collection.dataParam = data
+    @data = data  # @data is used for csv_export
     return data
   
   get_items: (data) ->
