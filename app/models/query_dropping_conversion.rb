@@ -5,7 +5,7 @@ class QueryDroppingConversion < BaseModel
    p 'weeks_apart', weeks_apart, 'query_date', query_date
 
     select_cols = %q{query, query_con_before, query_count_before, query_revenue_before,
-     query_count_after, query_con_after, query_revenue_after, query_con_after, query_con_diff, query_score}
+     query_count_after, query_con_after, query_revenue_after, query_con_after, query_con_diff, query_score, query_con_after/query_con_before*query_revenue_before-query_revenue_after as expected_revenue_diff}
 
     select(select_cols).where(%q{window_in_weeks = ? and data_date = ?}, weeks_apart, query_date).from('queries_with_dropping_conversion').page(page).per(limit)
   end
