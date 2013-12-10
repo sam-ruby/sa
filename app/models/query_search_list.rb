@@ -5,7 +5,9 @@ class QuerySearchList < RedisBase
     user_id, query_word=nil, query_date=nil, weeks_apart=nil)
     user_query_words = get_query_words(user_id)
     if user_query_words.size >= 15
-      user_query_words.sort!{|a,b| a[:created_time] <=> b[:created_time] }
+      user_query_words.sort!{|a,b|
+        a["created_at"].to_i <=> b["created_at"].to_i
+      }
       value_id = user_query_words.first[:id]
       Query_Words_List.delete(value_id)
       Query_Words_List.redis.del(QuerySearch.get_key_name(value_id))

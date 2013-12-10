@@ -24,5 +24,5 @@ window.SearchQualityApp = do ->
     week: @week
     year: @year
     cat_id: @cat_id
-  
+
   Controller: controller

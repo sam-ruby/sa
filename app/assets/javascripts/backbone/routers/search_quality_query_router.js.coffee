@@ -21,17 +21,25 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       "query_comparison"
 
   set_date_info: (date_part) =>
-    return unless date_part
-    date_parts = date_part.split('/')
-    for part, i in date_part.split('/')
-      if part == 'date'
-        @controller.set_date(date_parts[i+1])
-      else if part == 'year'
-        @controller.set_year(date_parts[i+1])
-      else if part == 'week'
-        @controller.set_week(date_parts[i+1])
+    curr_date = $('#dp3').datepicker('getDate')
+    if date_part?
+      date_parts = date_part.split('/')
+      for part, i in date_part.split('/')
+        if part == 'date'
+          if curr_date != Selected_Date
+            @controller.trigger('update_date', date_parts[i+1])
+            @controller.set_date(date_parts[i+1])
+        else if part == 'year'
+          @controller.set_year(date_parts[i+1])
+        else if part == 'week'
+          @controller.set_week(date_parts[i+1])
+    else if curr_date != Selected_Date
+      @controller.trigger('update_date', Selected_Date.toString('M-d-yyyy'))
+
 
   query_comparison: (query, weeks, search_date) =>
+    @controller.trigger('master-tabs:cleanup')
+    @controller.trigger('content-cleanup')
     if query?
       query = decodeURIComponent(query)
       @controller.trigger('query-comparison:index',
@@ -43,6 +51,8 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
 
   search_rel: (query, date_parts) =>
     @set_date_info(date_parts)
+    @controller.trigger('master-tabs:cleanup')
+    @controller.trigger('content-cleanup')
     if query?
       query = decodeURIComponent(query)
       @controller.trigger(
@@ -52,10 +62,14 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
 
   search_kpi: (date_parts) =>
     @set_date_info(date_parts)
+    @controller.trigger('master-tabs:cleanup')
+    @controller.trigger('content-cleanup')
     @controller.trigger('search-kpi:index')
   
   poor_performing: (query, date_parts) =>
     @set_date_info(date_parts)
+    @controller.trigger('master-tabs:cleanup')
+    @controller.trigger('content-cleanup')
     if query?
       query = decodeURIComponent(query)
       @controller.trigger(
@@ -65,6 +79,8 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
 
   adhoc_search: (query, date_parts) =>
     @set_date_info(date_parts)
+    @controller.trigger('master-tabs:cleanup')
+    @controller.trigger('content-cleanup')
     @controller.trigger('search:form')
     if query?
       query = decodeURIComponent(query)
@@ -75,6 +91,8 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   
   query_monitoring_count: (query, date_parts) =>
     @set_date_info(date_parts)
+    @controller.trigger('master-tabs:cleanup')
+    @controller.trigger('content-cleanup')
     if query?
       query = decodeURIComponent(query)
       @controller.trigger(
@@ -84,6 +102,8 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
 
   query_monitoring_metrics: (query, date_parts) =>
     @set_date_info(date_parts)
+    @controller.trigger('master-tabs:cleanup')
+    @controller.trigger('content-cleanup')
     if query?
       query = decodeURIComponent(query)
       @controller.trigger(
