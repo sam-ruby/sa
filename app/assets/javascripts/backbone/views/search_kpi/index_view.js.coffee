@@ -64,11 +64,11 @@ class Searchad.Views.SearchKPI.IndexView extends Backbone.View
       series: series)
     
   get_items: ->
-    @unrender()
+    @active = true
     image =$('<img>').addClass('ajax-loader').attr(
       'src', '/assets/ajax_loader.gif').css('display', 'block')
     @paid_el.append(image)
-    @unpaid_el.append(image)
+
     $.ajax(
       url: '/search_kpi/get_data.json'
       success: (json, status) =>
@@ -102,14 +102,17 @@ class Searchad.Views.SearchKPI.IndexView extends Backbone.View
     series[2].fillOpacity = .2
     series
 
-  render: (title, dom, data) ->
-    @active = true
+  render: (title, dom, data) =>
+    return unless @active
     dom.children().remove()
     @initChart(title, dom, data)
     this
   
   unrender: =>
     @active = false
+    @$el.children().not(@options.paid_dom_selector).not(
+      @options.unpaid_dom_selector).remove()
     @paid_el.highcharts().destroy() if @paid_el.highcharts()
     @unpaid_el.highcharts().destroy() if @unpaid_el.highcharts()
-
+    @paid_el.children().remove()
+    @unpaid_el.children().remove()
