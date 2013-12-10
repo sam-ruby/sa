@@ -11,6 +11,9 @@ class Searchad.Views.WeekPicker.IndexView extends Backbone.View
     @initCalendar()
 
     @listenTo(@controller, "set_latest_week_day", @setLatestWeekDay)
+    @listenTo(@controller, "update_date", (date) =>
+      @setDate(date)
+      @showDateInfo())
     @listenTo(@controller, 'view-change', @setView)
     @available_weeks = new Searchad.Collections.WeeksCollection(Available_weeks)
     

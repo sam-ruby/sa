@@ -73,5 +73,3 @@ class Searchad.Views.Search.AmazonItems.Stats.IndexView extends Backbone.View
       @$el.prepend(
         "<div><h1>No Walmart items found in Amazon Top 32.</h1></div>")
     return this
-
-

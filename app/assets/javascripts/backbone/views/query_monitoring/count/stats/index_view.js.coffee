@@ -8,8 +8,7 @@ class Searchad.Views.QueryMonitoring.Count.Stats.IndexView extends Backbone.View
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('qm-count:sub-content-cleanup', @unrender)
     @data = {}
-  
-  active: false
+    @active = false
 
   initChart: (query, series, ucl) ->
     @$el.highcharts('StockChart',
@@ -72,13 +71,14 @@ class Searchad.Views.QueryMonitoring.Count.Stats.IndexView extends Backbone.View
         ]
     )
     
-  unrender: ->
+  unrender: =>
     @active = false
-    @$el.highcharts().destroy()
+    @$el.highcharts().destroy() if @$el.highcharts()
     @controller.trigger('qm-count:sub-content:hide-spin')
   
-  get_items: (data) ->
-    @unrender()
+  get_items: (data) =>
+    @active = true
+    @$el.highcharts().destroy() if @$el.highcharts()
     @controller.trigger('qm-count:sub-content:show-spin')
     @$el.find('.ajax-loader').show()
     $.ajax(
@@ -102,18 +102,13 @@ class Searchad.Views.QueryMonitoring.Count.Stats.IndexView extends Backbone.View
     series
 
   render_error: (query) ->
+    return unless @active
     @controller.trigger('qm-count:sub-content:hide-spin')
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
 
   render: (query, data, ucl) ->
-    @active = true
+    return unless @active
     @controller.trigger('qm-count:sub-content:hide-spin')
     @initChart(query, data, ucl)
     this
-  
-  unrender: =>
-    @active = false
-    @$el.children().not('.ajax-loader').remove()
-    @controller.trigger('qm-count:sub-content:hide-spin')
-
