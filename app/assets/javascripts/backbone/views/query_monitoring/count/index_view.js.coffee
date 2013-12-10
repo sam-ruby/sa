@@ -8,6 +8,7 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     @router = SearchQualityApp.Router
     @collection = new Searchad.Collections.QueryMonitoringCountCollection()
     @$filter = @$el.find(options.el_filter)
+    @filterAdded = false
     @initTable()
 
     @$el.find('.ajax-loader').hide()
@@ -17,6 +18,7 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
     @collection.bind('request', =>
+      @unrender_search_results()
       @$el.find('.ajax-loader').css('display', 'block')
       @controller.trigger('qm-count:sub-content-cleanup')
     )
@@ -102,18 +104,22 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     e.preventDefault()
     query = @$el.find(".filter-box input[type=text]").val()
     @collection.query = query
-    @collection.get_items() if query
-    @trigger = true
+    if query
+      @collection.get_items()
+      @active = true
+      @trigger = true
 
   reset: (e) =>
     e.preventDefault()
     @router.update_path('/search_rel')
     @$el.find(".filter-box input[type=text]").val('')
     @collection.query = null
+    @active = true
     @collection.get_items()
     @trigger = true
 
   get_items: (data) =>
+    @active = true
     @$el.find('.ajax-loader').css('display', 'block')
     if data and data.query
       @collection.query = data.query
@@ -137,16 +143,19 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     this
 
   render_error: (query) ->
-    @controller.trigger('qm-count:sub-tab-cleanup')
-    @$el.append( $('<span>').addClass('label label-important').append(
-      "No data available for #{query}") )
-  
+    if query?
+      msg = "No data available for #{query}"
+    else
+      msg = "No data available"
+    @$el.append($('<span>').addClass('label label-important').append(msg))
+
   render: =>
-    @unrender_search_results()
+    return unless @active
+    @$el.find('.ajax-loader').hide()
     return @render_error(@collection.query) if @collection.size() == 0
-    unless @active
+    unless @filterAdded
       @$filter.append(@initFilter()())
-    
+      @filterAdded = true
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     @$el.append( @paginator.render().$el)
@@ -156,5 +165,4 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     if @trigger
       @trigger = false
       @$el.find('td a.query').first().trigger('click')
-    @active = true
     this

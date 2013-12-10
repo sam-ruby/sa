@@ -10,6 +10,11 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
       new Searchad.Collections.RecentSearchesCollection()
 
     @collection.bind('reset', @render_query_results)
+    @collection.bind('request', =>
+      @clean_query_results()
+      @comparison.find('.ajax-loader').css('display', 'block')
+    )
+
     @recent_searches_collection.bind('reset', @render_recent_searches)
     @recent_searches_collection.bind('add', @render_recent_searches)
     
@@ -18,7 +23,7 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
     @after = @$el.find(options.after_selector)
     @comparison = @$el.find(options.comparison_selector)
     @recent_searches = @$el.find(options.recent_searches_selector)
-
+  
   events:
     'click button.search': 'handle_search'
     'click button.reset': 'handle_reset'
@@ -202,7 +207,6 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
   
   handle_search: (e) =>
     e.preventDefault()
-    @clean_query_results()
     query_date = @query_form.find('input.datepicker').datepicker('getDate')
     data =
       query: @query_form.find('input.search-query').val()
@@ -215,7 +219,6 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
    
   handle_reset: (e) =>
     e.preventDefault()
-    @clean_query_results()
     query_date = @controller.get_filter_params()['date']
     query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
 
@@ -225,9 +228,9 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
       'update', query_date.toString('M-d-yyyy'))
   
   get_items: (data, refresh_form=true) ->
+    @active = true
     query_date = @controller.get_filter_params()['date']
     query_date = new Date(new Date(query_date) - 7*24*60*60*1000)
-    @clean_query_results()
 
     if data and data.query
       data.query = decodeURIComponent(data.query)
@@ -247,16 +250,13 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
 
     if data and data.query
       @query = data.query
-      image =$('<img>').addClass('ajax-loader').attr(
-        'src', '/assets/ajax_loader.gif').css('display', 'block')
-      @before.find('.chart').append(image)
-      @after.find('.chart').append(image.clone())
       @collection.get_items(data)
  
-    @recent_searches_collection.fetch(reset: true) unless @active
-    @active = true
+    @recent_searches_collection.fetch(reset: true)
   
   render_query_results: =>
+    return unless @active
+    @comparison.find('.ajax-loader').hide()
     before_data = @collection.first().get('before_week')
     after_data = @collection.first().get('after_week')
    
@@ -269,7 +269,6 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
       dom.append($("<span class='h4 lpadding-one-em'>" +
         before_data.title + '</span>'))
       @render_chart(@query, data, @before.find('.chart'))
-      #@render_table(before_data.data, @before.find('.table'))
 
     if after_data.error == 1
       @render_error(@after.find('.chart'))
@@ -280,7 +279,6 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
         after_data.title + '</div>'))
       dom.append($('<i>').addClass('icon-forward'))
       @render_chart(@query, data, @after.find('.chart'))
-      #@render_table(after_data.data, @after.find('.table'))
 
     if before_data.error == 0 and after_data.error == 0
       comparison_data = []
@@ -334,6 +332,7 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
     dom.append(grid.render().$el)
 
   render_recent_searches: =>
+    return unless @active
     return if @recent_searches_collection.length is 0
     
     @recent_searches.children().not('p.title').remove()
@@ -344,16 +343,17 @@ class Searchad.Views.SearchComparison.IndexView extends Backbone.View
     @recent_searches.append(paginator.render().$el)
  
   unrender: =>
+    @active = false
     @query_form.children().remove()
     @recent_searches.children().remove()
     @clean_query_results()
-    @active = false
 
   clean_query_results: =>
     @before.highcharts().destroy() if @before.highcharts()
     @after.highcharts().destroy() if @after.highcharts()
-    @comparison.children().remove()
-
+    @comparison.children().not('.ajax-loader').remove()
+    @comparison.find('.ajax-loader').hide()
+    
     for el in [@before, @after]
       for sub_el in ['.chart-title', '.chart', '.table']
         el.find(sub_el).children().remove()
