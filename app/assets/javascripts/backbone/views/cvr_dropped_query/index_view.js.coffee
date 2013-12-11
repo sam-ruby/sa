@@ -117,7 +117,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
  
   render_form: (data)=>
     # $('#data-container').children().not('#cvr-dropped-query').hide();
-    @$el.show();
+    # @$el.show();
     #if there is data, it should come from router
     data = @process_query_data(data);
     $(@query_form).html(@form_template(data))
