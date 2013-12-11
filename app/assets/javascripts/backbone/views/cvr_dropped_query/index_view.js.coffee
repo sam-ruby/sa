@@ -44,7 +44,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     before_end_date = new Date(new Date(query_date) - 24*60*60*1000).toString('MMM, d, yyyy'); 
     after_start_date = query_date .toString('MMM, d, yyyy')
     after_end_date = new Date(new Date(query_date) - (-(weeks_apart*7-1)*24*60*60*1000)).toString('MMM, d, yyyy'); 
-    $('.date_range_display').html('Investigage Conversion Rate Dropped Query between ['+ before_start_date+' to '+ before_end_date + '] and [' + after_start_date + ' to ' +  after_end_date + ']');
+    $('.date_range_display').html('Conversion Rate Dropped Query Comparison Report between ['+ before_start_date+' to '+ before_end_date + '] and [' + after_start_date + ' to ' +  after_end_date + ']');
 
   
   change_select: ->
@@ -61,9 +61,10 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     data =
       weeks_apart: @query_form.find('select').val()
       query_date:@query_form.find('input.datepicker').datepicker('getDate').toString('M-d-yyyy')
+      query:@query_form.find('input.query').val() || "NULL"
 
     data = @process_query_data(data);
-    new_path = 'cvr_dropped_query'+ '/wks_apart/' + data.weeks_apart + '/query_date/' + data.query_date
+    new_path = 'cvr_dropped_query'+ '/wks_apart/' + data.weeks_apart + '/query_date/' + data.query_date+"/query/"+data.query
     @router.update_path(new_path)
     @get_items(data)
 
@@ -100,7 +101,9 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       current_date= @controller.get_filter_params()['date']
       query_date = new Date(new Date(current_date) - data.weeks_apart*7*24*60*60*1000);
       data.query_date = query_date.toString('M-d-yyyy')
-
+    #query
+    # data.query = data.query || "NULL"
+    console.log("process_data", data)
     # set collection data(query params) for pagination. 
     @collection.dataParam = data
     @data = data  # @data is used for csv_export
@@ -128,10 +131,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       return @render_error() 
     
     @query_results.append($('<div>').css('text-align', 'left').css(
-      'margin-bottom': '1em').append(
-      $('<i>').addClass('icon-search').css(
-        'font-size', 'large').append(
-        '&nbsp; Results for : ' + 'Conversion Rate Dropped Query')))
+      'margin-bottom': '1em').append('Conversion Rate Dropped Query'))
     @initCvrDroppedQueryTable()
     @query_results.append(@grid.render().$el)
     @query_results.append(@paginator.render().$el)
@@ -176,7 +176,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     cell: SearchQueryCell
     },
     {name:'query_con_diff',
-    label:'Conversion Diff',
+    label:'Con Diff',
     editable:false
     cell:'number'},
     {name:'query_con_before',
@@ -190,11 +190,11 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     editable:false
     cell:'number'},
     {name:'query_revenue_before',
-    label:'Revenue Before',
+    label:'Rev Before',
     editable:false,
     cell:'number'},
     {name:'query_revenue_after',
-    label:'Revenue After',
+    label:'Rev After',
     editable:false,
     cell:'number'},
     {name:'expected_revenue_diff',
