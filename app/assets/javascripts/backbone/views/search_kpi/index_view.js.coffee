@@ -21,7 +21,8 @@ class Searchad.Views.SearchKPI.IndexView extends Backbone.View
     {column: "query_count"
     name: I18n.t('dashboard.query_count_l')}]
 
-  initChart: (title, dom, series) ->
+  initChart: (title, dom, series) =>
+    that = this
     dom.highcharts('StockChart',
       chart:
         alignTicks: false
@@ -55,6 +56,15 @@ class Searchad.Views.SearchKPI.IndexView extends Backbone.View
             states:
               hover:
                 enabled: true
+        areaspline:
+          events:
+            click: (e) ->
+              that.goto_query_analysis(e.point.x) if e.point.x?
+        spline:
+          events:
+            click: (e) ->
+              that.goto_query_analysis(e.point.x) if e.point.x?
+
       legend:
         enabled: true
         layout: 'horizontal'
@@ -63,6 +73,12 @@ class Searchad.Views.SearchKPI.IndexView extends Backbone.View
         borderWidth: 0
       series: series)
     
+    
+  goto_query_analysis: (date_in_millisecs) ->
+    new_date = (new Date(date_in_millisecs)).toString('M-d-yyyy')
+    SearchQualityApp.Router.navigate(
+      "/search_rel/filters/date/#{new_date}", trigger: true)
+
   get_items: ->
     @active = true
     image =$('<img>').addClass('ajax-loader').attr(
