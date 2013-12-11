@@ -11,6 +11,13 @@ class Searchad.Views.Search.WalmartItems.IndexView extends Backbone.View
     @controller.bind('date-changed', =>
       @get_items() if @active)
     @collection.bind('reset', @render)
+    
+    @collection.bind('request', =>
+      @$el.children().not('.ajax-loader').remove()
+      @controller.trigger('search:sub-content:show-spin')
+      @undelegateEvents()
+    )
+
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('sub-content-cleanup', @unrender)
     Utils.InitExportCsv(this, '/comp_analysis/get_walmart_items.json')
@@ -91,19 +98,21 @@ class Searchad.Views.Search.WalmartItems.IndexView extends Backbone.View
     @undelegateEvents()
   
   get_items: (data) =>
+    @active = true
     @query = data.query if data.query
-    @controller.trigger('search:sub-content:show-spin')
     @collection.get_items(data)
 
   render_error: (query) ->
+    return unless @active
     @controller.trigger('search:sub-content:hide-spin')
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
   
   render: =>
-    @unrender()
+    return unless @active
+    @controller.trigger('search:sub-content:hide-spin')
     return @render_error(@query) if @collection.size() == 0
-    @active = true
+    
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     @$el.append( @export_csv_button() )
