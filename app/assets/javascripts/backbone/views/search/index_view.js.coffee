@@ -19,6 +19,7 @@ class Searchad.Views.Search.IndexView extends Backbone.View
       @search_results_cleanup()
       @$search_results.find('.ajax-loader').css('display', 'block')
       @controller.trigger('sub-content-cleanup')
+      @controller.trigger('search:sub-tab-cleanup')
     )
     Utils.InitExportCsv(this, "/search/get_query_stats_date.csv")
     @undelegateEvents()
@@ -49,8 +50,8 @@ class Searchad.Views.Search.IndexView extends Backbone.View
   
   do_search: (e) =>
     e.preventDefault()
+    @active = true
     @search_results_cleanup()
-    @controller.trigger('sub-content-cleanup')
     @query = @$search_form.find('input.search-query').val()
     
     @queryStatsCollection.query = @query
@@ -60,20 +61,17 @@ class Searchad.Views.Search.IndexView extends Backbone.View
   unrender: =>
     @active = false
     @$search_form.children().remove()
-    @$search_results.children().not('.ajax-loader').remove()
+    @search_results_cleanup()
     @$el.find('.ajax-loader').hide()
     @undelegateEvents()
 
   render_error: ->
-    @controller.trigger('search:sub-tab-cleanup')
     @$search_results.append($('<span>').addClass(
       'label label-important').append("No data available for #{@query}"))
   
   render: =>
-    @active = true
     @$search_form.append(@search_form_template())
     @delegateEvents()
-    this
 
   search_results_cleanup: =>
     @$search_results.children().not('.ajax-loader').remove()
@@ -148,6 +146,7 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     )
 
   render_s_results: =>
+    return unless @active
     @$search_results.find('.ajax-loader').hide()
     return @render_error() if @queryStatsCollection.length == 0
     
