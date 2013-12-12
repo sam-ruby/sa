@@ -12,7 +12,7 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
     @collection.bind('reset', @render)
     @collection.bind('changed', @render)
     @controller.bind('content-cleanup', @unrender)
-    @controller.bind('sub-content-cleanup', @unrender)
+    @controller.bind('search:sub-content-cleanup', @unrender)
     @collection.bind('request', =>
       @$el.children().not('ul').remove()
       @controller.trigger('search:sub-content:show-spin')

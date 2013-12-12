@@ -20,10 +20,12 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @default_week_apart = 2
     @current_date = @controller.get_filter_params()['date']
     @data
+    @query_comparison_on
     # init_csv_export_button
     Utils.InitExportCsv(this, "/search/get_cvr_dropped_query.csv");
     
   events:
+    'change input.checkAdvanced':'toggle_search_mode'
     'click button.search': 'handle_search'
     'click button.reset': 'handle_reset'  
     'change .datepicker': 'change_date_picked'  #reset the div alert for selected dates when date range changed
@@ -36,6 +38,19 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
 
   active: false
 
+  toggle_search_mode: (e)->
+    @query_comparison_on = e.currentTarget.checked
+    @controller.trigger('search:sub-tab-cleanup')
+    @controller.trigger('sub-content-cleanup')
+    if @query_comparison_on
+      @query_form.find('.advanced').show()
+      $('#search-results').hide()
+      @query_results.show()
+      @get_items();
+    else
+      @query_form.find('.advanced').hide()
+      $('#search-results').show()
+      @query_results.hide()
   #when changing selected date or week, repaint the alert info displayed. 
   change_date_picked: ->
     weeks_apart= @query_form.find('select').val()
@@ -65,9 +80,12 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       query:@query_form.find('input.query').val() || "NULL"
 
     data = @process_query_data(data);
-    new_path = 'cvr_dropped_query'+ '/wks_apart/' + data.weeks_apart + '/query_date/' + data.query_date+"/query/"+data.query
-    @router.update_path(new_path)
-    @get_items(data)
+    if @query_comparison_on
+      new_path = 'cvr_dropped_query'+ '/wks_apart/' + data.weeks_apart + '/query_date/' + data.query_date+"/query/"+data.query
+      @router.update_path(new_path)
+      @get_items(data)
+    else
+      @controller.trigger('search:search',query:data.query)
 
 
   handle_reset: (e) =>
@@ -107,7 +125,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       data.query_date = query_date.toString('M-d-yyyy')
     #query
     data.query = data.query || "NULL"
-    console.log("process_data", data)
+    # console.log("process_data", data)
     # set collection data(query params) for pagination. 
     @collection.dataParam = data
     @data = data  # @data is used for csv_export
@@ -124,12 +142,9 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     # $('#data-container').children().not('#cvr-dropped-query').hide();
     # @$el.show();
     #if there is data, it should come from router
-
-    console.log("renderform data", data)
-    if data.query == "NULL"
-      data.query = undefined
-    $(@query_form).html(@form_template(data))
     data = @process_query_data(data);
+    $(@query_form).html(@form_template(data))
+
     end_date = new Date(new Date(@current_date) - data.weeks_apart*7*24*60*60*1000)
     @init_date_picker(data.query_date, end_date)
     @active = true
@@ -150,7 +165,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @query_results.append(@export_csv_button())
     if @trigger
       @trigger = false
-      @$el.find('td a.query').first().trigger('click')
+    @$el.find('td a.query').first().trigger('click')
     $("li.cvr-dropped-item-comparison").show();
     this
 

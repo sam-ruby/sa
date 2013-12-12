@@ -1,13 +1,17 @@
 form.form-horizontal.cvr-dropped-query-form
   .cvr-dropped-selected-result
-    .alert.alert-info.date_range_display
+    .alert.alert-info.date_range_display.advanced
 
   .control-group
     label.control-label(for='query') Search for Query
     .controls
       input.input-xxlarge.query(type='text', value=query)
+      | &nbsp;
+      input.checkAdvanced(type='checkbox', checked='checked')
+      | &nbsp;
+      | Advanced
 
-  .control-group
+  .control-group.advanced
     label.control-label(for='date-picker') Date within (before and after)
     .controls
       select.weeks-apart-select
@@ -30,4 +34,4 @@ form.form-horizontal.cvr-dropped-query-form
       //- | &nbsp;
       //- button.btn.reset(type='reset') Reset 
 
-.cvr-dropped-query-results-label
+.cvr-dropped-query-results-label.advanced
