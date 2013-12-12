@@ -11,6 +11,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @collection.bind('reset', @render_query_results)
     @collection.bind('request', =>
       @search_results_cleanup()
+      @controller.trigger('search:sub-tab-cleanup')
       @query_results.find('.ajax-loader').css('display', 'block')
       @controller.trigger('sub-content-cleanup')
     )
@@ -77,7 +78,9 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @query_form.find('input.query').val()
     console.log(query_date);
     @init_date_picker(query_date);
+    @query_form.find('.cvr-dropped-query-results-label').html
     @controller.trigger('sub-content-cleanup')
+    @controller.trigger('search:sub-tab-cleanup')
   
   init_date_picker: (default_selected_date, available_end_date) =>
     available_end_date = available_end_date || new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
@@ -115,14 +118,18 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @collection.reset();
     @collection.get_items(data)
     @active = true
+    @trigger = true
  
   render_form: (data)=>
     # $('#data-container').children().not('#cvr-dropped-query').hide();
     # @$el.show();
     #if there is data, it should come from router
-    data = @process_query_data(data);
-    console.log(data)
+
+    console.log("renderform data", data)
+    if data.query == "NULL"
+      data.query = undefined
     $(@query_form).html(@form_template(data))
+    data = @process_query_data(data);
     end_date = new Date(new Date(@current_date) - data.weeks_apart*7*24*60*60*1000)
     @init_date_picker(data.query_date, end_date)
     @active = true
@@ -136,10 +143,16 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       @query_form.find('.cvr-dropped-query-results-label').html('Query Comparison for ' + @data.query )  
     else 
       @query_form.find('.cvr-dropped-query-results-label').html('Conversion Rate Dropped Query Top 500 Report')
+
     @initCvrDroppedQueryTable()
     @query_results.append(@grid.render().$el)
     @query_results.append(@paginator.render().$el)
     @query_results.append(@export_csv_button())
+    if @trigger
+      @trigger = false
+      @$el.find('td a.query').first().trigger('click')
+    $("li.cvr-dropped-item-comparison").show();
+    this
 
   search_results_cleanup: =>
     @query_results.children().not('.ajax-loader').remove()
@@ -161,11 +174,16 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
         $(e.target).parents('tr').addClass('selected')
         query = $(e.target).text()
         dataParam = @model.collection.dataParam
-        that.controller.trigger('cvr_dropped_query:item_comparison',
+
+        that.controller.trigger('search:sub-content',
           query: query
           query_date: dataParam.query_date
           weeks_apart: dataParam.weeks_apart
-        )
+          # view: 'daily'
+          tab: 'cvr-dropped-item-comparison')
+ 
+        # new_path = new_path = 'cvr_dropped_query'+ '/wks_apart/' + dataParam.weeks_apart + '/query_date/' + dataParam.query_date+"/query/"+ query
+        # that.router.update_path(new_path)
       
       render: =>
         value = @model.get(@column.get('name'))
