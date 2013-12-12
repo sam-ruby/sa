@@ -20,7 +20,7 @@ class Searchad.Views.Search.WalmartItems.IndexView extends Backbone.View
 
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('sub-content-cleanup', @unrender)
-    Utils.InitExportCsv(this, '/comp_analysis/get_walmart_items.json')
+    Utils.InitExportCsv(this, '/comp_analysis/get_walmart_items.csv')
     @undelegateEvents()
     @active = false
 

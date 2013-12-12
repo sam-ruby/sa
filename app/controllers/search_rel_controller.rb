@@ -18,8 +18,20 @@ class SearchRelController < BaseController
         end
       end
       format.csv do |format|
-        render :json => SearchQualityDaily.get_query_stats(
-          query, @year, week, @date, 0)
+        result = SearchQualityDaily.get_query_stats(
+          query, @year, week, @date, 0).map do|record|
+            {'Query String' => record.query_str,
+             'Rank Metric' => record.rank_metric.to_f.round(2),
+             'Catalog Overlap' => record.cat_rate.to_f.round(2),
+             'Results Shown in Search' => record.show_rate.to_f.round(2),
+             'Overall Relevance Score' => record.rel_score.to_f.round(2), 
+             'Rev Rank Correlation' =>
+                record.search_rev_rank_correlation.to_f.round(2),
+             'Query Revenue' => record.query_revenue,
+             'Query Count' => record.query_count,
+             'Query Conversion' => record.query_con.to_f.round(2)}
+          end
+          render :json => result
       end
     end
   end
@@ -91,18 +103,16 @@ class SearchRelController < BaseController
                      :revenue => revenue,
                      :rev_rank => items[2].to_i + 1})
       else
-        result.push({:position => index,
-                     :walmart_item_id => walmart_item[:item_id],
-                     :walmart_item_title => walmart_item[:title],
-                     :walmart_item_image_url => walmart_item[:image_url],
-                     :walmart_item_price => walmart_item[:curr_item_price],
-                     :walmart_item_revenue => walmart_item[:item_revenue],
-                     :rev_based_item_id => rev_item[:item_id],
-                     :rev_based_item_title => rev_item[:title],
-                     :rev_based_item_image_url => rev_item[:image_url],
-                     :rev_based_item_price => rev_item[:curr_item_price],
-                     :rev_based_item_revenue => rev_item[:item_revenue],
-                     :rev_rank => items[2].to_i + 1})
+        result.push({'Position' => index,
+                     'Walmart Item Id' => walmart_item[:item_id],
+                     'Walmart Item Title' => walmart_item[:title],
+                     'Rev Rank' => items[2].to_i + 1,
+                     'Walmart Item Image URL' => walmart_item[:image_url],
+                     'Rev Based Item Id' => rev_item[:item_id],
+                     'Rev Based Item Title' => rev_item[:title],
+                     'Rev Based Item Image URL' => rev_item[:image_url],
+                     'Rev Based Item Revenue' =>
+                        rev_item[:item_revenue].to_f.round(2)})
       end
       index += 1
     end

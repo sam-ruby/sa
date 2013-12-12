@@ -16,8 +16,15 @@ class PoorPerformingController < BaseController
         end
       end
       format.csv do
-        render :json => QueryCatMetricsDaily.get_search_words(
-          query, @date, 0)
+        results = QueryCatMetricsDaily.get_search_words(
+          query, @date, 0).map do |record|
+            {'Query' => record.query,
+             'Query Revenue' => record.query_revenue.to_f.round(2),
+             'Conversion' => record.query_con.to_f.round(2),
+             'ATC' => record.query_atc.to_f.round(2),
+             'PVR' => record.query_pvr.to_f.round(2)}
+          end
+        render :json => results
       end
     end
   end
@@ -64,8 +71,19 @@ class PoorPerformingController < BaseController
       end
 
       format.csv do 
-        render :json => URLMapping.get_amazon_items(
-          query, ((week.to_i-3)..week.to_i).to_a, @year)[:all_items]
+        results = URLMapping.get_amazon_items(
+          query, ((week.to_i-3)..week.to_i).to_a, @year)[:all_items].map do|record|
+            {'Amazon Position' => record.position,
+             'Item Name' => record.name,
+             'Amazon Item image URL' => record.img_url,
+             'Amazon Item URL' => record.url,
+             'Amazon Item ID' => record.idd,
+             'Walmart Position' => record.walmart_position,
+             'Brand' => record.brand,
+             'Amazon Price' => record.newprice.to_f.round(2),
+             'Walmart Price' => record.curr_item_price.to_f.round(2)}
+          end
+        render :json => results
       end
     end
   end
