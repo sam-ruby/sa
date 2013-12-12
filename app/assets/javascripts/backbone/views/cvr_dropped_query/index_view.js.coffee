@@ -74,6 +74,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @clean_query_results()
     query_date = new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
     @query_form.find('.controls select').val(@default_week_apart+'')
+    @query_form.find('input.query').val()
     console.log(query_date);
     @init_date_picker(query_date);
     @controller.trigger('sub-content-cleanup')
@@ -102,7 +103,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       query_date = new Date(new Date(current_date) - data.weeks_apart*7*24*60*60*1000);
       data.query_date = query_date.toString('M-d-yyyy')
     #query
-    # data.query = data.query || "NULL"
+    data.query = data.query || "NULL"
     console.log("process_data", data)
     # set collection data(query params) for pagination. 
     @collection.dataParam = data
@@ -120,6 +121,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     # @$el.show();
     #if there is data, it should come from router
     data = @process_query_data(data);
+    console.log(data)
     $(@query_form).html(@form_template(data))
     end_date = new Date(new Date(@current_date) - data.weeks_apart*7*24*60*60*1000)
     @init_date_picker(data.query_date, end_date)
@@ -130,8 +132,10 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     if @collection.length == 0
       return @render_error() 
     
-    @query_results.append($('<div>').css('text-align', 'left').css(
-      'margin-bottom': '1em').append('Conversion Rate Dropped Query'))
+    if (@data.query!= "NULL")
+      @query_form.find('.cvr-dropped-query-results-label').html('Query Comparison for ' + @data.query )  
+    else 
+      @query_form.find('.cvr-dropped-query-results-label').html('Conversion Rate Dropped Query Top 500 Report')
     @initCvrDroppedQueryTable()
     @query_results.append(@grid.render().$el)
     @query_results.append(@paginator.render().$el)
@@ -228,7 +232,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
   
  
   unrender: =>
-    @$el.hide();
+    # @$el.hide();
     @query_form.children().remove()
     @clean_query_results()
     @active = false

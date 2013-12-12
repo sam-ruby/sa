@@ -19,7 +19,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       "query_monitoring_metrics"
     "query_comparison(/query/:query/wks_apart/:weeks/query_date/:date)(/filters/*wday)":
       "query_comparison"
-    "cvr_dropped_query(/wks_apart/:weeks/query_date/:date)(/filters/*wday)":
+    "cvr_dropped_query(/wks_apart/:weeks/query_date/:date/query/:query)(/filters/*wday)":
       "cvr_dropped_query"
 
   set_date_info: (date_part) =>
@@ -51,11 +51,12 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       @controller.trigger('query-comparison:index')
 
 
-  cvr_dropped_query: (weeks, date) =>
+  cvr_dropped_query: (weeks, date, query) =>
     if weeks && date
       data=
         weeks_apart: weeks
         query_date: date
+        query: query
       #data_process in render_form first. need to call result trigger after index trigger
       @controller.trigger('cvr-dropped-query:index', data)  
       @controller.trigger('cvr-dropped-query:result',data)

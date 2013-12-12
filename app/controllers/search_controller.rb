@@ -48,7 +48,7 @@ class SearchController < BaseController
         query_stats = QueryCatMetricsDaily.get_query_stats_date(
           query, @year, get_week_from_date(@date), @date, 
           @page, @sort_by, @order, @limit)
-        p 'query_stats', query_stats.total_pages, query_stats
+
         if query_stats.nil? or query_stats.empty?
           render :json => [{:total_entries => 0}, query_stats]
         else
@@ -78,15 +78,21 @@ class SearchController < BaseController
 
   def get_cvr_dropped_query
     query_date = DateTime.strptime(params[:query_date], "%m-%d-%Y") rescue DateTime.now
-    query_date = query_date.strftime("%Y-%m-%d")
     #by_default, set to two week apart
     weeks_apart = params[:weeks_apart] ? Integer(params[:weeks_apart]) : 2
+    query = params[:query]
     respond_to do |format|
+
       format.json do 
-        result= QueryDroppingConversion.get_cvr_dropped_query(weeks_apart,query_date,@page,@limit)
-          render :json => [
-            {:total_entries => result.total_pages * @limit,
-             :date => @date}, result]
+        if query == "NULL"
+          result= QueryDroppingConversion.get_cvr_dropped_query_top_500(weeks_apart,query_date,@page,@limit)
+          render :json => [{:total_entries => result.total_pages * @limit, :date => @date}, result]
+        else
+          result= QueryDroppingConversion.get_cvr_dropped_query_with_query(query, weeks_apart,query_date,@page,@limit)
+          render :json => [{:total_entries => 1, :date => @date}, result]
+        end
+
+
       end
       # since we know there are always total 500 entries. 
       format.csv do

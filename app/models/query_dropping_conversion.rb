@@ -1,9 +1,49 @@
 class QueryDroppingConversion < BaseModel
   self.table_name = 'queries_with_dropping_conversion'
 
-  def self.get_cvr_dropped_query(weeks_apart,query_date,page,limit)
-   p 'weeks_apart', weeks_apart, 'query_date', query_date
+  def self.get_cvr_dropped_query_with_query(query, weeks_apart,query_date,page,limit)
+    days_range = weeks_apart*7
+    before_start_date = query_date-days_range
+    before_end_date = query_date-1.day
+    after_start_date = query_date
+    after_end_date = query_date + days_range-1.day
 
+   p before_start_date
+   p before_end_date
+   p after_start_date
+   p after_end_date
+    sqlStatement = 
+    'select b.query as query,b.sum_count as query_count_before,  b.con as query_con_before, b.revenue as query_revenue_before, d.sum_count as query_count_after, d.con as query_con_after, d.revenue as query_revenue_after, b.con-d.con as query_con_diff, d.con/b.con*b.revenue-d.revenue as expected_revenue_diff, sqrt(d.sum_count)*(b.con-d.con) as query_score 
+  from 
+    (
+      select 
+        query, 
+        sum(query_count) as sum_count, 
+        sum(query_count*query_con)/sum(query_count) as con, 
+        sum(query_revenue) as revenue 
+       from query_cat_metrics_daily 
+       where query=? and query_date between ? and ? and
+       cat_id=0 and (channel="ORGANIC_USER" or channel="ORGANIC")
+    )b 
+    inner join 
+    (
+       select 
+         query, 
+         sum(query_count) as sum_count, 
+         sum(query_count*query_con)/sum(query_count) as con, 
+         sum(query_revenue) as revenue from query_cat_metrics_daily 
+      where 
+        query = ? and query_date between ? and ? and cat_id=0 and (channel="ORGANIC_USER" or channel="ORGANIC") 
+    )d 
+    on b.query=d.query'
+
+     result_data = find_by_sql([sqlStatement,query, before_start_date, before_end_date, query, after_start_date, after_end_date]) 
+
+  end
+
+
+  def self.get_cvr_dropped_query_top_500(weeks_apart,query_date,page,limit)
+    query_date = query_date.strftime("%Y-%m-%d")
     select_cols = %q{query, query_con_before, query_count_before, query_revenue_before,
      query_count_after, query_con_after, query_revenue_after, query_con_after, query_con_diff, query_score, query_con_after/query_con_before*query_revenue_before-query_revenue_after as expected_revenue_diff}
 
