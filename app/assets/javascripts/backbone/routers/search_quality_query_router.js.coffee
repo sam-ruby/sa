@@ -38,17 +38,17 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     else if curr_date != Selected_Date
       @controller.trigger('update_date', Selected_Date.toString('M-d-yyyy'))
 
-  query_comparison: (query, weeks, search_date) =>
-    @controller.trigger('master-tabs:cleanup')
-    @controller.trigger('content-cleanup')
-    if query?
-      query = decodeURIComponent(query)
-      @controller.trigger('query-comparison:index',
-        query: query
-        weeks_apart: weeks
-        query_date: search_date)
-    else
-      @controller.trigger('query-comparison:index')
+  # query_comparison: (query, weeks, search_date) =>
+  #   @controller.trigger('master-tabs:cleanup')
+  #   @controller.trigger('content-cleanup')
+  #   if query?
+  #     query = decodeURIComponent(query)
+  #     @controller.trigger('query-comparison:index',
+  #       query: query
+  #       weeks_apart: weeks
+  #       query_date: search_date)
+  #   else
+  #     @controller.trigger('query-comparison:index')
 
 
   cvr_dropped_query: (weeks, date, query) =>
@@ -58,10 +58,10 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
         query_date: date
         query: query
       #data_process in render_form first. need to call result trigger after index trigger
-      @controller.trigger('cvr-dropped-query:index', data)  
-      @controller.trigger('cvr-dropped-query:result',data)
-    else 
-      @controller.trigger('cvr-dropped-query:index')
+    @controller.trigger('cvr-dropped-query:index', data)  
+      # @controller.trigger('cvr-dropped-query:result',data)
+    # else 
+    #   @controller.trigger('cvr-dropped-query:index')
 
   search_rel: (query, date_parts) =>
     @set_date_info(date_parts)

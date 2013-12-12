@@ -6,10 +6,11 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     
-    @$search_form = $(options.el_form)
+    # @$search_form = $(options.el_form)
     @$search_results = $(options.el_results)
 
     @controller.bind('content-cleanup', @unrender)
+    # @controller.bind('sub-content-cleanup', @search_results_cleanup)
     @queryStatsCollection =
       new Searchad.Collections.QueryStatsDailyCollection()
     @initTable()
@@ -42,17 +43,19 @@ class Searchad.Views.Search.IndexView extends Backbone.View
         fileName = "search_#{date}.csv"
       @export_csv($(e.target), fileName, data)
 
-  search_form_template: JST['backbone/templates/search/form']
+  # search_form_template: JST['backbone/templates/search/form']
 
-  load_search_results: (query) =>
-    @$search_form.find('input.search-query').val(query)
-    @$search_form.find('button.search-btn').first().trigger('click')
+  # load_search_results: (query) =>
+  #   @$search_form.find('input.search-query').val(query)
+  #   @$search_form.find('button.search-btn').first().trigger('click')
   
-  do_search: (e) =>
-    e.preventDefault()
+  do_search: (data) =>
+    # console.log("do_search", data);
+    # e.preventDefault()
     @active = true
     @search_results_cleanup()
-    @query = @$search_form.find('input.search-query').val()
+    @query = data.query
+    # @query = @$search_form.find('input.search-query').val()
     
     @queryStatsCollection.query = @query
     @queryStatsCollection.get_items()
@@ -60,7 +63,7 @@ class Searchad.Views.Search.IndexView extends Backbone.View
 
   unrender: =>
     @active = false
-    @$search_form.children().remove()
+    # @$search_form.children().remove()
     @search_results_cleanup()
     @$el.find('.ajax-loader').hide()
     @undelegateEvents()
@@ -69,9 +72,9 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     @$search_results.append($('<span>').addClass(
       'label label-important').append("No data available for #{@query}"))
   
-  render: =>
-    @$search_form.append(@search_form_template())
-    @delegateEvents()
+  # render: =>
+  #   # @$search_form.append(@search_form_template())
+  #   @delegateEvents()
 
   search_results_cleanup: =>
     @$search_results.children().not('.ajax-loader').remove()

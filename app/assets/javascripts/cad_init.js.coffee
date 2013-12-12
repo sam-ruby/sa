@@ -123,6 +123,8 @@ $ ->
     searchView.listenTo(
       controller, 'search:form', searchView.render)
     searchView.listenTo(
+      controller, 'search:search', (data) -> searchView.do_search(data))
+    searchView.listenTo(
       controller, 'load-search-results', searchView.load_search_results)
 
     subtabsView =
@@ -180,7 +182,9 @@ $ ->
     cvrDroppedQueryView.listenTo(
         controller, 'cvr-dropped-query:index',cvrDroppedQueryView.render_form)
     cvrDroppedQueryView.listenTo(
-      controller, 'cvr-dropped-query:result', cvrDroppedQueryView.get_items)
+        controller, 'cvr-dropped-query:index',cvrDroppedQueryView.get_items)
+    # cvrDroppedQueryView.listenTo(
+    #   controller, 'cvr-dropped-query:result', cvrDroppedQueryView.get_items)
 
     #cvr_dropped_view when click on q query show the item comparison regarding that query
     cvrDroppedQueryItemComparisonView = new Searchad.Views.CVRDroppedQuery.ItemComparisonView {

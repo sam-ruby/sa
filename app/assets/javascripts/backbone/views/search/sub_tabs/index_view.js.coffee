@@ -113,15 +113,18 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
     @view = data.view if data.view
     @data = data;
     @$el.prepend(@template()) unless @active
-    @delegateEvents()   
-    if data.tab == 'rel-rev-analysis'
-      @$el.find('li.rev-rel-tab').first().trigger('click')
-    else if data.tab == 'amazon'
-      @$el.find('li.search-amazon-items-tab').first().trigger('click')
-    else if data.tab =='cvr-dropped-item-comparison'
-      @$el.find('li.cvr-dropped-item-comparison-tab').first().trigger('click')
+    @delegateEvents() 
+    if data.tab =='cvr-dropped-item-comparison'
+      @$el.find('li.cvr-dropped-item-comparison-tab').show();
+      @$el.find('li.cvr-dropped-item-comparison-tab').first().trigger('click')  
     else
-      @$el.find('li.search-stats-tab').first().trigger('click')
+      @$el.find('li.cvr-dropped-item-comparison-tab').hide();
+      if data.tab == 'rel-rev-analysis'
+        @$el.find('li.rev-rel-tab').first().trigger('click')
+      else if data.tab == 'amazon'
+        @$el.find('li.search-amazon-items-tab').first().trigger('click')
+      else
+        @$el.find('li.search-stats-tab').first().trigger('click')
     @active = true
 
   show_spin: =>
