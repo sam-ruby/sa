@@ -6,6 +6,8 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @controller.bind('content-cleanup', @unrender)
+    @controller.bind('date-changed', =>
+      @unrender() if @active)
     @controller.bind('search:sub-tab-cleanup', @unrender)
     @controller.bind('search:sub-content:show-spin', @show_spin)
     @controller.bind('search:sub-content:hide-spin', @hide_spin)
