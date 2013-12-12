@@ -184,7 +184,7 @@ $ ->
 
     #cvr_dropped_view when click on q query show the item comparison regarding that query
     cvrDroppedQueryItemComparisonView = new Searchad.Views.CVRDroppedQuery.ItemComparisonView {
-      el: '.cvr-dropped-query-item-comparison'
+      el: '#search-sub-content'
     }
     cvrDroppedQueryItemComparisonView.listenTo(
       controller, 'cvr_dropped_query:item_comparison', (data) ->

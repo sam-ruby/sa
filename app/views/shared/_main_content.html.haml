@@ -51,6 +51,19 @@
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
   #qm-count-sub-content
     
+
+#cvr-dropped-query
+  .row.span12
+    .cvr-dropped-query-form
+          
+  .row.span12
+    .cvr-dropped-query-results
+      = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+
+  .row.span12
+    .cvr-dropped-query-item-comparison
+    = image_tag 'ajax_loader.gif', :class=>'ajax-loader' 
+
 #search
   #search-form{:style=>'text-align:center'}
   #search-results
@@ -72,42 +85,31 @@
         %a{:href=>'#'}
           Items Not In Top 32
 
-#query-perf-comparison
-  #query-comparison-fcharts
-    .row
-      .span6
-        #query-form
-      .span5.offset1
-        #recent-searches
+
+/ #query-perf-comparison
+/   #query-comparison-fcharts
+/     .row
+/       .span6
+/         #query-form
+/       .span5.offset1
+/         #recent-searches
           
-    .row
-      .span12
-        #comparison-data
-          = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+/     .row
+/       .span12
+/         #comparison-data
+/           = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
 
-    .row{:style=>'margin-top: 2em;'}
-      .span5
-        #before-data
-          .chart-title
-          .chart
-          .table
-      .span5.offset2
-        #after-data
-          .chart-title
-          .chart
-          .table
+/     .row{:style=>'margin-top: 2em;'}
+/       .span5
+/         #before-data
+/           .chart-title
+/           .chart
+/           .table
+/       .span5.offset2
+/         #after-data
+/           .chart-title
+/           .chart
+/           .table
 
-  #search-comparison-content
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-
-#cvr-dropped-query
-  .row.span12
-    .cvr-dropped-query-form
-          
-  .row.span12
-    .cvr-dropped-query-results
-      = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-
-  .row.span12
-    .cvr-dropped-query-item-comparison
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader' 
+/   #search-comparison-content
+/     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'

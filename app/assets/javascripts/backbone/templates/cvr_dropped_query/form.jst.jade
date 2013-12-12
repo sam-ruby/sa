@@ -5,7 +5,7 @@ form.form-horizontal.cvr-dropped-query-form
   .control-group
     label.control-label(for='query') Search for Query
     .controls
-      input.input-xxlarge.query(type='text')
+      input.input-xxlarge.query(type='text', value=query)
 
   .control-group
     label.control-label(for='date-picker') Date within (before and after)
@@ -27,7 +27,7 @@ form.form-horizontal.cvr-dropped-query-form
   .control-group
     .controls
       button.btn.search(type='submit') Search
-      | &nbsp;
-      button.btn.reset(type='reset') Reset 
+      //- | &nbsp;
+      //- button.btn.reset(type='reset') Reset 
 
 .cvr-dropped-query-results-label

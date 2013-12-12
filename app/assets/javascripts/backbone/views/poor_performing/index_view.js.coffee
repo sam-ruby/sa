@@ -140,4 +140,5 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
     if @trigger
       @trigger = false
       @$el.find('td a.query').first().trigger('click')
+      # $('search-sub-tabs li.cvr-dropped-item-comparison').trigger('click')
     this
