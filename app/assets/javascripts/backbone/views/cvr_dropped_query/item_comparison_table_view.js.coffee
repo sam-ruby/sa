@@ -56,7 +56,7 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
 
     columns = [{
     name: 'item_title_before',
-    label: 'Item Before',
+    label: 'Item showed two weeks before',
     editable: false,
     cell: ItemCellBefore
     },
@@ -67,7 +67,7 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
     cell: 'string'
     },
     {name: 'item_title_after',
-    label: 'Item After', 
+    label: 'Item showed two weeks after', 
     editable: false,
     cell: ItemCellAfter
     },
@@ -113,9 +113,8 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
     @active = true
     @$el.append($('<div>').css('text-align', 'left').css(
       'margin-bottom': '1em').append(
-      $('<i>').addClass('icon-eye-open').css(
-        'font-size', 'large').append(
-        '&nbsp; Item Comparison Results for  :  <strong>' + @data.query + '</strong>')))
+      $('<div class="cvr-dropped-query-results-label">').append(
+        'Item Showed Comparison from Query : ' + @data.query )))
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     @$el.append( @export_csv_button() )
