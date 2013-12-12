@@ -15,7 +15,6 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
     @controller.bind('sub-content-cleanup', @unrender)
     @collection.bind('request', =>
       @$el.children().not('ul').remove()
-      @$el.hide()
       @controller.trigger('search:sub-content:show-spin')
       @undelegateEvents()
     )
@@ -108,24 +107,36 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
     @collection.get_items(data)
 
   render_error: (query) ->
+    return unless @active
     @controller.trigger('search:sub-content:hide-spin')
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
   
   render: =>
-    @$el.show()
+    # @$el.show()
+    # return unless @active
+    return @render_error(@query) if @collection.size() == 0
+    
+    @$el.children().not('.ajax-loader').remove()
     @controller.trigger('search:sub-content:hide-spin')
-    return @render_error(@data.query) if @collection.size() == 0
-    @active = true
-    console.log(@$el);
     # @$el.append($('<div>').css('text-align', 'left').css(
     #   'margin-bottom': '1em').append(
     #   $('<div class="cvr-dropped-query-results-label">').append(
     #     'Item Showed Comparison from Query : ' + @data.query )))
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
-    # @$el.append(@export_csv_button())
+    @$el.append(@export_csv_button())
+    console.log("added csv export")
     @delegateEvents()
+    # @active = true
     return this
+
+
+    
+    # @$el.append( @grid.render().$el)
+    # @$el.append( @paginator.render().$el)
+    # @$el.append( @export_csv_button() )
+    # @delegateEvents()
+    # this
 
 
