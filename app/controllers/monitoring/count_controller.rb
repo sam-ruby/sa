@@ -17,8 +17,14 @@ class Monitoring::CountController < BaseController
         end
       end
       format.csv do
-        render :json => QueryCountSpcDaily.get_words(
-          query, @date, 0)
+        results = QueryCountSpcDaily.get_words(
+          query, @date, 0).map do |record|
+            {'Query' => record.query_str,
+             'Query Score' => record.query_score.to_f.round(2),
+             'Count' => record.query_count,
+             'Conversion' => record.query_con.to_f.round(2)}
+          end
+          render :json => results 
       end
     end
   end

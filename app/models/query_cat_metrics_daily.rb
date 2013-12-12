@@ -2,12 +2,12 @@ class QueryCatMetricsDaily < BaseModel
   self.table_name = 'query_cat_metrics_daily'
 
   def self.get_search_words(
-    query, query_date, page=1, order_column='id', order='asc', limit=10)
+    query, query_date, page=1, order_column=nil, order='asc', limit=10)
     
     selects = %q{id, query, channel, query_revenue, query_count, 
       query_pvr, query_atc, query_con, cat_id, query_date}
     
-    if order_column.blank?
+    if order_column.nil?
       order_str = "sqrt(query_count)*(1-query_con) desc"
     else
       order_str = order_column
