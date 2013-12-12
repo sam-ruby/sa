@@ -58,8 +58,17 @@ class SearchController < BaseController
       end
       
       format.csv do
-        render :json => QueryCatMetricsDaily.get_query_stats_date(
-          query, @year, get_week_from_date(@date), @date, 0)
+        results = QueryCatMetricsDaily.get_query_stats_date(
+          query, @year, get_week_from_date(@date), @date, 0).map do |record|
+            {'Query' => record.query,
+             'Catalog Overlap' => record.cat_rate.to_f.round(2),
+             'Results Shown in Search' => record.show_rate.to_f.round(2),
+             'Overall Relevance Score' => record.rel_score.to_f.round(2),
+             'Rev Rank Correlation' => record.search_rev_rank_correlation.to_f.round(2),
+             'Revenue' => record.query_revenue.to_f.round(2),
+             'Count' => record.query_count}
+          end
+        render :json => results
       end
     end
   end
