@@ -128,7 +128,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     else
       @controller.trigger('query-monitoring-metrics:index')
 
-  update_path: (path) =>
+  update_path: (path, options=null) =>
     url_parts = window.location.hash.replace('#', '').split('filters')
     if url_parts.length > 0
       filters = url_parts[1]
@@ -138,5 +138,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       if new_path.indexOf('/') != (new_path.length - 1)
         new_path += '/'
       new_path += 'filters' + filters
-    @navigate(new_path, trigger: false)
+    options = {} unless options?
+    options['trigger'] ||= false
+    @navigate(new_path, options)
 

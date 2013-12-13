@@ -24,6 +24,20 @@ class CompAnalysisController < BaseController
         walmart_items = SearchQualityDaily.get_walmart_items(query, @date)
         render :json => walmart_items
       end
+      format.csv do 
+        walmart_items = SearchQualityDaily.get_walmart_items(
+          query, @date).map do |record|
+            {'Item Name' => record.title,
+             'Item Image URL' => record.image_url,
+             'Item Revenue' => record.item_revenue.to_f.round(2),
+             'Item Shown Count' => record.shown_count,
+             'Item Conversion' => record.item_con.to_f.round(2),
+             'Item ATC' => record.item_atc.to_f.round(2),
+             'Item PVR' => record.item_pvr.to_f.round(2)}
+          end
+        render :json => walmart_items
+      end
+
     end
   end
 
