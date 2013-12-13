@@ -61,9 +61,9 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     @init_date_picker(query_date, available_end_date)
 
   handle_search: (e) =>
-    console.log("search query_comparison_on" , @query_comparison_on);
     e.preventDefault()
     @search()
+
     # @clean_query_results()
 
   search: =>
@@ -71,22 +71,25 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
       weeks_apart: @query_form.find('select').val()
       query_date:@query_form.find('input.datepicker').datepicker('getDate').toString('M-d-yyyy')
       query:@query_form.find('input.query').val()
-    # console.log('search', data);
 
     data = @process_query_data(data);
+    new_path
     if @query_comparison_on
-       console.log("query_comparison_on", data);
-       @controller.trigger('search:cvr_dropped_query', data)
+       @controller.trigger('adhoc:cvr_dropped_query', data)
+       new_path = 'adhoc_query/mode/query_comparison'+ '/wks_apart/' + @data.weeks_apart + '/query_date/' + @data.query_date+'/query/'+ @data.query
     else
-      console.log("query_comparison_off")
-      @controller.trigger('search:search',query:data.query)
+      @controller.trigger('adhoc:search',query:data.query)
+      new_path = 'adhoc_query/mode/search'+'/query/'+ @data.query
+     
+    @router.update_path(new_path)
 
 
   reset_form:  =>
     # e.preventDefault()
     query_date = new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
     @query_form.find('.controls select').val(@default_week_apart+'')
-    @query_form.find('input.query').val('')
+    # @query_form.find('input.query').val('')
+    @clearSearchBox()
     @init_date_picker(query_date)
     @controller.trigger('sub-content-cleanup')
 
@@ -121,8 +124,12 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
  
   render_form: (data)=>
     #if there is data, it should come from router
+    # @query_comparison_on = data.query_comparison_on
     data = @process_query_data(data);
     $(@query_form).html(@form_template(data))
+    # @toggleRemoveIcon()
+    if data.query.length > 0
+      @query_form.find(".query_search_clear_icon").show()
 
     end_date = new Date(new Date(@current_date) - data.weeks_apart*7*24*60*60*1000)
     @init_date_picker(data.query_date, end_date)
@@ -151,8 +158,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     query = @query_form.find("input.query").val()
     if query.length > 0
       @query_form.find(".query_search_clear_icon").show()
-    else
-      
+    else     
       #if user press delete button and the box is empty
       @clearSearchBox()
 

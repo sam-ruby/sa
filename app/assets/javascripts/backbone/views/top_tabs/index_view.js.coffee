@@ -30,8 +30,9 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
       @controller.trigger('master-tabs:cleanup')
       @controller.trigger('content-cleanup')
       @controller.trigger('adhoc-query:index')
+      @controller.trigger('adhoc:cvr_dropped_query')
        # @controller.trigger('cvr-dropped-query:index')
-      @router.update_path('cvr_dropped_query')
+      @router.update_path('adhoc_query')
 
     'click li.query-monitoring-tab a': (e) =>
       e.preventDefault()

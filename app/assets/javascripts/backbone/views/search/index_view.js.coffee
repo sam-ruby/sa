@@ -88,7 +88,7 @@ class Searchad.Views.Search.IndexView extends Backbone.View
         that.controller.trigger('search:sub-content',
           query: query
           view: 'daily')
-        new_path = 'search/query/' + encodeURIComponent(query)
+        new_path = 'adhoc_query/mode/search/query/' + encodeURIComponent(query)
         that.router.update_path(new_path)
       
       render: =>
