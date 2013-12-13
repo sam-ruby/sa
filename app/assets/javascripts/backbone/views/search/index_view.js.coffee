@@ -8,9 +8,7 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     
     # @$search_form = $(options.el_form)
     @$search_results = $(options.el_results)
-
     @controller.bind('content-cleanup', @unrender)
-    # @controller.bind('sub-content-cleanup', @search_results_cleanup)
     @queryStatsCollection =
       new Searchad.Collections.QueryStatsDailyCollection()
     @initTable()
@@ -26,8 +24,8 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     @undelegateEvents()
 
   events: =>
-    'submit': 'do_search'
-    'click button.search-btn': 'do_search'
+    # 'submit': 'do_search'
+    # 'click button.search-btn': 'do_search'
     'click .export-csv a': (e) ->
       date = @controller.get_filter_params().date
       if @query
@@ -50,12 +48,9 @@ class Searchad.Views.Search.IndexView extends Backbone.View
   #   @$search_form.find('button.search-btn').first().trigger('click')
   
   do_search: (data) =>
-    # console.log("do_search", data);
-    # e.preventDefault()
     @active = true
     @search_results_cleanup()
     @query = data.query
-    # @query = @$search_form.find('input.search-query').val()
     
     @queryStatsCollection.query = @query
     @queryStatsCollection.get_items()
@@ -63,7 +58,6 @@ class Searchad.Views.Search.IndexView extends Backbone.View
 
   unrender: =>
     @active = false
-    # @$search_form.children().remove()
     @search_results_cleanup()
     @$el.find('.ajax-loader').hide()
     @undelegateEvents()
