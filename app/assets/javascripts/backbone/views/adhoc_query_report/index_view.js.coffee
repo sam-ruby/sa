@@ -14,31 +14,40 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     @query_comparison_on = true
     
   events:
-    'change input.checkAdvanced':'toggle_search_mode'
+    'change input.checkAdvanced':'click_toggle_search_mode'
     'click button.search': 'handle_search'
     # 'click button.reset': 'handle_reset'  
     'change .datepicker': 'change_date_picked'  #reset the div alert for selected dates when date range changed
     'change select.weeks-apart-select' : 'change_select'
-    "click i.query_search_clear_icon": "clearSearchBox"
+    "click i.query_search_clear_icon": "click_search_clear_icon"
     "input.query":"toggleRemoveIcon"
 
   form_template: JST['backbone/templates/adhoc_query/form']
 
   active: false
 
-  toggle_search_mode: (e)->
+  click_toggle_search_mode: (e)->
     @query_comparison_on = e.currentTarget.checked
+    @toggle_search_mode(@query_comparison_on)
+    # @reset_form()
+
+  toggle_search_mode: (query_comparison_on)->
+
     @controller.trigger('search:sub-tab-cleanup')
     @controller.trigger('sub-content-cleanup')
-    if @query_comparison_on
+    if query_comparison_on
       @query_form.find('.advanced').show()
       $('#search-results').hide()
       $('#cvr-dropped-query-results').show()
-      @reset_form();
+      # @query_form.find('input.checkAdvanced').attr( 'checked', query_comparison_on )
+      # @reset_form();
     else
       @query_form.find('.advanced').hide()
       $('#search-results').show()
       $('#cvr-dropped-query-results').hide()
+     # set checkbox to be query_comparison_on
+      # @query_form.find('input.checkAdvanced').attr( 'checked', query_comparison_on )
+      # @reset_form();
 
   #when changing selected date or week, repaint the alert info displayed. 
   change_date_picked: ->
@@ -74,6 +83,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
 
     data = @process_query_data(data);
     new_path
+    console.log(@query_comparison_on)
     if @query_comparison_on
        @controller.trigger('adhoc:cvr_dropped_query', data)
        new_path = 'adhoc_query/mode/query_comparison'+ '/wks_apart/' + @data.weeks_apart + '/query_date/' + @data.query_date+'/query/'+ @data.query
@@ -117,21 +127,27 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
       query_date = new Date(new Date(current_date) - data.weeks_apart*7*24*60*60*1000);
       data.query_date = query_date.toString('M-d-yyyy')
     #query
-    data.query = data.query || ""
+    if data.query
+      data.query = decodeURI(data.query)
+    else
+      data.query = ""
     @data = data  # @data is used for csv_export
     return data
  
  
   render_form: (data)=>
+    console.log("render_form", data)
     #if there is data, it should come from router
     # @query_comparison_on = data.query_comparison_on
     data = @process_query_data(data);
+    console.log("data_after_process", data);
     $(@query_form).html(@form_template(data))
     # @toggleRemoveIcon()
     if data.query.length > 0
       @query_form.find(".query_search_clear_icon").show()
 
     end_date = new Date(new Date(@current_date) - data.weeks_apart*7*24*60*60*1000)
+    console.log(data.query_date);
     @init_date_picker(data.query_date, end_date)
     @active = true
 
@@ -152,6 +168,9 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     #clear search box
     @query_form.find("input.query").val("")
     @query_form.find(".query_search_clear_icon").hide()
+    # @search()
+  click_search_clear_icon: =>
+    @clearSearchBox()
     @search()
 
   toggleRemoveIcon: =>

@@ -185,7 +185,11 @@ $ ->
       el_form: '#cvr-dropped-query-form'
     )
     adhocQueryView.listenTo(
-      controller, 'adhoc-query:index',adhocQueryView.render_form)
+      controller, 'adhoc-query:index',(data)->adhocQueryView.render_form(data))
+    adhocQueryView.listenTo(
+      controller, 'adhoc:toggle_search_mode',(query_comparison_on)->adhocQueryView.toggle_search_mode(query_comparison_on))
+
+    
 
     queryMonitoringCountView =
       new Searchad.Views.QueryMonitoring.Count.IndexView(
