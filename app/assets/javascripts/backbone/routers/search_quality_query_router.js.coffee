@@ -11,16 +11,17 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     
     "poor_performing(/query/:query)(/filters/*wday)": "poor_performing"
     
-    "search(/query/:query)(/filters/*wday)": "adhoc_search"
+    # "search(/query/:query)(/filters/*wday)": "adhoc_search"
     
     "query_monitoring/count(/query/:query)(/filters/*wday)":
       "query_monitoring_count"
     "query_monitoring/metrics(/query/:query)(/filters/*wday)":
       "query_monitoring_metrics"
-    # "query_comparison(/query/:query/wks_apart/:weeks/query_date/:date)(/filters/*wday)":
-    #   "query_comparison"
-    "cvr_dropped_query(wks_apart/:weeks/query_date/:date/query/:query)(/filters/*wday)":
-      "cvr_dropped_query"
+
+    # "adhoc_query(/mode/:mode/wks_apart/:weeks/query_date/:date)/query/(/filters/*wday)":
+    #   "adhoc_query"
+    "adhoc_query(/mode/:mode)(/wks_apart/:weeks)(/query_date/:date)(/query)(/)(:query)(/filters/*wday)":
+      "adhoc_query"
 
   set_date_info: (date_part) =>
     curr_date = $('#dp3').datepicker('getDate')
@@ -38,32 +39,30 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     else if curr_date != Selected_Date
       @controller.trigger('update_date', Selected_Date.toString('M-d-yyyy'))
 
-  # query_comparison: (query, weeks, search_date) =>
-  #   @controller.trigger('master-tabs:cleanup')
-  #   @controller.trigger('content-cleanup')
-  #   if query?
-  #     query = decodeURIComponent(query)
-  #     @controller.trigger('query-comparison:index',
-  #       query: query
-  #       weeks_apart: weeks
-  #       query_date: search_date)
-  #   else
-  #     @controller.trigger('query-comparison:index')
 
-
-  cvr_dropped_query: (weeks, date, query) =>
-    console.log("called cvr_dropped_query")
-    if weeks && date
-      # if query == "NULL"
-      #   query = ""
-      data=
-        weeks_apart: weeks
-        query_date: date
-        query: query
-
-      #data_process in render_form first. need to call result trigger after index trigger
+  adhoc_query: (mode, weeks, date, query) =>
+    # if weeks & date
+    console.log("in adhoc, mode", mode)
+    # console.log("mode", mode)
+    data=
+      weeks_apart: weeks
+      query_date: date
+      query: query
+      # query_comparison_on: false;
+    # console.log('data', data)
     @controller.trigger('adhoc-query:index',data)
-    # @controller.trigger('cvr-dropped-query:index', data)  
+
+    if mode=="query_comparison"
+      console.log("in comde_query_comparison")
+      @controller.trigger('adhoc:cvr_dropped_query', data)
+      return
+
+    else if mode == "search"
+      console.log("in mode search")
+      @controller.trigger('adhoc:search', data)
+      return
+
+    @controller.trigger('adhoc:cvr_dropped_query', data)
 
 
   search_rel: (query, date_parts) =>

@@ -124,7 +124,7 @@ $ ->
     # searchView.listenTo(
     #   controller, 'search:form', searchView.render)
     searchView.listenTo(
-      controller, 'search:search', (data) -> searchView.do_search(data))
+      controller, 'adhoc:search', (data) -> searchView.do_search(data))
     searchView.listenTo(
       controller, 'load-search-results', searchView.load_search_results)
 
@@ -162,20 +162,14 @@ $ ->
         queryItemsView.get_items(data)
     )
 
-
-
      #cvr dropped view
     cvrDroppedQueryView = new Searchad.Views.CVRDroppedQuery.IndexView(
       el: '#adhoc-query-report'
       el_results: '#cvr-dropped-query-results'
-      # el_form: '#cvr-dropped-query-form'
       )
 
-    console.log("init listener")
-    # cvrDroppedQueryView.listenTo(
-    #     controller, 'adhoc-query:index',cvrDroppedQueryView.render_form)
     cvrDroppedQueryView.listenTo(
-        controller, 'search:cvr_dropped_query', (data) -> cvrDroppedQueryView.get_items(data))
+        controller, 'adhoc:cvr_dropped_query', (data) -> cvrDroppedQueryView.get_items(data))
 
     #cvr_dropped_view when click on q query show the item comparison regarding that query
     cvrDroppedQueryItemComparisonView = new Searchad.Views.CVRDroppedQuery.ItemComparisonView {
