@@ -18,10 +18,10 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "query_monitoring/metrics(/query/:query)(/filters/*wday)":
       "query_monitoring_metrics"
 
-    # "adhoc_query(/mode/:mode/wks_apart/:weeks/query_date/:date)/query/(/filters/*wday)":
-    #   "adhoc_query"
-    "adhoc_query(/mode/:mode)(/wks_apart/:weeks)(/query_date/:date)(/query)(/)(:query)(/filters/*wday)":
-      "adhoc_query"
+    "adhoc_query/mode/search(/query)(/)(:query)(/filters/*wday)":
+      "adhoc_query_search"
+    "adhoc_query(/mode/query_comparison)(/wks_apart/:weeks)(/query_date/:date)(/query)(/)(:query)(/filters/*wday)":
+      "adhoc_query_comparison"
 
   set_date_info: (date_part) =>
     curr_date = $('#dp3').datepicker('getDate')
@@ -40,10 +40,18 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       @controller.trigger('update_date', Selected_Date.toString('M-d-yyyy'))
 
 
-  adhoc_query: (mode, weeks, date, query) =>
-    # if weeks & date
-    console.log("in adhoc, mode", mode)
-    # console.log("mode", mode)
+  adhoc_query_comparison: (weeks, date, query) =>
+    
+    # if weeks && date
+    #   data=
+    #     weeks_apart: weeks
+    #     query_date: date
+    #   #data_process in render_form first. need to call result trigger after index trigger
+    #   @controller.trigger('cvr-dropped-query:index', data)
+    #   @controller.trigger('cvr-dropped-query:result',data)
+    # else
+    #   @controller.trigger('cvr-dropped-query:index')
+
     data=
       weeks_apart: weeks
       query_date: date
@@ -51,18 +59,37 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       # query_comparison_on: false;
     # console.log('data', data)
     @controller.trigger('adhoc-query:index',data)
+    # if mode=="query_comparison"
+    #   console.log("in comde_query_comparison")
+    #   @controller.trigger('adhoc:cvr_dropped_query', data)
+    #   return
 
-    if mode=="query_comparison"
-      console.log("in comde_query_comparison")
-      @controller.trigger('adhoc:cvr_dropped_query', data)
-      return
-
-    else if mode == "search"
-      console.log("in mode search")
-      @controller.trigger('adhoc:search', data)
-      return
-
+    # else if mode == "search"
+    #   console.log("in mode search")
+    #   @controller.trigger('adhoc:search', data)
+    #   return
+    @controller.trigger('adhoc:toggle_search_mode', true)
     @controller.trigger('adhoc:cvr_dropped_query', data)
+
+  adhoc_query_search:(query) =>
+    data=
+      query: query
+      # query_comparison_on: false;
+    # console.log('data', data)
+    @controller.trigger('adhoc-query:index',data)
+    @controller.trigger('adhoc:toggle_search_mode', false)
+    # if mode=="query_comparison"
+    #   console.log("in comde_query_comparison")
+    #   @controller.trigger('adhoc:cvr_dropped_query', data)
+    #   return
+
+    # else if mode == "search"
+    #   console.log("in mode search")
+    #   @controller.trigger('adhoc:search', data)
+    #   return
+
+    @controller.trigger('adhoc:search', data)
+
 
 
   search_rel: (query, date_parts) =>

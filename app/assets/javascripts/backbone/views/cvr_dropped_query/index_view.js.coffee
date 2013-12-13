@@ -36,6 +36,8 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
   get_items: (data) ->
     if data== undefined
       data = @process_query_data(data)
+
+    console.log("cvr get item data", data);
     # reset is bind wiht render_query_results.
     @collection.reset();
     @collection.dataParam = data
@@ -112,8 +114,8 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
           # view: 'daily'
           tab: 'cvr-dropped-item-comparison')
  
-        new_path = new_path = 'cvr_dropped_query/mode/query_comparison'+ '/wks_apart/' + dataParam.weeks_apart + '/query_date/' + dataParam.query_date+"/query/"+ query
-        that.router.update_path(new_path)
+        # new_path = new_path = 'adhoc_query/mode/query_comparison'+ '/wks_apart/' + dataParam.weeks_apart + '/query_date/' + dataParam.query_date+"/query/"+ encodeURIComponent(query)
+        # that.router.update_path(new_path)
       
       render: =>
         value = @model.get(@column.get('name'))
