@@ -5,7 +5,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @controller.bind('content-cleanup', @unrender)
-    @query_form = $(options.el_form)
+    # @query_form = $(options.el_form)
     @query_results = $(options.el_results)
     @collection = new Searchad.Collections.CvrDroppedQueryCollection()
     @collection.bind('reset', @render_query_results)
@@ -26,139 +26,144 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     Utils.InitExportCsv(this, "/search/get_cvr_dropped_query.csv");
     
   events:
-    'change input.checkAdvanced':'toggle_search_mode'
-    'click button.search': 'handle_search'
-    'click button.reset': 'handle_reset'  
-    'change .datepicker': 'change_date_picked'  #reset the div alert for selected dates when date range changed
-    'change select.weeks-apart-select' : 'change_select'
+    # 'change input.checkAdvanced':'toggle_search_mode'
+    # 'click button.search': 'handle_search'
+    # 'click button.reset': 'handle_reset'  
+    # 'change .datepicker': 'change_date_picked'  #reset the div alert for selected dates when date range changed
+    # 'change select.weeks-apart-select' : 'change_select'
     'click .export-csv a': (e) ->
       fileName = "conversion_rate_dropped_query analysis_for #{@data.query_date}_week_apart_#{@data.weeks_apart}.csv"
       @export_csv($(e.target), fileName, @data)
 
-  form_template: JST['backbone/templates/cvr_dropped_query/form']
+  # form_template: JST['backbone/templates/cvr_dropped_query/form']
 
   active: false
 
-  toggle_search_mode: (e)->
-    @query_comparison_on = e.currentTarget.checked
-    @controller.trigger('search:sub-tab-cleanup')
-    @controller.trigger('sub-content-cleanup')
-    if @query_comparison_on
-      @query_form.find('.advanced').show()
-      $('#search-results').hide()
-      @query_results.show()
-      @get_items();
-    else
-      @query_form.find('.advanced').hide()
-      $('#search-results').show()
-      @query_results.hide()
-  #when changing selected date or week, repaint the alert info displayed. 
-  change_date_picked: ->
-    weeks_apart= @query_form.find('select').val()
-    query_date= @query_form.find('input.datepicker').datepicker('getDate')
-    #reset alert ino for selected dates;
-    before_start_date = new Date(new Date(query_date) - weeks_apart*7*24*60*60*1000).toString('MMM, d, yyyy'); 
-    before_end_date = new Date(new Date(query_date) - 24*60*60*1000).toString('MMM, d, yyyy'); 
-    after_start_date = query_date .toString('MMM, d, yyyy')
-    after_end_date = new Date(new Date(query_date) - (-(weeks_apart*7-1)*24*60*60*1000)).toString('MMM, d, yyyy'); 
-    $('.date_range_display').html('Conversion Rate Dropped Query Comparison Report between ['+ before_start_date+' to '+ before_end_date + '] and [' + after_start_date + ' to ' +  after_end_date + ']');
+  # toggle_search_mode: (e)->
+  #   @query_comparison_on = e.currentTarget.checked
+  #   @controller.trigger('search:sub-tab-cleanup')
+  #   @controller.trigger('sub-content-cleanup')
+  #   if @query_comparison_on
+  #     @query_form.find('.advanced').show()
+  #     $('#search-results').hide()
+  #     @query_results.show()
+  #     @get_items();
+  #   else
+  #     @query_form.find('.advanced').hide()
+  #     $('#search-results').show()
+  #     @query_results.hide()
+  # #when changing selected date or week, repaint the alert info displayed. 
+  # change_date_picked: ->
+  #   weeks_apart= @query_form.find('select').val()
+  #   query_date= @query_form.find('input.datepicker').datepicker('getDate')
+  #   #reset alert ino for selected dates;
+  #   before_start_date = new Date(new Date(query_date) - weeks_apart*7*24*60*60*1000).toString('MMM, d, yyyy'); 
+  #   before_end_date = new Date(new Date(query_date) - 24*60*60*1000).toString('MMM, d, yyyy'); 
+  #   after_start_date = query_date .toString('MMM, d, yyyy')
+  #   after_end_date = new Date(new Date(query_date) - (-(weeks_apart*7-1)*24*60*60*1000)).toString('MMM, d, yyyy'); 
+  #   $('.date_range_display').html('Conversion Rate Dropped Query Comparison Report between ['+ before_start_date+' to '+ before_end_date + '] and [' + after_start_date + ' to ' +  after_end_date + ']');
 
   
-  change_select: ->
-    weeks_apart= @query_form.find('select').val()
-    query_date= @query_form.find('input.datepicker').datepicker('getDate')
-    # set date_picker available dates. since week_range change
-    @change_date_picked()
-    available_end_date = new Date(new Date(@current_date) - weeks_apart*7*24*60*60*1000)
-    @init_date_picker(query_date, available_end_date)
+  # change_select: ->
+  #   weeks_apart= @query_form.find('select').val()
+  #   query_date= @query_form.find('input.datepicker').datepicker('getDate')
+  #   # set date_picker available dates. since week_range change
+  #   @change_date_picked()
+  #   available_end_date = new Date(new Date(@current_date) - weeks_apart*7*24*60*60*1000)
+  #   @init_date_picker(query_date, available_end_date)
 
-  handle_search: (e) =>
-    console.log("search query_comparison_on" , @query_comparison_on);
-    e.preventDefault()
-    @clean_query_results()
-    data =
-      weeks_apart: @query_form.find('select').val()
-      query_date:@query_form.find('input.datepicker').datepicker('getDate').toString('M-d-yyyy')
-      query:@query_form.find('input.query').val()
+  # handle_search: (e) =>
+  #   console.log("search query_comparison_on" , @query_comparison_on);
+  #   e.preventDefault()
+  #   @clean_query_results()
+  #   data =
+  #     weeks_apart: @query_form.find('select').val()
+  #     query_date:@query_form.find('input.datepicker').datepicker('getDate').toString('M-d-yyyy')
+  #     query:@query_form.find('input.query').val()
 
-    data = @process_query_data(data);
-    if @query_comparison_on
-      console.log("query_comparison_on")
-      new_path = 'cvr_dropped_query'+ '/wks_apart/' + data.weeks_apart + '/query_date/' + data.query_date+"/query/"+data.query
-      @router.update_path(new_path)
-      @get_items(data)
-    else
-      console.log("query_comparison_off")
-      @controller.trigger('search:search',query:data.query)
+  #   data = @process_query_data(data);
+  #   if @query_comparison_on
+  #     console.log("query_comparison_on")
+  #     new_path = 'cvr_dropped_query'+ '/wks_apart/' + data.weeks_apart + '/query_date/' + data.query_date+"/query/"+data.query
+  #     @router.update_path(new_path)
+  #     @get_items(data)
+  #   else
+  #     console.log("query_comparison_off")
+  #     @controller.trigger('search:search',query:data.query)
 
 
-  handle_reset: (e) =>
-    e.preventDefault()
-    @clean_query_results()
-    query_date = new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
-    @query_form.find('.controls select').val(@default_week_apart+'')
-    @query_form.find('input.query').val()
-    console.log(query_date);
-    @init_date_picker(query_date);
-    @query_form.find('.cvr-dropped-query-results-label').html
-    @controller.trigger('sub-content-cleanup')
-    @controller.trigger('search:sub-tab-cleanup')
+  # handle_reset: (e) =>
+  #   e.preventDefault()
+  #   @clean_query_results()
+  #   query_date = new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
+  #   @query_form.find('.controls select').val(@default_week_apart+'')
+  #   @query_form.find('input.query').val()
+  #   console.log(query_date);
+  #   @init_date_picker(query_date);
+  #   @query_form.find('.cvr-dropped-query-results-label').html
+  #   @controller.trigger('sub-content-cleanup')
+  #   @controller.trigger('search:sub-tab-cleanup')
   
-  init_date_picker: (default_selected_date, available_end_date) =>
-    available_end_date = available_end_date || new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
-    my_date_picker = @query_form.find('input.datepicker')
-    # needs to remove first to make sure date_picker refreshes. 
-    my_date_picker.datepicker("remove");
-    my_date_picker.datepicker({
-      endDate: available_end_date})
-    my_date_picker.datepicker('update', default_selected_date)
+  # init_date_picker: (default_selected_date, available_end_date) =>
+  #   available_end_date = available_end_date || new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
+  #   my_date_picker = @query_form.find('input.datepicker')
+  #   # needs to remove first to make sure date_picker refreshes. 
+  #   my_date_picker.datepicker("remove");
+  #   my_date_picker.datepicker({
+  #     endDate: available_end_date})
+  #   my_date_picker.datepicker('update', default_selected_date)
     
 
-  #process data from router
-  process_query_data:(data) =>
-    data = data || {}
-    #set_week_apart
-    if data.weeks_apart
-      data.weeks_apart= parseInt(data.weeks_apart)
-    else
-      data.weeks_apart = 2;
-    #query_date
-    if !data.query_date
-      current_date= @controller.get_filter_params()['date']
-      query_date = new Date(new Date(current_date) - data.weeks_apart*7*24*60*60*1000);
-      data.query_date = query_date.toString('M-d-yyyy')
-    #query
+  # #process data from router
+  # process_query_data:(data) =>
+  #   data = data || {}
+  #   #set_week_apart
+  #   if data.weeks_apart
+  #     data.weeks_apart= parseInt(data.weeks_apart)
+  #   else
+  #     data.weeks_apart = 2;
+  #   #query_date
+  #   if !data.query_date
+  #     current_date= @controller.get_filter_params()['date']
+  #     query_date = new Date(new Date(current_date) - data.weeks_apart*7*24*60*60*1000);
+  #     data.query_date = query_date.toString('M-d-yyyy')
+  #   #query
 
 
-    data.query = data.query || ""
-    # console.log("process_data", data)
-    # set collection data(query params) for pagination. 
-    @collection.dataParam = data
-    @data = data  # @data is used for csv_export
-    return data
+  #   data.query = data.query || ""
+  #   # console.log("process_data", data)
+  #   # set collection data(query params) for pagination. 
+  #   @collection.dataParam = data
+  #   @data = data  # @data is used for csv_export
+  #   return data
   
   get_items: (data) ->
-    # reset is bind wiht render_query_results. 
+    # reset is bind wiht render_query_results.
+    console.log("get_items", data) 
+
     @collection.reset();
-    console.log("get_items")
+    @collection.dataParam = data
+    
+    @data = data
     # if query is undefined, set it to "NULL". Backend controller
     # data.query = data.query || "NULL"
     @collection.get_items(data)
     @active = true
     @trigger = true
  
-  render_form: (data)=>
-    # $('#data-container').children().not('#cvr-dropped-query').hide();
-    # @$el.show();
-    #if there is data, it should come from router
-    data = @process_query_data(data);
-    $(@query_form).html(@form_template(data))
+  # render_form: (data)=>
+  #   # $('#data-container').children().not('#cvr-dropped-query').hide();
+  #   # @$el.show();
+  #   #if there is data, it should come from router
+  #   data = @process_query_data(data);
+  #   $(@query_form).html(@form_template(data))
 
-    end_date = new Date(new Date(@current_date) - data.weeks_apart*7*24*60*60*1000)
-    @init_date_picker(data.query_date, end_date)
-    @active = true
+  #   end_date = new Date(new Date(@current_date) - data.weeks_apart*7*24*60*60*1000)
+  #   @init_date_picker(data.query_date, end_date)
+  #   @active = true
 
   render_query_results: =>
+    # console.log("render_query_results", @collection);
     @query_results.find('.ajax-loader').hide()
     if @collection.length == 0
       return @render_error() 
@@ -283,7 +288,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
  
   unrender: =>
     # @$el.hide();
-    @query_form.children().remove()
+    # @query_form.children().remove()
     @clean_query_results()
     @active = false
 
