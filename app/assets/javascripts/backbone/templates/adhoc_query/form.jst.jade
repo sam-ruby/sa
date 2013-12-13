@@ -5,6 +5,12 @@ form.form-horizontal.cvr-dropped-query-form
     label.control-label(for='query') Search for Query
     .controls
       input.input-xxlarge.query(type='text', value=query)
+      i.query_search_clear_icon.icon-remove-sign(style='display: inline; position: relative; left: -20px; cursor: pointer; display: none; color: grey;')
+      input(type='hidden', name='type', value='videos')
+        input#keyword(name='keyword', value='Search Videos')
+        i.icon-search.icon-1x
+
+
       | &nbsp;
       input.checkAdvanced(type='checkbox', checked='checked')
       | &nbsp;
