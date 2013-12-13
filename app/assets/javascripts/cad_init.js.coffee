@@ -119,7 +119,8 @@ $ ->
     searchView = new Searchad.Views.Search.IndexView(
       el: '#search'
       el_results: '#search-results'
-      el_form: '#search-form')
+      )
+      # el_form: '#search-form')
     searchView.listenTo(
       controller, 'search:form', searchView.render)
     searchView.listenTo(
@@ -162,17 +163,17 @@ $ ->
     )
 
     # Search Comparison
-    searchComparisonView =
-      new Searchad.Views.SearchComparison.IndexView(
-        el: '#query-comparison-fcharts'
-        form_selector: '#query-form'
-        before_selector: '#before-data'
-        after_selector: '#after-data'
-        comparison_selector: '#comparison-data'
-        recent_searches_selector: '#recent-searches'
-      )
-    searchComparisonView.listenTo(controller, 'query-comparison:index',
-      searchComparisonView.get_items)
+    # searchComparisonView =
+    #   new Searchad.Views.SearchComparison.IndexView(
+    #     el: '#query-comparison-fcharts'
+    #     form_selector: '#query-form'
+    #     before_selector: '#before-data'
+    #     after_selector: '#after-data'
+    #     comparison_selector: '#comparison-data'
+    #     recent_searches_selector: '#recent-searches'
+    #   )
+    # searchComparisonView.listenTo(controller, 'query-comparison:index',
+    #   searchComparisonView.get_items)
 
      #cvr dropped view
     cvrDroppedQueryView = new Searchad.Views.CVRDroppedQuery.IndexView(
@@ -180,9 +181,9 @@ $ ->
       el_results: '.cvr-dropped-query-results'
       el_form: '.cvr-dropped-query-form')
     cvrDroppedQueryView.listenTo(
-        controller, 'cvr-dropped-query:index',cvrDroppedQueryView.render_form)
+        controller, 'adhoc-query:index',cvrDroppedQueryView.render_form)
     cvrDroppedQueryView.listenTo(
-        controller, 'cvr-dropped-query:index',cvrDroppedQueryView.get_items)
+        controller, 'adhoc-query:index',cvrDroppedQueryView.get_items)
     # cvrDroppedQueryView.listenTo(
     #   controller, 'cvr-dropped-query:result', cvrDroppedQueryView.get_items)
 

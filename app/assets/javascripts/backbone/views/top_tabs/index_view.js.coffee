@@ -8,8 +8,8 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
     @controller.bind('search-rel:index', @overview)
     @controller.bind('poor-performing:index', @overview)
     
-    @controller.bind('query-comparison:index', @adhoc)
-    @controller.bind('search:form', @adhoc)
+    @controller.bind('adhoc-query:index', @adhoc)
+    # @controller.bind('search:form', @adhoc)
     
     @controller.bind('query-monitoring-count:index', @query_monitoring)
     @controller.bind('query-monitoring-metrics:index', @query_monitoring)
@@ -29,8 +29,9 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
       e.preventDefault()
       @controller.trigger('master-tabs:cleanup')
       @controller.trigger('content-cleanup')
-      @controller.trigger('query-comparison:index')
-      @router.update_path('query_comparison')
+      @controller.trigger('adhoc-query:index')
+       # @controller.trigger('cvr-dropped-query:index')
+      @router.update_path('cvr_dropped_query')
 
     'click li.query-monitoring-tab a': (e) =>
       e.preventDefault()
