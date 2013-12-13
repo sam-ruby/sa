@@ -6,24 +6,12 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     @router = SearchQualityApp.Router
     @controller.bind('content-cleanup', @unrender)
     @query_form = $(options.el_form)
-    # @query_results = $(options.el_results)
-    # @collection = new Searchad.Collections.CvrDroppedQueryCollection()
-    # @collection.bind('reset', @render_query_results)
-    # @collection.bind('request', =>
-    #   @search_results_cleanup()
-    #   @controller.trigger('search:sub-tab-cleanup')
-    #   @query_results.find('.ajax-loader').css('display', 'block')
-    #   @controller.trigger('sub-content-cleanup')
-    # )
-    # class_variables
     @available_end_date = new Date(new Date(@controller.get_filter_params()['date']) - 2*7*24*60*60*1000)
     @default_week_apart = 2
     @current_date = @controller.get_filter_params()['date']
     @data
     #by default, turn on query_comparison. if it is false, it means on adhoc search mode
     @query_comparison_on = true
-    # init_csv_export_button
-    # Utils.InitExportCsv(this, "/search/get_cvr_dropped_query.csv");
     
   events:
     'change input.checkAdvanced':'toggle_search_mode'
@@ -31,11 +19,10 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     # 'click button.reset': 'handle_reset'  
     'change .datepicker': 'change_date_picked'  #reset the div alert for selected dates when date range changed
     'change select.weeks-apart-select' : 'change_select'
-    'click .export-csv a': (e) ->
-      fileName = "conversion_rate_dropped_query analysis_for #{@data.query_date}_week_apart_#{@data.weeks_apart}.csv"
-      @export_csv($(e.target), fileName, @data)
+    "click i.query_search_clear_icon": "clearSearchBox"
+    "input.query":"toggleRemoveIcon"
 
-  form_template: JST['backbone/templates/cvr_dropped_query/form']
+  form_template: JST['backbone/templates/adhoc_query/form']
 
   active: false
 
@@ -47,13 +34,11 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
       @query_form.find('.advanced').show()
       $('#search-results').hide()
       $('#cvr-dropped-query-results').show()
-      # @query_results.show()
-      # @get_items();
+      @reset_form();
     else
       @query_form.find('.advanced').hide()
       $('#search-results').show()
       $('#cvr-dropped-query-results').hide()
-      # @query_results.hide()
 
   #when changing selected date or week, repaint the alert info displayed. 
   change_date_picked: ->
@@ -78,36 +63,33 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
   handle_search: (e) =>
     console.log("search query_comparison_on" , @query_comparison_on);
     e.preventDefault()
+    @search()
     # @clean_query_results()
+
+  search: =>
     data =
       weeks_apart: @query_form.find('select').val()
       query_date:@query_form.find('input.datepicker').datepicker('getDate').toString('M-d-yyyy')
       query:@query_form.find('input.query').val()
+    # console.log('search', data);
 
     data = @process_query_data(data);
     if @query_comparison_on
        console.log("query_comparison_on", data);
        @controller.trigger('search:cvr_dropped_query', data)
-      # new_path = 'cvr_dropped_query'+ '/wks_apart/' + data.weeks_apart + '/query_date/' + data.query_date+"/query/"+data.query
-      # @router.update_path(new_path)
-      # @get_items(data)
     else
       console.log("query_comparison_off")
       @controller.trigger('search:search',query:data.query)
 
 
-  # handle_reset: (e) =>
-  #   e.preventDefault()
-  #   # @clean_query_results()
-  #   query_date = new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
-  #   @query_form.find('.controls select').val(@default_week_apart+'')
-  #   @query_form.find('input.query').val()
-  #   console.log(query_date);
-  #   @init_date_picker(query_date);
-  #   @query_form.find('.cvr-dropped-query-results-label').html
-  #   @controller.trigger('sub-content-cleanup')
-  #   @controller.trigger('search:sub-tab-cleanup')
-  
+  reset_form:  =>
+    # e.preventDefault()
+    query_date = new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
+    @query_form.find('.controls select').val(@default_week_apart+'')
+    @query_form.find('input.query').val('')
+    @init_date_picker(query_date)
+    @controller.trigger('sub-content-cleanup')
+
   init_date_picker: (default_selected_date, available_end_date) =>
     available_end_date = available_end_date || new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
     my_date_picker = @query_form.find('input.datepicker')
@@ -132,28 +114,12 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
       query_date = new Date(new Date(current_date) - data.weeks_apart*7*24*60*60*1000);
       data.query_date = query_date.toString('M-d-yyyy')
     #query
-
-
     data.query = data.query || ""
-    # console.log("process_data", data)
-    # set collection data(query params) for pagination. 
-    # @collection.dataParam = data
     @data = data  # @data is used for csv_export
     return data
-  
-  # get_items: (data) ->
-  #   # reset is bind wiht render_query_results. 
-  #   @collection.reset();
-  #   console.log("get_items")
-  #   # if query is undefined, set it to "NULL". Backend controller
-  #   # data.query = data.query || "NULL"
-  #   @collection.get_items(data)
-  #   @active = true
-  #   @trigger = true
+ 
  
   render_form: (data)=>
-    # $('#data-container').children().not('#cvr-dropped-query').hide();
-    # @$el.show();
     #if there is data, it should come from router
     data = @process_query_data(data);
     $(@query_form).html(@form_template(data))
@@ -162,33 +128,6 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     @init_date_picker(data.query_date, end_date)
     @active = true
 
-  # render_query_results: =>
-  #   @query_results.find('.ajax-loader').hide()
-  #   if @collection.length == 0
-  #     return @render_error() 
-    
-  #   # if (@data.query!= "NULL")
-  #   #   @query_form.find('.cvr-dropped-query-results-label').html('Query Comparison for ' + @data.query )  
-  #   # else 
-  #   #   @query_form.find('.cvr-dropped-query-results-label').html('Conversion Rate Dropped Query Top 500 Report')
-
-  #   @initCvrDroppedQueryTable()
-  #   result_label
-  #   if (@data.query== "")
-  #     result_label = 'Conversion Rate Dropped Query Top 500 Report'
-  #   else 
-  #    result_label = 'Query Comparison for ' + @data.query  
-
-  #   @query_results.append('<div class="cvr-dropped-query-results-label">'+result_label+'</div>')
-  #   # ('<div class = "cvr-dropped-query-results-label">'+ result_label +'</div>')
-  #   @query_results.append(@grid.render().$el)
-  #   @query_results.append(@paginator.render().$el)
-  #   @query_results.append(@export_csv_button())
-  #   if @trigger
-  #     @trigger = false
-  #   @$el.find('td a.query').first().trigger('click')
-  #   $("li.cvr-dropped-item-comparison").show();
-  #   this
 
   search_results_cleanup: =>
     @query_results.children().not('.ajax-loader').remove()
@@ -199,11 +138,22 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
       'label label-important').append("No data available"))
  
   unrender: =>
-    # @$el.hide();
     @query_form.children().remove()
-    # @clean_query_results()
     @active = false
 
-  # clean_query_results: =>
-  #    @query_results.children().not('.ajax-loader').remove()
+  clearSearchBox: => 
+    #clear search box
+    @query_form.find("input.query").val("")
+    @query_form.find(".query_search_clear_icon").hide()
+    @search()
+
+  toggleRemoveIcon: =>
+    query = @query_form.find("input.query").val()
+    if query.length > 0
+      @query_form.find(".query_search_clear_icon").show()
+    else
+      
+      #if user press delete button and the box is empty
+      @clearSearchBox()
+
 
