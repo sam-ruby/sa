@@ -20,7 +20,8 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @default_week_apart = 2
     @current_date = @controller.get_filter_params()['date']
     @data
-    @query_comparison_on
+    #by default, turn on query_comparison. if it is false, it means on adhoc search mode
+    @query_comparison_on = true
     # init_csv_export_button
     Utils.InitExportCsv(this, "/search/get_cvr_dropped_query.csv");
     
@@ -72,19 +73,22 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @init_date_picker(query_date, available_end_date)
 
   handle_search: (e) =>
+    console.log("search query_comparison_on" , @query_comparison_on);
     e.preventDefault()
     @clean_query_results()
     data =
       weeks_apart: @query_form.find('select').val()
       query_date:@query_form.find('input.datepicker').datepicker('getDate').toString('M-d-yyyy')
-      query:@query_form.find('input.query').val() || "NULL"
+      query:@query_form.find('input.query').val()
 
     data = @process_query_data(data);
     if @query_comparison_on
+      console.log("query_comparison_on")
       new_path = 'cvr_dropped_query'+ '/wks_apart/' + data.weeks_apart + '/query_date/' + data.query_date+"/query/"+data.query
       @router.update_path(new_path)
       @get_items(data)
     else
+      console.log("query_comparison_off")
       @controller.trigger('search:search',query:data.query)
 
 
@@ -124,7 +128,9 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
       query_date = new Date(new Date(current_date) - data.weeks_apart*7*24*60*60*1000);
       data.query_date = query_date.toString('M-d-yyyy')
     #query
-    data.query = data.query || "NULL"
+
+
+    data.query = data.query || ""
     # console.log("process_data", data)
     # set collection data(query params) for pagination. 
     @collection.dataParam = data
@@ -134,6 +140,9 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
   get_items: (data) ->
     # reset is bind wiht render_query_results. 
     @collection.reset();
+    console.log("get_items")
+    # if query is undefined, set it to "NULL". Backend controller
+    # data.query = data.query || "NULL"
     @collection.get_items(data)
     @active = true
     @trigger = true
@@ -154,12 +163,20 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     if @collection.length == 0
       return @render_error() 
     
-    if (@data.query!= "NULL")
-      @query_form.find('.cvr-dropped-query-results-label').html('Query Comparison for ' + @data.query )  
-    else 
-      @query_form.find('.cvr-dropped-query-results-label').html('Conversion Rate Dropped Query Top 500 Report')
+    # if (@data.query!= "NULL")
+    #   @query_form.find('.cvr-dropped-query-results-label').html('Query Comparison for ' + @data.query )  
+    # else 
+    #   @query_form.find('.cvr-dropped-query-results-label').html('Conversion Rate Dropped Query Top 500 Report')
 
     @initCvrDroppedQueryTable()
+    result_label
+    if (@data.query== "")
+      result_label = 'Conversion Rate Dropped Query Top 500 Report'
+    else 
+     result_label = 'Query Comparison for ' + @data.query  
+
+    @query_results.append('<div class="cvr-dropped-query-results-label">'+result_label+'</div>')
+    # ('<div class = "cvr-dropped-query-results-label">'+ result_label +'</div>')
     @query_results.append(@grid.render().$el)
     @query_results.append(@paginator.render().$el)
     @query_results.append(@export_csv_button())
