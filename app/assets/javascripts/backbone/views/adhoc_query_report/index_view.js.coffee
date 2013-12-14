@@ -58,7 +58,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     before_end_date = new Date(new Date(query_date) - 24*60*60*1000).toString('MMM, d, yyyy'); 
     after_start_date = query_date .toString('MMM, d, yyyy')
     after_end_date = new Date(new Date(query_date) - (-(weeks_apart*7-1)*24*60*60*1000)).toString('MMM, d, yyyy'); 
-    $('.date_range_display').html('Conversion Rate Dropped Query Comparison Report between ['+ before_start_date+' to '+ before_end_date + '] and [' + after_start_date + ' to ' +  after_end_date + ']');
+    $('.date_range_display').html('<p class= "selected_date_range_text">Selected <span>'+ before_start_date+' to '+ before_end_date + ' as before</span> and <span>' + after_start_date + ' to ' +  after_end_date + '</span> as after</p>');
 
   
   change_select: ->

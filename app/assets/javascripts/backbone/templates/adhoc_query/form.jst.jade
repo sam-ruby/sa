@@ -1,6 +1,4 @@
 form.form-horizontal.cvr-dropped-query-form
-  .cvr-dropped-selected-result.alert.alert-info.date_range_display.advanced
-
   .control-group
     label.control-label(for='query') Search for Query
     .controls
@@ -17,7 +15,7 @@ form.form-horizontal.cvr-dropped-query-form
       | Advanced
 
   .control-group.advanced
-    label.control-label(for='date-picker') Date within (before and after)
+    label.control-label(for='date-picker') Date Range
     .controls
       select.weeks-apart-select
         each val in [1, 2, 3 ,4]
@@ -32,6 +30,9 @@ form.form-horizontal.cvr-dropped-query-form
       | &nbsp;
       input.input-small.datepicker(type='text', 'data-date-format'='M d, yyyy',
         'data-date-autoclose'='true')
+
+    .controls
+      .cvr-dropped-selected-result.date_range_display.advanced(style = 'margin-top:10px')
 
   .control-group
     .controls
