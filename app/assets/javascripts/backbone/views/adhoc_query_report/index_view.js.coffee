@@ -12,9 +12,12 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     @data
     #by default, turn on query_comparison. if it is false, it means on adhoc search mode
     @query_comparison_on = true
+    @switch_simple_search_text = "Switch to Simple Search"
+    @switch_query_comparison_text = "Switch to Query Comparison"
     
   events:
-    'change input.checkAdvanced':'click_toggle_search_mode'
+    # 'change input.checkAdvanced':'click_toggle_search_mode'
+    'click #switch-mode-btn': 'click_toggle_search_mode'
     'click button.search': 'handle_search'
     # 'click button.reset': 'handle_reset'  
     'change .datepicker': 'change_date_picked'  #reset the div alert for selected dates when date range changed
@@ -26,8 +29,14 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
 
   active: false
 
-  click_toggle_search_mode: (e)->
-    @query_comparison_on = e.currentTarget.checked
+  click_toggle_search_mode:(e) ->
+    console.log('click_toggle_search_mode')
+    e.preventDefault();
+    search_mode = @query_form.find('span.switch_mode_text').text()
+    if search_mode == @switch_simple_search_text
+      @query_comparison_on = false
+    else 
+      @query_comparison_on = true
     @toggle_search_mode(@query_comparison_on)
     # @reset_form()
 
@@ -39,12 +48,14 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
       @query_form.find('.advanced').show()
       $('#search-results').hide()
       $('#cvr-dropped-query-results').show()
+      @query_form.find('span.switch_mode_text').text(@switch_simple_search_text)
       # @query_form.find('input.checkAdvanced').attr( 'checked', query_comparison_on )
       # @reset_form();
     else
       @query_form.find('.advanced').hide()
       $('#search-results').show()
       $('#cvr-dropped-query-results').hide()
+      @query_form.find('span.switch_mode_text').text(@switch_query_comparison_text)
      # set checkbox to be query_comparison_on
       # @query_form.find('input.checkAdvanced').attr( 'checked', query_comparison_on )
       # @reset_form();
@@ -142,6 +153,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     data = @process_query_data(data);
     console.log("data_after_process", data);
     $(@query_form).html(@form_template(data))
+    $(@query_form).find('span.label-search-mode').addClass('white-label-btn')
     # @toggleRemoveIcon()
     if data.query.length > 0
       @query_form.find(".query_search_clear_icon").show()

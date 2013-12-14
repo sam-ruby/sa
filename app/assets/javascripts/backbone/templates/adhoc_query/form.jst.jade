@@ -10,9 +10,15 @@ form.form-horizontal.cvr-dropped-query-form
 
 
       | &nbsp;
-      input.checkAdvanced(type='checkbox', checked='checked')
-      | &nbsp;
-      | Advanced
+      span.label.label-info.label-search-mode
+        a#switch-mode-btn(href='#')
+          i.icon.icon-th-large 
+          | &nbsp; 
+          span.switch_mode_text Switch to Simple Search
+
+      //- input.checkAdvanced(type='checkbox', checked='checked')
+      //- | &nbsp;
+      //- | Advanced
 
   .control-group.advanced
     label.control-label(for='date-picker') Date Range
