@@ -49,16 +49,12 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
       $('#search-results').hide()
       $('#cvr-dropped-query-results').show()
       @query_form.find('span.switch_mode_text').text(@switch_simple_search_text)
-      # @query_form.find('input.checkAdvanced').attr( 'checked', query_comparison_on )
-      # @reset_form();
     else
       @query_form.find('.advanced').hide()
       $('#search-results').show()
       $('#cvr-dropped-query-results').hide()
       @query_form.find('span.switch_mode_text').text(@switch_query_comparison_text)
-     # set checkbox to be query_comparison_on
-      # @query_form.find('input.checkAdvanced').attr( 'checked', query_comparison_on )
-      # @reset_form();
+
 
   #when changing selected date or week, repaint the alert info displayed. 
   change_date_picked: ->
