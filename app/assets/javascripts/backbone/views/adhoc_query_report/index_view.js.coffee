@@ -1,3 +1,16 @@
+###
+AdhocQuery Report View
+@author Linghua Jin
+@since Dec, 2013
+@class Searchad.Views.AdhocQuery.IndexView
+@extend Backbone.View
+
+This view main renders the form for adhoc query_report. This view triggers the behavior of two sub views 1) query_comparison 
+as advanced mode and 2) search_view 
+When click on the toggle button, it would swicth the behavior for the two subview
+
+###
+
 Searchad.Views.AdhocQuery||= {}
 
 class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
@@ -16,10 +29,8 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     @switch_query_comparison_text = "Switch to Query Comparison"
     
   events:
-    # 'change input.checkAdvanced':'click_toggle_search_mode'
     'click #switch-mode-btn': 'click_toggle_search_mode'
     'click button.search': 'handle_search'
-    # 'click button.reset': 'handle_reset'  
     'change .datepicker': 'change_date_picked'  #reset the div alert for selected dates when date range changed
     'change select.weeks-apart-select' : 'change_select'
     "click i.query_search_clear_icon": "click_search_clear_icon"
@@ -39,13 +50,14 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     @toggle_search_mode(@query_comparison_on)
     # @reset_form()
 
+  # this toggle_search_mode is not only triggerd by click_toogle_search_mode, it also get triggered by the places where 
+  #initialize the page. Like the router, or the top_tabs. 
   toggle_search_mode: (query_comparison_on)->
 
     @controller.trigger('search:sub-tab-cleanup')
     @controller.trigger('sub-content-cleanup')
     @query_comparison_on = query_comparison_on;
 
-    console.log(">< --------------query_comparsion_on", @query_comparison_on);
     if query_comparison_on
       @query_form.find('.advanced').show()
       $('#search-results').hide()
@@ -69,7 +81,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     after_end_date = new Date(new Date(query_date) - (-(weeks_apart*7-1)*24*60*60*1000)).toString('MMM, d, yyyy'); 
     $('.date_range_display').html('<p class= "selected_date_range_text">Selected <span>'+ before_start_date+' to '+ before_end_date + ' as before</span> and <span>' + after_start_date + ' to ' +  after_end_date + '</span> as after</p>');
 
-  
+  # when the selected window changes, this function is needed to change thw availabe date on the datepicker input
   change_select: ->
     weeks_apart= @query_form.find('select').val()
     query_date= @query_form.find('input.datepicker').datepicker('getDate')
@@ -78,11 +90,11 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     available_end_date = new Date(new Date(@current_date) - weeks_apart*7*24*60*60*1000)
     @init_date_picker(query_date, available_end_date)
 
+
   handle_search: (e) =>
     e.preventDefault()
     @search()
 
-    # @clean_query_results()
 
   search: =>
     data =
@@ -92,24 +104,25 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
 
     data = @process_query_data(data);
     new_path
+    # if it is on query comparison mode
     if @query_comparison_on
        @controller.trigger('adhoc:cvr_dropped_query', data)
        new_path = 'adhoc_query/mode/query_comparison'+ '/wks_apart/' + @data.weeks_apart + '/query_date/' + @data.query_date+'/query/'+ @data.query
     else
+    # else is on the simple search mode
       @controller.trigger('adhoc:search',query:data.query)
       new_path = 'adhoc_query/mode/search'+'/query/'+ @data.query
      
     @router.update_path(new_path)
 
-
-  reset_form:  =>
-    # e.preventDefault()
-    query_date = new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
-    @query_form.find('.controls select').val(@default_week_apart+'')
-    # @query_form.find('input.query').val('')
-    @clearSearchBox()
-    @init_date_picker(query_date)
-    @controller.trigger('sub-content-cleanup')
+  # reset_form is no longger needed, since there will be remove icon instead inside the input box
+  # reset_form:  =>
+  #   query_date = new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
+  #   @query_form.find('.controls select').val(@default_week_apart+'')
+  #   # @query_form.find('input.query').val('')
+  #   @clearSearchBox()
+  #   @init_date_picker(query_date)
+  #   @controller.trigger('sub-content-cleanup'
 
   init_date_picker: (default_selected_date, available_end_date) =>
     available_end_date = available_end_date || new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
@@ -144,13 +157,10 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
  
  
   render_form: (data)=>
-    # @query_comparison_on = true
     #if there is data, it should come from router
-    # @query_comparison_on = data.query_comparison_on
     data = @process_query_data(data);
     $(@query_form).html(@form_template(data))
     $(@query_form).find('span.label-search-mode').addClass('white-label-btn')
-    # @toggleRemoveIcon()
     if data.query.length > 0
       @query_form.find(".query_search_clear_icon").show()
 
@@ -162,23 +172,28 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
   search_results_cleanup: =>
     @query_results.children().not('.ajax-loader').remove()
 
+
   render_error: ->
-    # @controller.trigger('search:sub-tab-cleanup')
     @query_results.append($('<span>').addClass(
       'label label-important').append("No data available"))
+
  
   unrender: =>
     @query_form.children().remove()
     @active = false
+
 
   clearSearchBox: => 
     #clear search box
     @query_form.find("input.query").val("")
     @query_form.find(".query_search_clear_icon").hide()
     # @search()
+
+
   click_search_clear_icon: =>
     @clearSearchBox()
     @search()
+
 
   toggleRemoveIcon: =>
     query = @query_form.find("input.query").val()
@@ -187,5 +202,3 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     else     
       #if user press delete button and the box is empty
       @clearSearchBox()
-
-

@@ -1,3 +1,14 @@
+###
+Conversion Rate Dropping Query Item Comparison View
+@author Linghua Jin
+@since Dec, 2013
+@class Searchad.Views.CVRDroppedQuery.ItemComparisonView
+@extend Backbone.View
+
+Item showed for a query comparison for before and after based on selected week range and time from adhoc_query_report. 
+###
+
+
 Searchad.Views.CVRDroppedQuery||= {}
 
 class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
@@ -93,17 +104,20 @@ class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection)
     
+
   unrender: =>
     @$el.children().not('.ajax-loader').remove()
     @$el.find('.ajax-loader').hide()
     @active = false
     @undelegateEvents()
   
+
   get_items: (data) =>
     @active = true
     @data = data
     @unrender
     @collection.get_items(data)
+
 
   render_error:  ->
     return unless @active

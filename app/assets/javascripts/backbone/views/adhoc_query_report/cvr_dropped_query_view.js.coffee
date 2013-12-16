@@ -1,3 +1,16 @@
+###
+Conversion Rate Dropping QueryView
+@author Linghua Jin
+@since Dec, 2013
+@class Searchad.Views.AdhocQuery.cvrDroppedQueryView
+@extend Backbone.View
+
+This is the view for conversion rate dropping. It includes two parts, 1) report 2) search
+The searching params are mainly passed from adhoc_query_report index.
+If there is query, then do a search, if there is no query, then generate the report
+
+###
+
 Searchad.Views.AdhocQuery||= {}
 
 class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
@@ -19,8 +32,6 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     @default_week_apart = 2
     @current_date = @controller.get_filter_params()['date']
     @data
-    #by default, turn on query_comparison. if it is false, it means on adhoc search mode
-    @query_comparison_on = true
     # init_csv_export_button
     Utils.InitExportCsv(this, "/search/get_cvr_dropped_query.csv");
     
@@ -29,22 +40,18 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       fileName = "conversion_rate_dropped_query analysis_for #{@data.query_date}_week_apart_#{@data.weeks_apart}.csv"
       @export_csv($(e.target), fileName, @data)
 
-  # form_template: JST['backbone/templates/cvr_dropped_query/form']
-
   active: false
-  
+
+  #get_items is usually the first triggered function. It could be trgger from the index or router.  
   get_items: (data) ->
-    console.log("><---------------trigger get_items")
     if data== undefined
       data = @process_query_data(data)
     # reset is bind wiht render_query_results.
-    # @collection.reset()
     @collection.dataParam = data
     # important, between switch top500 and certain query, must reset current page size to 1
     @collection.state.currentPage = 1;
     @data = data
     @collection.get_items(data)
-    console.log('>< get items', data);
     @active = true
     @trigger = true
 
@@ -54,7 +61,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     if data.weeks_apart
       data.weeks_apart= parseInt(data.weeks_apart)
     else
-      data.weeks_apart = 2;
+      data.weeks_apart = @default_week_apart;
     #query_date
     if !data.query_date
       current_date= @controller.get_filter_params()['date']
@@ -65,12 +72,11 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     @data = data  # @data is used for csv_export
     return data
 
+  #when collection reset caused by get items, the rendering result is triggered
   render_query_results: =>
-    console.log('render_query_results');
     @query_results.find('.ajax-loader').hide()
     if @collection.length == 0
       return @render_error() 
-    console.log("collection", @collection)
 
     @initCvrDroppedQueryTable()
     result_label
@@ -90,13 +96,15 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     $("li.cvr-dropped-item-comparison").show();
     this
 
+
   search_results_cleanup: =>
     @query_results.children().not('.ajax-loader').remove()
 
+
   render_error: ->
-    # @controller.trigger('search:sub-tab-cleanup')
     @query_results.append($('<span>').addClass(
       'label label-important').append("No data available"))
+
 
   initCvrDroppedQueryTable: ->
     that = this
@@ -115,9 +123,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
           query: query
           query_date: dataParam.query_date
           weeks_apart: dataParam.weeks_apart
-          # view: 'daily'
           tab: 'cvr-dropped-item-comparison')
- 
         # new_path = new_path = 'adhoc_query/mode/query_comparison'+ '/wks_apart/' + dataParam.weeks_apart + '/query_date/' + dataParam.query_date+"/query/"+ encodeURIComponent(query)
         # that.router.update_path(new_path)
       
@@ -186,10 +192,9 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
   
  
   unrender: =>
-    # @$el.hide();
-    # @query_form.children().remove()
     @clean_query_results()
     @active = false
+
 
   clean_query_results: =>
      @query_results.children().not('.ajax-loader').remove()

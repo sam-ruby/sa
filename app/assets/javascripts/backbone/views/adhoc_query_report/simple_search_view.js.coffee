@@ -5,8 +5,6 @@ class Searchad.Views.AdhocQuery.SimpleSearchView extends Backbone.View
     @trigger = false
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
-    
-    # @$search_form = $(options.el_form)
     @$search_results = $(options.el_results)
     @controller.bind('content-cleanup', @unrender)
     @queryStatsCollection =
@@ -24,8 +22,6 @@ class Searchad.Views.AdhocQuery.SimpleSearchView extends Backbone.View
     @undelegateEvents()
 
   events: =>
-    # 'submit': 'do_search'
-    # 'click button.search-btn': 'do_search'
     'click .export-csv a': (e) ->
       date = @controller.get_filter_params().date
       if @query
@@ -41,12 +37,6 @@ class Searchad.Views.AdhocQuery.SimpleSearchView extends Backbone.View
         fileName = "search_#{date}.csv"
       @export_csv($(e.target), fileName, data)
 
-  # search_form_template: JST['backbone/templates/search/form']
-
-  # load_search_results: (query) =>
-  #   @$search_form.find('input.search-query').val(query)
-  #   @$search_form.find('button.search-btn').first().trigger('click')
-  
   do_search: (data) =>
     @active = true
     @search_results_cleanup()
@@ -66,10 +56,6 @@ class Searchad.Views.AdhocQuery.SimpleSearchView extends Backbone.View
     @$search_results.append($('<span>').addClass(
       'label label-important').append("No data available for #{@query}"))
   
-  # render: =>
-  #   # @$search_form.append(@search_form_template())
-  #   @delegateEvents()
-
   search_results_cleanup: =>
     @$search_results.children().not('.ajax-loader').remove()
 
