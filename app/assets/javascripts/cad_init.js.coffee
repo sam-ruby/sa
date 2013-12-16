@@ -116,7 +116,7 @@ $ ->
       controller, 'search-rel:index', searchQualityQueryView.get_items)
     
     # Search
-    searchView = new Searchad.Views.Search.IndexView(
+    searchView = new Searchad.Views.AdhocQuery.SimpleSearchView(
       el: '#adhoc-query-report'
       el_results: '#search-results'
       )
@@ -163,7 +163,7 @@ $ ->
     )
 
      #cvr dropped view
-    cvrDroppedQueryView = new Searchad.Views.CVRDroppedQuery.IndexView(
+    cvrDroppedQueryView = new Searchad.Views.AdhocQuery.cvrDroppedQueryView (
       el: '#adhoc-query-report'
       el_results: '#cvr-dropped-query-results'
       )
@@ -185,11 +185,12 @@ $ ->
       el_form: '#cvr-dropped-query-form'
     )
     adhocQueryView.listenTo(
-      controller, 'adhoc-query:index',(data)->adhocQueryView.render_form(data))
-    adhocQueryView.listenTo(
       controller, 'adhoc:toggle_search_mode',(query_comparison_on)->adhocQueryView.toggle_search_mode(query_comparison_on))
 
-    
+    adhocQueryView.listenTo(
+      controller, 'adhoc-query:index',(data)->adhocQueryView.render_form(data))
+    # adhocQueryView.listenTo(
+    #   controller, 'adhoc-query:index', adhocQueryView.toggle_search_mode())
 
     queryMonitoringCountView =
       new Searchad.Views.QueryMonitoring.Count.IndexView(

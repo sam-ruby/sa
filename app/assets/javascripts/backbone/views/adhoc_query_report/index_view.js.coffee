@@ -30,7 +30,6 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
   active: false
 
   click_toggle_search_mode:(e) ->
-    console.log('click_toggle_search_mode')
     e.preventDefault();
     search_mode = @query_form.find('span.switch_mode_text').text()
     if search_mode == @switch_simple_search_text
@@ -44,6 +43,9 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
 
     @controller.trigger('search:sub-tab-cleanup')
     @controller.trigger('sub-content-cleanup')
+    @query_comparison_on = query_comparison_on;
+
+    console.log(">< --------------query_comparsion_on", @query_comparison_on);
     if query_comparison_on
       @query_form.find('.advanced').show()
       $('#search-results').hide()
@@ -90,7 +92,6 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
 
     data = @process_query_data(data);
     new_path
-    console.log(@query_comparison_on)
     if @query_comparison_on
        @controller.trigger('adhoc:cvr_dropped_query', data)
        new_path = 'adhoc_query/mode/query_comparison'+ '/wks_apart/' + @data.weeks_apart + '/query_date/' + @data.query_date+'/query/'+ @data.query
@@ -143,11 +144,10 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
  
  
   render_form: (data)=>
-    console.log("render_form", data)
+    # @query_comparison_on = true
     #if there is data, it should come from router
     # @query_comparison_on = data.query_comparison_on
     data = @process_query_data(data);
-    console.log("data_after_process", data);
     $(@query_form).html(@form_template(data))
     $(@query_form).find('span.label-search-mode').addClass('white-label-btn')
     # @toggleRemoveIcon()
@@ -155,7 +155,6 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
       @query_form.find(".query_search_clear_icon").show()
 
     end_date = new Date(new Date(@current_date) - data.weeks_apart*7*24*60*60*1000)
-    console.log(data.query_date);
     @init_date_picker(data.query_date, end_date)
     @active = true
 
