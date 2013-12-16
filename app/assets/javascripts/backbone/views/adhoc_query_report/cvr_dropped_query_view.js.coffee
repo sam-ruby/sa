@@ -1,6 +1,6 @@
-Searchad.Views.CVRDroppedQuery||= {}
+Searchad.Views.AdhocQuery||= {}
 
-class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
+class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
@@ -34,16 +34,17 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
   active: false
   
   get_items: (data) ->
+    console.log("><---------------trigger get_items")
     if data== undefined
       data = @process_query_data(data)
-
-    console.log("cvr get item data", data);
     # reset is bind wiht render_query_results.
-    @collection.reset();
+    # @collection.reset()
     @collection.dataParam = data
-    
+    # important, between switch top500 and certain query, must reset current page size to 1
+    @collection.state.currentPage = 1;
     @data = data
     @collection.get_items(data)
+    console.log('>< get items', data);
     @active = true
     @trigger = true
 
@@ -65,9 +66,11 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     return data
 
   render_query_results: =>
+    console.log('render_query_results');
     @query_results.find('.ajax-loader').hide()
     if @collection.length == 0
       return @render_error() 
+    console.log("collection", @collection)
 
     @initCvrDroppedQueryTable()
     result_label
@@ -80,6 +83,7 @@ class Searchad.Views.CVRDroppedQuery.IndexView extends Backbone.View
     @query_results.append(@grid.render().$el)
     @query_results.append(@paginator.render().$el)
     @query_results.append(@export_csv_button())
+    console.log(@query_results);
     if @trigger
       @trigger = false
     @$el.find('td a.query').first().trigger('click')
