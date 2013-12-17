@@ -79,7 +79,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       return @render_error() 
 
     @initCvrDroppedQueryTable()
-    
+
     if (@data.query== "")
       result_label = 'Conversion Rate Dropped Query Top 500 Report'
     else 
@@ -89,9 +89,11 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     @query_results.append(@grid.render().$el)
     @query_results.append(@paginator.render().$el)
     @query_results.append(@export_csv_button())
+
     if @trigger
       @trigger = false
-    @$el.find('td a.query').first().trigger('click')
+      @$el.find('td a.query').first().trigger('click')
+      
     $("li.cvr-dropped-item-comparison").show();
     this
 
