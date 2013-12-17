@@ -16,4 +16,4 @@
 /tmp/*
 .DS_Store
 .sass-cache/
-database.yml
+config/database.yml
