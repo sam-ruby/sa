@@ -104,8 +104,13 @@ class SearchController < BaseController
       end
       # since we know there are always total 500 entries. 
       format.csv do
-        render :json => QueryDroppingConversion.get_cvr_dropped_query(
-          weeks_apart,query_date, 0, 500)
+        if query == "" or query == nil
+          render :json => QueryDroppingConversion.get_cvr_dropped_query_top_500(
+            weeks_apart,query_date, 0, 500)
+        else
+          result= QueryDroppingConversion.get_cvr_dropped_query_with_query(query, weeks_apart,query_date,@page,@limit)
+          render :json => result
+        end
       end
       #end_format_csv
     end

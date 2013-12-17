@@ -129,33 +129,33 @@ $ ->
       controller, 'load-search-results', searchView.load_search_results)
 
     subtabsView =
-      new Searchad.Views.Search.SubTabs.IndexView(el: '#search-sub-tabs')
+      new Searchad.Views.SubTabs.IndexView(el: '#search-sub-tabs')
     subtabsView.listenTo(
       controller, 'search:sub-content', subtabsView.render)
    
-    searchStatsView = new Searchad.Views.Search.Stats.IndexView(
+    searchStatsView = new Searchad.Views.SubTabs.Stats.IndexView(
       el: '#search-sub-content')
     searchStatsView.listenTo(
       controller, 'search:stats', searchStatsView.get_items)
 
-    searchWalmartItemsView = new Searchad.Views.Search.WalmartItems.IndexView(
+    searchWalmartItemsView = new Searchad.Views.SubTabs.WalmartItems.IndexView(
       el: '#search-sub-content')
     searchWalmartItemsView.listenTo(
       controller, 'search:walmart-items', searchWalmartItemsView.get_items)
 
     amazonStatsView =
-      new Searchad.Views.Search.AmazonItems.Stats.IndexView(
+      new Searchad.Views.SubTabs.AmazonItems.Stats.IndexView(
         el: '#search-sub-content')
     amazonStatsView.listenTo(
       controller, 'search:amazon-items:stats', amazonStatsView.render)
 
     amazonItemsView =
-      new Searchad.Views.Search.AmazonItems.IndexView(
+      new Searchad.Views.SubTabs.AmazonItems.IndexView(
         el: '#search-amazon-content')
     amazonItemsView.listenTo(
       controller, 'search:amazon-items', amazonItemsView.get_items)
     
-    queryItemsView = new Searchad.Views.Search.RelRev.IndexView(
+    queryItemsView = new Searchad.Views.SubTabs.RelRev.IndexView(
       el: '#search-sub-content')
     queryItemsView.listenTo(
       controller, 'search:rel-rev', (data) ->
@@ -172,7 +172,7 @@ $ ->
         controller, 'adhoc:cvr_dropped_query', (data) -> cvrDroppedQueryView.get_items(data))
 
     #cvr_dropped_view when click on q query show the item comparison regarding that query
-    cvrDroppedQueryItemComparisonView = new Searchad.Views.CVRDroppedQuery.ItemComparisonView {
+    cvrDroppedQueryItemComparisonView = new Searchad.Views.SubTabs.ItemComparisonView {
       el: '#search-sub-content'
     }
     cvrDroppedQueryItemComparisonView.listenTo(

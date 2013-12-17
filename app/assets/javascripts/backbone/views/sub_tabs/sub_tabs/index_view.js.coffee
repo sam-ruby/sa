@@ -1,7 +1,6 @@
-Searchad.Views.Search ||= {}
-Searchad.Views.Search.SubTabs ||= {}
+Searchad.Views.SubTabs ||= {}
 
-class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
+class Searchad.Views.SubTabs.IndexView extends Backbone.View
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
@@ -70,7 +69,6 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
     e.preventDefault()
     @controller.trigger('sub-content-cleanup')
     @select_cvr_dropped_item_comparison_tab()
-    console.log("show_cvr_dropped_item_comparison")
     @controller.trigger('cvr_dropped_query:item_comparison',
       query: @data.query
       query_date: @data.query_date
@@ -108,7 +106,6 @@ class Searchad.Views.Search.SubTabs.IndexView extends Backbone.View
     @hide_spin()
 
   render: (data) =>
-    console.log("data", data);
     @query = data.query if data.query
     @view = data.view if data.view
     @data = data;
