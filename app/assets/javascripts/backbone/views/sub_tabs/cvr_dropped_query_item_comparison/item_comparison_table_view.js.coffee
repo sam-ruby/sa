@@ -17,7 +17,7 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     @collection =
       new Searchad.Collections.CvrDroppedQueryComparisonItemCollection()
     @initTable()
-    @controller.bind('date-changed', => @get_items() if @active)
+    # @controller.bind('date-changed', => @get_items() if @active)
     @collection.bind('reset', @render)
     @collection.bind('changed', @render)
     @controller.bind('content-cleanup', @unrender)
