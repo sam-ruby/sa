@@ -2,16 +2,18 @@ Searchad.Views.AdhocQuery ||= {}
 
 class Searchad.Views.AdhocQuery.SimpleSearchView extends Backbone.View
   initialize: (options) ->
-    @trigger = false
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @$search_results = $(options.el_results)
+    @controller.bind('date-changed', => @do_search() if @active)
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('adhoc_query:search_content_clean_up', @unrender)
     @queryStatsCollection =
       new Searchad.Collections.QueryStatsDailyCollection()
     @initTable()
-    
+    @active = false
+    @trigger = false
+
     @queryStatsCollection.bind('reset', @render_s_results)
     @queryStatsCollection.bind('request', =>
       @search_results_cleanup()
@@ -41,8 +43,11 @@ class Searchad.Views.AdhocQuery.SimpleSearchView extends Backbone.View
   do_search: (data) =>
     @active = true
     @search_results_cleanup()
-    @query = data.query
-    
+    data || = { }
+    if data.query
+      @query = data.query
+    else
+      data.query = @query
     @queryStatsCollection.query = @query
     @queryStatsCollection.get_items()
     @trigger = true
