@@ -99,7 +99,12 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
   
   get_items: (data) =>
     @active = true
-    @query = data.query if data.query
+    data || = { }
+    if data.query
+      @query = data.query
+    else
+      data.query = @query
+    data.view || = "daily"
     @collection.get_items(data)
 
   render_error: (query) ->
