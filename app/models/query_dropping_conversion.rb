@@ -37,7 +37,7 @@ class QueryDroppingConversion < BaseModel
     )d 
     on b.query=d.query'
 
-     result_data = find_by_sql([sqlStatement,query, before_start_date, before_end_date, query, after_start_date, after_end_date]) 
+     result_data = find_by_sql([sqlStatement, query, before_start_date, before_end_date, query, after_start_date, after_end_date]) 
 
   end
 
@@ -146,6 +146,6 @@ order by diff desc;'
     before_date_arr=(before_start_date..before_end_date).map{ |date| date.strftime("%Y-%m-%d")}
     after_date_arr=(after_start_date..after_end_date).map{ |date| date.strftime("%Y-%m-%d")}
 
-    result_data = find_by_sql([sqlStatement,before_date_arr, sum_count, after_date_arr, sum_count]) 
+    result_data = find_by_sql([sqlStatement, before_date_arr, sum_count, after_date_arr, sum_count]) 
   end
 end
