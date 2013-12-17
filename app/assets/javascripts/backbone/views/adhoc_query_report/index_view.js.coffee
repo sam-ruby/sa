@@ -44,10 +44,10 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     search_mode = @query_form.find('span.switch_mode_text').text()
     if search_mode == @switch_simple_search_text
       @query_comparison_on = false
-      @router.update_path('/adhoc_query/mode/search/')
+      @router.update_path('/adhoc_query/mode/search')
     else 
       @query_comparison_on = true
-      @router.update_path('/adhoc_query/mode/query_comparison/')
+      @router.update_path('/adhoc_query/mode/query_comparison')
 
     @toggle_search_mode(@query_comparison_on)
 
