@@ -1,44 +1,6 @@
 class SearchController < BaseController
 
   before_filter :set_common_data
-  # def get_data
-  #   query = params[:query]
-  #   date = DateTime.strptime(params[:query_date], '%m-%d-%Y') rescue DateTime.now
-  #   days_range = params[:weeks_apart] ? Integer(params[:weeks_apart]) * 7 :
-  #     7
-  #   before_start_date = date - 1.day
-  #   after_start_date = date + 1.day
-
-  #   before_end_date = before_start_date - days_range.days
-  #   before_week = QueryCatMetricsDaily.get_week_average(
-  #     query, before_end_date, before_start_date).first
-  #   before_title = "#{before_end_date.strftime('%b %d, %Y')} - " + 
-  #     "#{before_start_date.strftime('%b %d, %Y')}"
-   
-  #   after_end_date = after_start_date + days_range.days
-  #   after_week = QueryCatMetricsDaily.get_week_average(
-  #     query, after_start_date, after_end_date).first
-  #   after_title = "#{after_start_date.strftime('%b %d, %Y')} - " +
-  #     "#{after_end_date.strftime('%b %d, %Y')}"
- 
-  #   user_id = 101
-  #   QuerySearchList.store_query_words(
-  #     user_id, query, params[:query_date], params[:weeks_apart])
-    
-  #   respond_to do |format|
-  #     format.json do 
-  #       render :json => {
-  #         :before_week => {
-  #           :error => before_week.query_count.nil? ? 1 : 0,
-  #           :data => before_week,
-  #           :title => before_title},
-  #         :after_week => {
-  #           :error => after_week.query_count.nil? ? 1 : 0,
-  #           :data => after_week,
-  #           :title => after_title}}
-  #     end
-  #   end
-  # end
   
   def get_query_stats_date
     query = params[:query]
@@ -94,7 +56,7 @@ class SearchController < BaseController
 
       format.json do
         #based on input, if there is no query param, get top 500, else do search 
-        if query == "" or query == nil
+        if query.nil? or query.empty?
           result= QueryDroppingConversion.get_cvr_dropped_query_top_500(weeks_apart,query_date,@page,@limit)
           render :json => [{:total_entries => result.total_pages * @limit, :date => @date}, result]
         else
@@ -104,8 +66,8 @@ class SearchController < BaseController
       end
       # since we know there are always total 500 entries. 
       format.csv do
-        results = [];
-        if query == "" or query == nil
+        results = []
+        if query.nil? or query.empty?
           results= QueryDroppingConversion.get_cvr_dropped_query_top_500(
             weeks_apart,query_date, 0, 500)
         else
@@ -179,7 +141,7 @@ class SearchController < BaseController
     respond_to do |format|
       format.json do 
         result= QueryCatMetricsDaily.get_cvr_dropped_query(before_start_date,before_end_date,after_start_date,after_end_date,sum_count,@page,@limit)
-        p 'result', result.length, result;
+        p 'result', result.length, result
         p @page, @limit
 
         start_index = @limit * @page - @limit
