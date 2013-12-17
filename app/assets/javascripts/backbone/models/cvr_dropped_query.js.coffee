@@ -33,7 +33,7 @@ class Searchad.Collections.CvrDroppedQueryCollection extends Backbone.PageableCo
       @dataParam.weeks_apart
   mode: 'server'
 
-  get_items: (data) =>
+  get_items: () =>
     @fetch(
       data: @dataParam
       reset: true)
