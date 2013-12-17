@@ -38,8 +38,8 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       @controller.trigger('update_date', Selected_Date.toString('M-d-yyyy'))
 
 
-  adhoc_query_comparison: (weeks, date, query) =>
-    @set_date_info()
+  adhoc_query_comparison: (weeks, date, query, date_parts) =>
+    @set_date_info(date_parts)
     data=
       weeks_apart: weeks
       query_date: date
@@ -50,8 +50,8 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.trigger('adhoc:cvr_dropped_query', data)
 
 
-  adhoc_query_search:(query) =>
-    @set_date_info()
+  adhoc_query_search:(query, date_parts) =>
+    @set_date_info(date_parts)
     data=
       query: query
     @controller.trigger('adhoc:index',data)
