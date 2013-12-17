@@ -27,7 +27,7 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
       @controller.trigger('search:sub-content:show-spin')
       @undelegateEvents()
     )
-    Utils.InitExportCsv(this, '/search/get_cvr_dropped_query_item_comparison.json')
+    Utils.InitExportCsv(this, '/search/get_cvr_dropped_query_item_comparison.csv')
     @undelegateEvents()
     @data = {}
     @active = false
