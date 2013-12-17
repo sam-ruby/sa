@@ -116,62 +116,77 @@ $ ->
       controller, 'search-rel:index', searchQualityQueryView.get_items)
     
     # Search
-    searchView = new Searchad.Views.Search.IndexView(
-      el: '#search'
+    searchView = new Searchad.Views.AdhocQuery.SimpleSearchView(
+      el: '#adhoc-query-report'
       el_results: '#search-results'
-      el_form: '#search-form')
+      )
     searchView.listenTo(
-      controller, 'search:form', searchView.render)
+      controller, 'adhoc:search', (data) -> searchView.do_search(data))
     searchView.listenTo(
       controller, 'load-search-results', searchView.load_search_results)
 
     subtabsView =
-      new Searchad.Views.Search.SubTabs.IndexView(el: '#search-sub-tabs')
+      new Searchad.Views.SubTabs.IndexView(el: '#search-sub-tabs')
     subtabsView.listenTo(
       controller, 'search:sub-content', subtabsView.render)
    
-    searchStatsView = new Searchad.Views.Search.Stats.IndexView(
+    searchStatsView = new Searchad.Views.SubTabs.Stats.IndexView(
       el: '#search-sub-content')
     searchStatsView.listenTo(
       controller, 'search:stats', searchStatsView.get_items)
 
-    searchWalmartItemsView = new Searchad.Views.Search.WalmartItems.IndexView(
+    searchWalmartItemsView = new Searchad.Views.SubTabs.WalmartItems.IndexView(
       el: '#search-sub-content')
     searchWalmartItemsView.listenTo(
       controller, 'search:walmart-items', searchWalmartItemsView.get_items)
 
     amazonStatsView =
-      new Searchad.Views.Search.AmazonItems.Stats.IndexView(
+      new Searchad.Views.SubTabs.AmazonItems.Stats.IndexView(
         el: '#search-sub-content')
     amazonStatsView.listenTo(
       controller, 'search:amazon-items:stats', amazonStatsView.render)
 
     amazonItemsView =
-      new Searchad.Views.Search.AmazonItems.IndexView(
+      new Searchad.Views.SubTabs.AmazonItems.IndexView(
         el: '#search-amazon-content')
     amazonItemsView.listenTo(
       controller, 'search:amazon-items', amazonItemsView.get_items)
     
-    queryItemsView = new Searchad.Views.Search.RelRev.IndexView(
+    queryItemsView = new Searchad.Views.SubTabs.RelRev.IndexView(
       el: '#search-sub-content')
     queryItemsView.listenTo(
       controller, 'search:rel-rev', (data) ->
         queryItemsView.get_items(data)
     )
 
-    # Search Comparison
-    searchComparisonView =
-      new Searchad.Views.SearchComparison.IndexView(
-        el: '#query-comparison-fcharts'
-        form_selector: '#query-form'
-        before_selector: '#before-data'
-        after_selector: '#after-data'
-        comparison_selector: '#comparison-data'
-        recent_searches_selector: '#recent-searches'
+     #cvr dropped view
+    cvrDroppedQueryView = new Searchad.Views.AdhocQuery.cvrDroppedQueryView (
+      el: '#adhoc-query-report'
+      el_results: '#cvr-dropped-query-results'
       )
-    searchComparisonView.listenTo(controller, 'query-comparison:index',
-      searchComparisonView.get_items)
+
+    cvrDroppedQueryView.listenTo(
+        controller, 'adhoc:cvr_dropped_query', (data) -> cvrDroppedQueryView.get_items(data))
+
+    #cvr_dropped_view when click on q query show the item comparison regarding that query
+    cvrDroppedQueryItemComparisonView = new Searchad.Views.SubTabs.ItemComparisonView {
+      el: '#search-sub-content'
+    }
+    cvrDroppedQueryItemComparisonView.listenTo(
+      controller, 'cvr_dropped_query:item_comparison', (data) ->
+         cvrDroppedQueryItemComparisonView.get_items(data)
+    )
     
+    adhocQueryView = new Searchad.Views.AdhocQuery.IndexView(
+      el: '#adhoc-query-report' 
+      el_form: '#cvr-dropped-query-form'
+    )
+    adhocQueryView.listenTo(
+      controller, 'adhoc:toggle_search_mode',(query_comparison_on)->adhocQueryView.toggle_search_mode(query_comparison_on))
+
+    adhocQueryView.listenTo(
+      controller, 'adhoc:index',(data)->adhocQueryView.render_form(data))
+
     queryMonitoringCountView =
       new Searchad.Views.QueryMonitoring.Count.IndexView(
         el: '#qm-count'
