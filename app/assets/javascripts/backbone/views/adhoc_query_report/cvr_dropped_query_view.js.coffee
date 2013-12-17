@@ -123,7 +123,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
           query_date: dataParam.query_date
           weeks_apart: dataParam.weeks_apart
           tab: 'cvr-dropped-item-comparison')
-        new_path = new_path = 'adhoc_query/mode/query_comparison'+ '/wks_apart/' + dataParam.weeks_apart + '/query_date/' + dataParam.query_date+"/query/"+ encodeURIComponent(query)
+        new_path = 'adhoc_query/mode/query_comparison'+ '/wks_apart/' + dataParam.weeks_apart + '/query_date/' + dataParam.query_date+"/query/"+ encodeURIComponent(query)
         that.router.update_path(new_path)
       
       render: =>
