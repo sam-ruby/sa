@@ -49,13 +49,13 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.trigger('adhoc:toggle_search_mode', true)
     @controller.trigger('adhoc:cvr_dropped_query', data)
 
+
   adhoc_query_search:(query) =>
     data=
       query: query
     @controller.trigger('adhoc-query:index',data)
     @controller.trigger('adhoc:toggle_search_mode', false)
     @controller.trigger('adhoc:search', data)
-
 
 
   search_rel: (query, date_parts) =>
