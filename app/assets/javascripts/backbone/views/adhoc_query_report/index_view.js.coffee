@@ -19,14 +19,15 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     @router = SearchQualityApp.Router
     @controller.bind('content-cleanup', @unrender)
     @query_form = $(options.el_form)
-    @available_end_date = new Date(new Date(@controller.get_filter_params()['date']) - 2*7*24*60*60*1000)
+    # the available_end_date is by default is the max_date(most recent date) availabe, which is defined _main_content.html.haml
+    @available_end_date = Max_date
     @default_week_apart = 2
-    @current_date = @controller.get_filter_params()['date']
     @data
     #by default, turn on query_comparison. if it is false, it means on adhoc search mode
     @query_comparison_on = true
     @switch_simple_search_text = "Switch to Simple Search"
     @switch_query_comparison_text = "Switch to Query Comparison"
+    @active = false
     
   events:
     'click #switch-mode-btn': 'click_toggle_search_mode'
@@ -37,8 +38,6 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     "input.query":"toggleRemoveIcon"
 
   form_template: JST['backbone/templates/adhoc_query/form']
-
-  active: false
 
   click_toggle_search_mode:(e) ->
     e.preventDefault();
@@ -92,7 +91,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     query_date= @query_form.find('input.datepicker').datepicker('getDate')
     # set date_picker available dates. since week_range change
     @change_date_picked()
-    available_end_date = new Date(new Date(@current_date) - weeks_apart*7*24*60*60*1000)
+    available_end_date = new Date(new Date(@available_end_date) - weeks_apart*7*24*60*60*1000)
     @init_date_picker(query_date, available_end_date)
 
 
@@ -120,17 +119,8 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
      
     @router.update_path(new_path)
 
-  # reset_form is no longger needed, since there will be remove icon instead inside the input box
-  # reset_form:  =>
-  #   # query_date = new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
-  #   @query_form.find('.controls select').val(@default_week_apart+'')
-  #   # @query_form.find('input.query').val('')
-  #   @clearSearchBox()
-  #   @init_date_picker(query_date)
-  #   @controller.trigger('sub-content-cleanup'
-
   init_date_picker: (default_selected_date, available_end_date) =>
-    available_end_date = available_end_date || new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
+    available_end_date = available_end_date || @available_end_date
     my_date_picker = @query_form.find('input.datepicker')
     # needs to remove first to make sure date_picker refreshes. 
     my_date_picker.datepicker("remove");
@@ -149,8 +139,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
       data.weeks_apart = 2;
     #query_date
     if !data.query_date
-      current_date= @controller.get_filter_params()['date']
-      query_date = new Date(new Date(current_date) - data.weeks_apart*7*24*60*60*1000);
+      query_date = new Date(new Date(@available_end_date) - data.weeks_apart*7*24*60*60*1000);
       data.query_date = query_date.toString('M-d-yyyy')
     #query
     if data.query
@@ -170,7 +159,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     if data.query.length > 0
       @query_form.find(".query_search_clear_icon").show()
 
-    end_date = new Date(new Date(@current_date) - data.weeks_apart*7*24*60*60*1000)
+    end_date = new Date(new Date(@available_end_date) - data.weeks_apart*7*24*60*60*1000)
     @init_date_picker(data.query_date, end_date)
     @active = true
 
