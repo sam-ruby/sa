@@ -8,7 +8,6 @@ class Searchad.Views.AdhocQuery.SimpleSearchView extends Backbone.View
     @$search_results = $(options.el_results)
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('adhoc_query:search_content_clean_up', @unrender)
-    # @controller.bind('sub-content-cleanup', @search_results_cleanup)
     @queryStatsCollection =
       new Searchad.Collections.QueryStatsDailyCollection()
     @initTable()
