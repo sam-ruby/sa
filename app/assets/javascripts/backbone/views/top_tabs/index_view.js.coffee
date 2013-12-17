@@ -7,7 +7,7 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
     @controller.bind('search-kpi:index', @overview)
     @controller.bind('search-rel:index', @overview)
     @controller.bind('poor-performing:index', @overview)
-    @controller.bind('adhoc-query:index', @adhoc)
+    @controller.bind('adhoc:index', @adhoc)
     @controller.bind('query-monitoring-count:index', @query_monitoring)
     @controller.bind('query-monitoring-metrics:index', @query_monitoring)
     
@@ -26,7 +26,7 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
       e.preventDefault()
       @controller.trigger('master-tabs:cleanup')
       @controller.trigger('content-cleanup')
-      @controller.trigger('adhoc-query:index')
+      @controller.trigger('adhoc:index')
       @controller.trigger('adhoc:cvr_dropped_query')
       @controller.trigger('adhoc:toggle_search_mode', true)
       @router.update_path('adhoc_query')

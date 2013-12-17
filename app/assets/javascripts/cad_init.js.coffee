@@ -185,9 +185,7 @@ $ ->
       controller, 'adhoc:toggle_search_mode',(query_comparison_on)->adhocQueryView.toggle_search_mode(query_comparison_on))
 
     adhocQueryView.listenTo(
-      controller, 'adhoc-query:index',(data)->adhocQueryView.render_form(data))
-    # adhocQueryView.listenTo(
-    #   controller, 'adhoc-query:index', adhocQueryView.toggle_search_mode())
+      controller, 'adhoc:index',(data)->adhocQueryView.render_form(data))
 
     queryMonitoringCountView =
       new Searchad.Views.QueryMonitoring.Count.IndexView(
