@@ -45,7 +45,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       weeks_apart: weeks
       query_date: date
       query: query
-    @controller.trigger('adhoc-query:index',data)
+    @controller.trigger('adhoc:index',data)
     @controller.trigger('adhoc:toggle_search_mode', true)
     @controller.trigger('adhoc:cvr_dropped_query', data)
 
@@ -53,7 +53,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   adhoc_query_search:(query) =>
     data=
       query: query
-    @controller.trigger('adhoc-query:index',data)
+    @controller.trigger('adhoc:index',data)
     @controller.trigger('adhoc:toggle_search_mode', false)
     @controller.trigger('adhoc:search', data)
 
