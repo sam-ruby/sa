@@ -107,12 +107,6 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
       query_date:@query_form.find('input.datepicker').datepicker('getDate').toString('M-d-yyyy')
       query:@query_form.find('input.query').val()
 
-    # console.log("query");
-    # for simple search, if there is nothing inside query box, don't do any search
-    # if !@query_comparison_on && data.query = ""
-    #   console.log("in return mode")
-    #   return
-
     data = @process_query_data(data);
     new_path
     # if it is on query comparison mode
@@ -170,7 +164,6 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
   render_form: (data)=>
     #if there is data, it should come from router
     data = @process_query_data(data);
-    console.log('renderform data', data)
     @query_form.html(@form_template(data))
     @query_form.find('input.query').val(data.query);
     $(@query_form).find('span.label-search-mode').addClass('white-label-btn')

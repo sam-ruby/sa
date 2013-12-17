@@ -27,10 +27,10 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       @query_results.find('.ajax-loader').css('display', 'block')
       @controller.trigger('sub-content-cleanup')
     )
-    # class_variables
-    @available_end_date = new Date(new Date(@controller.get_filter_params()['date']) - 2*7*24*60*60*1000)
+    # instance_variables
+    # @available_end_date = new Date(new Date(@controller.get_filter_params()['date']) - 2*7*24*60*60*1000)
     @default_week_apart = 2
-    @current_date = @controller.get_filter_params()['date']
+    @available_end_date = Max_date
     @data
     # init_csv_export_button
     Utils.InitExportCsv(this, "/search/get_cvr_dropped_query.csv");
@@ -64,7 +64,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       data.weeks_apart = @default_week_apart;
     #query_date
     if !data.query_date
-      current_date= @controller.get_filter_params()['date']
+      current_date= @available_end_date
       query_date = new Date(new Date(current_date) - data.weeks_apart*7*24*60*60*1000);
       data.query_date = query_date.toString('M-d-yyyy')
     #query
@@ -123,8 +123,8 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
           query_date: dataParam.query_date
           weeks_apart: dataParam.weeks_apart
           tab: 'cvr-dropped-item-comparison')
-        # new_path = new_path = 'adhoc_query/mode/query_comparison'+ '/wks_apart/' + dataParam.weeks_apart + '/query_date/' + dataParam.query_date+"/query/"+ encodeURIComponent(query)
-        # that.router.update_path(new_path)
+        new_path = new_path = 'adhoc_query/mode/query_comparison'+ '/wks_apart/' + dataParam.weeks_apart + '/query_date/' + dataParam.query_date+"/query/"+ encodeURIComponent(query)
+        that.router.update_path(new_path)
       
       render: =>
         value = @model.get(@column.get('name'))
