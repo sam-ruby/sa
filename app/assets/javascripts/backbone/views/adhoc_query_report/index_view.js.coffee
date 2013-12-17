@@ -45,9 +45,13 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     search_mode = @query_form.find('span.switch_mode_text').text()
     if search_mode == @switch_simple_search_text
       @query_comparison_on = false
+      @router.update_path('/adhoc_query/mode/search/')
     else 
       @query_comparison_on = true
+      @router.update_path('/adhoc_query/mode/query_comparison/')
+
     @toggle_search_mode(@query_comparison_on)
+
     # search_clear_icon only get cleared when click on toggle search button 
     @click_search_clear_icon()
 
@@ -102,6 +106,12 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
       weeks_apart: @query_form.find('select').val()
       query_date:@query_form.find('input.datepicker').datepicker('getDate').toString('M-d-yyyy')
       query:@query_form.find('input.query').val()
+
+    # console.log("query");
+    # for simple search, if there is nothing inside query box, don't do any search
+    # if !@query_comparison_on && data.query = ""
+    #   console.log("in return mode")
+    #   return
 
     data = @process_query_data(data);
     new_path

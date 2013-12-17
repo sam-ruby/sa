@@ -47,6 +47,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       query: query
     @controller.trigger('adhoc:index',data)
     @controller.trigger('adhoc:toggle_search_mode', true)
+    # always trigger cvr_dropped_query, if there is no query, by default it will get top 500
     @controller.trigger('adhoc:cvr_dropped_query', data)
 
 
@@ -55,7 +56,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       query: query
     @controller.trigger('adhoc:index',data)
     @controller.trigger('adhoc:toggle_search_mode', false)
-    @controller.trigger('adhoc:search', data)
+    # only trigger search when there is query 
+    if query
+      @controller.trigger('adhoc:search', data)
 
 
   search_rel: (query, date_parts) =>
