@@ -29,7 +29,7 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
       @controller.trigger('adhoc:index')
       @controller.trigger('adhoc:cvr_dropped_query')
       @controller.trigger('adhoc:toggle_search_mode', true)
-      @router.update_path('adhoc_query')
+      @router.update_path('adhoc_query/mode/query_comparison')
 
     'click li.query-monitoring-tab a': (e) =>
       e.preventDefault()

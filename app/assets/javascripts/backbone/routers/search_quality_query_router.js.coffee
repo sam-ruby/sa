@@ -11,16 +11,14 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     
     "poor_performing(/query/:query)(/filters/*wday)": "poor_performing"
     
-    # "search(/query/:query)(/filters/*wday)": "adhoc_search"
-    
     "query_monitoring/count(/query/:query)(/filters/*wday)":
       "query_monitoring_count"
     "query_monitoring/metrics(/query/:query)(/filters/*wday)":
       "query_monitoring_metrics"
 
-    "adhoc_query/mode/search(/query)(/)(:query)(/filters/*wday)":
+    "adhoc_query/mode/search(/query/)(:query)(/filters/*wday)":
       "adhoc_query_search"
-    "adhoc_query(/mode/query_comparison)(/wks_apart/:weeks)(/query_date/:date)(/query)(/)(:query)(/filters/*wday)":
+    "adhoc_query(/mode/query_comparison)(/wks_apart/:weeks/query_date/:date/query/)(:query)(/filters/*wday)":
       "adhoc_query_comparison"
 
   set_date_info: (date_part) =>
@@ -41,6 +39,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
 
 
   adhoc_query_comparison: (weeks, date, query) =>
+    @set_date_info()
     data=
       weeks_apart: weeks
       query_date: date
@@ -52,6 +51,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
 
 
   adhoc_query_search:(query) =>
+    @set_date_info()
     data=
       query: query
     @controller.trigger('adhoc:index',data)
