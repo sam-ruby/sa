@@ -147,16 +147,15 @@ class SearchController < BaseController
 
       format.csv do 
         results = QueryDroppingConversion.get_cvr_dropped_query_item_comparisons(query, before_start_date,before_end_date,after_start_date,after_end_date)
-        p "csv item resut><", results.to_yaml
-
-
         results =  results.map do |record|
           # see QueryDroppingConversion.get_cvr_dropped_query_item_comparisons when it is returned, it returned array of 
           # hash instead of array of objects 
           {'Item Id Before' => record["item_id_before"],
            'Item Title Before' => record["item_title_before"],
+           'Seller Before' => record["seller_name_before"],
            'Item Id After' => record["item_id_after"],
-           'Item Title After' => record["item_title_after"]
+           'Item Title After' => record["item_title_after"],
+           'Seller After' => record["seller_name_after"]
           }
         end
         render :json => results

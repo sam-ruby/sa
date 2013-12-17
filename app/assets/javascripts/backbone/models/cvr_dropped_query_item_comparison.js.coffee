@@ -4,11 +4,11 @@ class Searchad.Models.CvrDroppedQueryComparisonItem extends Backbone.Model
     item_id_before: null
     item_title_before: null  
     item_url_before:null
-    seller_id_before:null
+    seller_name_before:null
     item_id_after: null
     item_title_after:null
     item_url_after:null
-    seller_id_after:null
+    seller_name_after:null
 
 
 

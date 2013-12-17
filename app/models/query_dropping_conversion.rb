@@ -54,8 +54,9 @@ class QueryDroppingConversion < BaseModel
   def self.get_cvr_dropped_query_item_comparisons(query, before_start_date,before_end_date,after_start_date,after_end_date)
     # reason for two separate resquest, need to merge two result into one row. Join(no join condition) and Union(will produce 15*15 results.) don't work. 
     # Plus, it is very small data set. total item count is 15
-    item_before_arr = get_top_items_between_date(query, before_start_date, before_end_date) 
-    item_after_arr = get_top_items_between_date(query, after_start_date, after_end_date) 
+    # after_start_date is used for the query_date midpoint for two week before and  two week after
+    item_before_arr = get_top_items_between_date(query, before_start_date, before_end_date, after_start_date) 
+    item_after_arr = get_top_items_between_date(query, after_start_date, after_end_date, after_start_date) 
     #since this is a small list, it is ok to process the merge
     result_arr = Array.new([item_before_arr.length, item_after_arr.length].max){Hash.new}
     result_arr.each_with_index { |val, index| 
@@ -63,22 +64,26 @@ class QueryDroppingConversion < BaseModel
         val['item_id_before'] = item_before_arr[index]['item_id']
         val['item_title_before'] = item_before_arr[index]['title']
         val['image_url_before'] = item_before_arr[index]['image_url']
-        val['seller_id_before'] = item_before_arr[index]['seller_id']
+        val['seller_name_before'] = item_before_arr[index]['seller_name']
       end
 
       if (index < item_after_arr.length)
         val['item_id_after'] = item_after_arr[index]['item_id']
         val['item_title_after'] = item_after_arr[index]['title']
         val['image_url_after'] = item_after_arr[index]['image_url']
-        val['seller_id_after'] = item_after_arr[index]['seller_id']
+        val['seller_name_after'] = item_after_arr[index]['seller_name']
       end
     }
    return result_arr;
   end
 
-
+  #input query: query 
+  #input date_start: the starting date for one picked date range
+  #input date_end: the end date for one picke date range
+  #input query_date: specific date that is used to generate two week before and two week after, this is used to determin the seller_name
+  # TODO: need to discuss with Hang, which date is the best to get the seller name
   #out put array of top 15 item from a query between date range
-  def self.get_top_items_between_date(query, date_start, date_end)
+  def self.get_top_items_between_date(query, date_start, date_end, query_date)
     # result: query_items: "21630182,19423472,4764723,14237607,4764726,10992861, there is no related rank for that sequence.
     item_ids = find_by_sql(['select query_items from search_quality_daily where query_str= ?
       and query_date=(select max(query_date) from search_quality_daily where query_str=? and
@@ -88,8 +93,17 @@ class QueryDroppingConversion < BaseModel
       #process the result, split the string to array
       item_ids_arr=item_ids[0]['query_items'].split(",")
       #query item which id are in processed arr
-      items = find_by_sql(['select item_id, title, image_url, seller_id 
-        FROM all_item_attrs where item_id in (?)', item_ids_arr])
+
+    sql_statement = "select item_id, title, image_url, seller_name from
+      (select item_id, title, image_url, seller_id 
+       FROM all_item_attrs where item_id in (?)
+      )a 
+      inner join 
+      (select distinct seller_id, seller_name from mp_seller_id_name_mapping_daily where data_date = ?
+      )b
+      on a.seller_id = b.seller_id"
+
+      items = find_by_sql([sql_statement, item_ids_arr, query_date])
     else
       items =[]
     end

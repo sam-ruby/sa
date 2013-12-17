@@ -75,8 +75,8 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     cell: ItemCellBefore
     },
     {
-    name: 'seller_id_before',
-    label: 'Seller_ID',
+    name: 'seller_name_before',
+    label: 'Seller',
     editable: false,
     cell: 'string'
     },
@@ -86,8 +86,8 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     cell: ItemCellAfter
     },
     {
-    name: 'seller_id_after',
-    label: 'Seller_ID',
+    name: 'seller_name_after',
+    label: 'Seller',
     editable: false,
     cell: 'string'
     }
