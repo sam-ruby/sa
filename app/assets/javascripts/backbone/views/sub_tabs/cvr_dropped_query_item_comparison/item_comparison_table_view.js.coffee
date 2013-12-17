@@ -21,6 +21,7 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     @collection.bind('reset', @render)
     @collection.bind('changed', @render)
     @controller.bind('content-cleanup', @unrender)
+    @controller.bind('sub-content-cleanup', @unrender)
     @controller.bind('search:sub-content-cleanup', @unrender)
     @collection.bind('request', =>
       @$el.children().not('ul').remove()
