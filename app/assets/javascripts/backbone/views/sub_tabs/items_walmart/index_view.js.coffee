@@ -1,7 +1,7 @@
-Searchad.Views.Search ||= {}
-Searchad.Views.Search.WalmartItems ||= {}
+Searchad.Views.SubTabs ||= {}
+Searchad.Views.SubTabs.WalmartItems ||= {}
 
-class Searchad.Views.Search.WalmartItems.IndexView extends Backbone.View
+class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
   initialize: (options) =>
     @controller = SearchQualityApp.Controller
     @collection =

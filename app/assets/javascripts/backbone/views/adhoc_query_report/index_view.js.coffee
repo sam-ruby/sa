@@ -56,7 +56,8 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
 
     @controller.trigger('search:sub-tab-cleanup')
     @controller.trigger('sub-content-cleanup')
-    @query_comparison_on = query_comparison_on;
+    @query_comparison_on = query_comparison_on
+    @click_search_clear_icon()
 
     if query_comparison_on
       @query_form.find('.advanced').show()
@@ -117,7 +118,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
 
   # reset_form is no longger needed, since there will be remove icon instead inside the input box
   # reset_form:  =>
-  #   query_date = new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
+  #   # query_date = new Date(new Date(@current_date) - @default_week_apart*7*24*60*60*1000)
   #   @query_form.find('.controls select').val(@default_week_apart+'')
   #   # @query_form.find('input.query').val('')
   #   @clearSearchBox()
@@ -192,8 +193,13 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
 
   click_search_clear_icon: =>
     @clearSearchBox()
-    @search()
-
+    if @query_comparison_on
+      @search()
+    else
+      @controller.trigger('adhoc_query:search_content_clean_up')
+      @controller.trigger('search:sub-tab-cleanup')
+      @controller.trigger('sub-content-cleanup')
+    
 
   toggleRemoveIcon: =>
     query = @query_form.find("input.query").val()

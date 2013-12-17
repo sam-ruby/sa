@@ -1,7 +1,7 @@
-Searchad.Views.Search ||= {}
-Searchad.Views.Search.RelRev ||= {}
+Searchad.Views.SubTabs ||= {}
+Searchad.Views.SubTabs.RelRev ||= {}
 
-class Searchad.Views.Search.RelRev.IndexView extends Backbone.View
+class Searchad.Views.SubTabs.RelRev.IndexView extends Backbone.View
   initialize: (options) =>
     
     _.bindAll(this, 'render', 'initTable')

@@ -89,7 +89,6 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     @query_results.append(@grid.render().$el)
     @query_results.append(@paginator.render().$el)
     @query_results.append(@export_csv_button())
-    console.log(@query_results);
     if @trigger
       @trigger = false
     @$el.find('td a.query').first().trigger('click')

@@ -8,10 +8,10 @@ Conversion Rate Dropping Query Item Comparison View
 Item showed for a query comparison for before and after based on selected week range and time from adhoc_query_report. 
 ###
 
+Searchad.Views.SubTabs ||= {}
+Searchad.Views.SubTabs.ItemComparisonView ||= {}
 
-Searchad.Views.CVRDroppedQuery||= {}
-
-class Searchad.Views.CVRDroppedQuery.ItemComparisonView extends Backbone.View
+class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
   initialize: (options) =>
     @controller = SearchQualityApp.Controller
     @collection =

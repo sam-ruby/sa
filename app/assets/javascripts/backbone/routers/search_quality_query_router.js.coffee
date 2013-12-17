@@ -53,7 +53,6 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     data=
       query: query
     @controller.trigger('adhoc-query:index',data)
-    console.log("adhoc_query_search><")
     @controller.trigger('adhoc:toggle_search_mode', false)
     @controller.trigger('adhoc:search', data)
 
