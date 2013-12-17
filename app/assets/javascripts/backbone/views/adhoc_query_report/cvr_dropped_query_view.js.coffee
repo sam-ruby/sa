@@ -51,7 +51,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     # important, between switch top500 and certain query, must reset current page size to 1
     @collection.state.currentPage = 1;
     @data = data
-    @collection.get_items(data)
+    @collection.get_items()
     @active = true
     @trigger = true
 
@@ -79,7 +79,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       return @render_error() 
 
     @initCvrDroppedQueryTable()
-    result_label
+    
     if (@data.query== "")
       result_label = 'Conversion Rate Dropped Query Top 500 Report'
     else 
