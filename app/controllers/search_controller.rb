@@ -104,13 +104,27 @@ class SearchController < BaseController
       end
       # since we know there are always total 500 entries. 
       format.csv do
+        results = [];
         if query == "" or query == nil
-          render :json => QueryDroppingConversion.get_cvr_dropped_query_top_500(
+          results= QueryDroppingConversion.get_cvr_dropped_query_top_500(
             weeks_apart,query_date, 0, 500)
         else
-          result= QueryDroppingConversion.get_cvr_dropped_query_with_query(query, weeks_apart,query_date,@page,@limit)
-          render :json => result
+          results= QueryDroppingConversion.get_cvr_dropped_query_with_query(query, weeks_apart,query_date,@page,@limit)
         end
+
+        results = results.map do |record|
+            {'Query' => record.query,
+             'Query Conversion Difference' => record.query_con_diff,
+             'Query Conversion Before' => record.query_con_before,
+             'Query Conversion After' => record.query_con_after,
+             'Query Count Before' => record.query_count_before,
+             'Query Count After' => record.query_count_after,
+             'Query Revenue Before' =>record.query_revenue_before,
+             'Query Revenue After' => record.query_revenue_after,
+             'Revenue Diff Compare with Expected Value'=> record.expected_revenue_diff
+           }
+        end
+        render :json => results
       end
       #end_format_csv
     end
