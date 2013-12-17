@@ -113,16 +113,16 @@ class SearchController < BaseController
         end
 
         results = results.map do |record|
-            {'Query' => record.query,
-             'Query Conversion Difference' => record.query_con_diff,
-             'Query Conversion Before' => record.query_con_before,
-             'Query Conversion After' => record.query_con_after,
-             'Query Count Before' => record.query_count_before,
-             'Query Count After' => record.query_count_after,
-             'Query Revenue Before' =>record.query_revenue_before,
-             'Query Revenue After' => record.query_revenue_after,
-             'Revenue Diff Compare with Expected Value'=> record.expected_revenue_diff
-           }
+          {'Query' => record.query,
+           'Query Conversion Difference' => record.query_con_diff,
+           'Query Conversion Before' => record.query_con_before,
+           'Query Conversion After' => record.query_con_after,
+           'Query Count Before' => record.query_count_before,
+           'Query Count After' => record.query_count_after,
+           'Query Revenue Before' =>record.query_revenue_before,
+           'Query Revenue After' => record.query_revenue_after,
+           'Revenue Diff Compare with Expected Value'=> record.expected_revenue_diff
+          }
         end
         render :json => results
       end
@@ -141,8 +141,25 @@ class SearchController < BaseController
 
     respond_to do |format|
       format.json do 
-        @cvr_dropped_query_item_comparison = QueryDroppingConversion.get_cvr_dropped_query_item_comparisons(query, before_start_date,before_end_date,after_start_date,after_end_date)
-        render :json => @cvr_dropped_query_item_comparison
+        results = QueryDroppingConversion.get_cvr_dropped_query_item_comparisons(query, before_start_date,before_end_date,after_start_date,after_end_date)
+        render :json => results
+      end
+
+      format.csv do 
+        results = QueryDroppingConversion.get_cvr_dropped_query_item_comparisons(query, before_start_date,before_end_date,after_start_date,after_end_date)
+        p "csv item resut><", results.to_yaml
+
+
+        results =  results.map do |record|
+          # see QueryDroppingConversion.get_cvr_dropped_query_item_comparisons when it is returned, it returned array of 
+          # hash instead of array of objects 
+          {'Item Id Before' => record["item_id_before"],
+           'Item Title Before' => record["item_title_before"],
+           'Item Id After' => record["item_id_after"],
+           'Item Title After' => record["item_title_after"]
+          }
+        end
+        render :json => results
       end
     end
   end
