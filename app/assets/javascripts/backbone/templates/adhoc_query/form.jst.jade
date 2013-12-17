@@ -3,7 +3,7 @@ form.form-horizontal.cvr-dropped-query-form
     label.control-label(for='query') Search for Query
     .controls
       input.input-xxlarge.query(type='text', value=query)
-      i.query_search_clear_icon.icon-remove-sign(style='display: inline; position: relative; left: -20px; cursor: pointer; display: none; color: grey;')
+      i.query_search_clear_icon.icon-remove-sign
       input(type='hidden', name='type', value='videos')
         input#keyword(name='keyword', value='Search Videos')
         i.icon-search.icon-1x
@@ -15,10 +15,6 @@ form.form-horizontal.cvr-dropped-query-form
           i.icon.icon-th-large 
           | &nbsp; 
           span.switch_mode_text Switch to Simple Search
-
-      //- input.checkAdvanced(type='checkbox', checked='checked')
-      //- | &nbsp;
-      //- | Advanced
 
   .control-group.advanced
     label.control-label(for='date-picker') Date Range
@@ -38,7 +34,7 @@ form.form-horizontal.cvr-dropped-query-form
         'data-date-autoclose'='true')
 
     .controls
-      .cvr-dropped-selected-result.date_range_display.advanced(style = 'margin-top:10px')
+      .cvr-dropped-selected-result.date_range_display.advanced
 
   .control-group
     .controls
