@@ -68,7 +68,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       query_date = new Date(new Date(current_date) - data.weeks_apart*7*24*60*60*1000);
       data.query_date = query_date.toString('M-d-yyyy')
     #query
-    data.query = data.query || ""
+    date.query ||= ""
     @data = data  # @data is used for csv_export
     return data
 
