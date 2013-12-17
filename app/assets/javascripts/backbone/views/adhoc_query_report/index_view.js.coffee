@@ -131,7 +131,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
 
   #process data from router
   process_query_data:(data) =>
-    data = data || {}
+    data || = {}
     #set_week_apart
     if data.weeks_apart
       data.weeks_apart= parseInt(data.weeks_apart)
