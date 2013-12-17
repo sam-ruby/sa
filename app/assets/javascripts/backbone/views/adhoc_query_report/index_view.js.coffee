@@ -48,7 +48,8 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     else 
       @query_comparison_on = true
     @toggle_search_mode(@query_comparison_on)
-    # @reset_form()
+    # search_clear_icon only get cleared when click on toggle search button 
+    @click_search_clear_icon()
 
   # this toggle_search_mode is not only triggerd by click_toogle_search_mode, it also get triggered by the places where 
   #initialize the page. Like the router, or the top_tabs. 
@@ -57,7 +58,6 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     @controller.trigger('search:sub-tab-cleanup')
     @controller.trigger('sub-content-cleanup')
     @query_comparison_on = query_comparison_on
-    @click_search_clear_icon()
 
     if query_comparison_on
       @query_form.find('.advanced').show()
@@ -160,7 +160,9 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
   render_form: (data)=>
     #if there is data, it should come from router
     data = @process_query_data(data);
-    $(@query_form).html(@form_template(data))
+    console.log('renderform data', data)
+    @query_form.html(@form_template(data))
+    @query_form.find('input.query').val(data.query);
     $(@query_form).find('span.label-search-mode').addClass('white-label-btn')
     if data.query.length > 0
       @query_form.find(".query_search_clear_icon").show()
