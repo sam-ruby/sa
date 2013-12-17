@@ -40,7 +40,7 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
          query: @data.query.replace(/\s+/g, '_').replace(/"|'/, '')
          weeks_apart: @data.weeks_apart
 
-      fileName = "conversion_rate_dropped_item_comparison_for_#{data.query}_#{data.query_date}_week_apart_#{data.weeks_apart}.csv"
+      fileName = "item_comparison_#{data.query}_#{data.query_date}_week_apart_#{data.weeks_apart}.csv"
       @export_csv($(e.target), fileName, @data)
   
   gridColumns: =>
