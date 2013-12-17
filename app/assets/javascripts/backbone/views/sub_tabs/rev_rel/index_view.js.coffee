@@ -10,7 +10,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Backbone.View
     @initTable()
     
     @controller.bind('date-changed', =>
-      @unrender() if @active)
+      @get_items() if @active)
     @controller.bind('sub-content-cleanup', @unrender)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
@@ -84,7 +84,12 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Backbone.View
   
   get_items: (data) =>
     @active = true
-    @query = data.query if data.query
+    data || = { }
+    if data.query
+      @query = data.query
+    else
+      data.query = @query
+    data.view || = "daily"
     @collection.get_items(data)
 
   render_error: (query) ->
