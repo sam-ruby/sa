@@ -78,11 +78,11 @@ class QueryDroppingConversion < BaseModel
 
 
   #out put array of top 15 item from a query between date range
-  def self.get_top_items_between_date(query, date_before, date_after)
+  def self.get_top_items_between_date(query, date_start, date_end)
     # result: query_items: "21630182,19423472,4764723,14237607,4764726,10992861, there is no related rank for that sequence.
     item_ids = find_by_sql(['select query_items from search_quality_daily where query_str= ?
       and query_date=(select max(query_date) from search_quality_daily where query_str=? and
-       query_date>? and query_date<=?)', query,query,date_before,date_after])
+       query_date>? and query_date<=?)', query,query,date_start,date_end])
 
     if item_ids.length>0
       #process the result, split the string to array
