@@ -120,9 +120,6 @@ $ ->
       el: '#adhoc-query-report'
       el_results: '#search-results'
       )
-      # el_form: '#search-form')
-    # searchView.listenTo(
-    #   controller, 'search:form', searchView.render)
     searchView.listenTo(
       controller, 'adhoc:search', (data) -> searchView.do_search(data))
     searchView.listenTo(
