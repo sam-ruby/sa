@@ -1,0 +1,41 @@
+form.form-horizontal.cvr-dropped-query-form
+  .control-group
+    label.control-label(for='query') Search for Query
+    .controls
+      input.input-xxlarge.query(type='text', value=query)
+      i.query_search_clear_icon.icon-remove-sign
+      input(type='hidden', name='type', value='videos')
+        input#keyword(name='keyword', value='Search Videos')
+        i.icon-search.icon-1x
+
+
+      | &nbsp;
+      span.label.label-info.label-search-mode
+        a#switch-mode-btn(href='#')
+          i.icon.icon-th-large 
+          | &nbsp; 
+          span.switch_mode_text Switch to Simple Search
+
+  .control-group.advanced
+    label.control-label(for='date-picker') Date Range
+    .controls
+      select.weeks-apart-select
+        each val in [1, 2, 3 ,4]
+          if weeks_apart == val
+            option(selected=true, value=val)
+              =val + ' Week'
+          else
+            option(value=val)
+              =val + ' Week'
+      | &nbsp;
+      | of
+      | &nbsp;
+      input.input-small.datepicker(type='text', 'data-date-format'='M d, yyyy',
+        'data-date-autoclose'='true')
+
+    .controls
+      .cvr-dropped-selected-result.date_range_display.advanced
+
+  .control-group
+    .controls
+      button.btn.search(type='submit') Search

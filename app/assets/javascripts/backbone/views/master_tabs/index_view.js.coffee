@@ -8,16 +8,12 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @controller.bind('poor-performing:index', @select_pp_tab)
     @controller.bind('search-rel:index', @select_sq_tab)
     @controller.bind('search-kpi:index', @select_search_kpi_tab)
-    
-    @controller.bind('query-comparison:index',
-      @select_query_comparison_tab)
-    @controller.bind('search:form', @select_search_tab)
-    
     @controller.bind('query-monitoring-count:index', @select_qmc_tab)
     @controller.bind('query-monitoring-metrics:index', @select_qmm_tab)
     
     @controller.bind('master-tabs:cleanup', @unrender)
     @active = false
+
 
   events: =>
     #events on overview page
@@ -39,19 +35,6 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       @controller.trigger('search-kpi:index')
       @router.update_path('search_kpi')
 
-    #tab on adhoc query analysis page
-    'click li.query-comparison-tab': (e) =>
-      e.preventDefault()
-      @controller.trigger('content-cleanup')
-      @controller.trigger('query-comparison:index')
-      @router.update_path('query_comparison')
-
-    'click li.adhoc-search-tab': (e) =>
-      e.preventDefault()
-      @controller.trigger('content-cleanup')
-      @controller.trigger('adhoc-search:index')
-      @controller.trigger('search:form')
-      @router.update_path('search')
     
   get_tab_el: (data) ->
     css_classes = data.class.join(' ')
@@ -73,17 +56,6 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @$el.prepend(@get_tab_el(tabs[1]))
     @$el.prepend(@get_tab_el(tabs[0]))
 
-  init_query_comparison: =>
-    tabs = [{
-      class: ['query-comparison-tab','active']
-      href: '#query_comparison'
-      title: 'Query Performace Analysis'},
-      {class: ['adhoc-search-tab']
-      href: '#search'
-      title: 'Search'}]
-    @$el.prepend(@get_tab_el(tabs[1]))
-    @$el.prepend(@get_tab_el(tabs[0]))
-  
   init_query_monitoring: =>
     tabs = [{
       class: ['query-monitoring-count-tab','active']
@@ -115,21 +87,6 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       @init_overview()
       @active = true
     @toggleTab(@$el.find('li.search-kpi-tab a'))
-  
-  #on ad-hoc analysis page
-  select_query_comparison_tab: =>
-    unless @active
-      @$el.css('display', 'block')
-      @init_query_comparison()
-      @active = true
-    @toggleTab(@$el.find('li.query-comparison-tab a'))
-
-  select_search_tab:=>
-    unless @active
-      @$el.css('display', 'block')
-      @init_query_comparison()
-      @active = true
-    @toggleTab(@$el.find('li.adhoc-search-tab a'))
 
   select_qmc_tab:=>
     unless @active

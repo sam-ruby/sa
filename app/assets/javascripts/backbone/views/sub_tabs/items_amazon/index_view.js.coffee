@@ -1,7 +1,7 @@
-Searchad.Views.Search ||= {}
-Searchad.Views.Search.AmazonItems ||= {}
+Searchad.Views.SubTabs ||= {}
+Searchad.Views.SubTabs.AmazonItems ||= {}
 
-class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
+class Searchad.Views.SubTabs.AmazonItems.IndexView extends Backbone.View
   initialize: (options) =>
     @controller = SearchQualityApp.Controller
     @collection = new Searchad.Collections.CAAmazonItemsCollection()

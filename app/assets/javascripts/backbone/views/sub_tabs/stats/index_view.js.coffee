@@ -1,7 +1,7 @@
-Searchad.Views.Search ||= {}
-Searchad.Views.Search.Stats ||= {}
+Searchad.Views.SubTabs ||= {}
+Searchad.Views.SubTabs.Stats ||= {}
 
-class Searchad.Views.Search.Stats.IndexView extends Backbone.View
+class Searchad.Views.SubTabs.Stats.IndexView extends Backbone.View
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     @controller.bind('content-cleanup', @unrender)
