@@ -58,6 +58,7 @@ $ ->
       orderSeparator: ','
 
       fromRaw: (rawValue) ->
+        console.log 'here is the raw value ', rawValue
         if rawValue == 0
           '$' + rawValue.toFixed(0)
         else if rawValue < 0

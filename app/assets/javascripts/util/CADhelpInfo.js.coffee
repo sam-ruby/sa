@@ -37,3 +37,13 @@ Searchad.helpInfo =
     id:"expected_revenue_diff"
     name:"Revenue Difference compare with expected Revenue"
     description:"If the conversion did not change, what is the difference between the roughly expected revenue and actual revenue.  "
+    
+  site_revenue:
+    id: 'site_revenue'
+    name: 'Site Revenue'
+    description: 'Average daily Site revenue for the item in last 14 days'
+    
+  revenue:
+    id: 'revenue'
+    name: 'Revenue'
+    description: 'Average daily revenue for the item in last 14 days'
