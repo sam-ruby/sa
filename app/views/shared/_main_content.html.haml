@@ -51,8 +51,11 @@
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
   #qm-count-sub-content
     
-#search
-  #search-form{:style=>'text-align:center'}
+
+#adhoc-query-report
+  #cvr-dropped-query-form
+  #cvr-dropped-query-results
+    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
   #search-results
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
 
@@ -71,31 +74,3 @@
       %li.not-in-top-32
         %a{:href=>'#'}
           Items Not In Top 32
-
-#query-perf-comparison
-  #query-comparison-fcharts
-    .row
-      .span6
-        #query-form
-      .span5.offset1
-        #recent-searches
-          
-    .row
-      .span12
-        #comparison-data
-          = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-
-    .row{:style=>'margin-top: 2em;'}
-      .span5
-        #before-data
-          .chart-title
-          .chart
-          .table
-      .span5.offset2
-        #after-data
-          .chart-title
-          .chart
-          .table
-
-  #search-comparison-content
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
