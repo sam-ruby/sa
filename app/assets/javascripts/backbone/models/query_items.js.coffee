@@ -14,6 +14,7 @@ class Searchad.Models.QueryItem extends Backbone.Model
       image_url: null
       curr_item_price: null
     revenue: null
+    site_revenue: null
 
 class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollection
   initialize: (options) ->

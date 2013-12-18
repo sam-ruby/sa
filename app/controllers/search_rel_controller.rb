@@ -96,11 +96,14 @@ class SearchRelController < BaseController
       end
 
       revenue = rev_item.item_revenue rescue 0
+      site_revenue = rev_item.total_revenue rescue 0
+
       if mode == :json
         result.push({:position => index,
                      :walmart_item => walmart_item,
                      :rev_based_item => rev_item,
                      :revenue => revenue,
+                     :site_revenue => site_revenue,
                      :rev_rank => items[2].to_i + 1})
       else
         result.push({'Position' => index,
@@ -110,9 +113,11 @@ class SearchRelController < BaseController
                      'Walmart Item Image URL' => walmart_item[:image_url],
                      'Rev Based Item Id' => rev_item[:item_id],
                      'Rev Based Item Title' => rev_item[:title],
-                     'Rev Based Item Image URL' => rev_item[:image_url],
-                     'Rev Based Item Revenue' =>
-                        rev_item[:item_revenue].to_f.round(2)})
+                     'Item Image URL' => rev_item[:image_url],
+                     'Average Daily Item Revenue' =>
+                        rev_item[:item_revenue].to_f.round(2),
+                     'Average Daily Site Item Revenue' =>
+                        rev_item[:total_revenue].to_f.round(2)})
       end
       index += 1
     end
