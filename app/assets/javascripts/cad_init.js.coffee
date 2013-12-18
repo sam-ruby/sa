@@ -138,7 +138,7 @@ $ ->
     searchWalmartItemsView = new Searchad.Views.SubTabs.WalmartItems.IndexView(
       el: '#search-sub-content')
     searchWalmartItemsView.listenTo(
-      controller, 'search:walmart-items', searchWalmartItemsView.get_items)
+      controller, 'search:walmart-items', searchWalmartItemsView.render)
 
     amazonStatsView =
       new Searchad.Views.SubTabs.AmazonItems.Stats.IndexView(

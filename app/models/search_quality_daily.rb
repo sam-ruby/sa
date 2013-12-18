@@ -22,14 +22,15 @@ class SearchQualityDaily < BaseModel
     ).where('query_date = ? and query_str = ?', query_date, query_str)
   end
   
-  def self.get_walmart_items(query, query_date)
+  def self.get_walmart_items_daily(query, query_date)
     results = get_search_relevance_data_by_word(query, query_date)
     return results if results.empty?
     query_items = results.first['32_query_items'].split(',')
     results = AllItemAttrs.get_items(query, query_items, query_date)
     query_items.map {|item_id| results.select do|item|
       item.item_id == item_id
-    end.first }
+    end.first
+    }
   end
 
 
