@@ -70,6 +70,14 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Backbone.View
     editable: false,
     sortable: false,
     formatter: Utils.CurrencyFormatter,
+    headerCell: 'custom',
+    cell: 'number'},
+    {name: 'site_revenue',
+    label: 'Site Revenue',
+    editable: false,
+    sortable: false,
+    formatter: Utils.CurrencyFormatter,
+    headerCell: 'custom',
     cell: 'number'}]
 
     columns

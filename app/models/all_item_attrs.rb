@@ -13,11 +13,16 @@ class AllItemAttrs < BaseModel
     and query = #{query} and 
     (channel = "ORGANIC" or channel = "ORGANIC_USER") and 
     cat_id = 0 group by item_id) as item on 
-    item.item_id = item_attrs.item_id}
+    item.item_id = item_attrs.item_id
+    left outer join (select item, sum(revenue)/14 as total_revenue
+    from item_cat_total_revenue_daily where date in
+    (#{query_dates.join(',')}) and item in (#{item_ids})
+    and cat_id = 0 group by item) as item_site_revenue on
+    item_site_revenue.item = item_attrs.item_id}
 
     selects = %q{item_attrs.item_id, item_attrs.title, 
     item_attrs.image_url, item_attrs.curr_item_price, 
-    item.item_revenue}
+    item.item_revenue, item_site_revenue.total_revenue}
    
     joins(join_stmt).select(selects).where(
       %q{item_attrs.item_id in (?)}, item_id_list)
