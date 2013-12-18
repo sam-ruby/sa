@@ -58,7 +58,7 @@ class SearchRelController < BaseController
     else
       date = @date
     end
-    query_dates = (date-7.days..date-1.days).to_a.map {|d|
+    query_dates = (date-14.days..date-1.days).to_a.map {|d|
       "'#{d.strftime('%Y-%m-%d')}'"}
 
     results = SearchQualityDaily.get_search_relevance_data_by_word(

@@ -6,7 +6,7 @@ class AllItemAttrs < BaseModel
     query = sanitize_sql_array([%q{'%s'}, query])
 
     join_stmt = %Q{as item_attrs left outer join 
-    (select item_id, sum(item_revenue)/7 as item_revenue from 
+    (select item_id, sum(item_revenue)/14 as item_revenue from 
     item_query_cat_metrics_daily 
     where item_id in (#{item_ids}) and 
     query_date in (#{query_dates.join(',')}) 
