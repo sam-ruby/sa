@@ -19,14 +19,27 @@ class CompAnalysisController < BaseController
   
   def get_walmart_items
     query = params['query']
+    view = params['view']
+
+    if view == "ranged"
+      start_date = DateTime.strptime(params[:start_date], "%m-%d-%Y")  
+      end_date = DateTime.strptime(params[:end_date], "%m-%d-%Y")  
+    end
+
     respond_to do |format|
+      if view =='ranged'
+        walmart_items = ItemQueryCatMetricsDaily.get_walmart_items_over_time(query, start_date, end_date)
+      else
+        # view = daily
+        walmart_items = SearchQualityDaily.get_walmart_items_daily(query, @date)
+      end
+
       format.json do 
-        walmart_items = SearchQualityDaily.get_walmart_items(query, @date)
         render :json => walmart_items
       end
-      format.csv do 
-        walmart_items = SearchQualityDaily.get_walmart_items(
-          query, @date).map do |record|
+
+      format.csv do       
+        results = walmart_items.map do |record|
             {'Item Name' => record.title,
              'Item Image URL' => record.image_url,
              'Item Revenue' => record.item_revenue.to_f.round(2),
@@ -34,8 +47,8 @@ class CompAnalysisController < BaseController
              'Item Conversion' => record.item_con.to_f.round(2),
              'Item ATC' => record.item_atc.to_f.round(2),
              'Item PVR' => record.item_pvr.to_f.round(2)}
-          end
-        render :json => walmart_items
+        end
+        render :json => results
       end
 
     end
