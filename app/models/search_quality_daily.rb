@@ -61,7 +61,7 @@ class SearchQualityDaily < BaseModel
     (select rel_score from query_performance where year = #{year}
       and week = #{week} and query_str = search_daily.query_str
       limit 1) as rel_score,    
-    (select SQRT(query_daily.query_count)*(1-query_daily.query_con)*(cat_rate/100-show_rate/100)) 
+    (select SQRT(query_daily.query_count)*(100-query_daily.query_con)*(cat_rate/100-show_rate/100)) 
     as rank_metric}
 
     #rank_metric_caltulation:sqrt(Qquerycout)(1-conversionrate)(catoverlap- show rate);
