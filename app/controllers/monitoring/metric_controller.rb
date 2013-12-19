@@ -1,4 +1,4 @@
-class Monitoring::MetricMonitoringController < BaseController
+class Monitoring::MetricController < BaseController
   before_filter :set_common_data
   
   def get_metric_monitor_table_data
@@ -7,6 +7,7 @@ class Monitoring::MetricMonitoringController < BaseController
       format.json do 
         query_words = QueryMetricsMonitoring.get_query_metrics_monitoring_daily(
           @date, @page, @limit)
+        render :json => query_words
         # if query_words.nil? or query_words.empty?
         #   render :json => [{:total_entries => 0}, query_words]
         # else

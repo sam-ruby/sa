@@ -150,8 +150,7 @@ class Searchad.Views.QueryMonitoring.Metrics.IndexView extends Backbone.View
     editable: false,
     cell: 'number',
     formatter: Utils.PercentFormatter}
-
-  ]
+    ]
 
     columns
 
