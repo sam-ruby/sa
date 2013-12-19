@@ -8,13 +8,12 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
       new Searchad.Collections.CAWalmartItemsCollection()
     @initTable()
     
-    @controller.bind('date-changed', =>
-      @get_items() if @active)
+    @controller.bind('date-changed', => date_changed)
     @collection.bind('reset', @render_result)
-    
     @collection.bind('request', =>
+      @$el.children().not('.ajax-loader').not('.walmart-items-form').remove()
       @controller.trigger('search:sub-content:show-spin')
-      $('.cvr-dropped-query-form').hide()
+      $('.walmart-items-form').hide()
       @undelegateEvents()
     )
 
@@ -23,7 +22,6 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     Utils.InitExportCsv(this, '/comp_analysis/get_walmart_items.csv')
     @undelegateEvents()
     @active = false
-    @current_date = @controller.get_filter_params().date
     @data = {}
 
   form_template: JST['backbone/templates/walmart_item/form']
@@ -45,6 +43,9 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
      'click #label-popular-items-over-time ':'popular_items_over_time'
      'click #label-top-32-daily':'top_32_daily'
   
+  date_changed:=>
+    @get_items() if @active
+    @init_all_date_pickers()
 
 
   gridColumns: =>
@@ -117,8 +118,9 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     @init_one_date_picker(end_date_picker)
 
   init_one_date_picker:(el,end_date,selected_date) =>
-    selected_date ||= @current_date
-    end_date ||=@current_date
+    current_date = @controller.get_filter_params().date
+    selected_date ||= current_date
+    end_date ||=current_date
     el.datepicker("remove");
     el.datepicker({
       endDate: end_date})
@@ -175,9 +177,9 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     return unless @active
     # usually the clear is bind with request, since here is using client side pagination,
     # there is not request available to trigger clean up when swiching pages. Clear here. 
-    @$el.children().not('.ajax-loader').not('.cvr-dropped-query-form').remove()
+    @$el.children().not('.ajax-loader').not('.walmart-items-form').remove()
     @controller.trigger('search:sub-content:hide-spin')
-    $('.cvr-dropped-query-form').show()
+    $('.walmart-items-form').show()
     return @render_error(@query) if @collection.size() == 0
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)

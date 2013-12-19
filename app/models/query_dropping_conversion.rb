@@ -91,14 +91,14 @@ class QueryDroppingConversion < BaseModel
   def self.get_top_items_between_date(query, date_start, date_end, query_date)
     # result: query_items: "21630182,19423472,4764723,14237607,4764726,10992861, there is no related rank for that sequence.
     item_ids = find_by_sql(['select query_items from search_quality_daily where query_str= ?
-      and query_date=(select max(query_date) from search_quality_daily where query_str=? and
-       query_date>? and query_date<=?)', query,query,date_start,date_end])
-
-    if item_ids.length>0
+      and query_date=(select max(query_date) from search_quality_daily where query_str=? and 
+        query_date in (?))', query,query,date_start..date_end])
+    if item_ids.length == 0
+      return []
+    end
       #process the result, split the string to array
-      item_ids_arr=item_ids[0]['query_items'].split(",")
+    item_ids_arr=item_ids[0]['query_items'].split(",")
       #query item which id are in processed arr
-
     sql_statement = "select item_id, title, image_url, seller_name from
       (select item_id, title, image_url, seller_id 
        FROM all_item_attrs where item_id in (?)
@@ -109,11 +109,7 @@ class QueryDroppingConversion < BaseModel
       on a.seller_id = b.seller_id"
 
       items = find_by_sql([sql_statement, item_ids_arr, query_date])
-    else
-      items =[]
-    end
     return items
-
   end
 
 
