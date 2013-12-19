@@ -21,7 +21,7 @@ class Searchad.Collections.QueryMonitoringCountCollection extends Backbone.Pagea
     super(options)
 
   model: Searchad.Models.QueryMonitoringCount
-  url: '/monitoring/metric_monitoring/get_metric_monitor_table_data.json'
+  url: '/monitoring/metric/get_metric_monitor_table_data.json'
   # filters:
   #   date: null
 

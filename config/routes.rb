@@ -77,10 +77,10 @@ Searchad::Application.routes.draw do
   match 'search(/:action(.:format))',
     :to => 'search', :via => [:get, :post]
 
-  get 'amazon_overlap(/:action(.:format))', :to => 'amazon_overlap'
- 
   namespace :monitoring do
     match 'count(/:action(.:format))',
       :to => 'count', :via => [:get, :post]
+    match 'metric(/:action(.:format))',
+      :to => 'metric', :via => [:get, :post]
   end
 end
