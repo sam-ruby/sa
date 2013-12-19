@@ -8,7 +8,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
       new Searchad.Collections.CAWalmartItemsCollection()
     @initTable()
     
-    @controller.bind('date-changed', => date_changed)
+    @controller.bind('date-changed', @date_changed )
     @collection.bind('reset', @render_result)
     @collection.bind('request', =>
       @$el.children().not('.ajax-loader').not('.walmart-items-form').remove()
@@ -44,8 +44,10 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
      'click #label-top-32-daily':'top_32_daily'
   
   date_changed:=>
-    @get_items() if @active
-    @init_all_date_pickers()
+    if @active
+      @init_all_date_pickers()
+      @get_items()
+
 
 
   gridColumns: =>
@@ -120,7 +122,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
   init_one_date_picker:(el,end_date,selected_date) =>
     current_date = @controller.get_filter_params().date
     selected_date ||= current_date
-    end_date ||=current_date
+    end_date ||= Max_date
     el.datepicker("remove");
     el.datepicker({
       endDate: end_date})
@@ -140,7 +142,8 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     else
       data.query = @query
     data.view || = "daily"
-    @data = data;
+    @data = data
+    return data
 
 
   get_items: (data) =>
@@ -150,6 +153,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
 
   top_32_daily:(e)=>
     e.preventDefault()
+    console.log("top_32_daily")
     $('#label-popular-items-over-time').removeClass('label-info')
     $('#label-top-32-daily').addClass('label-info')
     # if top 32, reset date picker
@@ -159,6 +163,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
 
   popular_items_over_time:(e)=>
     e.preventDefault()
+    console.log("click popular_items_over_time")
     $('#label-popular-items-over-time').addClass('label-info')
     $('#label-top-32-daily').removeClass('label-info')
     data = {}
@@ -171,8 +176,10 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     return unless @active
     @controller.trigger('search:sub-content:hide-spin')
     @$el.append( $('<span>').addClass('label label-important').append(
-      "No data available for #{query}") )
-  
+      "No data available for #{query}"))
+    # need to delegate events because the "show popular item over time" and "top walmart 32" button needs it
+    @delegateEvents()
+
   render_result: =>
     return unless @active
     # usually the clear is bind with request, since here is using client side pagination,
