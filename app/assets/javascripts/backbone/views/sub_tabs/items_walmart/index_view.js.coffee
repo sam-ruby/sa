@@ -15,6 +15,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     @collection.bind('request', =>
       @$el.children().not('.ajax-loader').not('.cvr-dropped-query-form').remove()
       @controller.trigger('search:sub-content:show-spin')
+      $('.cvr-dropped-query-form').hide()
       @undelegateEvents()
     )
 
@@ -174,6 +175,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
   render_result: =>
     return unless @active
     @controller.trigger('search:sub-content:hide-spin')
+    $('.cvr-dropped-query-form').show()
     return @render_error(@query) if @collection.size() == 0
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
