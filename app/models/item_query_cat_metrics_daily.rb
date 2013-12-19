@@ -40,4 +40,55 @@ class ItemQueryCatMetricsDaily < BaseModel
           'item_revenue DESC, shown_count DESC').limit(32)
   end
 
+  def self.get_walmart_items_over_time(query, start_date, end_date)
+    sql_for_item_ids = 
+     "select item_id,
+     sum(shown_count) as sum_shown_count,
+     sum(item_pvr *shown_count)/sum(shown_count) as item_pvr_ave,
+     sum(item_con *shown_count)/sum(shown_count) as item_con_ave,
+     sum(item_atc *shown_count)/sum(shown_count) as item_atc_ave,
+     sum(item_revenue) as sum_item_revenue
+     from item_query_cat_metrics_daily 
+     where query_date in (?) and query = ? and cat_id = 0 and (channel = 'ORGANIC' or channel = 'ORGANIC_USER') 
+     group by item_id
+     
+     order by sum_shown_count DESC,item_pvr_ave DESC, item_atc_ave DESC limit 32"
+
+    date_range = start_date..end_date
+
+    ids = ItemQueryCatMetricsDaily.find_by_sql([sql_for_item_ids, date_range, query])
+    ids_array = Array.new
+
+    ids.each { |x| 
+      ids_array << x.item_id 
+    }
+    # if I direct do join it will be very slow to join item_query_cat_metrics_daily and all_items_attrs
+    sql_for_items =
+    "select b.title as title, b.image_url as image_url, a.item_con_ave as item_con, a. item_pvr_ave as item_pvr,
+     a.item_atc_ave as item_atc, a.sum_item_revenue as item_revenue, a.sum_shown_count as shown_count from
+     (
+     select item_id,
+     sum(shown_count) as sum_shown_count,
+     sum(item_pvr *shown_count)/sum(shown_count) as item_pvr_ave,
+     sum(item_con *shown_count)/sum(shown_count) as item_con_ave,
+     sum(item_atc *shown_count)/sum(shown_count) as item_atc_ave,
+     sum(item_revenue) as sum_item_revenue
+     from item_query_cat_metrics_daily 
+     where query_date in (?) and query = ? and cat_id = 0 and (channel = 'ORGANIC' or channel = 'ORGANIC_USER')
+      group by item_id
+     
+     order by sum_shown_count DESC,item_pvr_ave DESC, item_atc_ave DESC limit 32
+     )a
+     left join 
+     (select item_id, title, image_url from all_item_attrs where item_id in (?)) b
+     on b.item_id = a.item_id
+    "
+   items =ItemQueryCatMetricsDaily.find_by_sql([sql_for_items, date_range, query, ids_array])
+
+    return items
+
+    # select * from item_query_cat_metrics_daily where query_date in ('2013-07-07', '2013-07-09') and query = "dora" and cat_id = 0 and channel = 'ORGANIC' or 'ORGANIC_USER' order by item_pvr DESC limit 32
+
+  end
+
 end
