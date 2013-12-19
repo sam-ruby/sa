@@ -83,7 +83,7 @@ $ ->
 
     controller.on('all', (name) ->
       current_view = controller.get_view()
-      if name.match(/search-rel:index|search-kpi|do-search|poor-performing-stats:index|poor-performing:index|pp:stats:index|pp:walmart-items:index|pp:amazon-items:index|query-comparison|search:form|query-monitoring-count:index/)
+      if name.match(/search-rel:index|search-kpi|do-search|poor-performing-stats:index|poor-performing:index|pp:stats:index|pp:walmart-items:index|pp:amazon-items:index|adhoc_query|query-monitoring-count:index/)
         if not current_view or current_view != 'daily'
           controller.set_view('daily')
           controller.trigger('view-change', view: 'daily'))
@@ -138,7 +138,7 @@ $ ->
     searchWalmartItemsView = new Searchad.Views.SubTabs.WalmartItems.IndexView(
       el: '#search-sub-content')
     searchWalmartItemsView.listenTo(
-      controller, 'search:walmart-items', searchWalmartItemsView.get_items)
+      controller, 'search:walmart-items', searchWalmartItemsView.render)
 
     amazonStatsView =
       new Searchad.Views.SubTabs.AmazonItems.Stats.IndexView(
