@@ -37,8 +37,10 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     
   events:
     'click .export-csv a': (e) ->
-      fileName = "conversion_rate_dropped_query analysis_for #{@data.query_date}_week_apart_#{@data.weeks_apart}.csv"
-      @export_csv($(e.target), fileName, @data)
+      if @data
+        fileName = "conversion_rate_dropped_query analysis_for #{@data.query_date}_week_apart_#{@data.weeks_apart}.csv"
+        @export_csv($(e.target), fileName, @data)
+      
 
   active: false
 
