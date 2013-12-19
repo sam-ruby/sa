@@ -154,6 +154,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     @init_all_date_pickers()
     @get_items()
 
+
   popular_items_over_time:(e)=>
     e.preventDefault()
     $('#label-popular-items-over-time').addClass('label-info')
