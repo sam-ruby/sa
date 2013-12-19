@@ -13,7 +13,6 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     @collection.bind('reset', @render_result)
     
     @collection.bind('request', =>
-      @$el.children().not('.ajax-loader').not('.cvr-dropped-query-form').remove()
       @controller.trigger('search:sub-content:show-spin')
       $('.cvr-dropped-query-form').hide()
       @undelegateEvents()
@@ -75,7 +74,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     {name: 'shown_count',
     label: I18n.t('dashboard2.shown_count'),
     editable: false,
-    formatter: Utils.CustomNumberFormatter,
+    # formatter: Utils.CustomNumberFormatter,
     cell: 'integer'},
     {name: 'item_con',
     label: I18n.t('perf_monitor2.conversion_rate'),
@@ -174,6 +173,9 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
   
   render_result: =>
     return unless @active
+    # usually the clear is bind with request, since here is using client side pagination,
+    # there is not request available to trigger clean up when swiching pages. Clear here. 
+    @$el.children().not('.ajax-loader').not('.cvr-dropped-query-form').remove()
     @controller.trigger('search:sub-content:hide-spin')
     $('.cvr-dropped-query-form').show()
     return @render_error(@query) if @collection.size() == 0
