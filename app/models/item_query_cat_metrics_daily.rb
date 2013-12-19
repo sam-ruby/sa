@@ -47,13 +47,12 @@ class ItemQueryCatMetricsDaily < BaseModel
      sum(item_pvr *shown_count)/sum(shown_count) as item_pvr_ave,
      sum(item_con *shown_count)/sum(shown_count) as item_con_ave,
      sum(item_atc *shown_count)/sum(shown_count) as item_atc_ave,
-     sum(item_revenue) as sum_item_revenue,
-     sqrt(shown_count)*sum(item_pvr *shown_count)/sum(shown_count) as rank_score
+     sum(item_revenue) as sum_item_revenue
      from item_query_cat_metrics_daily 
      where query_date in (?) and query = ? and cat_id = 0 and (channel = 'ORGANIC' or channel = 'ORGANIC_USER') 
      group by item_id
      
-     order by rank_score DESC,item_pvr_ave DESC, item_atc_ave DESC limit 32"
+     order by sum_shown_count DESC,item_pvr_ave DESC, item_atc_ave DESC limit 32"
 
     date_range = start_date..end_date
 
@@ -73,13 +72,12 @@ class ItemQueryCatMetricsDaily < BaseModel
      sum(item_pvr *shown_count)/sum(shown_count) as item_pvr_ave,
      sum(item_con *shown_count)/sum(shown_count) as item_con_ave,
      sum(item_atc *shown_count)/sum(shown_count) as item_atc_ave,
-     sum(item_revenue) as sum_item_revenue,
-     sqrt(shown_count)*sum(item_pvr *shown_count)/sum(shown_count) as rank_score
+     sum(item_revenue) as sum_item_revenue
      from item_query_cat_metrics_daily 
      where query_date in (?) and query = ? and cat_id = 0 and (channel = 'ORGANIC' or channel = 'ORGANIC_USER')
       group by item_id
      
-     order by rank_score DESC,item_pvr_ave DESC, item_atc_ave DESC limit 32
+     order by sum_shown_count DESC,item_pvr_ave DESC, item_atc_ave DESC limit 32
      )a
      left join 
      (select item_id, title, image_url from all_item_attrs where item_id in (?)) b
