@@ -126,7 +126,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
 
 
   render:(data)=>
-    @$el.append(@form_template())
+    @$el.prepend(@form_template())
     @init_all_date_pickers()
     @get_items(data)
 
@@ -140,19 +140,24 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     data.view || = "daily"
     @data = data;
 
+
   get_items: (data) =>
     @active = true
-    @process_data(data);
+    data = @process_data(data)
     @collection.get_items(data)
 
   top_32_daily:(e)=>
     e.preventDefault()
+    $('#label-popular-items-over-time').removeClass('label-info')
+    $('#label-top-32-daily').addClass('label-info')
     # if top 32, reset date picker
     @init_all_date_pickers()
     @get_items()
 
   popular_items_over_time:(e)=>
     e.preventDefault()
+    $('#label-popular-items-over-time').addClass('label-info')
+    $('#label-top-32-daily').removeClass('label-info')
     data = {}
     data.start_date = @$el.find('input.start-date.datepicker').datepicker('getDate').toString('M-d-yyyy')
     data.end_date = @$el.find('input.end-date.datepicker').datepicker('getDate').toString('M-d-yyyy')
@@ -169,8 +174,6 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     return unless @active
     @controller.trigger('search:sub-content:hide-spin')
     return @render_error(@query) if @collection.size() == 0
-
-    
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     @$el.append( @export_csv_button() )
