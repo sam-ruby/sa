@@ -143,29 +143,29 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     cell: SearchQueryCell
     },
     {name:'query_con_diff',
-    label:'Con Diff',
+    label:'Con Diff (%)',
     editable:false
     cell:'number'},
     {name:'query_con_before',
-    label:'Con Before',
+    label:'Con Before (%)',
     editable:false
     cell:'number',
     # className:'conversion-rate'
     },
     {name:'query_con_after',
-    label:'Con After',
+    label:'Con After (%)',
     editable:false
     cell:'number'},
     {name:'query_revenue_before',
-    label:'Rev Before',
+    label:'Rev Before ($)',
     editable:false,
     cell:'number'},
     {name:'query_revenue_after',
-    label:'Rev After',
+    label:'Rev After ($)',
     editable:false,
     cell:'number'},
     {name:'expected_revenue_diff',
-    label:'Rev Diff',
+    label:'Potential Rev Loss ($)',
     editable:false,
     cell:'number'
     headerCell:'custom'},
