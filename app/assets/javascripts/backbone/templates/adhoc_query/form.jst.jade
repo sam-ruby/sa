@@ -8,7 +8,6 @@ form.form-horizontal.cvr-dropped-query-form
         input#keyword(name='keyword', value='Search Videos')
         i.icon-search.icon-1x
 
-
       | &nbsp;
       span.label.label-info.label-search-mode
         a#switch-mode-btn(href='#')
@@ -32,10 +31,9 @@ form.form-horizontal.cvr-dropped-query-form
       | &nbsp;
       input.input-small.datepicker(type='text', 'data-date-format'='M d, yyyy',
         'data-date-autoclose'='true')
+      | &nbsp;
+      button.btn.search(type='submit') Search
 
     .controls
       .cvr-dropped-selected-result.date_range_display.advanced
 
-  .control-group
-    .controls
-      button.btn.search(type='submit') Search

@@ -1,3 +1,37 @@
+.cvr-dropped-query-grid{
+
+  border-collapse: collapse;
+  thead th {
+
+    vertical-align: bottom;
+    background-color: #f9f9f9;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  th, td{
+    height: 20px;
+    max-width: 220px;
+    padding: 4px 5px;
+    overflow: hidden;
+    line-height: 20px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+    border: 1px solid #DDD;
+    display: table-cell;
+  }
+
+  .number-cell, .integer-cell {
+    text-align: right;
+  }
+  table{
+    border-spacing: 2px;
+    border-color: gray;
+  }
+}
+
 .cvr-dropped-selected-result{
   margin-top:10px
 }
@@ -33,7 +67,7 @@
 
 .cvr-dropped-query-results-label{
   font-size:20px;
-  margin-top:50px;
+  margin-top:20px;
   margin-bottom:20px;
   #font-weight:bold;
 }

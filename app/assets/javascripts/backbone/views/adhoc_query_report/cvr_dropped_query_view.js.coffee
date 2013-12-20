@@ -184,7 +184,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     ]
 
     @grid = new Backgrid.Grid(
-      className:'cvr-dropped-query backgrid'
+      className:'cvr-dropped-query-grid'
       columns: columns
       collection: @collection
     )
