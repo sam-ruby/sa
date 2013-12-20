@@ -1,12 +1,13 @@
 Searchad.Views.QueryMonitoring ||= {}
-Searchad.Views.QueryMonitoring.Metrics ||= {}
+Searchad.Views.QueryMonitoring.Metric ||= {}
 
-class Searchad.Views.QueryMonitoring.Metrics.IndexView extends Backbone.View
+class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
   initialize: (options) =>
+    console.log("init query monitoring metric")
     # @trigger = false
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
-    @collection = new Searchad.Collections.QueryMonitoringMetricsCollection()
+    @collection = new Searchad.Collections.QueryMonitoringMetricCollection()
     # @$filter = @$el.find(options.el_filter)
     # @filterAdded = false
     @initTable()
@@ -17,7 +18,7 @@ class Searchad.Views.QueryMonitoring.Metrics.IndexView extends Backbone.View
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
     @collection.bind('request', =>
-      @unrender_search_results()
+      # @unrender_search_results()
       @$el.find('.ajax-loader').css('display', 'block')
       @controller.trigger('qm-count:sub-content-cleanup')
     )
@@ -56,7 +57,7 @@ class Searchad.Views.QueryMonitoring.Metrics.IndexView extends Backbone.View
 
   unrender: =>
     @active = false
-    @unrender_search_results()
+    # @unrender_search_results()
     # @clear_filter()
     @undelegateEvents()
     this
@@ -75,6 +76,8 @@ class Searchad.Views.QueryMonitoring.Metrics.IndexView extends Backbone.View
 
 
   get_items: (data) =>
+
+    console.log("get_items_in query monitoring metrics", data)
     @active = true
     @$el.find('.ajax-loader').css('display', 'block')
     # if data and data.query
@@ -113,10 +116,11 @@ class Searchad.Views.QueryMonitoring.Metrics.IndexView extends Backbone.View
         query = $(e.target).text()
         $(e.target).parents('table').find('tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
-        that.controller.trigger('qm-count:sub-content',
+        console.log('click')
+        that.controller.trigger('qm-metric:stats',
           query: query
           view: 'daily')
-        new_path = 'query_monitoring/count/query/' + encodeURIComponent(query)
+        new_path = 'query_monitoring/metrics/query/' + encodeURIComponent(query)
         that.router.update_path(new_path)
 
       render: ->
@@ -132,7 +136,7 @@ class Searchad.Views.QueryMonitoring.Metrics.IndexView extends Backbone.View
     editable: false,
     cell: QueryCell},
     {name: 'count',
-    label: 'Query Cout',
+    label: 'Query Count',
     editable: false,
     cell: 'integer',
     headerCell: 'custom'},
@@ -141,15 +145,15 @@ class Searchad.Views.QueryMonitoring.Metrics.IndexView extends Backbone.View
     editable: false,
     cell: 'number'},
     {name: 'atc_trend_score',
-    label: I18n.t('atc trend score'),
+    label: 'ATC Trend Score',
     editable: false,
     cell: 'number',
-    formatter: Utils.PercentFormatter},
+    },
     {name: 'atc_ooc_score',
-    label: I18n.t('atc out of control score'),
+    label: 'ATC Out of Control Score',
     editable: false,
     cell: 'number',
-    formatter: Utils.PercentFormatter}
+    }
     ]
 
     columns

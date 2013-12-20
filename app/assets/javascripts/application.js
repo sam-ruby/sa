@@ -10,6 +10,7 @@
 // require highcharts
 //= require date
 //= require highstocks/js/highstock
+//= require highcharts-more
 //= require highcharts/modules/funnel
 //= require i18n
 //= require i18n/translations

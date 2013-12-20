@@ -1,4 +1,4 @@
-class Searchad.Models.QueryMonitoringMetrics extends Backbone.Model
+class Searchad.Models.QueryMonitoringMetric extends Backbone.Model
   # paramRoot: 'query'
   defaults:
     query: null
@@ -14,13 +14,13 @@ class Searchad.Models.QueryMonitoringMetrics extends Backbone.Model
     atc_trend_score:null
     atc_ooc_score:null
 
-class Searchad.Collections.QueryMonitoringCountCollection extends Backbone.PageableCollection
+class Searchad.Collections.QueryMonitoringMetricCollection extends Backbone.PageableCollection
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     @query = null
     super(options)
 
-  model: Searchad.Models.QueryMonitoringCount
+  model: Searchad.Models.QueryMonitoringMetric
   url: '/monitoring/metric/get_metric_monitor_table_data.json'
   # filters:
   #   date: null

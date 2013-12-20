@@ -205,6 +205,20 @@ $ ->
         el: '#qm-count-sub-content')
     qmCountStatsView.listenTo(
       controller, 'qm-count:stats', qmCountStatsView.get_items)
+
+    queryMonitoringMetricView = new Searchad.Views.QueryMonitoring.Metric.IndexView (
+      el:' #qm-metrics'    
+    )
+    queryMonitoringMetricView.listenTo(
+      controller, 'query-monitoring-metrics:index', (data) ->
+        queryMonitoringMetricView.get_items(data)
+    )
+
+    qmMetricStatsView = new Searchad.Views.QueryMonitoring.Metric.Stats.IndexView ( 
+      el: '#qm-count-sub-content'
+    )
+    qmCountStatsView.listenTo(
+      controller, 'qm-metric:stats', qmMetricStatsView.get_items)
    
   Backbone.history.start()
   
