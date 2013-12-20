@@ -70,6 +70,14 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
         return this
 
     columns = [{
+    name: 'cvr_dropped_item_comparison_rank',
+    label: 'Rank',
+    editable: false,
+    cell: 'string'
+    headerCell:'custom'
+    },
+
+    {
     name: 'item_title_before',
     label: 'Item showed two weeks before',
     editable: false,

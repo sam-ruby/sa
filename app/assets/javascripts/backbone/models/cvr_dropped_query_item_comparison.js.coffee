@@ -1,6 +1,7 @@
 class Searchad.Models.CvrDroppedQueryComparisonItem extends Backbone.Model
 
   defaults:
+    cvr_dropped_item_comparison_rank: null
     item_id_before: null
     item_title_before: null  
     item_url_before:null

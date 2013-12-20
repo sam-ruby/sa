@@ -64,7 +64,10 @@ class QueryDroppingConversion < BaseModel
     item_after_arr = get_top_items_between_date(query, after_start_date, after_end_date, after_start_date) 
     #since this is a small list, it is ok to process the merge
     result_arr = Array.new([item_before_arr.length, item_after_arr.length].max){Hash.new}
-    result_arr.each_with_index { |val, index| 
+
+    result_arr.each_with_index { |val, index|
+      # index starts with 0, when displaying it as rank in UI, it should start with 1;  
+      val['cvr_dropped_item_comparison_rank'] = index+1
       if (index < item_before_arr.length )
         val['item_id_before'] = item_before_arr[index]['item_id']
         val['item_title_before'] = item_before_arr[index]['title']

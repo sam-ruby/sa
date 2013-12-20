@@ -7,10 +7,7 @@ Searchad.helpInfo =
     Lager difference between catalog overlap and result shown in search
     Formula: Sqrt(query_cout)(100-conversion_rate)(cat_overlap - show_rate)
     "
-  # query_revenue:
-  #   id: "query_revenue"
-  #   name: "Query Revenue"
-  #   description: "weekly revenue from organic query"
+
   query_score:
     id: "query_score"
     name: "Query Score"
@@ -41,7 +38,12 @@ Searchad.helpInfo =
     id:"expected_revenue_diff"
     name:"Revenue Difference compare with expected Revenue"
     description:"If the conversion did not change, what is the difference between the roughly expected revenue and actual revenue.  "
-    
+  
+  cvr_dropped_item_comparison_rank:
+    id: 'cvr_dropped_item_comparison_rank'
+    name: 'cvr_dropped_item_comparison_rank'
+    description: 'The rank is the exact order that shown as result from search'
+
   site_revenue:
     id: 'site_revenue'
     name: 'Site Revenue'
@@ -51,3 +53,6 @@ Searchad.helpInfo =
     id: 'revenue'
     name: 'Revenue'
     description: 'Average daily revenue for the item in last 14 days'
+
+
+
