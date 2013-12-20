@@ -2,7 +2,11 @@ Searchad.helpInfo =
   rank_metric:
     id:"rand_metric"
     name:"Rank Metric"
-    description:"Sqrt(query_cout)(1-conversion_rate)(cat_overlap - show_rate)"
+    description:"Sorted by Larger Query Count,
+    Smaller Conversion Rate,
+    Lager difference between catalog overlap and result shown in search
+    Formula: Sqrt(query_cout)(100-conversion_rate)(cat_overlap - show_rate)
+    "
   # query_revenue:
   #   id: "query_revenue"
   #   name: "Query Revenue"
