@@ -56,5 +56,9 @@ Searchad.helpInfo =
     name: 'Revenue'
     description: 'Average daily revenue for the item in last 14 days'
 
+  rank:
+    id:'rank'
+    name: 'rank'
+    description: 'Ranked by query with most siginificant conversion dropping and increased demand. Formula: sqrt(count_after)* con_diff'
 
 
