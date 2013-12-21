@@ -49,9 +49,16 @@ class QueryDroppingConversion < BaseModel
     select_cols = %q{query, query_con_before, query_count_before, query_revenue_before,
      query_count_after, query_con_after, query_revenue_after, query_con_after, query_con_diff, 
      query_score, query_con_after/query_con_before*query_revenue_before-query_revenue_after 
-     as expected_revenue_diff}
-
-    select(select_cols).where(%q{window_in_weeks = ? and data_date = ?}, weeks_apart, query_date).from('queries_with_dropping_conversion').page(page).per(limit)
+     as expected_revenue_diff, 
+     (@rank := @rank + 1) AS rank}
+    # (@rank := @rank + 1) we need to calculate a rank number on the fly
+    # defining the starting count for the rank. Like on second page, the rank should be 11,12,13. The page starting from 1,2,3,4.
+    # the starting_rank is to form the from_statement
+    starting_rank = ((page-1) * limit).to_s
+    from_statement  =  "queries_with_dropping_conversion,(SELECT @rank := " + starting_rank +") AS vars"
+    select(select_cols).from(from_statement)
+      .where(%q{window_in_weeks = ? and data_date = ?}, weeks_apart, query_date)
+      .page(page).per(limit)
   end
 
 

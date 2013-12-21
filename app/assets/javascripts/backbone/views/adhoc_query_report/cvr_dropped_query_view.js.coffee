@@ -137,10 +137,18 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
         @delegateEvents()
         return this
 
+
     columns = [{name: 'query',
     label: 'Search Word',
     editable: false
     cell: SearchQueryCell
+    },
+    # rank is determined by query_score
+    {name:'rank',
+    label:'Rank',
+    editable:false,
+    cell:'integer',
+    headerCell:'custom'
     },
     {name:'query_con_diff',
     label:'Con Diff (%)',
@@ -175,10 +183,6 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     cell:'number'},
     {name:'query_count_after',
     label:'Count After',
-    editable:false
-    cell:'number'},
-    {name:'query_score',
-    label:'Rank Metric',
     editable:false
     cell:'number'},
     ]
