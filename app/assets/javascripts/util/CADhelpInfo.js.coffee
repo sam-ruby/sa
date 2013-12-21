@@ -37,7 +37,9 @@ Searchad.helpInfo =
   expected_revenue_diff:
     id:"expected_revenue_diff"
     name:"Revenue Difference compare with expected Revenue"
-    description:"If the conversion did not change, what is the difference between the roughly expected revenue and actual revenue.  "
+    description:"If the conversion did not change, what is the difference between the roughly 
+    expected revenue and actual revenue. Positive number indicates there might be rev loss
+     Formulat: conv_after/conv_before*rev_before - rev_after "
   
   cvr_dropped_item_comparison_rank:
     id: 'cvr_dropped_item_comparison_rank'
