@@ -8,7 +8,6 @@ form.form-horizontal.cvr-dropped-query-form
         input#keyword(name='keyword', value='Search Videos')
         i.icon-search.icon-1x
 
-
       | &nbsp;
       span.label.label-info.label-search-mode
         a#switch-mode-btn(href='#')
@@ -16,10 +15,10 @@ form.form-horizontal.cvr-dropped-query-form
           | &nbsp; 
           span.switch_mode_text Switch to Simple Search
 
-  .control-group.advanced
-    label.control-label(for='date-picker') Date Range
+  .control-group
+    label.control-label(for='date-picker').advanced Date Range
     .controls
-      select.weeks-apart-select
+      select.weeks-apart-select.advanced
         each val in [1, 2, 3 ,4]
           if weeks_apart == val
             option(selected=true, value=val)
@@ -27,15 +26,16 @@ form.form-horizontal.cvr-dropped-query-form
           else
             option(value=val)
               =val + ' Week'
-      | &nbsp;
-      | of
-      | &nbsp;
-      input.input-small.datepicker(type='text', 'data-date-format'='M d, yyyy',
+      span.advanced
+        | &nbsp;
+        | of
+        | &nbsp;
+      input.input-small.datepicker.advanced(type='text', 'data-date-format'='M d, yyyy',
         'data-date-autoclose'='true')
+      span.advanced
+        | &nbsp;
+      button.btn.search(type='submit') Search
 
     .controls
       .cvr-dropped-selected-result.date_range_display.advanced
 
-  .control-group
-    .controls
-      button.btn.search(type='submit') Search
