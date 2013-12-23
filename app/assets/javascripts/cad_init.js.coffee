@@ -80,10 +80,10 @@ $ ->
     controller.set_date(Selected_Date.toString('M-d-yyyy'))
     controller.set_week(Selected_Week)
     controller.set_year(Selected_Year)
-    
+
     controller.on('all', (name) ->
       current_view = controller.get_view()
-      if name.match(/search-rel:index|search-kpi|do-search|poor-performing-stats:index|poor-performing:index|pp:stats:index|pp:walmart-items:index|pp:amazon-items:index|query-comparison|search:form|query-monitoring-count:index/)
+      if name.match(/search-rel:index|search-kpi|do-search|poor-performing-stats:index|poor-performing:index|pp:stats:index|pp:walmart-items:index|pp:amazon-items:index|adhoc_query|query-monitoring-count:index/)
         if not current_view or current_view != 'daily'
           controller.set_view('daily')
           controller.trigger('view-change', view: 'daily'))
@@ -116,62 +116,77 @@ $ ->
       controller, 'search-rel:index', searchQualityQueryView.get_items)
     
     # Search
-    searchView = new Searchad.Views.Search.IndexView(
-      el: '#search'
+    searchView = new Searchad.Views.AdhocQuery.SimpleSearchView(
+      el: '#adhoc-query-report'
       el_results: '#search-results'
-      el_form: '#search-form')
+      )
     searchView.listenTo(
-      controller, 'search:form', searchView.render)
+      controller, 'adhoc:search', (data) -> searchView.do_search(data))
     searchView.listenTo(
       controller, 'load-search-results', searchView.load_search_results)
 
     subtabsView =
-      new Searchad.Views.Search.SubTabs.IndexView(el: '#search-sub-tabs')
+      new Searchad.Views.SubTabs.IndexView(el: '#search-sub-tabs')
     subtabsView.listenTo(
       controller, 'search:sub-content', subtabsView.render)
    
-    searchStatsView = new Searchad.Views.Search.Stats.IndexView(
+    searchStatsView = new Searchad.Views.SubTabs.Stats.IndexView(
       el: '#search-sub-content')
     searchStatsView.listenTo(
       controller, 'search:stats', searchStatsView.get_items)
 
-    searchWalmartItemsView = new Searchad.Views.Search.WalmartItems.IndexView(
+    searchWalmartItemsView = new Searchad.Views.SubTabs.WalmartItems.IndexView(
       el: '#search-sub-content')
     searchWalmartItemsView.listenTo(
-      controller, 'search:walmart-items', searchWalmartItemsView.get_items)
+      controller, 'search:walmart-items', searchWalmartItemsView.render)
 
     amazonStatsView =
-      new Searchad.Views.Search.AmazonItems.Stats.IndexView(
+      new Searchad.Views.SubTabs.AmazonItems.Stats.IndexView(
         el: '#search-sub-content')
     amazonStatsView.listenTo(
       controller, 'search:amazon-items:stats', amazonStatsView.render)
 
     amazonItemsView =
-      new Searchad.Views.Search.AmazonItems.IndexView(
+      new Searchad.Views.SubTabs.AmazonItems.IndexView(
         el: '#search-amazon-content')
     amazonItemsView.listenTo(
       controller, 'search:amazon-items', amazonItemsView.get_items)
     
-    queryItemsView = new Searchad.Views.Search.RelRev.IndexView(
+    queryItemsView = new Searchad.Views.SubTabs.RelRev.IndexView(
       el: '#search-sub-content')
     queryItemsView.listenTo(
       controller, 'search:rel-rev', (data) ->
         queryItemsView.get_items(data)
     )
 
-    # Search Comparison
-    searchComparisonView =
-      new Searchad.Views.SearchComparison.IndexView(
-        el: '#query-comparison-fcharts'
-        form_selector: '.query-form'
-        before_selector: '.before-data'
-        after_selector: '.after-data'
-        comparison_selector: '.comparison-data'
-        recent_searches_selector: '.recent-searches'
+     #cvr dropped view
+    cvrDroppedQueryView = new Searchad.Views.AdhocQuery.cvrDroppedQueryView (
+      el: '#adhoc-query-report'
+      el_results: '#cvr-dropped-query-results'
       )
-    searchComparisonView.listenTo(controller, 'query-comparison:index',
-      searchComparisonView.get_items)
+
+    cvrDroppedQueryView.listenTo(
+        controller, 'adhoc:cvr_dropped_query', (data) -> cvrDroppedQueryView.get_items(data))
+
+    #cvr_dropped_view when click on q query show the item comparison regarding that query
+    cvrDroppedQueryItemComparisonView = new Searchad.Views.SubTabs.ItemComparisonView {
+      el: '#search-sub-content'
+    }
+    cvrDroppedQueryItemComparisonView.listenTo(
+      controller, 'cvr_dropped_query:item_comparison', (data) ->
+         cvrDroppedQueryItemComparisonView.get_items(data)
+    )
     
+    adhocQueryView = new Searchad.Views.AdhocQuery.IndexView(
+      el: '#adhoc-query-report' 
+      el_form: '#cvr-dropped-query-form'
+    )
+    adhocQueryView.listenTo(
+      controller, 'adhoc:toggle_search_mode',(query_comparison_on)->adhocQueryView.toggle_search_mode(query_comparison_on))
+
+    adhocQueryView.listenTo(
+      controller, 'adhoc:index',(data)->adhocQueryView.render_form(data))
+
     queryMonitoringCountView =
       new Searchad.Views.QueryMonitoring.Count.IndexView(
         el: '#qm-count'
@@ -191,100 +206,6 @@ $ ->
     qmCountStatsView.listenTo(
       controller, 'qm-count:stats', qmCountStatsView.get_items)
    
-    ###
-    searchStatsView = new Searchad.Views.Search.Stats.IndexView(
-      el: '#search-sub-content')
-    searchStatsView.listenTo(
-      controller, 'search:stats', searchStatsView.get_items)
-    ###
-    #
-    ###
-    amazonItemsView =
-      new Searchad.Views.PoorPerforming.AmazonItems.IndexView(
-        el: '#ca-subtabs-content'
-        top_32_tab: '#ca-amazon-top-subtabs'
-        view: 'weekly')
-    amazonItemsView.listenTo(
-      @controller, 'ca:amazon-items:index', amazonItemsView.get_items)
-    amazonItemsView.listenTo(
-      @controller, 'ca:content-cleanup', amazonItemsView.unrender)
-    
-    amazonItemsView.listenTo(
-      @controller, 'ca:amazon-items:all-items',
-      amazonItemsView.render_all_items)
-    amazonItemsView.listenTo(
-      @controller, 'ca:amazon-items:in-top-32',
-      amazonItemsView.render_in_top_32)
-    amazonItemsView.listenTo(
-      @controller, 'ca:amazon-items:not-in-top-32',
-      amazonItemsView.render_not_in_top_32)
-
-    amazonItemsView.collection.on('reset', ->
-      if @collection.at(0).get('all_items').length > 0
-        @controller.trigger('ca:amazon-items:overlap',
-          query: @query
-          collection: @collection)
-    , amazonItemsView)
-    @controller.bind('ca:amazon-items:in-top-32', @render_in_top_32)
-    @controller.bind('ca:amazon-items:not-in-top-32', @render_not_in_top_32)
-    
-    amazonStatsView =
-      new Searchad.Views.CompAnalysis.AmazonItemsChart.IndexView(
-        el: '#ca-amazon-overlap')
-    amazonStatsView.listenTo(
-      @controller, 'ca:amazon-items:overlap', amazonStatsView.render)
-    amazonStatsView.listenTo(
-      @controller, 'ca:content-cleanup', amazonStatsView.unrender)
-
-    @searchStatsView = new Searchad.Views.PoorPerforming.Stats.IndexView(
-      el: options.el_sub_content)
-    @searchStatsView.listenTo(
-      @controller, 'search:stats', @searchStatsView.get_items)
-    @searchStatsView.listenTo(
-      @controller, 'search:sub-content-cleanup', @searchStatsView.unrender)
-
-    @searchWalmartItemsView =
-      new Searchad.Views.PoorPerforming.WalmartItems.IndexView(
-        el: options.el_sub_content)
-    @searchWalmartItemsView.listenTo(
-      @controller, 'search:walmart-items', @searchWalmartItemsView.get_items)
-    @searchWalmartItemsView.listenTo(
-      @controller, 'search:sub-content-cleanup', @searchWalmartItemsView.unrender)
-    
-    @searchAmazonItemsView =
-      new Searchad.Views.PoorPerforming.AmazonItems.IndexView(
-        el: options.el_sub_content)
-    @searchAmazonItemsView.listenTo(
-      @controller, 'search:amazon-items', @searchAmazonItemsView.get_items)
-    @searchStatsView.listenTo(
-      @controller, 'search:sub-content-cleanup', @searchStatsView.unrender)
-
-
-    ppSubtabsView = new Searchad.Views.PoorPerforming.SubTabs.IndexView(
-        el: '#poor-performing-subtabs')
-    
-    ppWalmartItemsView = new Searchad.Views.PoorPerforming.WalmartItems.IndexView(
-        el: '#poor-performing-subtabs-content')
-    ppWalmartItemsView.listenTo(
-      controller, 'pp:walmart-items:index', ppWalmartItemsView.get_items)
-    ppWalmartItemsView.listenTo(
-      controller, 'pp:content-cleanup', ppWalmartItemsView.unrender)
-    
-    ppStatsView = new Searchad.Views.PoorPerforming.Stats.IndexView(
-        el: '#hcharts')
-    ppStatsView.listenTo(
-      controller, 'pp:stats:index', ppStatsView.get_items)
-    ppStatsView.listenTo(
-      controller, 'pp:content-cleanup', ppStatsView.unrender)
-    
-    ppAmazonItemsView = new Searchad.Views.PoorPerforming.AmazonItems.IndexView(
-        el: '#poor-performing-subtabs-content')
-    ppAmazonItemsView.listenTo(
-      controller, 'pp:amazon-items:index', ppAmazonItemsView.get_items)
-    ppAmazonItemsView.listenTo(
-      controller, 'pp:content-cleanup', ppAmazonItemsView.unrender)
-    ###
-      
   Backbone.history.start()
   
   $('div.content').css('height', ($(window).height() + 50) + 'px')
@@ -292,7 +213,6 @@ $ ->
   $('p.alert').hide()
   $('a.home-page').on('click', (e) ->
     e.preventDefault()
-    SearchQualityApp.Controller.trigger('content-cleanup')
     SearchQualityApp.Router.navigate('/', trigger: true)
   )
   MDW.init({appId: 429415118})

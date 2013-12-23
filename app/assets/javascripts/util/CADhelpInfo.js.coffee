@@ -2,11 +2,12 @@ Searchad.helpInfo =
   rank_metric:
     id:"rand_metric"
     name:"Rank Metric"
-    description:"Sqrt(query_cout)(1-conversion_rate)(cat_overlap - show_rate)"
-  # query_revenue:
-  #   id: "query_revenue"
-  #   name: "Query Revenue"
-  #   description: "weekly revenue from organic query"
+    description:"Sorted by Larger Query Count,
+    Smaller Conversion Rate,
+    Lager difference between catalog overlap and result shown in search
+    Formula: Sqrt(query_cout)(100-conversion_rate)(cat_overlap - show_rate)
+    "
+
   query_score:
     id: "query_score"
     name: "Query Score"
@@ -31,3 +32,33 @@ Searchad.helpInfo =
     id: "query_pvr"
     name: "Product View Rate"
     description: "percentage of queries that customers clicked items recalled for a query"
+
+  #conversionrate dropped query
+  expected_revenue_diff:
+    id:"expected_revenue_diff"
+    name:"Revenue Difference compare with expected Revenue"
+    description:"If the conversion did not change, what is the difference between the roughly 
+    expected revenue and actual revenue. Positive number indicates there might be rev loss
+     Formulat: conv_after/conv_before*rev_before - rev_after "
+  
+  cvr_dropped_item_comparison_rank:
+    id: 'cvr_dropped_item_comparison_rank'
+    name: 'cvr_dropped_item_comparison_rank'
+    description: 'The rank is the exact order that shown as result from search'
+
+  site_revenue:
+    id: 'site_revenue'
+    name: 'Site Revenue'
+    description: 'Average daily Site revenue for the item in last 14 days'
+    
+  revenue:
+    id: 'revenue'
+    name: 'Revenue'
+    description: 'Average daily revenue for the item in last 14 days'
+
+  rank:
+    id:'rank'
+    name: 'rank'
+    description: 'Ranked by query with most siginificant conversion dropping and increased demand. Ranked by a score calculated based on formula: sqrt(count_after)* con_diff'
+
+

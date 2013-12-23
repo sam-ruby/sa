@@ -1,7 +1,7 @@
-Searchad.Views.Search ||= {}
-Searchad.Views.Search.RelRev ||= {}
+Searchad.Views.SubTabs ||= {}
+Searchad.Views.SubTabs.RelRev ||= {}
 
-class Searchad.Views.Search.RelRev.IndexView extends Backbone.View
+class Searchad.Views.SubTabs.RelRev.IndexView extends Backbone.View
   initialize: (options) =>
     
     _.bindAll(this, 'render', 'initTable')
@@ -10,10 +10,15 @@ class Searchad.Views.Search.RelRev.IndexView extends Backbone.View
     @initTable()
     
     @controller.bind('date-changed', =>
-      @unrender() if @active)
+      @get_items() if @active)
     @controller.bind('sub-content-cleanup', @unrender)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
+    @collection.bind('request', =>
+      @$el.children().not('.ajax-loader').remove()
+      @controller.trigger('search:sub-content:show-spin')
+      @undelegateEvents()
+    )
     Utils.InitExportCsv(this, '/search_rel/get_query_items.csv')
     @undelegateEvents()
     @active = false
@@ -65,6 +70,14 @@ class Searchad.Views.Search.RelRev.IndexView extends Backbone.View
     editable: false,
     sortable: false,
     formatter: Utils.CurrencyFormatter,
+    headerCell: 'custom',
+    cell: 'number'},
+    {name: 'site_revenue',
+    label: 'Site Revenue',
+    editable: false,
+    sortable: false,
+    formatter: Utils.CurrencyFormatter,
+    headerCell: 'custom',
     cell: 'number'}]
 
     columns
@@ -78,19 +91,29 @@ class Searchad.Views.Search.RelRev.IndexView extends Backbone.View
       collection: @collection)
   
   get_items: (data) =>
-    @query = data.query if data.query
-    @controller.trigger('search:sub-content:show-spin')
+    @active = true
+    data || = { }
+    if data.query
+      @query = data.query
+    else
+      data.query = @query
+    data.view || = "daily"
     @collection.get_items(data)
 
   render_error: (query) ->
+    return unless @active
+    
     @controller.trigger('search:sub-content:hide-spin')
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
   
   render: =>
-    @unrender()
+    return unless @active
     return @render_error(@query) if @collection.size() == 0
-    @active = true
+    
+    @$el.children().not('.ajax-loader').remove()
+    @controller.trigger('search:sub-content:hide-spin')
+    
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     @$el.append( @export_csv_button() )

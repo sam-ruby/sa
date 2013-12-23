@@ -21,7 +21,8 @@ class Searchad.Views.SearchKPI.IndexView extends Backbone.View
     {column: "query_count"
     name: I18n.t('dashboard.query_count_l')}]
 
-  initChart: (title, dom, series) ->
+  initChart: (title, dom, series) =>
+    that = this
     dom.highcharts('StockChart',
       chart:
         alignTicks: false
@@ -55,6 +56,15 @@ class Searchad.Views.SearchKPI.IndexView extends Backbone.View
             states:
               hover:
                 enabled: true
+        areaspline:
+          events:
+            click: (e) ->
+              that.goto_query_analysis(e.point.x) if e.point.x?
+        spline:
+          events:
+            click: (e) ->
+              that.goto_query_analysis(e.point.x) if e.point.x?
+
       legend:
         enabled: true
         layout: 'horizontal'
@@ -63,12 +73,18 @@ class Searchad.Views.SearchKPI.IndexView extends Backbone.View
         borderWidth: 0
       series: series)
     
+    
+  goto_query_analysis: (date_in_millisecs) ->
+    new_date = (new Date(date_in_millisecs)).toString('M-d-yyyy')
+    SearchQualityApp.Router.navigate(
+      "/search_rel/filters/date/#{new_date}", trigger: true)
+
   get_items: ->
-    @unrender()
+    @active = true
     image =$('<img>').addClass('ajax-loader').attr(
       'src', '/assets/ajax_loader.gif').css('display', 'block')
     @paid_el.append(image)
-    @unpaid_el.append(image)
+
     $.ajax(
       url: '/search_kpi/get_data.json'
       success: (json, status) =>
@@ -102,14 +118,17 @@ class Searchad.Views.SearchKPI.IndexView extends Backbone.View
     series[2].fillOpacity = .2
     series
 
-  render: (title, dom, data) ->
-    @active = true
+  render: (title, dom, data) =>
+    return unless @active
     dom.children().remove()
     @initChart(title, dom, data)
     this
   
   unrender: =>
     @active = false
+    @$el.children().not(@options.paid_dom_selector).not(
+      @options.unpaid_dom_selector).remove()
     @paid_el.highcharts().destroy() if @paid_el.highcharts()
     @unpaid_el.highcharts().destroy() if @unpaid_el.highcharts()
-
+    @paid_el.children().remove()
+    @unpaid_el.children().remove()

@@ -2,7 +2,6 @@ Searchad.Views.PoorPerforming ||= {}
 
 class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
   initialize: (options) =>
-    
     _.bindAll(this, 'render', 'initTable')
     @trigger = false
     @controller = SearchQualityApp.Controller
@@ -15,8 +14,18 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
     @controller.bind('date-changed', =>
       @get_items(trigger: true) if @active)
     @controller.bind('content-cleanup', @unrender)
+    
     @collection.bind('reset', @render)
-    Utils.InitExportCsv(this, "/poor_performing/get_search_words.csv")
+    @collection.bind('request', =>
+      @$el.children().not('.ajax-loader').remove()
+      @$el.find('.ajax-loader').css('display', 'block')
+      @controller.trigger('sub-content-cleanup')
+      @controller.trigger('search:sub-tab-cleanup')
+      @undelegateEvents()
+    )
+
+    Utils.InitExportCsv(
+      this, "/poor_performing/get_search_words.csv")
     @undelegateEvents()
     @active = false
 
@@ -41,17 +50,20 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
       handleQueryClick: (e) =>
         e.preventDefault()
         query = $(e.target).text()
-        $(e.target).parents('table').find('tr.selected').removeClass('selected')
+        $(e.target).parents('table').find(
+          'tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
         that.controller.trigger('search:sub-content',
           query: query
           view: 'daily')
-        new_path = 'poor_performing/query/' + encodeURIComponent(query)
+        new_path = 'poor_performing/query/' +
+          encodeURIComponent(query)
         that.router.update_path(new_path)
 
       render: ->
         value = @model.get(@column.get('name'))
-        formatted_value = '<a class="query" href="#">' + value + '</a>'
+        formatted_value = '<a class="query" href="#">' + value +
+          '</a>'
         @$el.html(formatted_value)
         @delegateEvents()
         return this
@@ -99,6 +111,7 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
     )
   
   get_items: (data) =>
+    @active = true
     @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items(data)
     @trigger = true
@@ -109,9 +122,15 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
     @$el.find('.ajax-loader').hide()
     @undelegateEvents()
 
+  render_error: =>
+    @$el.append( $('<span>').addClass(
+      'label label-important').append("No data available"))
+
   render: =>
-    @unrender()
-    @active = true
+    return unless @active
+    @$el.find('.ajax-loader').hide()
+    return @render_error(' ') if @collection.size() == 0
+    
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     @$el.append( @paginator.render().$el)
