@@ -8,17 +8,17 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @collection = new Searchad.Collections.QueryMonitoringMetricCollection()
-    # @$filter = @$el.find(options.el_filter)
-    # @filterAdded = false
+    @$filter = @$el.find(options.el_filter)
+    @filterAdded = true
     @initTable()
     # @$el.find('.ajax-loader').hide()
     
-    # @controller.bind('date-changed', =>
-    #   @get_items(trigger: true) if @active)
+    @controller.bind('date-changed', =>
+      @get_items(trigger: true) if @active)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
     @collection.bind('request', =>
-      # @unrender_search_results()
+      @unrender_search_results()
       @$el.find('.ajax-loader').css('display', 'block')
       @controller.trigger('qm-count:sub-content-cleanup')
     )
@@ -41,23 +41,24 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     return unless @active
     @$el.find('.ajax-loader').hide()
     return @render_error(@collection.query) if @collection.size() == 0
-    # unless @filterAdded
-    #   @$filter.append(@initFilter()())
-    #   @filterAdded = true
+    if @filterAdded
+      console.log("filter added")
+      @$filter.append(@initFilter()())
+      @filterAdded = true
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     @$el.append( @paginator.render().$el)
     # @$el.append( @export_csv_button() )
     @delegateEvents()
     
-    # if @trigger
-    #   @trigger = false
-    #   @$el.find('td a.query').first().trigger('click')
+    if @trigger
+      @trigger = false
+      @$el.find('td a.query').first().trigger('click')
     this
 
   unrender: =>
     @active = false
-    # @unrender_search_results()
+    @unrender_search_results()
     # @clear_filter()
     @undelegateEvents()
     this
@@ -80,17 +81,18 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     console.log("get_items_in query monitoring metrics", data)
     @active = true
     @$el.find('.ajax-loader').css('display', 'block')
-    # if data and data.query
-    #   @collection.query = data.query
-    # else
-    #   @collection.query = null
+    if data and data.query
+      @collection.query = data.query
+    else
+      @collection.query = null
     @collection.get_items()
     @trigger = true
 
   
-  # unrender_search_results: =>
-  #   @$el.children().not('.ajax-loader, #' + @$filter.attr('id')).remove()
-  #   @$el.find('.ajax-loader').hide()
+  unrender_search_results: =>
+    # @$el.children().not('.ajax-loader').remove()
+    @$el.children().not('.ajax-loader, #' + @$filter.attr('id')).remove()
+    @$el.find('.ajax-loader').hide()
   
 
 
@@ -159,26 +161,26 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     columns
 
 
-  # clear_filter: =>
-  #   @$filter.children().remove()
+  clear_filter: =>
+     @$filter.children().remove()
 
-      # initFilter: =>
-  #   _.template('<div class="input-prepend input-append filter-box"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type to filter results"/></form><button class="btn btn-primary reset">Reset</button></div>')
+  initFilter: =>
+    _.template('<div class="input-prepend input-append filter-box"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type to filter results"/></form><button class="btn btn-primary reset">Reset</button></div>')
  
-  # filter: (e) =>
-  #   e.preventDefault()
-  #   query = @$el.find(".filter-box input[type=text]").val()
-  #   @collection.query = query
-  #   if query
-  #     @collection.get_items()
-  #     @active = true
-  #     @trigger = true
+  filter: (e) =>
+    e.preventDefault()
+    query = @$el.find(".filter-box input[type=text]").val()
+    @collection.query = query
+    if query
+      @collection.get_items()
+      @active = true
+      @trigger = true
 
-  # reset: (e) =>
-  #   e.preventDefault()
-  #   @router.update_path('/search_rel')
-  #   @$el.find(".filter-box input[type=text]").val('')
-  #   @collection.query = null
-  #   @active = true
-  #   @collection.get_items()
-  #   @trigger = true
+  reset: (e) =>
+    e.preventDefault()
+    @router.update_path('/search_rel')
+    @$el.find(".filter-box input[type=text]").val('')
+    @collection.query = null
+    @active = true
+    @collection.get_items()
+    @trigger = true
