@@ -1,6 +1,7 @@
 class Searchad.Models.CvrDroppedQueryComparisonItem extends Backbone.Model
 
   defaults:
+    cvr_dropped_item_comparison_rank: null
     item_id_before: null
     item_title_before: null  
     item_url_before:null
@@ -28,14 +29,6 @@ class Searchad.Collections.CvrDroppedQueryComparisonItemCollection extends Backb
     query_date:null
   
   get_items: (data) =>
-    # data = {} unless data
-    # if data.query
-    #   @data.query = data.query
-    # else
-    #   data.query = @data.query
-    # for k, v of @controller.get_filter_params()
-    #   continue unless v
-    #   data[k] = v
     @fetch(
       reset: true
       data: data
