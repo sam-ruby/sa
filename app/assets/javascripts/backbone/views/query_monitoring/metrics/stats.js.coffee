@@ -135,49 +135,43 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
 
   process_data: (data) ->
     control_boudries_data = []
+    atc_data = [] 
+    trend_data = [] 
+    ooc_data_good = []
+    ooc_data_bad = []
+
     for k in data
       control_boudries_data.push([k.data_date, k.atc_LCL, k.atc_UCL])
-   
+      atc_data.push([k.data_date, k.atc_metric])
+      trend_data.push([k.data_date, k.atc_trend])
+      # process red or green dot for the ooc flag
+      if k.atc_OOC_flag ==1
+        ooc_data_good.push([k.data_date, k.atc_metric])
+      if k.atc_OOC_flag == -1
+        ooc_data_bad.push([k.data_date, k.atc_metric])
+
     series_boundries = {
       name: "atc control series_boundries"
       type: 'areasplinerange'
       data: control_boudries_data
+      tooltip: {
+        crosshairs: true,
+        shared: true
+      },
       fillOpacity: .03
-      # color: "#8bbc21"
       lineWidth: 0,
-      linkedTo: ':previous',
       color: Highcharts.getOptions().colors[0]
       fillOpacity: 0.2
       zIndex: 0
-      # '#c0c0c0' 
     }
-
-    console.log(series_boundries)
      
-    atc_data = [] 
-    trend_data = [] 
-    ooc_data = []
-
-    for k in data
-      atc_data.push([k.data_date, k.atc_metric])
-      trend_data.push([k.data_date, k.atc_trend])
-      if k.atc_OOC_flag ==1
-        ooc_data.push([k.data_date, k.atc_metric])
- 
     series_atc = {
       name: "atc"
       type: 'spline'
       data: atc_data
       zIndex: 2
-      # color: 'black'
       lineWidth: 2,
       lineColor: Highcharts.getOptions().colors[0]
-      # marker: {
-      #   fillColor: 'white',
-      #   lineWidth: 2,
-      #   lineColor: Highcharts.getOptions().colors[0]
-      # }
-    
     }
 
     series_trend = {
@@ -186,12 +180,11 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
       data: trend_data
       color: '#c0c0c0'
       zIndex: 1
-        # '#2f7ed8'  
     }
 
-    series_ooc = {
-      name: "OUT OF CONTROL!!"
-      data: ooc_data
+    series_ooc_bad = {
+      name: "OUT OF CONTROL- Bad!!"
+      data: ooc_data_bad
       zIndex: 4
       lineWidth : 0,
       marker : {
@@ -200,39 +193,22 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
         symbol:'circle'
       },
       color: "red"
-        # "#910000"
-
-        # "red"
-        # "#df5353"
     }
 
+    series_ooc_good = {
+      name: "OUT OF CONTROL- Good or possible out of stock"
+      data: ooc_data_good
+      zIndex: 4
+      lineWidth : 0,
+      marker : {
+        enabled : true,
+        radius : 4
+        symbol:'circle'
+      },
+      color: "green"
+    }
 
-    # arr = []
-    # for k in @seriesTypes
-    #   arr.push([])
-    # for k in data
-    #   console.log(k)
-    #   for p, i in @seriesTypes
-    #     arr[i].push(
-    #       x: k.data_date
-    #       y: parseFloat(k[p.column])
-    #     )
-    # series = []
-    # for p, i in @seriesTypes
-    #   series.push(
-    #     name: p.name
-    #     data: arr[i]
-    #     cursor: 'pointer'
-    #     type: p.type
-    #     color: p.color
-    #   )
-    # series[0].fillOpacity = .05
-    # # series[1].fillOpacity = .1
-    # series[2].fillOpacity = .1
-    # console.log("series", series)
-    # return series
-    series = [series_boundries,series_atc,series_trend, series_ooc]
-
+    series = [series_boundries,series_atc,series_trend, series_ooc_bad, series_ooc_good]
 
     return series
 
