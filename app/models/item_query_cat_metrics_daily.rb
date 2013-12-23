@@ -40,6 +40,7 @@ class ItemQueryCatMetricsDaily < BaseModel
           'item_revenue DESC, shown_count DESC').limit(32)
   end
 
+  # for a range of time get the popular items
   def self.get_walmart_items_over_time(query, start_date, end_date)
     sql_for_item_ids = 
      "select item_id,

@@ -1,3 +1,35 @@
+.cvr-dropped-query-grid{
+  border-collapse: collapse;
+  thead th {
+
+    vertical-align: bottom;
+    background-color: #f9f9f9;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  th, td{
+    height: 20px;
+    max-width: 220px;
+    padding: 4px 5px;
+    overflow: hidden;
+    line-height: 20px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+    border: 1px solid #DDD;
+    display: table-cell;
+  }
+
+  .number-cell, .integer-cell {
+    text-align: right;
+  }
+  table{
+    border-spacing: 2px;
+    border-color: gray;
+  }
+}
+
 .cvr-dropped-selected-result{
   margin-top:10px
 }
@@ -27,13 +59,9 @@
   }
 }
 
-.query_search_clear_icon {
-
-}
-
 .cvr-dropped-query-results-label{
   font-size:20px;
-  margin-top:50px;
+  margin-top:20px;
   margin-bottom:20px;
   #font-weight:bold;
 }
@@ -44,25 +72,24 @@
 
 .query-dropped-item-comparison{
 
-	th:nth-child(3)
-{
-    background-color: #F0F8FF;
-}
+  th:nth-child(4)
+    {
+      background-color: #F0F8FF;
+    }
 
-	th:nth-child(4)
-{
-    background-color: #F0F8FF;
-}
+  th:nth-child(5)
+    {
+      background-color: #F0F8FF;
+    }
 
+  tr td:nth-child(4)
+    {
+      background-color: #F0F8FF;
+    }
 
-	tr td:nth-child(3)
-{
-    background-color: #F0F8FF;
-}
-
-	tr td:nth-child(4)
-{
-    background-color: #F0F8FF;
-}
+  tr td:nth-child(5)
+    {
+      background-color: #F0F8FF;
+    }
 }
 
