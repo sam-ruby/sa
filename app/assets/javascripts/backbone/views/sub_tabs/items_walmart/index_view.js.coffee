@@ -81,8 +81,8 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
 
   top_32_daily:(e)=>
     e.preventDefault()
-    $('#label-popular-items-over-time').removeClass('label-info')
-    $('#label-top-32-daily').addClass('label-info')
+    # $('#label-popular-items-over-time').removeClass('label-info')
+    # $('#label-top-32-daily').addClass('label-info')
     # if top 32, reset date picker
     @init_all_date_pickers()
     @get_items()
@@ -90,8 +90,8 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
 
   popular_items_over_time:(e)=>
     e.preventDefault()
-    $('#label-popular-items-over-time').addClass('label-info')
-    $('#label-top-32-daily').removeClass('label-info')
+    # $('#label-popular-items-over-time').addClass('label-info')
+    # $('#label-top-32-daily').removeClass('label-info')
     data = {}
     data.start_date = @$el.find('input.start-date.datepicker').datepicker('getDate').toString('M-d-yyyy')
     data.end_date = @$el.find('input.end-date.datepicker').datepicker('getDate').toString('M-d-yyyy')
