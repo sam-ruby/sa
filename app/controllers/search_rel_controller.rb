@@ -21,6 +21,7 @@ class SearchRelController < BaseController
         result = SearchQualityDaily.get_query_stats(
           query, @year, week, @date, 0).map do|record|
             {'Query String' => record.query_str,
+             'Query Count' => record.query_count,
              'Rank Metric' => record.rank_metric.to_f.round(2),
              'Catalog Overlap' => record.cat_rate.to_f.round(2),
              'Results Shown in Search' => record.show_rate.to_f.round(2),
@@ -28,7 +29,6 @@ class SearchRelController < BaseController
              'Rev Rank Correlation' =>
                 record.search_rev_rank_correlation.to_f.round(2),
              'Query Revenue' => record.query_revenue,
-             'Query Count' => record.query_count,
              'Query Conversion' => record.query_con.to_f.round(2)}
           end
           render :json => result
