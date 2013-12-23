@@ -1,7 +1,7 @@
-Searchad.Views.Search ||= {}
-Searchad.Views.Search.AmazonItems ||= {}
+Searchad.Views.SubTabs ||= {}
+Searchad.Views.SubTabs.AmazonItems ||= {}
 
-class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
+class Searchad.Views.SubTabs.AmazonItems.IndexView extends Backbone.View
   initialize: (options) =>
     @controller = SearchQualityApp.Controller
     @collection = new Searchad.Collections.CAAmazonItemsCollection()
@@ -13,10 +13,18 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
           query: that.query
           collection: collection)
     )
+    @collection.bind('request', =>
+      @$el.children().not('ul').remove()
+      @$el.hide()
+      @controller.trigger('search:sub-content:show-spin')
+      @undelegateEvents()
+    )
+
     @query = ''
     
     @controller.bind('search:amazon-items:in-top-32', @render_in_top_32)
-    @controller.bind('search:amazon-items:not-in-top-32', @render_not_in_top_32)
+    @controller.bind(
+      'search:amazon-items:not-in-top-32', @render_not_in_top_32)
     @controller.bind('date-changed', =>
       @get_items() if @active)
 
@@ -72,6 +80,7 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
         @$el.empty()
         amazon_price = @model.get("newprice")
         walmart_price = @model.get("curr_item_price")
+        walmart_price = walmart_price.toFixed(2) if walmart_price
         price_string = ""
       
         if walmart_price == null
@@ -134,6 +143,7 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
     @undelegateEvents()
 
   get_items: (data) =>
+    @active = true
     @query = data.query if data
     @controller.trigger('search:sub-content:show-spin')
     @collection.get_items(data)
@@ -143,13 +153,13 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
       new Searchad.Collections.PoorPerfAmazonItemsCollection(data)
     @initTable()
     @amazonCollection.bind('reset', @render)
+    @$el.children().not('ul').remove()
+    @controller.trigger('search:sub-content:hide-spin')
     @render()
 
   render: =>
-    @unrender()
-    @active = true
+    return unless @active
     @$el.show()
-    @$el.children('ul').show()
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     @$el.append( @export_csv_button() )
@@ -157,6 +167,7 @@ class Searchad.Views.Search.AmazonItems.IndexView extends Backbone.View
     this
 
   render_error: (query) ->
+    return unless @active
     @$el.children().not('ul').remove()
     @controller.trigger('search:sub-content:hide-spin')
     @$el.show()

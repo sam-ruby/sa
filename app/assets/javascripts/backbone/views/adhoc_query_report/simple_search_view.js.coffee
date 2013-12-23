@@ -1,31 +1,30 @@
-Searchad.Views.Search ||= {}
+Searchad.Views.AdhocQuery ||= {}
 
-class Searchad.Views.Search.IndexView extends Backbone.View
+class Searchad.Views.AdhocQuery.SimpleSearchView extends Backbone.View
   initialize: (options) ->
-    @trigger = false
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
-    
-    @$search_form = $(options.el_form)
     @$search_results = $(options.el_results)
-
+    @controller.bind('date-changed', => @do_search() if @active)
     @controller.bind('content-cleanup', @unrender)
+    @controller.bind('adhoc_query:search_content_clean_up', @unrender)
     @queryStatsCollection =
       new Searchad.Collections.QueryStatsDailyCollection()
     @initTable()
-    
+    @active = false
+    @trigger = false
+
     @queryStatsCollection.bind('reset', @render_s_results)
     @queryStatsCollection.bind('request', =>
       @search_results_cleanup()
       @$search_results.find('.ajax-loader').css('display', 'block')
       @controller.trigger('sub-content-cleanup')
+      @controller.trigger('search:sub-tab-cleanup')
     )
     Utils.InitExportCsv(this, "/search/get_query_stats_date.csv")
     @undelegateEvents()
 
   events: =>
-    'submit': 'do_search'
-    'click button.search-btn': 'do_search'
     'click .export-csv a': (e) ->
       date = @controller.get_filter_params().date
       if @query
@@ -41,40 +40,28 @@ class Searchad.Views.Search.IndexView extends Backbone.View
         fileName = "search_#{date}.csv"
       @export_csv($(e.target), fileName, data)
 
-  search_form_template: JST['backbone/templates/search/form']
-
-  load_search_results: (query) =>
-    @$search_form.find('input.search-query').val(query)
-    @$search_form.find('button.search-btn').first().trigger('click')
-  
-  do_search: (e) =>
-    e.preventDefault()
+  do_search: (data) =>
+    @active = true
     @search_results_cleanup()
-    @controller.trigger('sub-content-cleanup')
-    @query = @$search_form.find('input.search-query').val()
-    
+    data || = { }
+    if data.query
+      @query = data.query
+    else
+      data.query = @query
     @queryStatsCollection.query = @query
     @queryStatsCollection.get_items()
     @trigger = true
 
   unrender: =>
     @active = false
-    @$search_form.children().remove()
-    @$search_results.children().not('.ajax-loader').remove()
+    @search_results_cleanup()
     @$el.find('.ajax-loader').hide()
     @undelegateEvents()
 
   render_error: ->
-    @controller.trigger('search:sub-tab-cleanup')
     @$search_results.append($('<span>').addClass(
       'label label-important').append("No data available for #{@query}"))
   
-  render: =>
-    @active = true
-    @$search_form.append(@search_form_template())
-    @delegateEvents()
-    this
-
   search_results_cleanup: =>
     @$search_results.children().not('.ajax-loader').remove()
 
@@ -93,7 +80,7 @@ class Searchad.Views.Search.IndexView extends Backbone.View
         that.controller.trigger('search:sub-content',
           query: query
           view: 'daily')
-        new_path = 'search/query/' + encodeURIComponent(query)
+        new_path = 'adhoc_query/mode/search/query/' + encodeURIComponent(query)
         that.router.update_path(new_path)
       
       render: =>
@@ -148,6 +135,7 @@ class Searchad.Views.Search.IndexView extends Backbone.View
     )
 
   render_s_results: =>
+    return unless @active
     @$search_results.find('.ajax-loader').hide()
     return @render_error() if @queryStatsCollection.length == 0
     

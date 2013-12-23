@@ -46,4 +46,5 @@ Backgrid.CustomHeaderCell = Backgrid.HeaderCell.extend(
 
   hideDetails: (e) ->
     @$(".info").tooltip "hide"
+    
 )

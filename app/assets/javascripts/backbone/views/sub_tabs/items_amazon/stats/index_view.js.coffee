@@ -1,8 +1,8 @@
-Searchad.Views.Search ||= {}
-Searchad.Views.Search.AmazonItems ||= {}
-Searchad.Views.Search.AmazonItems.Stats ||= {}
+Searchad.Views.SubTabs ||= {}
+Searchad.Views.SubTabs.AmazonItems ||= {}
+Searchad.Views.SubTabs.AmazonItems.Stats ||= {}
 
-class Searchad.Views.Search.AmazonItems.Stats.IndexView extends Backbone.View
+class Searchad.Views.SubTabs.AmazonItems.Stats.IndexView extends Backbone.View
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     @controller.bind('content-cleanup', @unrender)
@@ -73,5 +73,3 @@ class Searchad.Views.Search.AmazonItems.Stats.IndexView extends Backbone.View
       @$el.prepend(
         "<div><h1>No Walmart items found in Amazon Top 32.</h1></div>")
     return this
-
-

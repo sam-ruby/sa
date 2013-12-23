@@ -1,11 +1,11 @@
-Searchad.Views.Search ||= {}
-Searchad.Views.Search.Stats ||= {}
+Searchad.Views.SubTabs ||= {}
+Searchad.Views.SubTabs.Stats ||= {}
 
-class Searchad.Views.Search.Stats.IndexView extends Backbone.View
+class Searchad.Views.SubTabs.Stats.IndexView extends Backbone.View
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     @controller.bind('content-cleanup', @unrender)
-    @controller.bind('subcontent-cleanup', @unrender)
+    @controller.bind('sub-content-cleanup', @unrender)
     @data = {}
   
   active: false
@@ -64,15 +64,14 @@ class Searchad.Views.Search.Stats.IndexView extends Backbone.View
         borderWidth: 0
       series: series)
     
-  unrender: ->
+  unrender: =>
     @active = false
-    @$el.highcharts().destroy()
+    @$el.highcharts().destroy() if @$el and @$el.highcharts()
     @controller.trigger('search:sub-content:hide-spin')
   
   get_items: (data) ->
-    @unrender()
+    @active = true
     @controller.trigger('search:sub-content:show-spin')
-    @$el.find('.ajax-loader').show()
     $.ajax(
       url: '/poor_performing/get_query_stats.json'
       data:
@@ -109,17 +108,13 @@ class Searchad.Views.Search.Stats.IndexView extends Backbone.View
     series
 
   render_error: (query) ->
+    return unless @active
     @controller.trigger('search:sub-content:hide-spin')
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
 
   render: (query, data) ->
-    @active = true
+    return unless @active
     @controller.trigger('search:sub-content:hide-spin')
     @initChart(query, data)
     this
-  
-  unrender: =>
-    @active = false
-    @$el.children().not('.ajax-loader').remove()
-    @controller.trigger('search:sub-content:hide-spin')

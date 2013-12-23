@@ -8,6 +8,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @collection =
       new Searchad.Collections.SearchQualityQueryCollection()
     @$filter = @$el.find(options.el_filter)
+    @filterAdded = false
     @initTable()
 
     @controller.bind('date-changed', =>
@@ -20,6 +21,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
       @unrender_search_results()
       @$el.find('.ajax-loader').css('display', 'block')
       @controller.trigger('sub-content-cleanup')
+      @controller.trigger('search:sub-tab-cleanup')
     )
     
     Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
@@ -119,7 +121,9 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     e.preventDefault()
     query = @$el.find(".filter-box input[type=text]").val()
     @collection.query = query
-    @collection.get_items() if query
+    if query
+      @collection.get_items()
+      @active = true
     @trigger = true
 
   reset: (e) =>
@@ -128,6 +132,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @$el.find(".filter-box input[type=text]").val('')
     @collection.query = null
     @collection.get_items()
+    @active = true
     @trigger = true
 
   unrender_search_results: =>
@@ -145,13 +150,11 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     )
 
   get_items: (data) =>
+    @active = true
     if data and data.query
       @collection.query = data.query
     else
       @collection.query = null
-
-    @unrender()
-    @$el.find('.ajax-loader').css('display', 'block')
     @collection.get_items()
     @trigger = true
 
@@ -160,21 +163,23 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
 
   unrender: =>
     @active = false
+    @filterAdded = false
     @unrender_search_results()
     @clear_filter()
     @undelegateEvents()
     this
 
   render_error: (query) ->
-    @controller.trigger('search:sub-tab-cleanup')
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
   
   render: =>
+    return unless @active
     @unrender_search_results()
     return @render_error(@collection.query) if @collection.size() == 0
-    unless @active
+    unless @filterAdded
       @$filter.append(@initFilter()())
+      @filterAdded = true
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     @$el.append( @export_csv_button() )
@@ -183,6 +188,5 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     if @trigger
       @trigger = false
       @$el.find('td a.query').first().trigger('click')
-    @active = true
     this
 
