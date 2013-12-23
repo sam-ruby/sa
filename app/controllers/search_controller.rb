@@ -69,13 +69,14 @@ class SearchController < BaseController
         results = []
         if query.nil? or query.empty?
           results= QueryDroppingConversion.get_cvr_dropped_query_top_500(
-            weeks_apart,query_date, 0, 500)
+            weeks_apart,query_date, 1, 500)
         else
           results= QueryDroppingConversion.get_cvr_dropped_query_with_query(query, weeks_apart,query_date,@page,@limit)
         end
 
         results = results.map do |record|
           {'Query' => record.query,
+           'Rank' => record.rank,
            'Query Conversion Difference' => record.query_con_diff,
            'Query Conversion Before' => record.query_con_before,
            'Query Conversion After' => record.query_con_after,
@@ -83,7 +84,7 @@ class SearchController < BaseController
            'Query Count After' => record.query_count_after,
            'Query Revenue Before' =>record.query_revenue_before,
            'Query Revenue After' => record.query_revenue_after,
-           'Revenue Diff Compare with Expected Value'=> record.expected_revenue_diff
+           'Potential Revenue Loss'=> record.expected_revenue_diff
           }
         end
         render :json => results
@@ -112,7 +113,8 @@ class SearchController < BaseController
         results =  results.map do |record|
           # see QueryDroppingConversion.get_cvr_dropped_query_item_comparisons when it is returned, it returned array of 
           # hash instead of array of objects 
-          {'Item Id Before' => record["item_id_before"],
+          {'Rank' => record["cvr_dropped_item_comparison_rank"],
+           'Item Id Before' => record["item_id_before"],
            'Item Title Before' => record["item_title_before"],
            'Seller Before' => record["seller_name_before"],
            'Item Id After' => record["item_id_after"],
