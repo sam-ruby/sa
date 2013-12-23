@@ -59,6 +59,6 @@ Searchad.helpInfo =
   rank:
     id:'rank'
     name: 'rank'
-    description: 'Ranked by query with most siginificant conversion dropping and increased demand. Formula: sqrt(count_after)* con_diff'
+    description: 'Ranked by query with most siginificant conversion dropping and increased demand. Ranked by a score calculated based on formula: sqrt(count_after)* con_diff'
 
 

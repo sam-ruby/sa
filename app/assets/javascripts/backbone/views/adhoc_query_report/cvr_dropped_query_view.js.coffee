@@ -27,22 +27,23 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       @query_results.find('.ajax-loader').css('display', 'block')
       @controller.trigger('sub-content-cleanup')
     )
+    Utils.InitExportCsv(this, "/search/get_cvr_dropped_query.csv")
     # instance_variables
-    # @available_end_date = new Date(new Date(@controller.get_filter_params()['date']) - 2*7*24*60*60*1000)
     @default_week_apart = 2
     @available_end_date = Max_date
     @data
-    # init_csv_export_button
-    Utils.InitExportCsv(this, "/search/get_cvr_dropped_query.csv");
+
     
   events:
     'click .export-csv a': (e) ->
       if @data
-        fileName = "conversion_rate_dropped_query analysis_for #{@data.query_date}_week_apart_#{@data.weeks_apart}.csv"
+        fileName = "conversion_rate_dropped_query analysis_for 
+          #{@data.query_date}_week_apart_#{@data.weeks_apart}.csv"
         @export_csv($(e.target), fileName, @data)
       
 
   active: false
+
 
   #get_items is usually the first triggered function. It could be trgger from the index or router.  
   get_items: (data) ->
@@ -56,6 +57,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     @collection.get_items()
     @active = true
     @trigger = true
+
 
   process_query_data:(data) =>
     data || = {}
@@ -73,6 +75,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     data.query || = ""
     @data = data  # @data is used for csv_export
     return data
+
 
   #when collection reset caused by get items, the rendering result is triggered
   render_query_results: =>
@@ -97,6 +100,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       @$el.find('td a.query').first().trigger('click')
       
     $("li.cvr-dropped-item-comparison").show();
+
     this
 
 
@@ -147,7 +151,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     {name:'rank',
     label:'Rank',
     editable:false,
-    cell:'integer',
+    cell:'string',
     headerCell:'custom'
     },
     {name:'query_con_diff',

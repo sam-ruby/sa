@@ -12,8 +12,9 @@ class QueryDroppingConversion < BaseModel
     before_end_date = query_date-1.day
     after_start_date = query_date
     after_end_date = query_date + days_range-1.day
+    # rank was not really the rank in top 500, it will be modified into either "in top 500", or not "in top 500"
     sqlStatement = 
-    'select b.query as query,b.sum_count as query_count_before,  b.con as query_con_before, b.revenue
+    'select null as rank, b.query as query,b.sum_count as query_count_before,  b.con as query_con_before, b.revenue
      as query_revenue_before, d.sum_count as query_count_after, d.con as query_con_after,
     d.revenue as query_revenue_after, b.con-d.con as query_con_diff, d.con/b.con*b.revenue-d.revenue
      as expected_revenue_diff, sqrt(d.sum_count)*(b.con-d.con) as query_score 
@@ -41,7 +42,18 @@ class QueryDroppingConversion < BaseModel
     on b.query=d.query'
 
      result_data = find_by_sql([sqlStatement, query, before_start_date, before_end_date, query, after_start_date, after_end_date]) 
-
+     
+     #requested by Ravi: they want to know if a searched result is in top 500 hundred or not
+     #another alternative way is to cached the data from get_cvr_dropped_query_top_500 
+     in_top_500 = find_by_sql(['select query, query_score from queries_with_dropping_conversion where
+      query = ? and window_in_weeks = ? and data_date = ?', query,weeks_apart, query_date])   
+     if in_top_500.length > 0
+       result_data[0].rank = "In Top 500"
+     else
+       result_data[0].rank = "Not In Top 500"
+     end
+     
+     return result_data
   end
 
   def self.get_cvr_dropped_query_top_500(weeks_apart,query_date,page,limit)
@@ -57,7 +69,7 @@ class QueryDroppingConversion < BaseModel
     starting_rank = ((page-1) * limit).to_s
     from_statement  =  "queries_with_dropping_conversion,(SELECT @rank := " + starting_rank +") AS vars"
     select(select_cols).from(from_statement)
-      .where(%q{window_in_weeks = ? and data_date = ?}, weeks_apart, query_date)
+      .where(%q{window_in_weeks = ? and data_date = ?}, weeks_apart, query_date).order('query_score DESC')
       .page(page).per(limit)
   end
 

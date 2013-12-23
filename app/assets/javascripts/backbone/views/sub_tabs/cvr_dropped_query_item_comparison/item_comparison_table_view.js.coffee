@@ -125,6 +125,8 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     @active = true
     @data = data
     @unrender
+    # important,must reset current page size to 1
+    @collection.state.currentPage = 1;
     @collection.get_items(data)
 
 
