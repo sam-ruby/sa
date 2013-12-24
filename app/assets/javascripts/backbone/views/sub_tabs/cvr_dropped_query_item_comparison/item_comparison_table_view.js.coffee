@@ -75,6 +75,7 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     editable: false,
     cell: 'string'
     headerCell:'custom'
+    helpInfo: 'The rank is the exact order that shown as result from search'
     },
 
     {

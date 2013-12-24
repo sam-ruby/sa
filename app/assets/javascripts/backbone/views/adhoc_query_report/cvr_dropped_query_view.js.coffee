@@ -20,6 +20,8 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     @controller.bind('content-cleanup', @unrender)
     @query_results = $(options.el_results)
     @collection = new Searchad.Collections.CvrDroppedQueryCollection()
+    # table has to init here not in render result
+    @init_table()
     @collection.bind('reset', @render_query_results)
     @collection.bind('request', =>
       @search_results_cleanup()
@@ -27,6 +29,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       @query_results.find('.ajax-loader').css('display', 'block')
       @controller.trigger('sub-content-cleanup')
     )
+
     Utils.InitExportCsv(this, "/search/get_cvr_dropped_query.csv")
     # instance_variables
     @default_week_apart = 2
@@ -43,6 +46,51 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       
 
   active: false
+
+
+  #when collection reset caused by get items, the rendering result is triggered
+  render_query_results: =>
+    @query_results.find('.ajax-loader').hide()
+    if @collection.length == 0
+      return @render_error()
+
+    # render the result label
+    if (@data.query== "")
+      result_label = "Conversion Rate Dropped Query Top 500 Report"
+    else
+     result_label = 'Query Comparison for '
+     if @collection.models[0].get('is_in_top_500')
+        in_top_500_label = "In Top 500"
+
+    result_label_template = JST['backbone/templates/adhoc_query/result_label']
+    label_data =
+      "in_top_500_label": in_top_500_label
+      "query" : @data.query
+      "result_label": result_label
+    @query_results.append(result_label_template(label_data))
+    @query_results.append(@grid.render().$el)
+    @query_results.append(@paginator.render().$el)
+    @query_results.append(@export_csv_button())
+
+    if @trigger
+      @trigger = false
+      @$el.find('td a.query').first().trigger('click')
+     
+    $("li.cvr-dropped-item-comparison").show();
+
+    return this
+
+  render_error: ->
+    @query_results.append($('<span>').addClass(
+      'label label-important').append("No data available"))
+    
+  unrender: =>
+    @search_results_cleanup()
+    @active = false
+    
+
+  search_results_cleanup: =>
+    @query_results.children().not('.ajax-loader').remove()
 
 
   #get_items is usually the first triggered function. It could be trgger from the index or router.  
@@ -77,43 +125,20 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     return data
 
 
-  #when collection reset caused by get items, the rendering result is triggered
-  render_query_results: =>
-    @query_results.find('.ajax-loader').hide()
-    if @collection.length == 0
-      return @render_error() 
+  init_table: ()->
+    columns =  @grid_columns()
+    @grid = new Backgrid.Grid(
+      # className:'cvr-dropped-query-grid'
+      columns: columns
+      collection: @collection
+    )
 
-    @initCvrDroppedQueryTable()
+    @paginator = new Backgrid.Extension.Paginator(
+      collection: @collection
+    )
+  
 
-    if (@data.query== "")
-      result_label = 'Conversion Rate Dropped Query Top 500 Report'
-    else 
-     result_label = 'Query Comparison for ' + @data.query  
-
-    @query_results.append('<div class="cvr-dropped-query-results-label">'+result_label+'</div>')
-    @query_results.append(@grid.render().$el)
-    @query_results.append(@paginator.render().$el)
-    @query_results.append(@export_csv_button())
-
-    if @trigger
-      @trigger = false
-      @$el.find('td a.query').first().trigger('click')
-      
-    $("li.cvr-dropped-item-comparison").show();
-
-    this
-
-
-  search_results_cleanup: =>
-    @query_results.children().not('.ajax-loader').remove()
-
-
-  render_error: ->
-    @query_results.append($('<span>').addClass(
-      'label label-important').append("No data available"))
-
-
-  initCvrDroppedQueryTable: ->
+  grid_columns: =>
     that = this
     class SearchQueryCell extends Backgrid.Cell
       events:
@@ -141,18 +166,20 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
         @delegateEvents()
         return this
 
-
+    helpInfo = Searchad.helpInfo.conversion_rate_dropped_query
     columns = [{name: 'query',
     label: 'Search Word',
     editable: false
     cell: SearchQueryCell
     },
     # rank is determined by query_score
-    {name:'rank',
-    label:'Rank',
+    {name:'query_score',
+    label:'Rank Score',
     editable:false,
     cell:'string',
+    sortable:true,
     headerCell:'custom'
+    helpInfo:helpInfo.query_score
     },
     {name:'query_con_diff',
     label:'Con Diff (%)',
@@ -180,7 +207,9 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     label:'Potential Rev Loss ($)',
     editable:false,
     cell:'number'
-    headerCell:'custom'},
+    helpInfo: helpInfo.expected_revenue_diff
+    headerCell:'custom'
+    },
     {name:'query_count_before',
     label:'Count Before',
     editable:false
@@ -191,22 +220,5 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     cell:'number'},
     ]
 
-    @grid = new Backgrid.Grid(
-      className:'cvr-dropped-query-grid'
-      columns: columns
-      collection: @collection
-    )
-
-    @paginator = new Backgrid.Extension.Paginator(
-      collection: @collection
-    )
-  
- 
-  unrender: =>
-    @clean_query_results()
-    @active = false
-
-
-  clean_query_results: =>
-     @query_results.children().not('.ajax-loader').remove()
+    return columns
 
