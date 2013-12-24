@@ -22,7 +22,6 @@ class Searchad.Collections.CvrDroppedQueryCollection extends Backbone.PageableCo
   mode: 'server'
   state:
     pageSize: 10
-    # currentPage:1
 
   queryParams:
     currentPage: 'page'
