@@ -22,7 +22,7 @@ class Searchad.Collections.CvrDroppedQueryComparisonItemCollection extends Backb
   model: Searchad.Models.CvrDroppedQueryComparisonItem
   url: '/search/get_cvr_dropped_query_item_comparison.json'
   state:
-    pageSize: 8
+    pageSize: 16
   mode: 'client'
   data:
     query: null

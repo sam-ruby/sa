@@ -16,27 +16,24 @@ Backgrid.CustomHeaderCell = Backgrid.HeaderCell.extend(
   initialize: (options) ->
     
     # call standard HeaderCell's initialize
-    Backgrid.HeaderCell::initialize.call this, options
+    Backgrid.HeaderCell.prototype.initialize.call(this, options)
 
   render: ->
-    @$el.empty()
-    column = @column
-    columnName = column.get("name")
-    $label = $("<a id=" + column.get("name") + "</a>").text(column.get("label"))
-    
-    # var sortable = Backgrid.callByNeed(column.sortable(), column, this.collection);
-    # if (sortable) $label.append("<b class='sort-caret'></b>");
-    @$el.append $label
-    @$el.addClass columnName
-    @delegateEvents()
-    @direction column.get("direction")
-    @$el.append "<i class=\"icon-question-sign icon-large info pull-right\" style=\"color:#49afcd\"/>"  if Searchad.helpInfo.hasOwnProperty(columnName)
+    Backgrid.HeaderCell.prototype.render.call(this)
+    # if defined in column, use that. else find in general CAD help Info
+    if @column.get("helpInfo")
+      @$el.append "<i class=\"icon-question-sign icon-large info pull-right\" style=\"color:#49afcd\"/>"
+    else if Searchad.helpInfo.hasOwnProperty(@column.get("name"))
+      @$el.append "<i class=\"icon-question-sign icon-large info pull-right\" style=\"color:#49afcd\"/>"  
     this
 
   showDetails: (e) ->
-    that = this
-    columnName = that.column.get("name")
-    helpText = Searchad.helpInfo["" + columnName]["description"]
+    # that = this
+    if @column.get("helpInfo")
+      helpText = @column.get("helpInfo")
+    else
+      columnName = @column.get("name")
+      helpText = Searchad.helpInfo["" + columnName]["description"]
     @$(".info").tooltip
       title: helpText
       placement: "right"
