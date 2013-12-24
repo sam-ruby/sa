@@ -14,10 +14,10 @@ class QueryDroppingConversion < BaseModel
     after_end_date = query_date + days_range-1.day
     # rank was not really the rank in top 500, it will be modified into either "in top 500", or not "in top 500"
     sqlStatement = 
-    'select null as rank, b.query as query,b.sum_count as query_count_before,  b.con as query_con_before, b.revenue
+    'select null as is_in_top_500, b.query as query,b.sum_count as query_count_before,  b.con as query_con_before, b.revenue
      as query_revenue_before, d.sum_count as query_count_after, d.con as query_con_after,
-    d.revenue as query_revenue_after, b.con-d.con as query_con_diff, d.con/b.con*b.revenue-d.revenue
-     as expected_revenue_diff, sqrt(d.sum_count)*(b.con-d.con) as query_score 
+    d.revenue as query_revenue_after, b.con-d.con as query_con_diff, (b.con-d.con)/d.con*d.revenue
+     as expected_revenue_diff, round(sqrt(d.sum_count)*(b.con-d.con), 0) as query_score
   from 
     (
       select 
@@ -48,19 +48,28 @@ class QueryDroppingConversion < BaseModel
      in_top_500 = find_by_sql(['select query, query_score from queries_with_dropping_conversion where
       query = ? and window_in_weeks = ? and data_date = ?', query,weeks_apart, query_date])   
      if in_top_500.length > 0
-       result_data[0].rank = "In Top 500"
+       result_data[0].is_in_top_500 = true
      else
-       result_data[0].rank = "Not In Top 500"
+       result_data[0].is_in_top_500 = false
      end
      
      return result_data
   end
 
-  def self.get_cvr_dropped_query_top_500(weeks_apart,query_date,page,limit)
+  # weeks_apart,query_date,@sort_by,@order, @page,@limit
+
+  def self.get_cvr_dropped_query_top_500(weeks_apart,query_date,order_col=nil,order='asc', page,limit)
+
+
+    order_str = order_col.nil? ? 'query_score desc' : 
+      order.nil? ? order_col : order_col + ' ' + order  
+
+    p 'order_str', order_str
+
     query_date = query_date.strftime("%Y-%m-%d")
     select_cols = %q{query, query_con_before, query_count_before, query_revenue_before,
      query_count_after, query_con_after, query_revenue_after, query_con_after, query_con_diff, 
-     query_score, query_con_after/query_con_before*query_revenue_before-query_revenue_after 
+     ROUND(query_score, 0) as query_score, query_con_diff/query_con_after*query_revenue_after 
      as expected_revenue_diff, 
      (@rank := @rank + 1) AS rank}
     # (@rank := @rank + 1) we need to calculate a rank number on the fly
@@ -69,8 +78,8 @@ class QueryDroppingConversion < BaseModel
     starting_rank = ((page-1) * limit).to_s
     from_statement  =  "queries_with_dropping_conversion,(SELECT @rank := " + starting_rank +") AS vars"
     select(select_cols).from(from_statement)
-      .where(%q{window_in_weeks = ? and data_date = ?}, weeks_apart, query_date).order('query_score DESC')
-      .page(page).per(limit)
+      .where(%q{window_in_weeks = ? and data_date = ?}, weeks_apart, query_date)
+      .order(order_str).page(page).per(limit)
   end
 
 
