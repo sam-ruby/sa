@@ -22,8 +22,8 @@ class Searchad.Collections.QueryMonitoringMetricCollection extends Backbone.Page
 
   model: Searchad.Models.QueryMonitoringMetric
   url: '/monitoring/metric/get_metric_monitor_table_data.json'
-  # filters:
-  #   date: null
+  filters:
+    date: null
 
   state:
     pageSize: 10
@@ -33,13 +33,15 @@ class Searchad.Collections.QueryMonitoringMetricCollection extends Backbone.Page
     pageSize: 'per_page'
     date: ->
       @controller.get_filter_params().date
+    query: ->
+      @query
 
 
   get_items: (data) =>
-    data = {} unless data
-    for k, v of @controller.get_filter_params()
-      continue unless v
-      data[k] = v
+    # data = {} unless data
+    # for k, v of @controller.get_filter_params()
+    #   continue unless v
+    #   data[k] = v
     @fetch(
       reset: true
       data: data)

@@ -114,7 +114,6 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       @controller.trigger('query-monitoring-count:index')
 
   query_monitoring_metrics: (query, date_parts) =>
-    console.log("trigger query-monitoring-metrics from router")
     @set_date_info(date_parts)
     @controller.trigger('master-tabs:cleanup')
     @controller.trigger('content-cleanup')
@@ -124,8 +123,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       @controller.trigger(
         'query-monitoring-metrics:index', query: query)
     else
-      console.log("trigger index")
-      @controller.trigger('query-monitoring-metrics:index', query: "zoomer")
+      @controller.trigger('query-monitoring-metrics:index')
 
   update_path: (path, options=null) =>
     url_parts = window.location.hash.replace('#', '').split('filters')
