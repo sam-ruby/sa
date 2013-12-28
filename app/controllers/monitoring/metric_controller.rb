@@ -6,19 +6,19 @@ class Monitoring::MetricController < BaseController
     respond_to do |format|
       format.json do 
         results = QueryMetricsMonitoring.get_query_metrics_monitoring_daily(
-          @date, @page, @limit)
+          query, @date, @page, @sort_by, @order, @limit)
 
-        render :json => [
+        # render :json => [
+        #     {:total_entries => results.total_pages * @limit,
+        #      :date => @date}, results]
+   
+        if results.nil? or results.empty?
+          render :json => [{:total_entries => 0}, results]
+        else
+          render :json => [
             {:total_entries => results.total_pages * @limit,
              :date => @date}, results]
-   
-        # if query_words.nil? or query_words.empty?
-        #   render :json => [{:total_entries => 0}, query_words]
-        # else
-        #   render :json => [
-        #     {:total_entries => query_words.total_pages * @limit,
-        #      :date => @date}, query_words]
-        # end
+        end
       end
       # format.csv do
       #   results = QueryCountSpcDaily.get_words(
@@ -35,10 +35,10 @@ class Monitoring::MetricController < BaseController
 
   def get_query_stats
     query = params['query']
-    type = "atc"
+    type = params['stats_type']
     respond_to do |format|
       format.json do
-        results = QueryMetricsMonitoring.get_query_stats(query)
+        results = QueryMetricsMonitoring.get_query_stats(query, type)
         # baseline_stats = QueryCountDailyBaseline.get_query_stats(query, @date)
         render :json => results
       end

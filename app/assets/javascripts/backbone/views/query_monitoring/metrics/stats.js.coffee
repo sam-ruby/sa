@@ -10,44 +10,12 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
     @data = {}
     @active = false
 
-
-  seriesTypes: [
-    {
-    name: "ATC Lower Bound"
-    color:"#c0c0c0"
-    type:"areaspline"
-    },
-    {
-    name: "ATC"
-    color:"blue"
-    type:"spline"
-    }
-  ]
-
-  # seriesTypes: [
-  #   {column: "atc_LCL"
-  #   name: "ATC Lower Bound"
-  #   color:"#c0c0c0"
-  #   type:"areaspline"
-  #   },
-  #   {
-  #   column: "atc_metric"
-  #   name: "ATC"
-  #   color:"blue"
-  #   type:"spline"
-  #   },
-  #   {column: "atc_UCL"
-  #   name: "ATC Upper Bound"
-  #   color:"#c0c0c0"
-  #   type:"areaspline"
-  #   }
-  # ]
-
-  initChart: (title, series) =>
-    title = "ACT metric monitoring for " + title
+  initChart: (title, series, type) =>
+    # title = "ATC metric monitoring for " + title
     that = this
-    console.log('title', title, 'series', series)
-    @$el.highcharts('StockChart',
+    dom = "#" + type + "-stats"
+    console.log(dom)
+    $(dom).highcharts('StockChart',
       chart:
         alignTicks: false
       # rangeSelector:
@@ -61,7 +29,7 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
             Highcharts.dateFormat('%b %e', @value)
       yAxis: [{
         title:
-          text: 'atc metric'
+          text: 'atc metric (%)'
         gridLineWidth: 0}]
           # {title:
           #   text: 'ATC value'
@@ -90,15 +58,6 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
             click: (e) ->
               that.goto_query_analysis(e.point.x) if e.point.x?
 
-        # scatter: 
-        #   marker: 
-        #     radius: 5
-        #     states: 
-        #       hover:
-        #         enabled: true,
-        #         lineColor: 'rgb(100,100,100)'
-        
-
       legend:
         enabled: true
         layout: 'horizontal'
@@ -109,7 +68,11 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
 
   unrender: =>
     @active = false
-    @$el.highcharts().destroy() if @$el.highcharts()
+    # clear the three stats
+    $("#con-stats").empty()
+    # .highcharts().destroy() if @$el.highcharts()   
+    $("#pvr-stats").empty()
+    $("#atc-stats").empty()
     @controller.trigger('qm-count:sub-content:hide-spin')
 
   
@@ -122,18 +85,28 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
       url: '/monitoring/metric/get_query_stats.json'
       data:
         query: data.query
+        stats_type: "all"#data.stats_type
       success: (ajax_data, status) =>
-        console.log("success")
-        console.log("ajax_data", ajax_data)
         if ajax_data and ajax_data.length > 0
-           series = @process_data(ajax_data)
+           series = @process_one_type_data(ajax_data, "atc")
            console.log(series)
-           @render(data.query, series)
+           @render("conversion monitoring for " + data.query, @process_one_type_data(ajax_data, "con"), "con")
+           @render("pvr monitoring for " + data.query, @process_one_type_data(ajax_data, "pvr"), "pvr")
+           @render("atc monitoring for " + data.query, @process_one_type_data(ajax_data, "atc"),"atc")
+
         else
            @render_error(data.query)
     )
 
-  process_data: (data) ->
+  # available types :atc, pvr, con
+  process_one_type_data: (data, type) ->
+    # generate variable name
+    metric = type + "_metric"
+    LCL = type + "_LCL"
+    UCL = type + "_UCL"
+    trend = type + "_trend"
+    ooc_flag = type + "_OOC_flag"
+    # data series for drawing graph
     control_boudries_data = []
     atc_data = [] 
     trend_data = [] 
@@ -141,17 +114,17 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
     ooc_data_bad = []
 
     for k in data
-      control_boudries_data.push([k.data_date, k.atc_LCL, k.atc_UCL])
-      atc_data.push([k.data_date, k.atc_metric])
-      trend_data.push([k.data_date, k.atc_trend])
+      control_boudries_data.push([k.data_date, k[LCL], k[UCL]])
+      atc_data.push([k.data_date, k[metric]])
+      trend_data.push([k.data_date, k[trend]])
       # process red or green dot for the ooc flag
-      if k.atc_OOC_flag ==1
-        ooc_data_good.push([k.data_date, k.atc_metric])
-      if k.atc_OOC_flag == -1
-        ooc_data_bad.push([k.data_date, k.atc_metric])
+      if k[ooc_flag] ==1
+        ooc_data_good.push([k.data_date, k[metric]])
+      if k[ooc_flag] == -1
+        ooc_data_bad.push([k.data_date, k[metric]])
 
     series_boundries = {
-      name: "atc control series_boundries"
+      name: type + " out of control series_boundries"
       type: 'areasplinerange'
       data: control_boudries_data
       tooltip: {
@@ -165,8 +138,8 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
       zIndex: 0
     }
      
-    series_atc = {
-      name: "atc"
+    series_metric = {
+      name: type
       type: 'spline'
       data: atc_data
       zIndex: 2
@@ -175,7 +148,7 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
     }
 
     series_trend = {
-      name: "atc trend"
+      name: type + "trend"
       type: 'spline'
       data: trend_data
       color: '#c0c0c0'
@@ -208,8 +181,7 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
       color: "green"
     }
 
-    series = [series_boundries,series_atc,series_trend, series_ooc_bad, series_ooc_good]
-
+    series = [series_boundries,series_metric,series_trend, series_ooc_bad, series_ooc_good]
     return series
 
 
@@ -219,15 +191,8 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
 
-    #  render: (title, dom, data) =>
-    # return unless @active
-    # dom.children().remove()
-    # @initChart(title, dom, data)
-    # this
-  
-
-  render: (query, data) ->
+  render: (title, data, type) ->
     return unless @active
     @controller.trigger('qm-count:sub-content:hide-spin')
-    @initChart(query, data)
+    @initChart(title, data, type)
     this

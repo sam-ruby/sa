@@ -9,7 +9,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @router = SearchQualityApp.Router
     @collection = new Searchad.Collections.QueryMonitoringMetricCollection()
     @$filter = @$el.find(options.el_filter)
-    @filterAdded = true
+    # @filterAdded = false
     @initTable()
     # @$el.find('.ajax-loader').hide()
     
@@ -27,9 +27,9 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @active = false
 
   events: =>
-    # 'click .filter': 'filter'
-    # 'click .reset': 'reset'
-    # 'submit': 'filter'
+    'click .filter': 'filter'
+    'click .reset': 'reset'
+    'submit': 'filter'
     # 'click .export-csv a': (e) ->
     #   date = @controller.get_filter_params().date
     #   fileName = "query_count_monitoring_#{date}.csv"
@@ -41,11 +41,22 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     return unless @active
     @$el.find('.ajax-loader').hide()
     return @render_error(@collection.query) if @collection.size() == 0
-    if @filterAdded
-      console.log("filter added")
-      @$filter.append(@initFilter()())
-      @filterAdded = true
+    # if !@filterAdded
+    @$filter.html(@initFilter()())
+      # @filterAdded = true
+    @$filter.find("toggle_columns").remove()
+    @$filter.prepend('<ul id = "toggle_columns" class="nav nav-pills pull-left">
+      <li class="active"><a href = "#">show default</a></span>
+      <li class=""><a href = "#">show all columns</a></span>
+      </ul>')
     @$el.append( @grid.render().$el)
+    @$el.find('table #group_header').remove()
+    # @$el.find('table thead').prepend('<tr id = "group_header">
+    #   <th colspan = "2"></th>
+    #   <th colspan = "4">Conversion</th></tr>
+    #   <th colspan = "4">ATC</th></tr>
+    #   <th colspan = "4">PVR</th></tr>
+    #   ')
     @$el.append( @paginator.render().$el)
     @$el.append( @paginator.render().$el)
     # @$el.append( @export_csv_button() )
@@ -59,7 +70,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
   unrender: =>
     @active = false
     @unrender_search_results()
-    # @clear_filter()
+    @clear_filter()
     @undelegateEvents()
     this
 
@@ -77,8 +88,6 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
 
 
   get_items: (data) =>
-
-    console.log("get_items_in query monitoring metrics", data)
     @active = true
     @$el.find('.ajax-loader').css('display', 'block')
     if data and data.query
@@ -90,7 +99,6 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
 
   
   unrender_search_results: =>
-    # @$el.children().not('.ajax-loader').remove()
     @$el.children().not('.ajax-loader, #' + @$filter.attr('id')).remove()
     @$el.find('.ajax-loader').hide()
   
@@ -121,7 +129,8 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
         console.log('click')
         that.controller.trigger('qm-metric:stats',
           query: query
-          view: 'daily')
+          stats_type: 'atc'
+        )
         new_path = 'query_monitoring/metrics/query/' + encodeURIComponent(query)
         that.router.update_path(new_path)
 
@@ -142,20 +151,33 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     editable: false,
     cell: 'integer',
     headerCell: 'custom'},
-    {name: 'atc',
-    label: 'Add to Cart Rage',
+    {name: 'con',
+    label: 'Conversion',
     editable: false,
     cell: 'number'},
-    {name: 'atc_trend_score',
-    label: 'ATC Trend Score',
+    {name: 'con_trend_score',
+    label: 'Con Trend Score',
     editable: false,
     cell: 'number',
     },
-    {name: 'atc_ooc_score',
-    label: 'ATC Out of Control Score',
+    {name: 'con_ooc_score',
+    label: 'Con OOC',
+    editable: false,
+    cell: 'number',
+    },
+    {name: 'con_rank_score',
+    label: 'Con Rank Score',
     editable: false,
     cell: 'number',
     }
+    {name: 'atc',
+    label: 'ATC',
+    editable: false,
+    cell: 'number'},
+    {name: 'pvr',
+    label: 'PVR',
+    editable: false,
+    cell: 'number'}
     ]
 
     columns
@@ -165,8 +187,8 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
      @$filter.children().remove()
 
   initFilter: =>
-    _.template('<div class="input-prepend input-append filter-box"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type to filter results"/></form><button class="btn btn-primary reset">Reset</button></div>')
- 
+    _.template('<div id = "filter_row" class="input-prepend input-append filter-box"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type to filter results"/></form><button class="btn btn-primary reset">Reset</button></div>')
+  
   filter: (e) =>
     e.preventDefault()
     query = @$el.find(".filter-box input[type=text]").val()
@@ -178,7 +200,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
 
   reset: (e) =>
     e.preventDefault()
-    @router.update_path('/search_rel')
+    @router.update_path('/query_monitoring/metrics/query/')
     @$el.find(".filter-box input[type=text]").val('')
     @collection.query = null
     @active = true
