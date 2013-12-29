@@ -18,9 +18,15 @@ class QueryMetricsMonitoring < BaseModel
       order_str << ' ' << order
     end 
     # define select field
-  	selects = %q{query, count, con, con_ooc_score, con_trend_score* con_ooc_flag 
-      as con_trend_score, sqrt(count)*con_ooc_score as con_rank_score, 
-      pvr, pvr_ooc_score, pvr_trend_score,atc, atc_trend_score, atc_ooc_score}
+    # TODO: discuss the select with Hang, should we do con_trend_score * con_ooc_flag as con_trend_score,
+  	selects = %q{query, count, 
+      con, con_ooc_score, con_trend_score, 
+      sqrt(count)*con_ooc_score as con_rank_score, 
+      pvr, pvr_ooc_score, pvr_trend_score,
+      sqrt(count)*pvr_ooc_score as pvr_rank_score, 
+      atc, atc_ooc_score, atc_trend_score,
+      sqrt(count)*atc_ooc_score as atc_rank_score
+    }
     # do query
     if query 
     	QueryMetricsMonitoring.select(selects).where(%q{query = ? and data_date = ? }, query, data_date)
