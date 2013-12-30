@@ -3,14 +3,12 @@ Searchad.Views.MasterTab ||= {}
 class Searchad.Views.MasterTab.IndexView extends Backbone.View
  initialize: (options) =>
     @controller = SearchQualityApp.Controller
-    @router = SearchQualityApp.Router
-    
+    @router = SearchQualityApp.Router   
     @controller.bind('poor-performing:index', @select_pp_tab)
     @controller.bind('search-rel:index', @select_sq_tab)
     @controller.bind('search-kpi:index', @select_search_kpi_tab)
     @controller.bind('query-monitoring-count:index', @select_qmc_tab)
-    @controller.bind('qm-metrics:index', @select_qm_metrics_tab)
-    
+    @controller.bind('qm-metrics:index', @select_qm_metrics_tab)  
     @controller.bind('master-tabs:cleanup', @unrender)
     @active = false
 
@@ -34,6 +32,19 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       @controller.trigger('content-cleanup')
       @controller.trigger('search-kpi:index')
       @router.update_path('search_kpi')
+
+
+    'click li.qm-count-top-tab a': (e) =>
+      e.preventDefault()
+      @controller.trigger('content-cleanup')
+      @controller.trigger('query-monitoring-count:index')
+      @router.update_path('query_monitoring/count')
+
+    'click li.qm-metrics-top-tab a': (e) =>
+      e.preventDefault()
+      @controller.trigger('content-cleanup')
+      @controller.trigger('qm-metrics:index')
+      @router.update_path('query_monitoring/metrics')
 
     
   get_tab_el: (data) ->
