@@ -198,9 +198,7 @@ $ ->
     qmSubtabsView =
       new Searchad.Views.QueryMonitoring.SubTabs.IndexView(el: '#qm-count-sub-tabs')
     qmSubtabsView.listenTo(
-      controller, 'qm-count:sub-content', qmSubtabsView.render)
-    # qmSubtabsView.listenTo(
-    #   controller, 'qm-metrics:sub-content', qmSubtabsView.render)
+      controller, 'qm:sub-content', qmSubtabsView.render)
  
     qmCountStatsView =
       new Searchad.Views.QueryMonitoring.Count.Stats.IndexView(
@@ -213,7 +211,7 @@ $ ->
       el_filter:"#qm-metrics-filter"   
     )
     queryMonitoringMetricView.listenTo(
-      controller, 'query-monitoring-metrics:index', (data) ->
+      controller, 'qm-metrics:index', (data) ->
         queryMonitoringMetricView.get_items(data)
     )
 
@@ -224,7 +222,7 @@ $ ->
       pvr_el:'#pvr-stats'
     )
     qmCountStatsView.listenTo(
-      controller, 'qm-metric:stats', 
+      controller, 'qm-metrics:stats', 
       (data)-> qmMetricStatsView.get_items(data))
    
   Backbone.history.start()

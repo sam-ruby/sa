@@ -9,7 +9,7 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
     @controller.bind('poor-performing:index', @overview)
     @controller.bind('adhoc:index', @adhoc)
     @controller.bind('query-monitoring-count:index', @query_monitoring)
-    @controller.bind('query-monitoring-metrics:index', @query_monitoring)
+    @controller.bind('qm-metrics:index', @query_monitoring)
     
     @masterTabView = new Searchad.Views.MasterTab.IndexView(
         el: 'ul.master-tab')

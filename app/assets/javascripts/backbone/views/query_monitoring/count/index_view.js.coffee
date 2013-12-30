@@ -8,11 +8,8 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     @router = SearchQualityApp.Router
     @collection = new Searchad.Collections.QueryMonitoringCountCollection()
     @$filter = @$el.find(options.el_filter)
-    @filterAdded = false
     @initTable()
-
     @$el.find('.ajax-loader').hide()
-    
     @controller.bind('date-changed', =>
       @get_items(trigger: true) if @active)
     @controller.bind('content-cleanup', @unrender)
@@ -20,7 +17,7 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     @collection.bind('request', =>
       @unrender_search_results()
       @$el.find('.ajax-loader').css('display', 'block')
-      @controller.trigger('qm-count:sub-content-cleanup')
+      @controller.trigger('qm:sub-content:cleanup')
     )
     Utils.InitExportCsv(this, "/monitoring/count/get_words.csv")
     @undelegateEvents()
@@ -43,7 +40,6 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     class QueryCell extends Backgrid.Cell
       controller: SearchQualityApp.Controller
       router: SearchQualityApp.Router
-
       events:
         'click': 'handleQueryClick'
 
@@ -52,8 +48,9 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
         query = $(e.target).text()
         $(e.target).parents('table').find('tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
-        that.controller.trigger('qm-count:sub-content',
+        that.controller.trigger('qm:sub-content',
           query: query
+          tab: "count"
           view: 'daily')
         new_path = 'query_monitoring/count/query/' + encodeURIComponent(query)
         that.router.update_path(new_path)
@@ -87,8 +84,8 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
 
     columns
   
-  initFilter: =>
-    _.template('<div class="input-prepend input-append filter-box"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type to filter results"/></form><button class="btn btn-primary reset">Reset</button></div>')
+  # initFilter: =>
+  #   _.template('<div class="input-prepend input-append filter-box"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type to filter results"/></form><button class="btn btn-primary reset">Reset</button></div>')
   
   initTable: () =>
     @grid = new Backgrid.Grid(
@@ -153,9 +150,7 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     return unless @active
     @$el.find('.ajax-loader').hide()
     return @render_error(@collection.query) if @collection.size() == 0
-    unless @filterAdded
-      @$filter.append(@initFilter()())
-      @filterAdded = true
+    @$filter.html(JST['backbone/templates/shared/general_filter']())
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     @$el.append( @paginator.render().$el)

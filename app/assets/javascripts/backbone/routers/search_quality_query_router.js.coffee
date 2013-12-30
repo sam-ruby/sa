@@ -102,7 +102,6 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       @controller.trigger('adhoc-search:index')
   
   query_monitoring_count: (query, date_parts) =>
-    console.log("trigger count")
     @set_date_info(date_parts)
     @controller.trigger('master-tabs:cleanup')
     @controller.trigger('content-cleanup')
@@ -117,13 +116,12 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @set_date_info(date_parts)
     @controller.trigger('master-tabs:cleanup')
     @controller.trigger('content-cleanup')
-      # console.log("trigger index")
     if query?
       query = decodeURIComponent(query)
       @controller.trigger(
-        'query-monitoring-metrics:index', query: query)
+        'qm-metrics:index', query: query)
     else
-      @controller.trigger('query-monitoring-metrics:index')
+      @controller.trigger('qm-metrics:index')
 
   update_path: (path, options=null) =>
     url_parts = window.location.hash.replace('#', '').split('filters')
