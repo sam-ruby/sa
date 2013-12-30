@@ -45,3 +45,25 @@ Backgrid.CustomHeaderCell = Backgrid.HeaderCell.extend(
     @$(".info").tooltip "hide"
     
 )
+
+
+Backgrid.CADQueryCell = Backgrid.Cell.extend(
+  initialize: (options) ->
+    Backgrid.Cell.prototype.initialize.call(this, options)
+  controller: SearchQualityApp.Controller
+  router: SearchQualityApp.Router
+  events:
+    'click': 'handleQueryClick'
+  handleQueryClick: (e) =>
+    e.preventDefault()
+    $(e.target).parents('table').find('tr.selected').removeClass('selected')
+    $(e.target).parents('tr').addClass('selected')
+    # trigger controller function
+    # update path
+  render: ->
+    value = @model.get(@column.get('name'))
+    formatted_value = '<a class="query" href="#">' + value + '</a>'
+    @$el.html(formatted_value)
+    @delegateEvents()
+    return this
+)

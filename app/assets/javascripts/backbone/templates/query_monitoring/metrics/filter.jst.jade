@@ -3,10 +3,10 @@ ul#toggle-columns.nav.nav-pills.pull-left
     a show default columns
   li#show-all-columns
     a show all columns
-
-#filter_row.input-prepend.input-append.filter-box
-  button.btn.filter Filter
-  form
-    input(type="text", placeholder="Type to filter results")
-  button.btn.reset Reset
+.shared-filter
+  #filter_row.input-prepend.input-append.filter-box
+    button.btn.filter Filter
+    form
+      input(type = "text", placeholder = "Type to filter results", value = query)
+    button.btn.reset Reset
 

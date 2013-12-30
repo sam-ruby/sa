@@ -6,18 +6,17 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @collection = new Searchad.Collections.QueryMonitoringMetricCollection()
-    @$filter = @$el.find(options.el_filter)
     @initTable()
     @controller.bind('date-changed', =>
       @get_items(trigger: true) if @active)
     @controller.bind('content-cleanup', @unrender)
-    @collection.bind('reset', @render)
+    @collection.bind('reset', => @render())
     @collection.bind('request', =>
-      @unrender_search_results()
+      @clean_search_results()
       @$el.find('.ajax-loader').css('display', 'block')
       @controller.trigger('qm:sub-content:cleanup')
     )
-    # Utils.InitExportCsv(this, "/monitoring/count/get_words.csv")
+    Utils.InitExportCsv(this, "/monitoring/metric/get_metric_monitor_table_data.csv")
     @undelegateEvents()
     @active = false
     @is_shown_all_columns = false
@@ -29,24 +28,28 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     'submit': 'filter'
     'click #show-default-columns':'show_default_columns'
     'click #show-all-columns':'show_all_columns'
-    # 'click .export-csv a': (e) ->
-    #   date = @controller.get_filter_params().date
-    #   fileName = "query_count_monitoring_#{date}.csv"
-    #   data =
-    #     date: date
-    #   data['query'] = @collection.query if @collection.query
-    #   @export_csv($(e.target), fileName, data)
+    'click .export-csv a': (e) ->
+      e? e.preventDefault()
+      console.log("clickcsv")
+      date = @controller.get_filter_params().date
+      fileName = "query_metrics_monitoring_#{date}.csv"
+      data =
+        date: date
+      console.log("data", data);
+      # data['query'] = @collection.query if @collection.query
+      @export_csv($(e.target), fileName, data)
 
 
   render: =>
     return unless @active
     @$el.find('.ajax-loader').hide()
-    return @render_error(@collection.query) if @collection.size() == 0
+    if @collection.size() == 0
+      return @render_error(@collection.query) 
     # add filter
     filter_template = JST['backbone/templates/query_monitoring/metrics/filter']
-    @$filter.html(filter_template())
+    @$el.append(filter_template(@collection.data))
     # render grid
-    @$el.append( @grid.render().$el)
+    @$el.append(@grid.render().$el)
     # append group-header
     @$el.find('table #qm-group-header-row').remove()
     @$el.find('table thead').prepend(JST['backbone/templates/query_monitoring/metrics/table_group_header']())
@@ -56,28 +59,35 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
       @show_default_columns()
     # add paginator
     @$el.append( @paginator.render().$el)
-    # @$el.append( @export_csv_button() )
-    @delegateEvents()
-    
-    if @trigger
-      @trigger = false
-      @$el.find('td a.query').first().trigger('click')
-    this
+    @$el.append( @export_csv_button())
+    # when resetting the form, automaticlly choose the first item
+    @$el.find('td a.query').first().click()
+    @delegateEvents() 
+    # this
+
+   render_error: (query) ->
+    if query?
+      msg = "No data available for #{query}"
+    else
+      msg = "No data available"
+    @$el.append($('<span>').addClass('label label-important').append(msg))
 
   unrender: =>
     @active = false
-    @unrender_search_results()
-    @clear_filter()
+    @clean_search_results()
     @undelegateEvents()
-    this
+
+
+  clean_search_results: =>
+    @$el.children().not('.ajax-loader').remove()
+    @$el.find('.ajax-loader').hide()
 
 
   initTable: () =>
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
       collection: @collection
-    )
-    
+    )   
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection
     )
@@ -85,59 +95,47 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
 
   get_items: (data) =>
     @active = true
-    # @$el.find('.ajax-loader').css('display', 'block')
-    if data and data.query
-      @collection.query = data.query
-    else
-      @collection.query = null
-    @collection.get_items()
     @trigger = true
-
-  
-  unrender_search_results: =>
-    @$el.children().not('.ajax-loader, #' + @$filter.attr('id')).remove()
-    @$el.find('.ajax-loader').hide()
-  
-
-  render_error: (query) ->
-    if query?
-      msg = "No data available for #{query}"
+    # if there is already collection, with the same date and no query param, then directly render
+    # optional, if don't detect if it is one. it won't refresh to page 1 every render
+    if @collection.data.date == @controller.get_filter_params().date && @collection.data.query == null && @collection.state.currentPage ==1 
+      @render()
+      return
+    # if needs to fetch data, process first
+    if data and data.query
+      @collection.data.query = data.query
     else
-      msg = "No data available"
-    @$el.append($('<span>').addClass('label label-important').append(msg))
+      @collection.data.query = null
+    @collection.data.date = @controller.get_filter_params().date
+    # get_first_page, backgrid function
+    @collection.getPage(1)
 
 
   show_all_columns:(e) =>
-    e? e.preventDefault()
-    # show group header
-    @$el.find('table #qm-group-header-row').show()
-    # hide unnessasary column
-    @$el.find('table').removeClass('hide-atc-pvr-column')
-    @$el.find('table').addClass('all-columns-with-group-header')
-    # toggle li for select options
     @$el.find('li').removeClass('active')
     @$el.find('li#show-all-columns').addClass('active')
+    @$el.find('table #qm-group-header-row').show()
+    @$el.find('table').removeClass('hide-atc-pvr-column')
+    @$el.find('table').addClass('all-columns-with-group-header')
     @is_shown_all_columns = true
 
-  show_default_columns: (e)=>
-    e? e.preventDefault()
+
+  show_default_columns:(e)=>
+    @$el.find('li').removeClass('active')
+    @$el.find('li#show-default-columns').addClass('active')
+    # hide unnessasary column
     @$el.find('table #qm-group-header-row').hide()
     @$el.find('table').addClass('hide-atc-pvr-column')
     @$el.find('table').removeClass('all-columns-with-group-header')
-    # toggle li for select options
-    @$el.find('li').removeClass('active')
-    @$el.find('li#show-default-columns').addClass('active')
     @is_shown_all_columns = false
 
-  clear_filter: =>
-     @$filter.children().remove()
   
   filter: (e) =>
     e.preventDefault()
     query = @$el.find(".filter-box input[type=text]").val()
-    @collection.query = query
+    @collection.data.query = query
     if query
-      @collection.get_items()
+      @collection.getPage(1)
       @active = true
       @trigger = true
 
@@ -146,39 +144,25 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     e.preventDefault()
     @router.update_path('/query_monitoring/metrics/query/')
     @$el.find(".filter-box input[type=text]").val('')
-    @collection.query = null
+    @collection.data.query = null
     @active = true
-    @collection.get_items()
+    @collection.getPage(1)
     @trigger = true
 
 
   gridColumns:  ->
     that = this
-    class QueryCell extends Backgrid.Cell
-      controller: SearchQualityApp.Controller
-      router: SearchQualityApp.Router
-
-      events:
-        'click': 'handleQueryClick'
-
+    # Backgrid CADQueryCell is defined in util/backgrid.customize.js
+    class QueryCell extends Backgrid.CADQueryCell
       handleQueryClick: (e) =>
-        e.preventDefault()
+        Backgrid.CADQueryCell.prototype.handleQueryClick.call(this, e)
         query = $(e.target).text()
-        $(e.target).parents('table').find('tr.selected').removeClass('selected')
-        $(e.target).parents('tr').addClass('selected')
         that.controller.trigger('qm:sub-content',
           query: query
           tab: "metrics"
           view: 'daily')
         new_path = 'query_monitoring/metrics/query/' + encodeURIComponent(query)
         that.router.update_path(new_path)
-
-      render: ->
-        value = @model.get(@column.get('name'))
-        formatted_value = '<a class="query" href="#">' + value + '</a>'
-        @$el.html(formatted_value)
-        @delegateEvents()
-        return this
     
     columns = [{
     name: 'query',

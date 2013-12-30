@@ -1,5 +1,4 @@
 class Searchad.Models.QueryMonitoringMetric extends Backbone.Model
-  # paramRoot: 'query'
   defaults:
     query: null
     query_score: null
@@ -17,31 +16,30 @@ class Searchad.Models.QueryMonitoringMetric extends Backbone.Model
 class Searchad.Collections.QueryMonitoringMetricCollection extends Backbone.PageableCollection
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
-    @query = null
+    @data = {
+      query: null
+      date: null
+    }
     super(options)
-
   model: Searchad.Models.QueryMonitoringMetric
   url: '/monitoring/metric/get_metric_monitor_table_data.json'
-  filters:
-    date: null
-
   state:
+    currentPage:null
     pageSize: 10
+    totalRecords:500
   mode: 'server'
+  # Backbone.PageableCollection#queryParams` converts to ruby's will_paginate keys by default.
   queryParams:
     currentPage: 'page'
     pageSize: 'per_page'
-    date: ->
-      @controller.get_filter_params().date
-    query: ->
-      @query
+    date:->
+      @data.date
+    query:->
+      @data.query
 
-
-  get_items: (data) =>
-    # data = {} unless data
-    # for k, v of @controller.get_filter_params()
-    #   continue unless v
-    #   data[k] = v
-    @fetch(
-      reset: true
-      data: data)
+  # get_items:  =>
+  #   @state.currentPage = 1
+  #   @fetch(
+  #     reset: true
+  #     data: @data
+  #   )
