@@ -15,7 +15,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @collection.bind('request', =>
       @unrender_search_results()
       @$el.find('.ajax-loader').css('display', 'block')
-      @controller.trigger('qm-count:sub-content-cleanup')
+      @controller.trigger('qm:sub-content:cleanup')
     )
     # Utils.InitExportCsv(this, "/monitoring/count/get_words.csv")
     @undelegateEvents()
@@ -38,28 +38,6 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     #   @export_csv($(e.target), fileName, data)
 
 
-  show_all_columns:(e) =>
-    e? e.preventDefault()
-    # show group header
-    @$el.find('table #qm-group-header-row').show()
-    # hide unnessasary column
-    @$el.find('table').removeClass('hide-atc-pvr-column')
-    @$el.find('table').addClass('all-columns-with-group-header')
-    # toggle li for select options
-    @$el.find('li').removeClass('active')
-    @$el.find('li#show-all-columns').addClass('active')
-    @is_shown_all_columns = true
-
-  show_default_columns: (e)=>
-    e? e.preventDefault()
-    @$el.find('table #qm-group-header-row').hide()
-    @$el.find('table').addClass('hide-atc-pvr-column')
-    @$el.find('table').removeClass('all-columns-with-group-header')
-    # toggle li for select options
-    @$el.find('li').removeClass('active')
-    @$el.find('li#show-default-columns').addClass('active')
-    @is_shown_all_columns = false
-
   render: =>
     return unless @active
     @$el.find('.ajax-loader').hide()
@@ -71,13 +49,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @$el.append( @grid.render().$el)
     # append group-header
     @$el.find('table #qm-group-header-row').remove()
-    @$el.find('table thead').prepend('
-      <tr id = "qm-group-header-row">
-      <th colspan = "2"></th>
-      <th colspan = "4">Conversion</th>
-      <th colspan = "4">PVR</th>
-      <th colspan = "4">ATC</th></tr>
-      ')
+    @$el.find('table thead').prepend(JST['backbone/templates/query_monitoring/metrics/table_group_header']())
     if @is_shown_all_columns
       @show_all_columns()
     else
@@ -113,7 +85,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
 
   get_items: (data) =>
     @active = true
-    @$el.find('.ajax-loader').css('display', 'block')
+    # @$el.find('.ajax-loader').css('display', 'block')
     if data and data.query
       @collection.query = data.query
     else
@@ -133,6 +105,29 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     else
       msg = "No data available"
     @$el.append($('<span>').addClass('label label-important').append(msg))
+
+
+  show_all_columns:(e) =>
+    e? e.preventDefault()
+    # show group header
+    @$el.find('table #qm-group-header-row').show()
+    # hide unnessasary column
+    @$el.find('table').removeClass('hide-atc-pvr-column')
+    @$el.find('table').addClass('all-columns-with-group-header')
+    # toggle li for select options
+    @$el.find('li').removeClass('active')
+    @$el.find('li#show-all-columns').addClass('active')
+    @is_shown_all_columns = true
+
+  show_default_columns: (e)=>
+    e? e.preventDefault()
+    @$el.find('table #qm-group-header-row').hide()
+    @$el.find('table').addClass('hide-atc-pvr-column')
+    @$el.find('table').removeClass('all-columns-with-group-header')
+    # toggle li for select options
+    @$el.find('li').removeClass('active')
+    @$el.find('li#show-default-columns').addClass('active')
+    @is_shown_all_columns = false
 
   clear_filter: =>
      @$filter.children().remove()
@@ -171,11 +166,10 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
         query = $(e.target).text()
         $(e.target).parents('table').find('tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
-        console.log('click')
-        that.controller.trigger('qm-metric:stats',
+        that.controller.trigger('qm:sub-content',
           query: query
-          stats_type: 'atc'
-        )
+          tab: "metrics"
+          view: 'daily')
         new_path = 'query_monitoring/metrics/query/' + encodeURIComponent(query)
         that.router.update_path(new_path)
 

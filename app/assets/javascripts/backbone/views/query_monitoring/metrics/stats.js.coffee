@@ -6,7 +6,7 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     @controller.bind('content-cleanup', @unrender)
-    @controller.bind('qm-metric:sub-content-cleanup', @unrender)
+    @controller.bind('qm:sub-content:cleanup', @unrender)
     @data = {}
     @active = false
 
@@ -14,12 +14,11 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
     # title = "ATC metric monitoring for " + title
     that = this
     dom = "#" + type + "-stats"
-    console.log(dom)
     $(dom).highcharts('StockChart',
       chart:
         alignTicks: false
-      # rangeSelector:
-      #   selected: 0
+      rangeSelector:
+        selected: 0
       credits:
         enabled: false
       xAxis:
@@ -27,16 +26,11 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
         labels:
           formatter: ->
             Highcharts.dateFormat('%b %e', @value)
+      # single side y value
       yAxis: [{
         title:
           text: 'atc metric (%)'
         gridLineWidth: 0}]
-          # {title:
-          #   text: 'ATC value'
-          # opposite: true
-          # type: 'linear'
-          # gridLineWidth: 0}]
-
       title:
         text: title
         useHTML: true
@@ -68,28 +62,27 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
 
   unrender: =>
     @active = false
+    @$el.children().not('#con-stats, #pvr-stats, #atc-stats').remove()
     # clear the three stats
     $("#con-stats").empty()
-    # .highcharts().destroy() if @$el.highcharts()   
     $("#pvr-stats").empty()
     $("#atc-stats").empty()
-    @controller.trigger('qm-count:sub-content:hide-spin')
+    @controller.trigger('qm:sub-content:hide-spin')
 
   
   get_items: (data) =>
     @active = true
     @$el.highcharts().destroy() if @$el.highcharts()
-    @controller.trigger('qm-count:sub-content:show-spin')
+    @controller.trigger('qm:sub-content:show-spin')
     @$el.find('.ajax-loader').show()
     $.ajax(
       url: '/monitoring/metric/get_query_stats.json'
       data:
         query: data.query
-        stats_type: "all"#data.stats_type
+        stats_type: "all" #data.stats_type
       success: (ajax_data, status) =>
         if ajax_data and ajax_data.length > 0
            series = @process_one_type_data(ajax_data, "atc")
-           console.log(series)
            @render("conversion monitoring for " + data.query, @process_one_type_data(ajax_data, "con"), "con")
            @render("pvr monitoring for " + data.query, @process_one_type_data(ajax_data, "pvr"), "pvr")
            @render("atc monitoring for " + data.query, @process_one_type_data(ajax_data, "atc"),"atc")
@@ -98,6 +91,21 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
            @render_error(data.query)
     )
 
+
+  render: (title, data, type) ->
+    return unless @active
+    @controller.trigger('qm:sub-content:hide-spin')
+    @initChart(title, data, type)
+    this
+
+
+  render_error: (query) ->
+    return unless @active
+    @controller.trigger('qm:sub-content:hide-spin')
+    @$el.append( $('<span>').addClass('label label-important').append(
+      "No data available for #{query}") )
+
+  
   # available types :atc, pvr, con
   process_one_type_data: (data, type) ->
     # generate variable name
@@ -183,16 +191,3 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
 
     series = [series_boundries,series_metric,series_trend, series_ooc_bad, series_ooc_good]
     return series
-
-
-  render_error: (query) ->
-    return unless @active
-    @controller.trigger('qm-count:sub-content:hide-spin')
-    @$el.append( $('<span>').addClass('label label-important').append(
-      "No data available for #{query}") )
-
-  render: (title, data, type) ->
-    return unless @active
-    @controller.trigger('qm-count:sub-content:hide-spin')
-    @initChart(title, data, type)
-    this
