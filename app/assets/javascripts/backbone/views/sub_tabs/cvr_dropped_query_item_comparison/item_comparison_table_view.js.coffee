@@ -116,8 +116,9 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     
 
   unrender: =>
-    @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').hide()
+    # @$el.children().not('.ajax-loader').remove()
+    # @$el.find('.ajax-loader').hide()
+    @$el.children().remove()
     @active = false
     @undelegateEvents()
   
@@ -134,8 +135,8 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
   render_error:  ->
     return unless @active
     @controller.trigger('search:sub-content:hide-spin')
-    @$el.append( $('<span>').addClass('label label-important').append(
-      "No data available for #{@data.query}") )
+    @$el.html( '<span class = "label label-important"> No data available for '+ @data.query+'</span>')
+
   
   render: =>
     if @active == false

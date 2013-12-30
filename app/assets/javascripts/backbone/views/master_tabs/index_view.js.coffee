@@ -71,11 +71,11 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     tabs = [{
       class: ['qm-count-top-tab','active']
       href: '#query_monitoring/count'
-      title: 'Query Count Analysis'},
+      title: 'Query Count'},
      {
       class: ['qm-metrics-top-tab']
       href: '#query_monitoring/metrics'
-      title: 'Query Metrics Analysis'}
+      title: 'Query Metrics'}
     ]
     @$el.append(@get_tab_el(tabs[0]))
     @$el.append(@get_tab_el(tabs[1]))

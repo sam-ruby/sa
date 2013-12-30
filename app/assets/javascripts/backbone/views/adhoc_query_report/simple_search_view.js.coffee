@@ -66,74 +66,16 @@ class Searchad.Views.AdhocQuery.SimpleSearchView extends Backbone.View
     @$search_results.children().not('.ajax-loader').remove()
 
   initTable: =>
-    that = this
-    class SearchQueryCell extends Backgrid.Cell
-      events:
-        'click': 'handleQueryClick'
-
-      handleQueryClick: (e) =>
-        e.preventDefault()
-        $(e.target).parents('table').find('tr.selected').removeClass(
-          'selected')
-        $(e.target).parents('tr').addClass('selected')
-        query = $(e.target).text()
-        that.controller.trigger('search:sub-content',
-          query: query
-          view: 'daily')
-        new_path = 'adhoc_query/mode/search/query/' + encodeURIComponent(query)
-        that.router.update_path(new_path)
-      
-      render: =>
-        value = @model.get(@column.get('name'))
-        formatted_value = '<a class="query" href="#">' + value + '</a>'
-        @$el.html(formatted_value)
-        @delegateEvents()
-        return this
-
-    @grid = new Backgrid.Grid(
-      columns: [{
-        name: 'query',
-        label: I18n.t('search_analytics.query_string'),
-        editable: false,
-        cell: SearchQueryCell},
-        {name: 'cat_rate',
-        label: I18n.t('dashboard.catalog_overlap'),
-        editable: false,
-        cell: 'number',
-        formatter: Utils.PercentFormatter},
-        {name: 'show_rate',
-        label: I18n.t('dashboard.results_shown_in_search'),
-        editable: false,
-        cell: 'number',
-        formatter: Utils.PercentFormatter},
-        {name: 'rel_score',
-        label: I18n.t('dashboard.overall_relevance_score'),
-        editable: false,
-        cell: 'number'},
-        {name: 'search_rev_rank_correlation',
-        label: I18n.t('search_analytics.rev_rank_correlation'),
-        editable: false,
-        cell: 'number'},
-        {name: 'query_revenue',
-        label: I18n.t('search_analytics.revenue'),
-        editable: false,
-        cell: 'number',
-        formatter: Utils.CurrencyFormatter},
-        {name: 'query_count',
-        label: I18n.t('search_analytics.query_count'),
-        editable: false,
-        cell: 'integer'},
-        {name: 'query_con',
-        label: 'Conversion',
-        editable: false,
-        cell: 'number'
-        formatter: Utils.PercentFormatter}]
-      collection: @queryStatsCollection)
-
+    columns =  @grid_columns()
+    console.log(columns)
+    # @grid = new Backgrid.Grid(
+    #   columns: columns
+    #   collection: @queryStatsCollection
+    # )
     @paginator = new Backgrid.Extension.Paginator(
       collection: @queryStatsCollection
     )
-
+  
   render_s_results: =>
     return unless @active
     @$search_results.find('.ajax-loader').hide()
@@ -152,3 +94,54 @@ class Searchad.Views.AdhocQuery.SimpleSearchView extends Backbone.View
       @trigger = false
       @$search_results.find('td a.query').first().trigger('click')
     this
+
+  grid_columns: =>
+    class SearchQueryCell extends Backgrid.CADQueryCell
+      handleQueryClick: (e) =>
+        Backgrid.CADQueryCell.prototype.handleQueryClick.call(this, e)
+        query = $(e.target).text()
+        @controller.trigger('search:sub-content',
+          query: query
+          view: 'daily')
+        new_path = 'adhoc_query/mode/search/query/' + encodeURIComponent(query)
+        @router.update_path(new_path)
+      
+    columns = [{
+      name: 'query',
+      label: I18n.t('search_analytics.query_string'),
+      editable: false,
+      cell: SearchQueryCell},
+      {name: 'cat_rate',
+      label: I18n.t('dashboard.catalog_overlap'),
+      editable: false,
+      cell: 'number',
+      formatter: Utils.PercentFormatter},
+      {name: 'show_rate',
+      label: I18n.t('dashboard.results_shown_in_search'),
+      editable: false,
+      cell: 'number',
+      formatter: Utils.PercentFormatter},
+      {name: 'rel_score',
+      label: I18n.t('dashboard.overall_relevance_score'),
+      editable: false,
+      cell: 'number'},
+      {name: 'search_rev_rank_correlation',
+      label: I18n.t('search_analytics.rev_rank_correlation'),
+      editable: false,
+      cell: 'number'},
+      {name: 'query_revenue',
+      label: I18n.t('search_analytics.revenue'),
+      editable: false,
+      cell: 'number',
+      formatter: Utils.CurrencyFormatter},
+      {name: 'query_count',
+      label: I18n.t('search_analytics.query_count'),
+      editable: false,
+      cell: 'integer'},
+      {name: 'query_con',
+      label: 'Conversion',
+      editable: false,
+      cell: 'number'
+      formatter: Utils.PercentFormatter}
+    ]
+    return columns

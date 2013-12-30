@@ -27,7 +27,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       @search_results_cleanup()
       @controller.trigger('search:sub-tab-cleanup')
       @query_results.find('.ajax-loader').css('display', 'block')
-      @controller.trigger('sub-content-cleanup')
+      # @controller.trigger('sub-content-cleanup')
     )
 
     Utils.InitExportCsv(this, "/search/get_cvr_dropped_query.csv")
@@ -49,6 +49,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
 
   #when collection reset caused by get items, the rendering result is triggered
   render_query_results: =>
+    @search_results_cleanup()
     @query_results.find('.ajax-loader').hide()
     if @collection.length == 0
       return @render_error()
@@ -69,14 +70,8 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     @query_results.append(@grid.render().$el)
     @query_results.append(@paginator.render().$el)
     @query_results.append(@export_csv_button())
-
-    if @trigger
-      @trigger = false
-      @$el.find('td a.query').first().trigger('click')
-     
-    $("li.cvr-dropped-item-comparison").show();
-
-    return this
+    $("li.cvr-dropped-item-comparison").show()
+    @$el.find('td a.query').first().click() 
 
   render_error: ->
     @query_results.append($('<span>').addClass(
@@ -93,15 +88,20 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
 
   #get_items is usually the first triggered function. It could be trgger from the index or router.  
   get_items: (data) ->
+    @active = true
     if data== undefined
       data = @process_query_data(data)
-    # reset is bind wiht render_query_results.
+    # if the exact same data, don't redo the fetch
+    if  @collection.dataParam.query_date == data.query_date and
+     @collection.dataParam.weeks_apart == data.weeks_apart and 
+     @collection.dataParam.query == data.query and  
+     @collection.state.currentPage ==1 
+      @render_query_results()
+      return
+    # reset is bind with render_query_results.
     @collection.dataParam = data
-    # important, between switch top500 and certain query, must reset current page size to 1
     @data = data
-    @collection.getPage(1)
-    @active = true
-    @trigger = true
+    @collection.getFirstPage()
 
 
   process_query_data:(data) =>

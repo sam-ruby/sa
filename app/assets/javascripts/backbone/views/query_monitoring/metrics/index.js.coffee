@@ -6,7 +6,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @collection = new Searchad.Collections.QueryMonitoringMetricCollection()
-    @initTable()
+    @init_table()
     @controller.bind('date-changed', =>
       @get_items(trigger: true) if @active)
     @controller.bind('content-cleanup', @unrender)
@@ -83,9 +83,9 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @$el.find('.ajax-loader').hide()
 
 
-  initTable: () =>
+  init_table: () =>
     @grid = new Backgrid.Grid(
-      columns: @gridColumns()
+      columns: @grid_columns()
       collection: @collection
     )   
     @paginator = new Backgrid.Extension.Paginator(
@@ -150,7 +150,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @trigger = true
 
 
-  gridColumns:  ->
+  grid_columns:  ->
     that = this
     # Backgrid CADQueryCell is defined in util/backgrid.customize.js
     class QueryCell extends Backgrid.CADQueryCell
