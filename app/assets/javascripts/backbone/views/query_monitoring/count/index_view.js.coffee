@@ -34,58 +34,7 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
         date: date
       data['query'] = @collection.query if @collection.query
       @export_csv($(e.target), fileName, data)
-  
-  gridColumns:  ->
-    that = this
-    class QueryCell extends Backgrid.Cell
-      controller: SearchQualityApp.Controller
-      router: SearchQualityApp.Router
-      events:
-        'click': 'handleQueryClick'
 
-      handleQueryClick: (e) =>
-        e.preventDefault()
-        query = $(e.target).text()
-        $(e.target).parents('table').find('tr.selected').removeClass('selected')
-        $(e.target).parents('tr').addClass('selected')
-        that.controller.trigger('qm:sub-content',
-          query: query
-          tab: "count"
-          view: 'daily')
-        new_path = 'query_monitoring/count/query/' + encodeURIComponent(query)
-        that.router.update_path(new_path)
-
-      render: ->
-        value = @model.get(@column.get('name'))
-        formatted_value = '<a class="query" href="#">' + value + '</a>'
-        @$el.html(formatted_value)
-        @delegateEvents()
-        return this
-    
-    columns = [{
-    name: 'query_str',
-    label: I18n.t('query'),
-    editable: false,
-    cell: QueryCell},
-    {name: 'query_score',
-    label: 'Query Score',
-    editable: false,
-    cell: 'integer',
-    headerCell: 'custom'},
-    {name: 'query_count',
-    label: I18n.t('search_analytics.queries'),
-    editable: false,
-    cell: 'integer'},
-    {name: 'query_con',
-    label: I18n.t('perf_monitor.conversion_rate'),
-    editable: false,
-    cell: 'number',
-    formatter: Utils.PercentFormatter}]
-
-    columns
-  
-  # initFilter: =>
-  #   _.template('<div class="input-prepend input-append filter-box"><button class="btn btn-primary filter">Filter</button><form><input type="text" placeholder="Type to filter results"/></form><button class="btn btn-primary reset">Reset</button></div>')
   
   initTable: () =>
     @grid = new Backgrid.Grid(
@@ -100,7 +49,7 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
   filter: (e) =>
     e.preventDefault()
     query = @$el.find(".filter-box input[type=text]").val()
-    @collection.query = query
+    @collection.data.query = query
     if query
       @collection.get_items()
       @active = true
@@ -110,20 +59,25 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     e.preventDefault()
     @router.update_path('/search_rel')
     @$el.find(".filter-box input[type=text]").val('')
-    @collection.query = null
+    @collection.data.query = null
     @active = true
     @collection.get_items()
     @trigger = true
 
   get_items: (data) =>
     @active = true
-    @$el.find('.ajax-loader').css('display', 'block')
-    if data and data.query
-      @collection.query = data.query
-    else
-      @collection.query = null
-    @collection.get_items()
     @trigger = true
+    # if there is already collection, with the same date and no query param, then directly render
+    if @collection.data.date ==@controller.get_filter_params().date && @collection.data.query ==null      
+        @render()
+        return
+    # if needs to fetch data, process first
+    if data and data.query
+      @collection.data.query = data.query
+    else
+      @collection.data.query = null
+    @collection.data.date = @controller.get_filter_params().date
+    @collection.get_items()
 
   clear_filter: =>
     @$filter.children().remove()
@@ -153,7 +107,6 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     @$filter.html(JST['backbone/templates/shared/general_filter']())
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
-    @$el.append( @paginator.render().$el)
     @$el.append( @export_csv_button() )
     @delegateEvents()
     
@@ -161,3 +114,38 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
       @trigger = false
       @$el.find('td a.query').first().trigger('click')
     this
+
+  gridColumns:  ->
+    that = this
+    class QueryCell extends Backgrid.CADQueryCell
+      handleQueryClick: (e) =>
+        Backgrid.CADQueryCell.prototype.handleQueryClick.call(this, e)
+        query = $(e.target).text()
+        that.controller.trigger('qm:sub-content',
+          query: query
+          tab: "count"
+          view: 'daily')
+        new_path = 'query_monitoring/count/query/' + encodeURIComponent(query)
+        that.router.update_path(new_path)
+    
+    columns = [{
+    name: 'query_str',
+    label: I18n.t('query'),
+    editable: false,
+    cell: QueryCell},
+    {name: 'query_score',
+    label: 'Query Score',
+    editable: false,
+    cell: 'integer',
+    headerCell: 'custom'},
+    {name: 'query_count',
+    label: I18n.t('search_analytics.queries'),
+    editable: false,
+    cell: 'integer'},
+    {name: 'query_con',
+    label: I18n.t('perf_monitor.conversion_rate'),
+    editable: false,
+    cell: 'number',
+    formatter: Utils.PercentFormatter}]
+
+    columns

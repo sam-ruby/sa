@@ -12,15 +12,14 @@ class Searchad.Models.QueryMonitoringCount extends Backbone.Model
 
 class Searchad.Collections.QueryMonitoringCountCollection extends Backbone.PageableCollection
   initialize: (options) ->
-    @controller = SearchQualityApp.Controller
-    @query = null
+    @data = {
+      query:null
+      date:null
+    }
     super(options)
 
   model: Searchad.Models.QueryMonitoringCount
   url: '/monitoring/count/get_words.json'
-  filters:
-    date: null
-
   state:
     pageSize: 10
   mode: 'server'
@@ -28,17 +27,13 @@ class Searchad.Collections.QueryMonitoringCountCollection extends Backbone.Pagea
     currentPage: 'page'
     pageSize: 'per_page'
     date: ->
-      @controller.get_filter_params().date
+      @data.date
     query: ->
-      @query
-
+      @data.query
 
   get_items: (data) =>
-    data = {} unless data
-    for k, v of @controller.get_filter_params()
-      continue unless v
-      data[k] = v
+    @state.currentPage = 1
     @fetch(
       reset: true
-      data: data)
+      data: @data)
 

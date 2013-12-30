@@ -47,13 +47,11 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
 
   active: false
 
-
   #when collection reset caused by get items, the rendering result is triggered
   render_query_results: =>
     @query_results.find('.ajax-loader').hide()
     if @collection.length == 0
       return @render_error()
-
     # render the result label
     if (@data.query== "")
       result_label = "Conversion Rate Dropped Query Top 500 Report"
@@ -100,9 +98,8 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     # reset is bind wiht render_query_results.
     @collection.dataParam = data
     # important, between switch top500 and certain query, must reset current page size to 1
-    @collection.state.currentPage = 1;
     @data = data
-    @collection.get_items()
+    @collection.getPage(1)
     @active = true
     @trigger = true
 
@@ -132,7 +129,6 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       columns: columns
       collection: @collection
     )
-
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection
     )
@@ -140,17 +136,11 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
 
   grid_columns: =>
     that = this
-    class SearchQueryCell extends Backgrid.Cell
-      events:
-        'click': 'handleQueryClick'
+    class SearchQueryCell extends Backgrid.CADQueryCell
       handleQueryClick: (e) =>
-        e.preventDefault()
-        $(e.target).parents('table').find('tr.selected').removeClass(
-          'selected')
-        $(e.target).parents('tr').addClass('selected')
+        Backgrid.CADQueryCell.prototype.handleQueryClick.call(this, e)
         query = $(e.target).text()
         dataParam = @model.collection.dataParam
-
         that.controller.trigger('search:sub-content',
           query: query
           query_date: dataParam.query_date
@@ -158,13 +148,6 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
           tab: 'cvr-dropped-item-comparison')
         new_path = 'adhoc_query/mode/query_comparison'+ '/wks_apart/' + dataParam.weeks_apart + '/query_date/' + dataParam.query_date+"/query/"+ encodeURIComponent(query)
         that.router.update_path(new_path)
-      
-      render: =>
-        value = @model.get(@column.get('name'))
-        formatted_value = '<a class="query" href="#">' + value + '</a>'
-        @$el.html(formatted_value)
-        @delegateEvents()
-        return this
 
     helpInfo = Searchad.helpInfo.conversion_rate_dropped_query
     columns = [{name: 'query',

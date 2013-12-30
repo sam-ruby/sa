@@ -7,11 +7,6 @@ class Monitoring::MetricController < BaseController
       format.json do 
         results = QueryMetricsMonitoring.get_query_metrics_monitoring_daily(
           query, @date, @page, @sort_by, @order, @limit)
-
-        # render :json => [
-        #     {:total_entries => results.total_pages * @limit,
-        #      :date => @date}, results]
-   
         if results.nil? or results.empty?
           render :json => [{:total_entries => 0}, results]
         else
@@ -20,16 +15,19 @@ class Monitoring::MetricController < BaseController
              :date => @date}, results]
         end
       end
-      # format.csv do
-      #   results = QueryCountSpcDaily.get_words(
-      #     query, @date, 0).map do |record|
-      #       {'Query' => record.query_str,
-      #        'Query Score' => record.query_score.to_f.round(2),
-      #        'Count' => record.query_count,
-      #        'Conversion' => record.query_con.to_f.round(2)}
-      #     end
-      #     render :json => results 
-      # end
+      format.csv do
+        p "request csv"
+        # if it is getting the csv file, set page to 1 and limit to 10000.(currently the max available is 500)
+        results = QueryCountSpcDaily.get_words(
+          nil, @date, 1,'con_rank_score' ,'desc', 10000)
+        # .map do |record|
+        #     {'Query' => record.query_str,
+        #      'Query Score' => record.query_score.to_f.round(2),
+        #      'Count' => record.query_count,
+        #      'Conversion' => record.query_con.to_f.round(2)}
+          # end
+          render :json => results 
+      end
     end
   end
 
