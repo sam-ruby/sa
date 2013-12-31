@@ -116,22 +116,27 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
     UCL = type + "_UCL"
     trend = type + "_trend"
     ooc_flag = type + "_OOC_flag"
+    trend_flag = type + "_trend_flag"
     # data series for drawing graph
     control_boudries_data = []
     atc_data = [] 
     trend_data = [] 
     ooc_data_good = []
     ooc_data_bad = []
+    ooc_data_down_trend = []
 
     for k in data
       control_boudries_data.push([k.data_date, k[LCL], k[UCL]])
       atc_data.push([k.data_date, k[metric]])
       trend_data.push([k.data_date, k[trend]])
       # process red or green dot for the ooc flag
-      if k[ooc_flag] ==1
+      # only when the trend is not downwarding and the ooc_flag is 1, it consider as good ooc
+      if k[ooc_flag] ==1 && k[trend_flag] ==0
         ooc_data_good.push([k.data_date, k[metric]])
       if k[ooc_flag] == -1
         ooc_data_bad.push([k.data_date, k[metric]])
+      if k[trend_flag] ==1
+        ooc_data_down_trend.push([k.data_date, k[metric]])
 
     series_boundries = {
       name: type + " out of control series_boundries"
@@ -154,20 +159,34 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
       data: atc_data
       zIndex: 2
       lineWidth: 2,
-      lineColor: Highcharts.getOptions().colors[0]
+      color: Highcharts.getOptions().colors[0]
     }
 
     series_trend = {
-      name: type + "trend"
+      name: type + " trend"
       type: 'spline'
       data: trend_data
-      color: '#c0c0c0'
       zIndex: 1
+      color: '#c0c0c0'
     }
 
+   # ooc bad indicates the bad ooc
     series_ooc_bad = {
-      name: "OUT OF CONTROL- Bad!!"
+      name: "This metric is ooc, deviates from prediction"
       data: ooc_data_bad
+      zIndex: 4
+      lineWidth : 0,
+      marker : {
+        enabled : true,
+        radius : 4
+        symbol:'circle'
+      },
+      color: "red"
+    }
+    # down_trend indicates it's a downward trending
+    series_down_trend = {
+      name: "This metric has downward trending"
+      data: ooc_data_down_trend
       zIndex: 4
       lineWidth : 0,
       marker : {
@@ -179,7 +198,7 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
     }
 
     series_ooc_good = {
-      name: "OUT OF CONTROL- Good or possible out of stock"
+      name: "Good out of control or possiblely out of stock"
       data: ooc_data_good
       zIndex: 4
       lineWidth : 0,
@@ -191,5 +210,5 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
       color: "green"
     }
 
-    series = [series_boundries,series_metric,series_trend, series_ooc_bad, series_ooc_good]
+    series = [series_boundries,series_metric,series_trend, series_ooc_bad,series_down_trend, series_ooc_good]
     return series
