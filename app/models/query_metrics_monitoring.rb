@@ -6,7 +6,7 @@
 
 class QueryMetricsMonitoring < BaseModel
   
-  self.table_name = 'query_search_metrics_monitoring_daily_temp'
+  self.table_name = 'query_search_metrics_monitoring_daily'
   # this function generate the query metric monitoring table
   def self.get_query_metrics_monitoring_daily(query, data_date, page, order_column, order, limit)
     # set rank order, order will be changed when click on certain column of the grid
