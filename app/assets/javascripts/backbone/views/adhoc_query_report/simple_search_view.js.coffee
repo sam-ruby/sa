@@ -67,11 +67,10 @@ class Searchad.Views.AdhocQuery.SimpleSearchView extends Backbone.View
 
   initTable: =>
     columns =  @grid_columns()
-    console.log(columns)
-    # @grid = new Backgrid.Grid(
-    #   columns: columns
-    #   collection: @queryStatsCollection
-    # )
+    @grid = new Backgrid.Grid(
+      columns: columns
+      collection: @queryStatsCollection
+    )
     @paginator = new Backgrid.Extension.Paginator(
       collection: @queryStatsCollection
     )

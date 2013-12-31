@@ -338,6 +338,19 @@ a.cat-breadcrumb, a.daily, a.weekly {
   font-style:italic;
   padding-bottom:20px;
 }
+.cad-filter{
+  .close {
+    display: inline-block;
+    float: none;
+    width: 20px;
+    height: 20px;
+    margin-top: -4px;
+    font-size: 20px;
+    line-height: 20px;
+    text-align: center;
+    vertical-align: text-top;
+  }
+}
 #search-quality-filter,.shared-filter {
   text-align: right;
   .filter-box {

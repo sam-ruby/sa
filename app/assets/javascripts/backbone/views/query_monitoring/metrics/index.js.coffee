@@ -6,6 +6,9 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @collection = new Searchad.Collections.QueryMonitoringMetricCollection()
+    @$filter = @$el.find('#qm-filter')
+    @$result = @$el.find('#qm-table-content')
+    @$ajax_loader = @$el.find('.ajax-loader')
     @init_table()
     @controller.bind('date-changed', =>
       @get_items(trigger: true) if @active)
@@ -13,7 +16,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @collection.bind('reset', => @render())
     @collection.bind('request', =>
       @clean_search_results()
-      @$el.find('.ajax-loader').css('display', 'block')
+      @$ajax_loader.show()
       @controller.trigger('qm:sub-content:cleanup')
     )
     Utils.InitExportCsv(this, "/monitoring/metric/get_metric_monitor_table_data.csv")
@@ -23,8 +26,8 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @trigger = false
 
   events: =>
-    'click .filter': 'filter'
-    'click .reset': 'reset'
+    'click a.filter': 'filter'
+    'click a.reset': 'reset'
     'submit': 'filter'
     'click #show-default-columns':'show_default_columns'
     'click #show-all-columns':'show_all_columns'
@@ -42,45 +45,45 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
 
   render: =>
     return unless @active
-    @$el.find('.ajax-loader').hide()
+    @$ajax_loader.hide()
     if @collection.size() == 0
       return @render_error(@collection.query) 
     # add filter
     filter_template = JST['backbone/templates/query_monitoring/metrics/filter']
-    @$el.append(filter_template(@collection.data))
+    @$filter.html(filter_template(@collection.data))
     # render grid
-    @$el.append(@grid.render().$el)
+    @$result.html(@grid.render().$el)
     # append group-header
-    @$el.find('table #qm-group-header-row').remove()
-    @$el.find('table thead').prepend(JST['backbone/templates/query_monitoring/metrics/table_group_header']())
+    @$result.find('table thead').prepend(JST['backbone/templates/query_monitoring/metrics/table_group_header']())
     if @is_shown_all_columns
       @show_all_columns()
     else
       @show_default_columns()
     # add paginator
-    @$el.append( @paginator.render().$el)
-    @$el.append( @export_csv_button())
+    @$result.append( @paginator.render().$el)
+    @$result.append( @export_csv_button())
     # when resetting the form, automaticlly choose the first item
-    @$el.find('td a.query').first().click()
+    @$result.find('td a.query').first().click()
     @delegateEvents() 
     # this
 
-   render_error: (query) ->
+  render_error: (query) ->
     if query?
       msg = "No data available for #{query}"
     else
       msg = "No data available"
-    @$el.append($('<span>').addClass('label label-important').append(msg))
+    @$result.html('<span class = "label label-important">'+msg+'</span>')
 
   unrender: =>
     @active = false
     @clean_search_results()
+    @$filter.empty()
     @undelegateEvents()
 
 
   clean_search_results: =>
-    @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').hide()
+    @$result.empty()
+    @$ajax_loader.hide()
 
 
   init_table: () =>
@@ -98,7 +101,9 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @trigger = true
     # if there is already collection, with the same date and no query param, then directly render
     # optional, if don't detect if it is one. it won't refresh to page 1 every render
-    if @collection.data.date == @controller.get_filter_params().date && @collection.data.query == null && @collection.state.currentPage ==1 
+    if @collection.data.date == @controller.get_filter_params().date &&
+    @collection.data.query == null &&
+    @collection.state.currentPage ==1 
       @render()
       return
     # if needs to fetch data, process first
@@ -132,7 +137,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
   
   filter: (e) =>
     e.preventDefault()
-    query = @$el.find(".filter-box input[type=text]").val()
+    query = @$el.find("input#filter-text").val()
     @collection.data.query = query
     if query
       @collection.getPage(1)
@@ -143,7 +148,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
   reset: (e) =>
     e.preventDefault()
     @router.update_path('/query_monitoring/metrics/query/')
-    @$el.find(".filter-box input[type=text]").val('')
+    @$el.find("input#filter-text").val('')
     @collection.data.query = null
     @active = true
     @collection.getPage(1)
