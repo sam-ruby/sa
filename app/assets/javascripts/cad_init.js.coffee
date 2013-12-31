@@ -188,9 +188,7 @@ $ ->
       controller, 'adhoc:index',(data)->adhocQueryView.render_form(data))
 
     queryMonitoringCountView =
-      new Searchad.Views.QueryMonitoring.Count.IndexView(
-        el: '#qm-count'
-        el_filter: '#qm-count-filter')
+      new Searchad.Views.QueryMonitoring.Count.IndexView(el: '#query-monitoring')
     queryMonitoringCountView.listenTo(
       controller, 'query-monitoring-count:index', (data) ->
         queryMonitoringCountView.get_items(data)
@@ -206,10 +204,7 @@ $ ->
     qmCountStatsView.listenTo(
       controller, 'qm-count:stats', qmCountStatsView.get_items)
 
-    queryMonitoringMetricView = new Searchad.Views.QueryMonitoring.Metric.IndexView (
-      el:' #qm-metrics'
-      el_filter:"#qm-metrics-filter"   
-    )
+    queryMonitoringMetricView = new Searchad.Views.QueryMonitoring.Metric.IndexView(el: '#query-monitoring')
     queryMonitoringMetricView.listenTo(
       controller, 'qm-metrics:index', (data) ->
         queryMonitoringMetricView.get_items(data)

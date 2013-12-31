@@ -3,29 +3,30 @@ Searchad.Views.QueryMonitoring.Count ||= {}
 
 class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
   initialize: (options) =>
-    @trigger = false
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     @collection = new Searchad.Collections.QueryMonitoringCountCollection()
-    @$filter = @$el.find(options.el_filter)
     @initTable()
-    @$el.find('.ajax-loader').hide()
     @controller.bind('date-changed', =>
       @get_items(trigger: true) if @active)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
     @collection.bind('request', =>
       @unrender_search_results()
-      @$el.find('.ajax-loader').css('display', 'block')
+      @$ajax_loader.show()
       @controller.trigger('qm:sub-content:cleanup')
     )
     Utils.InitExportCsv(this, "/monitoring/count/get_words.csv")
     @undelegateEvents()
+    @$filter = @$el.find('#qm-filter')
+    @$result = @$el.find('#qm-table-content')
+    @$ajax_loader = @$el.find('.ajax-loader')
     @active = false
+    @trigger = false
 
   events: =>
-    'click .filter': 'filter'
-    'click .reset': 'reset'
+    'click a.filter': 'filter'
+    'click a.reset': 'reset'
     'submit': 'filter'
     'click .export-csv a': (e) ->
       date = @controller.get_filter_params().date
@@ -48,7 +49,7 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
   
   filter: (e) =>
     e.preventDefault()
-    query = @$el.find(".filter-box input[type=text]").val()
+    query = @$filter.find("#filter-text").val()
     @collection.data.query = query
     if query
       @collection.get_items()
@@ -57,8 +58,8 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
 
   reset: (e) =>
     e.preventDefault()
-    @router.update_path('/search_rel')
-    @$el.find(".filter-box input[type=text]").val('')
+    @router.update_path('/query_monitoring/count')
+    @$filter.find(".filter-box input[type=text]").val('')
     @collection.data.query = null
     @active = true
     @collection.get_items()
@@ -78,42 +79,38 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
       @collection.data.query = null
     @collection.data.date = @controller.get_filter_params().date
     @collection.get_items()
-
-  clear_filter: =>
-    @$filter.children().remove()
   
   unrender_search_results: =>
-    @$el.children().not('.ajax-loader, #' + @$filter.attr('id')).remove()
-    @$el.find('.ajax-loader').hide()
+    @$result.empty()
+    @$ajax_loader.hide()
   
   unrender: =>
     @active = false
     @unrender_search_results()
-    @clear_filter()
+    @$filter.empty()
     @undelegateEvents()
-    this
+
 
   render_error: (query) ->
     if query?
       msg = "No data available for #{query}"
     else
       msg = "No data available"
-    @$el.append($('<span>').addClass('label label-important').append(msg))
+    @$result.html('<span class = "label label-important">'+msg+'</span>')
+    # @$el.append($('<span>').addClass('label label-important').append(msg))
 
   render: =>
     return unless @active
     @$el.find('.ajax-loader').hide()
     return @render_error(@collection.query) if @collection.size() == 0
-    @$filter.html(JST['backbone/templates/shared/general_filter']())
-    @$el.append( @grid.render().$el)
-    @$el.append( @paginator.render().$el)
-    @$el.append( @export_csv_button() )
-    @delegateEvents()
-    
+    @$filter.html(JST['backbone/templates/shared/general_filter'](@collection.data))
+    @$result.html(@grid.render().$el)
+    @$result.append( @paginator.render().$el)
+    @$result.append( @export_csv_button() )
+    @delegateEvents()   
     if @trigger
       @trigger = false
       @$el.find('td a.query').first().trigger('click')
-    this
 
   gridColumns:  ->
     that = this
