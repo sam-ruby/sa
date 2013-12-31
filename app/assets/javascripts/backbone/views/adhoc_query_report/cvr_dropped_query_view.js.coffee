@@ -27,7 +27,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       @search_results_cleanup()
       @controller.trigger('search:sub-tab-cleanup')
       @query_results.find('.ajax-loader').css('display', 'block')
-      # @controller.trigger('sub-content-cleanup')
+      @controller.trigger('sub-content-cleanup')
     )
 
     Utils.InitExportCsv(this, "/search/get_cvr_dropped_query.csv")
