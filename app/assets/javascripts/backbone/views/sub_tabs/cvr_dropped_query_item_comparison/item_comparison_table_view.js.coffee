@@ -135,8 +135,7 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
   render_error:  ->
     return unless @active
     @controller.trigger('search:sub-content:hide-spin')
-    @$el.html( '<span class = "label label-important"> No data available for '+ @data.query+'</span>')
-
+    @$el.html(JST['backbone/templates/shared/no_data']({query:@data.query}))
   
   render: =>
     if @active == false
