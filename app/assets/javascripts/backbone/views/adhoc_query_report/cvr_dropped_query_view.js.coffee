@@ -66,8 +66,11 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       "in_top_500_label": in_top_500_label
       "query" : @data.query
       "result_label": result_label
-    @query_results.append(result_label_template(label_data))
-    @query_results.append(@grid.render().$el)
+    @query_results.html(@grid.render().$el)
+    @query_results.find('.group-header-rows').remove()
+    @query_results.find('table thead').prepend(JST['backbone/templates/adhoc_query/table_group_header']())
+    @query_results.prepend(result_label_template(label_data))
+
     @query_results.append(@paginator.render().$el)
     @query_results.append(@export_csv_button())
     $("li.cvr-dropped-item-comparison").show()
@@ -125,7 +128,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
   init_table: ()->
     columns =  @grid_columns()
     @grid = new Backgrid.Grid(
-      # className:'cvr-dropped-query-grid'
+      className:'cvr-dropped-query-grid backgrid'
       columns: columns
       collection: @collection
     )
@@ -165,25 +168,25 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     helpInfo:helpInfo.query_score
     },
     {name:'query_con_diff',
-    label:'Con Diff (%)',
+    label:'Difference (%)',
     editable:false
     cell:'number'},
     {name:'query_con_before',
-    label:'Con Before (%)',
+    label:'Before (%)',
     editable:false
     cell:'number',
     # className:'conversion-rate'
     },
     {name:'query_con_after',
-    label:'Con After (%)',
+    label:'After (%)',
     editable:false
     cell:'number'},
     {name:'query_revenue_before',
-    label:'Rev Before ($)',
+    label:'Before ($)',
     editable:false,
     cell:'number'},
     {name:'query_revenue_after',
-    label:'Rev After ($)',
+    label:'After ($)',
     editable:false,
     cell:'number'},
     {name:'expected_revenue_diff',
@@ -194,13 +197,13 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     headerCell:'helper'
     },
     {name:'query_count_before',
-    label:'Count Before',
+    label:'Before',
     editable:false
-    cell:'number'},
+    cell:'integer'},
     {name:'query_count_after',
-    label:'Count After',
+    label:'After',
     editable:false
-    cell:'number'},
+    cell:'integer'},
     ]
 
     return columns

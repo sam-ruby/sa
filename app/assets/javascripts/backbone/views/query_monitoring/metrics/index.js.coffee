@@ -52,7 +52,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @$filter.html(filter_template(@collection.data))
     # render grid
     @$result.html(@grid.render().$el)
-    @$result.find('.qm-group-header-row').remove()
+    @$result.find('.group-header-rows').remove()
     # append group-header
     @$result.find('table thead').prepend(JST['backbone/templates/query_monitoring/metrics/table_group_header']())
     if @is_shown_all_columns

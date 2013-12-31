@@ -1,10 +1,10 @@
 $qm-border-style: #DDD 2px solid;
-#qm-group-head-all-cols,#qm-group-head-default-cols{
+.group-header-rows{
   th{
-	text-align:center;
-	cursor:default;
-	border-right: $qm-border-style;
-    border-bottom: $qm-border-style;
+  	text-align:center !important;
+  	cursor:default !important;
+  	border-right: $qm-border-style !important;
+    border-bottom: $qm-border-style !important;
 	}
 }
 
