@@ -139,7 +139,7 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
         ooc_data_down_trend.push([k.data_date, k[metric]])
 
     series_boundries = {
-      name: type + " out of control series_boundries"
+      name: "Out of control boundries"
       type: 'areasplinerange'
       data: control_boudries_data
       tooltip: {
@@ -172,7 +172,7 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
 
    # ooc bad indicates the bad ooc
     series_ooc_bad = {
-      name: "This metric is ooc, deviates from prediction"
+      name: "Out of control, deviates from prediction"
       data: ooc_data_bad
       zIndex: 4
       lineWidth : 0,
@@ -185,7 +185,7 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
     }
     # down_trend indicates it's a downward trending
     series_down_trend = {
-      name: "This metric has downward trending"
+      name: "Downward Trending"
       data: ooc_data_down_trend
       zIndex: 4
       lineWidth : 0,
