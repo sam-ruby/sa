@@ -51,18 +51,18 @@ class QueryMetricsMonitoring < BaseModel
     # since we might switch between chart, we keep three type for now.
     if stats_type == "con"
       selects = %q{unix_timestamp(data_date) * 1000 as data_date, 
-        con_UCL, con_LCL, con_metric, con_trend, con_OOC_flag}
+        con_UCL, con_LCL, con_metric, con_trend, con_OOC_flag, con_trend_flag}
     elsif stats_type == "atc"
       selects = %q{unix_timestamp(data_date) * 1000 as data_date, 
-        atc_UCL, atc_LCL, atc_metric, atc_trend, atc_OOC_flag}
+        atc_UCL, atc_LCL, atc_metric, atc_trend, atc_OOC_flag, atc_trend_flag}
     elsif stats_type == "pvr"
       selects = %q{unix_timestamp(data_date) * 1000 as data_date, 
-        pvr_UCL, pvr_LCL, pvr_metric, pvr_trend, pvr_OOC_flag}
+        pvr_UCL, pvr_LCL, pvr_metric, pvr_trend, pvr_OOC_flag, pvr_trend_flag}
     elsif stats_type == "all"
       selects = %q{unix_timestamp(data_date) * 1000 as data_date, 
-        pvr_UCL, pvr_LCL, pvr_metric, pvr_trend, pvr_OOC_flag, 
-        con_UCL, con_LCL, con_metric, con_trend, con_OOC_flag,
-        atc_UCL, atc_LCL, atc_metric, atc_trend, atc_OOC_flag
+        pvr_UCL, pvr_LCL, pvr_metric, pvr_trend, pvr_OOC_flag, pvr_trend_flag,
+        con_UCL, con_LCL, con_metric, con_trend, con_OOC_flag, con_trend_flag,
+        atc_UCL, atc_LCL, atc_metric, atc_trend, atc_OOC_flag, atc_trend_flag
      }
     end
     # do the query
