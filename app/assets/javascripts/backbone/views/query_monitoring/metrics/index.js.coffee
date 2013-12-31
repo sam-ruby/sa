@@ -47,7 +47,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     return unless @active
     @$ajax_loader.hide()
     if @collection.size() == 0
-      return @render_error(@collection.query) 
+      return @render_error(@collection.data.query) 
     # add filter
     filter_template = JST['backbone/templates/query_monitoring/metrics/filter']
     @$filter.html(filter_template(@collection.data))
@@ -68,11 +68,11 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     # this
 
   render_error: (query) ->
-    if query?
-      msg = "No data available for #{query}"
-    else
-      msg = "No data available"
-    @$result.html('<span class = "label label-important">'+msg+'</span>')
+    # if query?
+    #   msg = "No data available for #{query}"
+    # else
+    #   msg = "No data available"
+    @$result.html(JST['backbone/templates/shared/no_data']({query:query}))
 
   unrender: =>
     @active = false
