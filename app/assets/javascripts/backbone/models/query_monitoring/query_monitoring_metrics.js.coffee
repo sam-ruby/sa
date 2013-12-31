@@ -26,7 +26,6 @@ class Searchad.Collections.QueryMonitoringMetricCollection extends Backbone.Page
   state:
     currentPage:null
     pageSize: 10
-    totalRecords:500
   mode: 'server'
   # Backbone.PageableCollection#queryParams` converts to ruby's will_paginate keys by default.
   queryParams:
@@ -36,10 +35,3 @@ class Searchad.Collections.QueryMonitoringMetricCollection extends Backbone.Page
       @data.date
     query:->
       @data.query
-
-  # get_items:  =>
-  #   @state.currentPage = 1
-  #   @fetch(
-  #     reset: true
-  #     data: @data
-  #   )
