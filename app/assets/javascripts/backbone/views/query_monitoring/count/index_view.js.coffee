@@ -92,17 +92,12 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
 
 
   render_error: (query) ->
-    if query?
-      msg = "No data available for #{query}"
-    else
-      msg = "No data available"
-    @$result.html('<span class = "label label-important">'+msg+'</span>')
-    # @$el.append($('<span>').addClass('label label-important').append(msg))
+    @$result.html(JST['backbone/templates/shared/no_data']({query:query}))
 
   render: =>
     return unless @active
     @$el.find('.ajax-loader').hide()
-    return @render_error(@collection.query) if @collection.size() == 0
+    return @render_error(@collection.data.query) if @collection.size() == 0
     @$filter.html(JST['backbone/templates/shared/general_filter'](@collection.data))
     @$result.html(@grid.render().$el)
     @$result.append( @paginator.render().$el)

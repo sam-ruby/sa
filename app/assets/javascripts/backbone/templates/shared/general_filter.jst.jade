@@ -4,11 +4,12 @@
 //-     form
 //-       input(type="text", placeholder="Type to filter results")
 //-     button.btn.reset Reset
-form.pull-right.cad-filter
-  .input-prepend.input-append
-      span.add-on
-        a(href='#').filter
-          i.icon-search
-      input#filter-text(type='text', placeholder="Type to filter results",value = query)
-      span.add-on
-        a.close.reset(href='#') ×
+.row
+  form.pull-right.cad-filter
+    .input-prepend.input-append
+        span.add-on
+          a(href='#').filter
+            i.icon-search
+        input#filter-text(type='text', placeholder="Type to filter results",value = query)
+        span.add-on
+          a.close.reset(href='#') ×
