@@ -29,7 +29,7 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
       # single side y value
       yAxis: [{
         title:
-          text: 'atc metric (%)'
+          text: type + ' metric (%)'
         gridLineWidth: 0}]
       title:
         text: title
@@ -76,13 +76,15 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
     @controller.trigger('qm:sub-content:show-spin')
     @$el.find('.ajax-loader').show()
     $.ajax(
-      url: '/monitoring/metric/get_query_stats.json'
+      url: '/monitoring/metrics/get_query_stats.json'
       data:
         query: data.query
         stats_type: "all" #data.stats_type
       success: (ajax_data, status) =>
+        # save the data to the @data, so that next time before fetch, detect if data has changed.
+        @data.query = data.query
+        @data.stats_type = data.stats_type
         if ajax_data and ajax_data.length > 0
-           series = @process_one_type_data(ajax_data, "atc")
            @render("conversion monitoring for " + data.query, @process_one_type_data(ajax_data, "con"), "con")
            @render("pvr monitoring for " + data.query, @process_one_type_data(ajax_data, "pvr"), "pvr")
            @render("atc monitoring for " + data.query, @process_one_type_data(ajax_data, "atc"),"atc")

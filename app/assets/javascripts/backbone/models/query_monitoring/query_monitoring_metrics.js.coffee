@@ -22,7 +22,7 @@ class Searchad.Collections.QueryMonitoringMetricCollection extends Backbone.Page
     }
     super(options)
   model: Searchad.Models.QueryMonitoringMetric
-  url: '/monitoring/metric/get_metric_monitor_table_data.json'
+  url: '/monitoring/metrics/get_metric_monitor_table_data.json'
   state:
     currentPage:null
     pageSize: 10

@@ -1,18 +1,20 @@
 ###
 CAD Customize backgrid(same as DOD)
 @author Linghua Jin
+###
+
+###
 @class Backgrid.CustomHeaderCell
 @extend Backgrid HeaderCell
-This extension generate a class for header called 'custom'. When specify headerCell: "custom" in backgrid columns, this
+This extension generate a header class. When specify headerCell: "helper" in backgrid columns, this
 will add a question button, and hover show a tool tip for inline help information
 ###
-Backgrid.CustomHeaderCell = Backgrid.HeaderCell.extend(
-  className: "custom-header-cell"
+Backgrid.HelperHeaderCell = Backgrid.HeaderCell.extend(
+  className: "th-with-helper"
   events:
     "click a": "onClick"
     "mouseenter .info": "showDetails"
     "mouseleave .info": "hideDetails"
-
   initialize: (options) ->
     
     # call standard HeaderCell's initialize
@@ -28,7 +30,6 @@ Backgrid.CustomHeaderCell = Backgrid.HeaderCell.extend(
     this
 
   showDetails: (e) ->
-    # that = this
     if @column.get("helpInfo")
       helpText = @column.get("helpInfo")
     else
@@ -38,14 +39,38 @@ Backgrid.CustomHeaderCell = Backgrid.HeaderCell.extend(
       title: helpText
       placement: "right"
       html: true
-
     @$(".info").tooltip "show"
+
 
   hideDetails: (e) ->
     @$(".info").tooltip "hide"
     
 )
 
+###
+@class HelperDescendingHeaderCell
+@extend Backgrid.HelperHeaderCell
+1) This extension generate a header class. When specify headerCell: "helper" in backgrid columns, this
+will add a question button, and hover show a tool tip for inline help information
+2) The column th using this header will shown a descending caret by default
+###
+
+Backgrid.HelperDescendingHeaderCell = Backgrid.HelperHeaderCell.extend(
+    className: "th-with-helper-descending"
+    render: ->
+      Backgrid.HelperHeaderCell.prototype.render.call(this)
+      # add some indicator for it is the rank of the table by default
+      # if we do this, we need to add event listener to other cols when click on any col, need to remove descending of this col
+      # @$el.addClass('descending')
+      this
+)
+
+###
+@class CADQueryCell 
+@extend Backgrid.Cell
+This class will provide a basic cell for rendering Query column, which has a event 
+listener on each <a>xxx query</a>
+###
 
 Backgrid.CADQueryCell = Backgrid.Cell.extend(
   initialize: (options) ->

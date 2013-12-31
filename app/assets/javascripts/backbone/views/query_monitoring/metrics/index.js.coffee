@@ -42,7 +42,6 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
       # data['query'] = @collection.query if @collection.query
       @export_csv($(e.target), fileName, data)
 
-
   render: =>
     return unless @active
     @$ajax_loader.hide()
@@ -53,6 +52,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @$filter.html(filter_template(@collection.data))
     # render grid
     @$result.html(@grid.render().$el)
+    @$result.find('.qm-group-header-row').remove()
     # append group-header
     @$result.find('table thead').prepend(JST['backbone/templates/query_monitoring/metrics/table_group_header']())
     if @is_shown_all_columns
@@ -68,10 +68,6 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     # this
 
   render_error: (query) ->
-    # if query?
-    #   msg = "No data available for #{query}"
-    # else
-    #   msg = "No data available"
     @$result.html(JST['backbone/templates/shared/no_data']({query:query}))
 
   unrender: =>
@@ -119,9 +115,10 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
   show_all_columns:(e) =>
     @$el.find('li').removeClass('active')
     @$el.find('li#show-all-columns').addClass('active')
-    @$el.find('table #qm-group-header-row').show()
-    @$el.find('table').removeClass('hide-atc-pvr-column')
     @$el.find('table').addClass('all-columns-with-group-header')
+    @$el.find('table').removeClass('default-columns-with-group-header')
+    @$el.find('tr#qm-group-head-all-cols').show()
+    @$el.find('tr#qm-group-head-default-cols').hide()
     @is_shown_all_columns = true
 
 
@@ -129,9 +126,10 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @$el.find('li').removeClass('active')
     @$el.find('li#show-default-columns').addClass('active')
     # hide unnessasary column
-    @$el.find('table #qm-group-header-row').hide()
-    @$el.find('table').addClass('hide-atc-pvr-column')
+    @$el.find('table').addClass('default-columns-with-group-header')
     @$el.find('table').removeClass('all-columns-with-group-header')
+    @$el.find('tr#qm-group-head-all-cols').hide()
+    @$el.find('tr#qm-group-head-default-cols').show()
     @is_shown_all_columns = false
 
   
@@ -168,7 +166,20 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
           view: 'daily')
         new_path = 'query_monitoring/metrics/query/' + encodeURIComponent(query)
         that.router.update_path(new_path)
-    
+
+    helpInfo = {
+      trend: "Trend score for that metric on selected date. The higher the trend score is, 
+        the worse downwarding the trend of the metric is. 
+        If the trend score is 0, it indicates that query has no downward trending",
+      ooc: "Out of Control score for that metric on selected date. The higher the ooc score is, 
+        the more out of control the metric is (compare with predicted value) 
+        If the trend score is 0, it indicates that query has is in control",
+      rank_score: "Rank score is considering count, trend score and ooc score for the metric on the selected date. 
+        Larger query count, high out of control, and severe downward trending would cause high rank_score.
+        The formula is sqrt(query_count) * (ooc_score + trend_score)
+      "
+    }
+ 
     columns = [{
     name: 'query',
     label: I18n.t('query'),
@@ -178,56 +189,62 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     label: 'Query Count',
     editable: false,
     cell: 'integer',
-    headerCell: 'custom'},
+    headerCell: 'helper'},
     {name: 'con',
     label: 'Conversion(%)',
     editable: false,
     cell: 'number'},
-    {name: 'con_trend_score',
-    label: 'Con Trend',
+    {name: 'con_rank_score',
+    label: 'Rank Score',
     editable: false,
     cell: 'number',
+    helpInfo: helpInfo.rank_score
+    headerCell:'helper'
     },
     {name: 'con_ooc_score',
-    label: 'Con OOC',
+    label: 'OOC',
     editable: false,
     cell: 'number',
+    helpInfo: helpInfo.ooc,
+    headerCell:'helper'
     },
-    {name: 'con_rank_score',
-    label: 'Con Rank Score',
+    {name: 'con_trend_score',
+    label: 'Trend',
     editable: false,
     cell: 'number',
-    }
+    helpInfo: helpInfo.trend,
+    headerCell:'helper'
+    },
     {name: 'pvr',
     label: 'PVR(%)',
     editable: false,
     cell: 'number'},
-    {name: 'pvr_trend_score',
-    label: 'Trend',
+    {name: 'pvr_rank_score',
+    label: 'Rank Score',
     editable: false,
     cell: 'number'},
     {name: 'pvr_ooc_score',
     label: 'OOC',
     editable: false,
     cell: 'number'},
-    {name: 'pvr_rank_score',
-    label: 'Rank Score',
+    {name: 'pvr_trend_score',
+    label: 'Trend',
     editable: false,
-    cell: 'number'}
+    cell: 'number'},
     {name: 'atc',
     label: 'ATC(%)',
     editable: false,
     cell: 'number'},
-    {name: 'atc_trend_score',
-    label: 'Trend',
+    {name: 'atc_rank_score',
+    label: 'Rank Score',
     editable: false,
     cell: 'number'},
     {name: 'atc_ooc_score',
     label: 'OOC',
     editable: false,
     cell: 'number'},
-    {name: 'atc_rank_score',
-    label: 'Rank Score',
+    {name: 'atc_trend_score',
+    label: 'Trend',
     editable: false,
     cell: 'number'}
     ]

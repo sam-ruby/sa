@@ -1,4 +1,4 @@
-class Monitoring::MetricController < BaseController
+class Monitoring::MetricsController < BaseController
   before_filter :set_common_data
   
   def get_metric_monitor_table_data

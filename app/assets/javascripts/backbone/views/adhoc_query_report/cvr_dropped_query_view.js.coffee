@@ -161,7 +161,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     editable:false,
     cell:'string',
     sortable:true,
-    headerCell:'custom'
+    headerCell:'helper'
     helpInfo:helpInfo.query_score
     },
     {name:'query_con_diff',
@@ -191,7 +191,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     editable:false,
     cell:'number'
     helpInfo: helpInfo.expected_revenue_diff
-    headerCell:'custom'
+    headerCell:'helper'
     },
     {name:'query_count_before',
     label:'Count Before',

@@ -129,7 +129,7 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     label: 'Query Score',
     editable: false,
     cell: 'integer',
-    headerCell: 'custom'},
+    headerCell: 'helper'},
     {name: 'query_count',
     label: I18n.t('search_analytics.queries'),
     editable: false,
