@@ -80,7 +80,7 @@ Searchad::Application.routes.draw do
   namespace :monitoring do
     match 'count(/:action(.:format))',
       :to => 'count', :via => [:get, :post]
-    match 'metric(/:action(.:format))',
-      :to => 'metric', :via => [:get, :post]
+    match 'metrics(/:action(.:format))',
+      :to => 'metrics', :via => [:get, :post]
   end
 end
