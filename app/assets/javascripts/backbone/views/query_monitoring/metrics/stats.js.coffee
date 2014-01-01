@@ -194,7 +194,7 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
         radius : 4
         symbol:'circle'
       },
-      color: "red"
+      color: "orange"
     }
 
     series_ooc_good = {
@@ -210,5 +210,5 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
       color: "green"
     }
 
-    series = [series_boundries,series_metric,series_trend, series_ooc_bad,series_down_trend, series_ooc_good]
+    series = [series_boundries,series_metric,series_trend, series_down_trend, series_ooc_bad, series_ooc_good]
     return series

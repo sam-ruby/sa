@@ -45,6 +45,10 @@ class QueryDroppingConversion < BaseModel
      
      #requested by Ravi: they want to know if a searched result is in top 500 hundred or not
      #another alternative way is to cached the data from get_cvr_dropped_query_top_500 
+     if result_data.length ==0
+        return result_data
+     end
+     
      in_top_500 = find_by_sql(['select query, query_score from queries_with_dropping_conversion where
       query = ? and window_in_weeks = ? and data_date = ?', query,weeks_apart, query_date])   
      if in_top_500.length > 0
