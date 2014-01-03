@@ -13,7 +13,6 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
   data:
     query: null
 
-
   events:
     'click li.search-stats-tab': 'stats'
     'click li.search-amazon-items-tab': 'amazon_items'
@@ -29,79 +28,61 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
         @data.query)
       @router.navigate(path + newPath)
 
-  toggleTab: (e) =>
-    @$el.find('li.active').removeClass('active')
-    $(e.target).parents('li').addClass('active')
-
   stats: (e) =>
-    e.preventDefault()
-    @controller.trigger('sub-content-cleanup')
-    @select_stats_tab()
+    @toggleTab(e)
     @controller.trigger('search:stats', query: @query)
-  
+    # change user latest click tab to store stats, so when user stwitch between queries, 
+    # the tab won't jump from one to anoter
+    Searchad.UserLatest.sub_tabs.current_tab = "stats"
+ 
+
   walmart_items: (e) =>
-    e.preventDefault()
-    @controller.trigger('sub-content-cleanup')
-    @select_walmart_tab()
+    @toggleTab(e)
     @controller.trigger('search:walmart-items',
       query: @query
       view: @view)
+    Searchad.UserLatest.sub_tabs.current_tab = "walmart"
+
   
   amazon_items: (e) =>
-    e.preventDefault()
-    @controller.trigger('sub-content-cleanup')
-    @select_amazon_tab()
+    @toggleTab(e)
     @controller.trigger('search:amazon-items',
       query: @query
       view: @view)
+    Searchad.UserLatest.sub_tabs.current_tab = "amazon"
+
 
   rev_rel: (e) =>
-    e.preventDefault()
-    @controller.trigger('sub-content-cleanup')
-    @select_rev_rel_tab()
+    @toggleTab(e)
     @controller.trigger('search:rel-rev',
       query: @query
       view: @view)
+    Searchad.UserLatest.sub_tabs.current_tab = "rel-rev-analysis"
+
 
   show_cvr_dropped_item_comparison:(e)=>
-    e.preventDefault()
-    @controller.trigger('sub-content-cleanup')
-    @select_cvr_dropped_item_comparison_tab()
+    @toggleTab(e)
+    # @select_cvr_dropped_item_comparison_tab()
     @controller.trigger('cvr_dropped_query:item_comparison',
       query: @data.query
       query_date: @data.query_date
       weeks_apart: @data.weeks_apart
     )
-  
-  select_stats_tab: () =>
-    e = {}
-    e.target = @$el.find('li.search-stats-tab a').get(0)
-    @toggleTab(e)
+    Searchad.UserLatest.sub_tabs.current_tab = "cvr-dropped-item-comparison"
 
-  select_walmart_tab: () =>
-    e = {}
-    e.target = @$el.find('li.search-walmart-items-tab a').get(0)
-    @toggleTab(e)
-  
-  select_amazon_tab: () =>
-    e = {}
-    e.target = @$el.find('li.search-amazon-items-tab a').get(0)
-    @toggleTab(e)
-    
-  select_rev_rel_tab: () =>
-    e = {}
-    e.target = @$el.find('li.rev-rel-tab a').get(0)
-    @toggleTab(e)
 
-  select_cvr_dropped_item_comparison_tab:()=>
-    e = {}
-    e.target = @$el.find('li.cvr-dropped-item-comparison-tab a').get(0)
-    @toggleTab(e)
+  toggleTab: (e) =>
+    e.preventDefault()
+    @$el.find('li.active').removeClass('active')
+    $(e.target).parent().addClass('active')
+    @controller.trigger('sub-content-cleanup')
+
 
   unrender: =>
     @active = false
     @$el.children().not('.ajax-loader').remove()
     @hide_spin()
+
 
   render: (data) =>
     @query = data.query if data.query
@@ -111,19 +92,23 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     @delegateEvents() 
     if data.tab =='cvr-dropped-item-comparison'
       @$el.find('li.cvr-dropped-item-comparison-tab').show();
-      @$el.find('li.cvr-dropped-item-comparison-tab').first().trigger('click')  
+      @$el.find('li.cvr-dropped-item-comparison-tab a').first().click()  
     else
       @$el.find('li.cvr-dropped-item-comparison-tab').hide();
       if data.tab == 'rel-rev-analysis'
-        @$el.find('li.rev-rel-tab').first().trigger('click')
+        @$el.find('li.rev-rel-tab a').first().click()
       else if data.tab == 'amazon'
-        @$el.find('li.search-amazon-items-tab').first().trigger('click')
+        @$el.find('li.search-amazon-items-tab a').first().click()
+      else if data.tab == 'walmart'
+        @$el.find('li.search-walmart-items-tab a').first().click()
       else
-        @$el.find('li.search-stats-tab').first().trigger('click')
+        @$el.find('li.search-stats-tab').first().click()
     @active = true
+
 
   show_spin: =>
     @$el.find('.ajax-loader').css('display', 'block')
   
+
   hide_spin: =>
     @$el.find('.ajax-loader').hide()

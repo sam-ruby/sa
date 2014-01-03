@@ -164,6 +164,10 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
         $(@$el).html(formatted_value)
         return this
 
+    helpInfo = {
+      curr_item_price: "We only provide the price available for the most recent available day"
+    }
+
     columns = [{
     name: 'item_id',
     label: I18n.t('dashboard2.item'),
@@ -174,13 +178,21 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     editable: false,
     cell: 'number',
     formatter: Utils.CurrencyFormatter},
+    {name: 'curr_item_price',
+    label: 'Current Item Price',
+    editable: false,
+    cell: 'number',
+    formatter: Utils.CurrencyFormatter,
+    headerCell:'helper'
+    helpInfo:helpInfo.curr_item_price
+    },
     {name: 'shown_count',
     label: I18n.t('dashboard2.shown_count'),
     editable: false,
     # formatter: Utils.CustomNumberFormatter,
     cell: 'integer'},
     {name: 'item_con',
-    label: I18n.t('perf_monitor2.conversion_rate'),
+    label: 'Conversion',
     editable: false,
     cell: 'number',
     formatter: Utils.PercentFormatter},
