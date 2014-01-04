@@ -19,7 +19,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
       @$ajax_loader.show()
       @controller.trigger('qm:sub-content:cleanup')
     )
-    Utils.InitExportCsv(this, "/monitoring/metric/get_metric_monitor_table_data.csv")
+    Utils.InitExportCsv(this, "/monitoring/metrics/get_metric_monitor_table_data.csv")
     @undelegateEvents()
     @active = false
     @is_shown_all_columns = false
