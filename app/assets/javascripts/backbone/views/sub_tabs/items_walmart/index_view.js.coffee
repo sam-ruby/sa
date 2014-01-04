@@ -6,7 +6,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     @controller = SearchQualityApp.Controller
     @collection =
       new Searchad.Collections.CAWalmartItemsCollection()
-    @initTable()
+    @init_table()
     
     @controller.bind('date-changed', @date_changed )
     @collection.bind('reset', @render_result)
@@ -104,12 +104,6 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     @active = true  
     start_date = @$el.find('input.start-date.datepicker').datepicker('getDate')
     end_date = @$el.find('input.end-date.datepicker').datepicker('getDate')
-    console.log(start_date)
-    console.log(end_date)
-    if start_date > end_date
-      # start_date = end_date
-      return
-      console.log("start_date>end_date")
     data.start_date = start_date.toString('M-d-yyyy')
     data.end_date = end_date.toString('M-d-yyyy')
 
@@ -136,7 +130,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     return data
 
 
-  initTable: =>
+  init_table: =>
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
       collection: @collection

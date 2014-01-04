@@ -33,13 +33,10 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     'click #show-all-columns':'show_all_columns'
     'click .export-csv a': (e) ->
       e? e.preventDefault()
-      console.log("clickcsv")
       date = @controller.get_filter_params().date
       fileName = "query_metrics_monitoring_#{date}.csv"
       data =
         date: date
-      console.log("data", data);
-      # data['query'] = @collection.query if @collection.query
       @export_csv($(e.target), fileName, data)
 
   render: =>
