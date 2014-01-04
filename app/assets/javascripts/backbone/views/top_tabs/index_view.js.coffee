@@ -42,10 +42,7 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
     @$el.find('li.active').removeClass('active')
     $(el).parents('li').addClass('active')
 
-  search_kpi: =>
-    @toggleTab(@$el.find('li.overview-tab a'))
-  
-  overview: (data) =>
+  overview: =>
     @toggleTab(@$el.find('li.overview-tab a'))
 
   adhoc: =>
