@@ -29,24 +29,6 @@ class PoorPerformingController < BaseController
     end
   end
   
-  def get_walmart_items
-    query = params['query']
-    view = params['view']
-    if view == 'weekly'
-      @walmart_items = ItemQueryCatMetricsWeekly.get_walmart_items(
-        query, @cat_id, week, @year)
-    else
-      @walmart_items = SearchQualityDaily.get_walmart_items(
-        query, @cat_id, @date)
-    end
-    
-    respond_to do |format|
-      format.json do 
-        render :json => @walmart_items
-      end
-    end
-  end
-
   def get_query_stats
     query = params['query']
     respond_to do |format|
@@ -56,35 +38,4 @@ class PoorPerformingController < BaseController
     end
   end
 
-  def get_amazon_items
-    query = params['query']
-    view = params['view']
-    if view == 'daily'
-      week = get_week_from_date(@date)
-    else
-      week = @week
-    end
-    respond_to do |format|
-      format.json do 
-        render :json => URLMapping.get_amazon_items(
-          query, ((week.to_i-3)..week.to_i).to_a, @year)
-      end
-
-      format.csv do 
-        results = URLMapping.get_amazon_items(
-          query, ((week.to_i-3)..week.to_i).to_a, @year)[:all_items].map do|record|
-            {'Amazon Position' => record.position,
-             'Item Name' => record.name,
-             'Amazon Item image URL' => record.img_url,
-             'Amazon Item URL' => record.url,
-             'Amazon Item ID' => record.idd,
-             'Walmart Position' => record.walmart_position,
-             'Brand' => record.brand,
-             'Amazon Price' => record.newprice.to_f.round(2),
-             'Walmart Price' => record.curr_item_price.to_f.round(2)}
-          end
-        render :json => results
-      end
-    end
-  end
 end

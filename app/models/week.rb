@@ -6,11 +6,10 @@ class Week < BaseModel
       {week: x.week, year: x.year}}
   end
 
-  def self.available_weeks(year)
-    select("distinct week, year").where([%q{year = ? AND week NOT IN 
-    (SELECT DISTINCT week FROM pipeline_log_weekly WHERE status != 1 AND
-    year = ?)}, year, year]).order("week DESC").map {|x|
-      {week: x.week, year: x.year}}
+  def self.available_weeks
+    @available_weeks = Week.select("distinct week, year").where([
+    %q{(week,year) NOT IN (SELECT DISTINCT week, year FROm pipeline_log_weekly WHERE status != 1)}]).order(
+        "year DESC, week DESC").map {|x| {week: x.week, year: x.year}}
   end
    
   def self.unavailable_weeks(year)
