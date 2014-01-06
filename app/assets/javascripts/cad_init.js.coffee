@@ -76,10 +76,11 @@ $ ->
     router = new Searchad.Routers.SearchQualityQuery()
     SearchQualityApp.Router = router
     controller = SearchQualityApp.Controller
-    
     controller.set_date(Selected_Date.toString('M-d-yyyy'))
-    controller.set_week(Selected_Week)
-    controller.set_year(Selected_Year)
+    # comment out cuz we never select week or year, in CAD we only select dates
+    # if we need what week or year it is, there is a function in backend to process that
+    # controller.set_week(Selected_Week)
+    # controller.set_year(Selected_Year)
 
     controller.on('all', (name) ->
       current_view = controller.get_view()
