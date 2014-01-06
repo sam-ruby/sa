@@ -68,6 +68,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
         @$el.html(formatted_value)
         @delegateEvents()
         return this
+
     
     columns = [{
     name: 'query_str',

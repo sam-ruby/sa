@@ -1,7 +1,5 @@
 :javascript
-  var Selected_Date = new Date(#{@date.year}, #{@date.month - 1}, #{@date.day});
-  var Selected_Week = #{@week};
-  var Selected_Year = #{@year};
+  var Selected_Date = new Date(#{@date.year}, #{@date.month-1}, #{@date.day});
   var Available_weeks = #{@available_weeks.to_json} 
   var Min_date = new Date(
     #{@min_date.year}, #{@min_date.month - 1}, #{@min_date.day});
