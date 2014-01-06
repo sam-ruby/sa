@@ -121,7 +121,6 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
     control_boudries_data = []
     atc_data = [] 
     trend_data = [] 
-    ooc_data_good = []
     ooc_data_bad = []
     ooc_data_down_trend = []
 
@@ -131,12 +130,10 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
       trend_data.push([k.data_date, k[trend]])
       # process red or green dot for the ooc flag
       # only when the trend is not downwarding and the ooc_flag is 1, it consider as good ooc
-      if k[ooc_flag] ==1 && k[trend_flag] ==0
-        ooc_data_good.push([k.data_date, k[metric]])
       if k[ooc_flag] == -1
         ooc_data_bad.push([k.data_date, k[metric]])
       if k[trend_flag] ==1
-        ooc_data_down_trend.push([k.data_date, k[metric]])
+        ooc_data_down_trend.push([k.data_date, k[trend]])
 
     series_boundries = {
       name: "Out of control boundries"
@@ -197,18 +194,6 @@ class Searchad.Views.QueryMonitoring.Metric.Stats.IndexView extends Backbone.Vie
       color: "orange"
     }
 
-    series_ooc_good = {
-      name: "Good out of control or possiblely out of stock"
-      data: ooc_data_good
-      zIndex: 4
-      lineWidth : 0,
-      marker : {
-        enabled : true,
-        radius : 4
-        symbol:'circle'
-      },
-      color: "green"
-    }
 
-    series = [series_boundries,series_metric,series_trend, series_down_trend, series_ooc_bad, series_ooc_good]
+    series = [series_boundries,series_metric,series_trend, series_down_trend, series_ooc_bad]
     return series
