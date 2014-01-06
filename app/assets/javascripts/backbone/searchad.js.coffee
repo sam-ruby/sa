@@ -15,8 +15,8 @@ window.SearchQualityApp = do ->
   controller.set_view = (@view) =>
   controller.get_view = => @view
   controller.set_date = (@date) =>
-  controller.set_week = (@week) =>
-  controller.set_year = (@year) =>
+  # controller.set_week = (@week) =>
+  # controller.set_year = (@year) =>
   controller.set_cat_id = (@cat_id) =>
 
   controller.get_filter_params = =>

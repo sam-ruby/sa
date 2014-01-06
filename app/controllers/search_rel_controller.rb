@@ -4,11 +4,13 @@ class SearchRelController < BaseController
 
   def get_search_words
     query = params[:query]
-    week = get_week_from_date(@date)
+    week = get_week_from_date(@date)["week"]
+    year = get_week_from_date(@date)["year"]
+
     respond_to do |format|
       format.json do 
         @search_words = SearchQualityDaily.get_query_stats(
-          query, @year, week, @date, @page, @sort_by, @order, @limit)
+          query, year, week, @date, @page, @sort_by, @order, @limit)
         if @search_words.nil? or @search_words.empty?
           render :json => [{:total_entries => 0}, @search_words]
         else
@@ -53,11 +55,11 @@ class SearchRelController < BaseController
     result = []
     return result unless query_str
     
-    if view == 'weekly'
-      date = get_date_from_week(@week)
-    else
-      date = @date
-    end
+    # if view == 'weekly'
+    #   date = get_date_from_week(@week)
+    # else
+    date = @date
+    # end
     query_dates = (date-14.days..date-1.days).to_a.map {|d|
       "'#{d.strftime('%Y-%m-%d')}'"}
 
@@ -131,9 +133,11 @@ class SearchRelController < BaseController
     else
       fuzzy = false
     end
+    week = get_week_from_date(@date)["week"]
+    year = get_week_from_date(@date)["year"]
 
     @search_words = QueryPerformance.get_comp_analysis(
-      query, @week, @year, fuzzy, @page, @sort_by, @order, @limit)
+      query, week, year, fuzzy, @page, @sort_by, @order, @limit)
     if @search_words.nil? or @search_words.empty?
       render :json => [{:total_entries => 0}, @search_words]
     else
