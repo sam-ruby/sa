@@ -1,3 +1,4 @@
+# deprecated
 class Searchad.Models.RecentSearch extends Backbone.Model
   
   defaults:

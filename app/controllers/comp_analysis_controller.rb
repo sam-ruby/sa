@@ -21,13 +21,10 @@ class CompAnalysisController < BaseController
     query = params['query']
     view = params['view']
 
-    if view == "ranged"
-      start_date = DateTime.strptime(params[:start_date], "%m-%d-%Y")  
-      end_date = DateTime.strptime(params[:end_date], "%m-%d-%Y")  
-    end
-
     respond_to do |format|
       if view =='ranged'
+        start_date = DateTime.strptime(params[:start_date], "%m-%d-%Y")  
+        end_date = DateTime.strptime(params[:end_date], "%m-%d-%Y")  
         walmart_items = ItemQueryCatMetricsDaily.get_walmart_items_over_time(query, start_date, end_date)
       else
         # view = daily
@@ -65,11 +62,27 @@ class CompAnalysisController < BaseController
 
   def get_amazon_items
     query = params['query']
-    week = params[:week] || get_available_weeks.first[:week]
+    view = params['view']
+    four_weeks_info = get_four_weeks_from_date(@date)
     respond_to do |format|
-      format.json do 
+      format.json do
         render :json => URLMapping.get_amazon_items(
-          query, ((week.to_i-3)..week.to_i).to_a, @year)
+          query, four_weeks_info)
+      end
+      format.csv do 
+        results = URLMapping.get_amazon_items(
+          query, four_weeks_info)[:all_items].map do|record|
+            {'Amazon Position' => record.position,
+             'Item Name' => record.name,
+             'Amazon Item image URL' => record.img_url,
+             'Amazon Item URL' => record.url,
+             'Amazon Item ID' => record.idd,
+             'Walmart Position' => record.walmart_position,
+             'Brand' => record.brand,
+             'Amazon Price' => record.newprice.to_f.round(2),
+             'Walmart Price' => record.curr_item_price.to_f.round(2)}
+          end
+        render :json => results
       end
     end
   end

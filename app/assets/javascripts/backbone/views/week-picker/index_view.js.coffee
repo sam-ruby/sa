@@ -7,26 +7,22 @@ class Searchad.Views.WeekPicker.IndexView extends Backbone.View
   initialize: (options) =>
     @weekly = false
     @controller = SearchQualityApp.Controller
-    
     @initCalendar()
-
     @listenTo(@controller, "set_latest_week_day", @setLatestWeekDay)
     @listenTo(@controller, "update_date", (date) =>
       @setDate(date)
       @showDateInfo())
-    @listenTo(@controller, 'view-change', @setView)
-    @available_weeks = new Searchad.Collections.WeeksCollection(Available_weeks)
-    
-    @end_date = Date.parse(@available_weeks.at(0).get('end_date'))
-    @start_date = Date.parse(
-      @available_weeks.at(@available_weeks.length - 1).get('start_date'))
-   
+    @listenTo(@controller, 'view-change', @setView) 
     filter_params = @controller.get_filter_params()
-    week = @available_weeks.where(week: parseInt(filter_params.week))
-    if week.length > 0
-      @week_date = Date.parse(week[0].get('end_date'))
-    
+
+    # we only need to get available weeks wehn it is weekly mode
     if @weekly
+      @available_weeks = new Searchad.Collections.WeeksCollection(Available_weeks)
+      week = @available_weeks.where(week: parseInt(filter_params.week))
+      if week.length > 0
+        @week_date = Date.parse(week[0].get('end_date'))
+      @end_date = Date.parse(@available_weeks.at(0).get('end_date'))
+      @start_date = Date.parse(@available_weeks.at(@available_weeks.length - 1).get('start_date'))
       @$el.datepicker('setStartDate', @start_date)
       @$el.datepicker('setEndDate', @end_date)
       @setDate(@week_date)

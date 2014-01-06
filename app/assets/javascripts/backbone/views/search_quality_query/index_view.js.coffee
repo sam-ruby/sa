@@ -38,7 +38,6 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
       data['query'] = @collection.query if @collection.query
       @export_csv($(e.target), fileName, data)
   
-  
   filter: (e) =>
     e.preventDefault()
     query = @$el.find("input#filter-text").val()

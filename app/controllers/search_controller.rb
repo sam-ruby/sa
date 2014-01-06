@@ -1,14 +1,15 @@
 class SearchController < BaseController
 
   before_filter :set_common_data
-  
   def get_query_stats_date
     query = params[:query]
+    week = get_week_from_date(@date)["week"]
+    year = get_week_from_date(@date)["year"]
     
     respond_to do |format|
       format.json do 
         query_stats = QueryCatMetricsDaily.get_query_stats_date(
-          query, @year, get_week_from_date(@date), @date, 
+          query, year, week, @date, 
           @page, @sort_by, @order, @limit)
 
         if query_stats.nil? or query_stats.empty?
@@ -22,7 +23,7 @@ class SearchController < BaseController
       
       format.csv do
         results = QueryCatMetricsDaily.get_query_stats_date(
-          query, @year, get_week_from_date(@date), @date, 0).map do |record|
+          query, year, week, @date, 0).map do |record|
             {'Query' => record.query,
              'Catalog Overlap' => record.cat_rate.to_f.round(2),
              'Results Shown in Search' => record.show_rate.to_f.round(2),
@@ -35,7 +36,8 @@ class SearchController < BaseController
       end
     end
   end
-
+ 
+ # this is deprecated
   def get_recent_searches
     result = QuerySearchList.get_query_words(101).sort do |a,b|
       b['created_at'] <=> a['created_at']
