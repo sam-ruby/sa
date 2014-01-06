@@ -25,15 +25,15 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     curr_date = $('#dp3').datepicker('getDate')
     if date_part?
       date_parts = date_part.split('/')
-      for part, i in date_part.split('/')
+      for part, i in date_parts 
         if part == 'date'
           if curr_date != Selected_Date
             @controller.trigger('update_date', date_parts[i+1])
             @controller.set_date(date_parts[i+1])
-        else if part == 'year'
-          @controller.set_year(date_parts[i+1])
-        else if part == 'week'
-          @controller.set_week(date_parts[i+1])
+        # else if part == 'year'
+        #   @controller.set_year(date_parts[i+1])
+        # else if part == 'week'
+        #   @controller.set_week(date_parts[i+1])
     else if curr_date != Selected_Date
       @controller.trigger('update_date', Selected_Date.toString('M-d-yyyy'))
 

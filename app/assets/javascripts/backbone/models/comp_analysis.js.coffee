@@ -17,10 +17,6 @@ class Searchad.Collections.CompAnalysisCollection extends Backbone.PageableColle
   queryParams:
     currentPage: 'page'
     pageSize: 'per_page'
-    week: ->
-      @controller.get_filter_params().week
-    year: ->
-      @controller.get_filter_params().year
   mode: 'server'
 
   fetch: (data) =>
