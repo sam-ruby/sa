@@ -49,27 +49,13 @@ class BaseController < ApplicationController
   end
   
   def set_common_data
-    # @year = @month = @week = 
     @date = nil
     #TBD: Is this an efficient way to get the maximum date. Do we
     #need this for every call.
-    @most_recent_date ||= SearchQualityDaily.maximum('query_date')
-    @view = params[:view] || 'weekly'
-    @date = params[:date] ? Date.strptime(params[:date], '%m-%d-%Y') : @most_recent_date
-
-    # the available_weeks is moved into a seperate function since not every controller needs it
-    # @available_weeks = get_available_weeks
-    # end
-    # if params[:year] and params[:week]
-    #    @year = params[:year]
-    #    @week = params[:week]
-    # else 
-    # @year = params[:year] || @available_weeks.first[:year]
-    # @week = params[:week] || @available_weeks.first[:week]
-
     max_min_dates = SearchQualityDaily.get_max_min_dates.first
     @max_date, @min_date = max_min_dates.max_date, max_min_dates.min_date
-    
+    @view = params[:view] || 'weekly'
+    @date = params[:date] ? Date.strptime(params[:date], '%m-%d-%Y') : @max_date
     @page = params[:page].to_i || 1
     @limit = params[:per_page].to_i || 10
     @sort_by = params[:sort_by]
@@ -78,36 +64,26 @@ class BaseController < ApplicationController
 
   # output: {year=>, week =>} for multiple year handling
   def get_week_from_date(date)
-    @available_weeks = get_available_weeks()
     date_info = Hash.new
-    if date >= @available_weeks.first[:end_date]
-      date_info["week"] = @available_weeks.first[:week]
-      date_info["year"] = @available_weeks.first[:year]
-    else
-      @available_weeks.each do |week| 
-        if date >= week[:start_date] and date <= week[:end_date]
-          date_info["week"] = week[:week]
-          date_info["year"] = week[:year]
-          break
-        end
-      end
-    end
-    return date_info 
+    # ALwasys get teh date for last friday. 
+    last_friday_date = date - (date.wday+2)%7
+    return Week.get_week_from_date(date)
   end
 
   # when get previous weeks, it might contain two years. 
   def get_four_weeks_from_date(date)
     # always suppose it has two years    [{week, year}, {week, year}]
     current_week_info = get_week_from_date(date)
+    # p current_week_info.to_yaml
     week = current_week_info["week"]
     year = current_week_info["year"]
     weeks = Array.new(2) { Hash.new }
-    if week >= 4
+    if week >= 3
       weeks[0]= {"weeks" => (week-3..week).to_a, "year" => year}
     else
-      weeks[0] = {"weeks" => (1..week).to_a, "year" => year}
+      weeks[0] = {"weeks" => (0..week).to_a, "year" => year}
       last_year_total_week = get_dod_week_info(year-1)["total_weeks"]
-      weeks[1] = {"weeks" => (last_year_total_week-(4-week-1)..last_year_total_week).to_a, "year" => year-1}
+      weeks[1] = {"weeks" => (last_year_total_week-(3-week-1)..last_year_total_week).to_a, "year" => year-1}
     end
     return weeks
   end
@@ -131,22 +107,22 @@ class BaseController < ApplicationController
     -1
   end
   
-  def get_available_weeks
-    weeks = Week.available_weeks().map do |curr_week|
-      start_date = convert_to_dod_date(curr_week[:week], curr_week[:year])
-      curr_week[:start_date] = start_date
-      curr_week[:end_date] = start_date + 6.days
-      curr_week[:fiscal_week] = curr_week[:week] - 3
-      curr_week
-    end
-    return weeks
-  end
+  # def get_available_weeks
+  #   weeks = Week.available_weeks().map do |curr_week|
+  #     start_date = convert_to_dod_date(curr_week[:week], curr_week[:year])
+  #     curr_week[:start_date] = start_date
+  #     curr_week[:end_date] = start_date + 6.days
+  #     curr_week[:fiscal_week] = curr_week[:week] - 3
+  #     curr_week
+  #   end
+  #   return weeks
+  # end
 
-  def available_weeks
-    respond_to do |format|
-      format.json {render :json => get_available_weeks}
-    end 
-  end
+  # def available_weeks
+  #   respond_to do |format|
+  #     format.json {render :json => get_available_weeks}
+  #   end 
+  # end
 
   def convert_to_dod_date(week, year)
     first_day_of_jan = get_dod_week_info(year)["start_date"]
@@ -158,8 +134,8 @@ class BaseController < ApplicationController
   def get_dod_week_info(year)
     week_mapping = Hash.new
     week_mapping["2012"] = {"start_date" => Date.new(2012,1,5), "total_weeks" => 52}
-    week_mapping["2013"] = Hash["start_date" => Date.new(2012,1,5), "total_weeks" => 52]
-    week_mapping["2014"] = Hash["start_date" => Date.new(2012,1,5), "total_weeks" => 52]
+    week_mapping["2013"] = {"start_date" => Date.new(2013,1,5), "total_weeks" => 51}
+    week_mapping["2014"] = {"start_date" => Date.new(2014,1,5), "total_weeks" => 52}
     return week_mapping[year.to_s]
   end
 
