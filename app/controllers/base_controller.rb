@@ -67,7 +67,7 @@ class BaseController < ApplicationController
     date_info = Hash.new
     # ALwasys get teh date for last friday. 
     last_friday_date = date - (date.wday+2)%7
-    return Week.get_week_from_date(date)
+    return Week.get_week_from_date(last_friday_date)
   end
 
   # when get previous weeks, it might contain two years. 
