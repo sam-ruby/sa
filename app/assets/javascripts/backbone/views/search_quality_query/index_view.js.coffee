@@ -21,7 +21,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
       @controller.trigger('sub-content-cleanup')
       @controller.trigger('search:sub-tab-cleanup')
     )
-    
+    @advanced_search_on
     Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
     @undelegateEvents()
     @active = false
@@ -30,28 +30,54 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     'click .filter': 'filter'
     'click .reset': 'reset'
     'submit': 'filter'
+    'click #simple_checkbox':'show_advanced'
+    'click #advanced_checkbox':'show_simple'
+    'click #advanced-search-submit':'advanced_search'
     'click .export-csv a': (e) ->
       date = @controller.get_filter_params().date
       fileName = "query_analysis_#{date}.csv"
       data =
         date: date
-      data['query'] = @collection.query if @collection.query
+      data['query'] = @collection.data.query if @collection.data.query
       @export_csv($(e.target), fileName, data)
   
   filter: (e) =>
     e.preventDefault()
     query = @$el.find("input#filter-text").val()
-    @collection.query = query
-    if query
-      @collection.get_items()
-      @active = true
+    query = 'EXACT_WORD=' + query + 'ALL_WORD=ANY_WORD=NONE_WORD='
+
+    @collection.data.query = query
+    @collection.get_items()
+    @active = true
+    @trigger = true
+
+  show_simple:=>
+    @$filter.find(".row.simple").show()
+    @$filter.find(".row.advanced").hide()
+    @advanced_search_on =false
+
+  show_advanced:=>
+    @$filter.find(".row.simple").hide()
+    @$filter.find(".row.advanced").show()
+    @advanced_search_on =true
+
+  advanced_search:(e) =>
+    e.preventDefault()
+    exact_words = @$el.find("#input-exact-words").val()
+    all_words = @$el.find("#input-all-words").val()
+    any_words= @$el.find("#input-any-words").val()
+    none_words = @$el.find("#input-none-words").val()
+    @collection.data.query = 'EXACT_WORD='+ exact_words + 
+      'ALL_WORD='+ all_words + 'ANY_WORD='+ any_words+'NONE_WORD='+ none_words
+    @collection.get_items()
+    @active = true
     @trigger = true
 
   reset: (e) =>
     e.preventDefault()
     @router.update_path('/search_rel')
     @$el.find("input#filter-text").val('')
-    @collection.query = null
+    @collection.data.query = null
     @collection.get_items()
     @active = true
     @trigger = true
@@ -71,12 +97,20 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
 
   get_items: (data) =>
     @active = true
-    if data and data.query
-      @collection.query = data.query
-    else
-      @collection.query = null
-    @collection.get_items()
     @trigger = true
+    # if the date don't change, don't refetch every time
+    console.log(@collection.data.query)
+    if @collection.data.query  == null && @collection.data.date == @controller.get_filter_params().date
+      @render()
+      return
+    # refetch
+    if data and data.query
+      @collection.data.query = 'EXACT_WORD=' + data.query + 'ALL_WORD=ANY_WORD=NONE_WORD='
+    else
+      @collection.data.query = null
+    @collection.data.date = @controller.get_filter_params().date
+    @collection.get_items()
+
 
   clear_filter: =>
     @$filter.children().remove()
@@ -94,8 +128,19 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
   render: =>
     return unless @active
     @unrender_search_results()
-    return @render_error(@collection.query) if @collection.size() == 0
-    @$filter.html(JST['backbone/templates/shared/general_filter']({query:@collection.query}))
+    return @render_error(@collection.data.query) if @collection.size() == 0
+    @$filter.html(JST['backbone/templates/shared/advanced_search']())
+    if @collection.data.query
+      results = @collection.data.query.match(/^EXACT_WORD=(.*)ALL_WORD=(.*)ANY_WORD=(.*)NONE_WORD=(.*)$/)
+      @$filter.find('input#filter-text').val(results[1])
+      @$filter.find('#input-exact-words').val(results[1])
+      @$filter.find('#input-all-words').val(results[2])
+      @$filter.find('#input-any-words').val(results[3])
+      @$filter.find('#input-none-words').val(results[4])
+    if @advanced_search_on
+      @show_advanced()
+    else
+      @show_simple()
     @$el.append( @grid.render().$el)
     @$el.append( @paginator.render().$el)
     @$el.append( @export_csv_button() )
