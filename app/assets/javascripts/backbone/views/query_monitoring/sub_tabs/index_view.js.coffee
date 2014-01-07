@@ -61,7 +61,6 @@ class Searchad.Views.QueryMonitoring.SubTabs.IndexView extends Backbone.View
       return
 
 
-
   toggleTab: (el) =>
     @$el.find('li.active').removeClass('active')
     el.parents('li').addClass('active')

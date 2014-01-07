@@ -137,3 +137,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     options['trigger'] ||= false
     @navigate(new_path, options)
 
+    # this function will return the basic root url. like /#adhoc_query or /#search_rel etc
+  get_root_path: =>
+    url = window.location.hash
+    return url.match(/^#[^\/]*/)[0]
+
+

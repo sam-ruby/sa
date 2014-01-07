@@ -19,7 +19,7 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
       @$ajax_loader.show()
       @controller.trigger('qm:sub-content:cleanup')
     )
-    Utils.InitExportCsv(this, "/monitoring/metric/get_metric_monitor_table_data.csv")
+    Utils.InitExportCsv(this, "/monitoring/metrics/get_metric_monitor_table_data.csv")
     @undelegateEvents()
     @active = false
     @is_shown_all_columns = false
@@ -33,13 +33,10 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     'click #show-all-columns':'show_all_columns'
     'click .export-csv a': (e) ->
       e? e.preventDefault()
-      console.log("clickcsv")
       date = @controller.get_filter_params().date
       fileName = "query_metrics_monitoring_#{date}.csv"
       data =
         date: date
-      console.log("data", data);
-      # data['query'] = @collection.query if @collection.query
       @export_csv($(e.target), fileName, data)
 
   render: =>
