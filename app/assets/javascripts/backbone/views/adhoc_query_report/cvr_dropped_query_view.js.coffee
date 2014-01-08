@@ -74,7 +74,9 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     @query_results.append(@paginator.render().$el)
     @query_results.append(@export_csv_button())
     $("li.cvr-dropped-item-comparison").show()
-    @$el.find('td a.query').first().click() 
+    # if @trigger
+    #   @trigger = false
+    @$el.find('td a.query').first().trigger('click')
 
   render_error: ->
     @query_results.append($('<span>').addClass(
