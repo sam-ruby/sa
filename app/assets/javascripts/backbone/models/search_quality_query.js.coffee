@@ -15,8 +15,12 @@ class Searchad.Models.SearchQualityQuery extends Backbone.Model
 class Searchad.Collections.SearchQualityQueryCollection extends Backbone.PageableCollection
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
-    @query = null
+    # @query = null
     super(options)
+    @data={
+      query: null
+      date: null
+    }
 
   get_date: ->
     @date
@@ -32,15 +36,11 @@ class Searchad.Collections.SearchQualityQueryCollection extends Backbone.Pageabl
     date: ->
       @controller.get_filter_params().date
     query: ->
-      @query
+      @data.query
 
   mode: 'server'
 
   get_items: (data) =>
-    data = {} unless data
-    for k, v of @controller.get_filter_params()
-      continue unless v
-      data[k] = v
     @fetch(
       reset: true
       data: data

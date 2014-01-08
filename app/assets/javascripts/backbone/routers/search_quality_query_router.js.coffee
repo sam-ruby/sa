@@ -119,9 +119,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     if query?
       query = decodeURIComponent(query)
       @controller.trigger(
-        'query-monitoring-metrics:index', query: query)
+        'qm-metrics:index', query: query)
     else
-      @controller.trigger('query-monitoring-metrics:index')
+      @controller.trigger('qm-metrics:index')
 
   update_path: (path, options=null) =>
     url_parts = window.location.hash.replace('#', '').split('filters')
@@ -136,4 +136,19 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     options = {} unless options?
     options['trigger'] ||= false
     @navigate(new_path, options)
+
+    # this function will return the basic root url. like /#adhoc_query or /#search_rel etc
+  get_root_path: =>
+    url = window.location.hash
+    if url.match(/^#[^\/]*/)
+      return url.match(/^#[^\/]*/)[0]
+    else 
+      return ""
+  
+  root_path_conains:(url_regexp) =>
+    url = window.location.hash
+    if url.match(url_regexp)
+      return true
+    else 
+      return false
 

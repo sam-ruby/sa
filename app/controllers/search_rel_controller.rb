@@ -3,14 +3,14 @@ class SearchRelController < BaseController
   before_filter :set_common_data
 
   def get_search_words
-    query = params[:query]
+    query = params[:query] 
     week = get_week_from_date(@date)["week"]
     year = get_week_from_date(@date)["year"]
 
     respond_to do |format|
       format.json do 
         @search_words = SearchQualityDaily.get_query_stats(
-          query, year, week, @date, @page, @sort_by, @order, @limit)
+          query, year, week, @date, @page, @limit, @sort_by, @order)
         if @search_words.nil? or @search_words.empty?
           render :json => [{:total_entries => 0}, @search_words]
         else
@@ -21,7 +21,7 @@ class SearchRelController < BaseController
       end
       format.csv do |format|
         result = SearchQualityDaily.get_query_stats(
-          query, @year, week, @date, 0).map do|record|
+          query, @year, week, @date, 1,10000).map do|record|
             {'Query String' => record.query_str,
              'Query Count' => record.query_count,
              'Rank Metric' => record.rank_metric.to_f.round(2),
@@ -54,12 +54,7 @@ class SearchRelController < BaseController
     view = params[:view]
     result = []
     return result unless query_str
-    
-    # if view == 'weekly'
-    #   date = get_date_from_week(@week)
-    # else
     date = @date
-    # end
     query_dates = (date-14.days..date-1.days).to_a.map {|d|
       "'#{d.strftime('%Y-%m-%d')}'"}
 

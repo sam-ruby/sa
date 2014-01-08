@@ -6,7 +6,7 @@ class Searchad.Views.QueryMonitoring.Count.Stats.IndexView extends Backbone.View
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     @controller.bind('content-cleanup', @unrender)
-    @controller.bind('qm-count:sub-content-cleanup', @unrender)
+    @controller.bind('qm:sub-content:cleanup', @unrender)
     @data = {}
     @active = false
 
@@ -73,13 +73,14 @@ class Searchad.Views.QueryMonitoring.Count.Stats.IndexView extends Backbone.View
     
   unrender: =>
     @active = false
-    @$el.highcharts().destroy() if @$el.highcharts()
-    @controller.trigger('qm-count:sub-content:hide-spin')
+    @$el.empty()
+    # @$el.highcharts().destroy() if @$el.highcharts()
+    @controller.trigger('qm:sub-content:hide-spin')
   
   get_items: (data) =>
     @active = true
     @$el.highcharts().destroy() if @$el.highcharts()
-    @controller.trigger('qm-count:sub-content:show-spin')
+    @controller.trigger('qm:sub-content:show-spin')
     @$el.find('.ajax-loader').show()
     $.ajax(
       url: '/monitoring/count/get_query_stats.json'
@@ -103,12 +104,12 @@ class Searchad.Views.QueryMonitoring.Count.Stats.IndexView extends Backbone.View
 
   render_error: (query) ->
     return unless @active
-    @controller.trigger('qm-count:sub-content:hide-spin')
+    @controller.trigger('qm:sub-content:hide-spin')
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
 
   render: (query, data, ucl) ->
     return unless @active
-    @controller.trigger('qm-count:sub-content:hide-spin')
+    @controller.trigger('qm:sub-content:hide-spin')
     @initChart(query, data, ucl)
     this

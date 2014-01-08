@@ -1,0 +1,37 @@
+.row.simple(style = "margin-bottom:20px")
+  form.input-prepend.input-append.pull-right.cad-filter.form-inline
+      span.add-on
+        a(href='#').filter
+          i.icon-search
+      input#filter-text(type='text', placeholder="Filter Exact Phrase")
+      span.add-on
+        a.close.reset(href='#') ×
+      span.add-on
+        label.checkbox
+          input#simple_checkbox(type='checkbox')
+          span  Advanced
+
+.row.advanced
+  //- .span6.pull-right
+  form.form-horizontal.pull-right
+    table
+      tr
+        td(style = "padding-left: 20px;") Exact words
+        td(style = "padding-left: 20px;") All of these words
+        td(style = "padding-left: 20px;") Any of these words
+        td(style = "padding-left: 20px;") None of these words
+        td(style = "padding-left: 20px")
+          label.checkbox
+            input#advanced_checkbox(type='checkbox', checked='true')
+            span Advanced
+      tr
+        td(style = "padding-left: 20px")
+          input#input-exact-words(type='text')
+        td(style = "padding-left: 20px") 
+          input#input-all-words(type='text')
+        td(style = "padding-left: 20px") 
+          input#input-any-words(type='text')
+        td(style = "padding-left: 20px") 
+          input#input-none-words(type='text')
+        td(style = "padding-left: 20px")
+          a.btn#advanced-search-submit Search

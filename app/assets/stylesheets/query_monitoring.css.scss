@@ -1,0 +1,66 @@
+$qm-border-style: #DDD 2px solid;
+.group-header-rows{
+  th{
+  	text-align:center !important;
+  	cursor:default !important;
+  	border-right: $qm-border-style !important;
+    border-bottom: $qm-border-style !important;
+	}
+}
+
+//this will bold certain border with certain head are group together.
+.all-columns-with-group-header{
+  border: $qm-border-style !important;
+  th:nth-child(3), tr td:nth-child(3)
+    {
+      border-left: $qm-border-style !important;
+    }
+  th:nth-child(7), tr td:nth-child(7)
+    {
+      border-left: $qm-border-style !important;
+    }
+  th:nth-child(11), tr td:nth-child(11)
+    {
+      border-left: $qm-border-style !important;
+    }	
+}
+
+//this will bold certain border with certain head are group together.
+.default-columns-with-group-header{
+  border: $qm-border-style !important;
+  th:nth-child(3), tr td:nth-child(3)
+    {
+      border-left: $qm-border-style !important;
+    }
+  th:nth-child(7), tr td:nth-child(7)
+    {
+      border-left: $qm-border-style !important;
+      border-right: $qm-border-style !important;
+    }
+  
+   //this will hide excessive columns associated with atc or pvr on query_monitoring page
+  th:nth-child(8), tr td:nth-child(8)
+    {
+      display:none;
+    }
+  th:nth-child(9), tr td:nth-child(9)
+    {
+      display:none;
+    }
+  th:nth-child(10), tr td:nth-child(10)
+    {
+      display:none;
+    }
+  th:nth-child(12), tr td:nth-child(12)
+    {
+      display:none;
+    }
+  th:nth-child(13), tr td:nth-child(13)
+    {
+      display:none;
+    }
+  th:nth-child(14), tr td:nth-child(14)
+    {
+      display:none;
+    }
+}

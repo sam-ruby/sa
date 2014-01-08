@@ -30,19 +30,43 @@ class AllItemAttrs < BaseModel
   
   def self.get_items(query, items, query_date)
     query_date = query_date.strftime('%Y-%m-%d')
-    item_selects = %q{item_attr.item_id, item.item_revenue,
-      item.shown_count, item.item_con, item.item_atc, item.item_pvr,
-      total.revenue as site_revenue, item_attr.title,
-      item_attr.image_url}
-    join_stmt = %Q{AS item_attr LEFT OUTER JOIN (SELECT item,
-    revenue FROM item_cat_total_revenue_daily WHERE cat_id = 0 AND 
-    date = '#{query_date}') AS total ON total.item = item_attr.item_id
-    left outer join (select item_id, item_revenue, shown_count, item_con,
-    item_atc, item_pvr FROM item_query_cat_metrics_daily WHERE
-    query_date = '#{query_date}' AND query = '#{query}' AND cat_id = 0
-    AND (channel = "ORGANIC" or channel = "ORGANIC_USER")) AS item ON
-    item_attr.item_id = item.item_id}
-    joins(join_stmt).select(item_selects).where(
-      %q{item_attr.item_id in (?)}, items)
+    # by deviding it into small set first, we could optimize this query from 1.5s to 50ms
+    sql_statement = '
+     select 
+     a.item_id, a.image_url, a.curr_item_price, a.title,
+     b.item_revenue, b.shown_count, b.item_con, b.item_atc, b.item_pvr,
+     c.revenue as site_revenue from (
+     (select item_id, image_url, curr_item_price, title from `all_item_attrs` where item_id in (?))a
+
+     LEFT OUTER JOIN 
+
+     (select item_id, item_revenue, shown_count, item_con,
+     item_atc, item_pvr FROM item_query_cat_metrics_daily WHERE item_id in (?) and
+     query = ? and query_date = ? AND cat_id = 0
+     AND (channel = "ORGANIC" or channel = "ORGANIC_USER") ) b
+
+     on a.item_id = b.item_id
+     
+     left outer join 
+     (SELECT item, revenue FROM item_cat_total_revenue_daily WHERE cat_id = 0 AND date = ? and item in (?)) c
+     on a.item_id = c.item
+     )'
+
+    items = find_by_sql([sql_statement,items, items, query, query_date, query_date, items ])
+
+    # item_selects = %q{item_attr.item_id, item.item_revenue,
+    #   item.shown_count, item.item_con, item.item_atc, item.item_pvr,
+    #   total.revenue as site_revenue, item_attr.title,
+    #   item_attr.image_url}
+    # join_stmt = %Q{AS item_attr LEFT OUTER JOIN (SELECT item,
+    # revenue FROM item_cat_total_revenue_daily WHERE cat_id = 0 AND 
+    # date = '#{query_date}') AS total ON total.item = item_attr.item_id
+    # left outer join (select item_id, item_revenue, shown_count, item_con,
+    # item_atc, item_pvr FROM item_query_cat_metrics_daily WHERE
+    # query_date = '#{query_date}' AND query = '#{query}' AND cat_id = 0
+    # AND (channel = "ORGANIC" or channel = "ORGANIC_USER")) AS item ON
+    # item_attr.item_id = item.item_id}
+    # joins(join_stmt).select(item_selects).where(
+    #   %q{item_attr.item_id in (?)}, items)
   end
 end
