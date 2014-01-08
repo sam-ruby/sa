@@ -54,11 +54,14 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
   show_simple:=>
     @$filter.find(".row.simple").show()
     @$filter.find(".row.advanced").hide()
+    $('#simple_checkbox').removeAttr("checked")
     @advanced_search_on =false
 
   show_advanced:=>
-    @$filter.find(".row.simple").hide()
+    console.log("show advanced")
+    $('#simple_checkbox').attr('checked')
     @$filter.find(".row.advanced").show()
+    @$filter.find(".row.simple").hide()
     @advanced_search_on =true
 
   advanced_search:(e) =>
