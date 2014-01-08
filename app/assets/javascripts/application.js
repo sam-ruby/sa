@@ -10,6 +10,7 @@
 // require highcharts
 //= require date
 //= require highstocks/js/highstock
+//= require highcharts-more
 //= require highcharts/modules/funnel
 //= require i18n
 //= require i18n/translations
@@ -30,3 +31,4 @@
 //= require util/CADhelpInfo
 //= require util/backgrid.customize
 //= require cad_init
+//= require user_latest_status.js

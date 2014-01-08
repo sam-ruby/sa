@@ -189,23 +189,37 @@ $ ->
       controller, 'adhoc:index',(data)->adhocQueryView.render_form(data))
 
     queryMonitoringCountView =
-      new Searchad.Views.QueryMonitoring.Count.IndexView(
-        el: '#qm-count'
-        el_filter: '#qm-count-filter')
+      new Searchad.Views.QueryMonitoring.Count.IndexView(el: '#query-monitoring')
     queryMonitoringCountView.listenTo(
       controller, 'query-monitoring-count:index', (data) ->
         queryMonitoringCountView.get_items(data)
     )
-    qmCountSubtabsView =
+    qmSubtabsView =
       new Searchad.Views.QueryMonitoring.SubTabs.IndexView(el: '#qm-count-sub-tabs')
-    qmCountSubtabsView.listenTo(
-      controller, 'qm-count:sub-content', qmCountSubtabsView.render)
+    qmSubtabsView.listenTo(
+      controller, 'qm:sub-content', qmSubtabsView.render)
  
     qmCountStatsView =
       new Searchad.Views.QueryMonitoring.Count.Stats.IndexView(
         el: '#qm-count-sub-content')
     qmCountStatsView.listenTo(
       controller, 'qm-count:stats', qmCountStatsView.get_items)
+
+    queryMonitoringMetricView = new Searchad.Views.QueryMonitoring.Metric.IndexView(el: '#query-monitoring')
+    queryMonitoringMetricView.listenTo(
+      controller, 'qm-metrics:index', (data) ->
+        queryMonitoringMetricView.get_items(data)
+    )
+
+    qmMetricStatsView = new Searchad.Views.QueryMonitoring.Metric.Stats.IndexView ( 
+      el: '#qm-count-sub-content'
+      con_el:'#con-stats'
+      atc_el:'#atc-stats'
+      pvr_el:'#pvr-stats'
+    )
+    qmCountStatsView.listenTo(
+      controller, 'qm-metrics:stats', 
+      (data)-> qmMetricStatsView.get_items(data))
    
   Backbone.history.start()
   

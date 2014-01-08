@@ -40,33 +40,19 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
   
   gridColumns:  ->
     that = this
-    class QueryCell extends Backgrid.Cell
-      controller: SearchQualityApp.Controller
-      router: SearchQualityApp.Router
-
-      events:
-        'click': 'handleQueryClick'
-
-      handleQueryClick: (e) =>
-        e.preventDefault()
+    class QueryCell extends Backgrid.CADQueryCell
+      handleQueryClick: (e) ->
+        Backgrid.CADQueryCell.prototype.handleQueryClick.call(this, e)
         query = $(e.target).text()
-        $(e.target).parents('table').find(
-          'tr.selected').removeClass('selected')
-        $(e.target).parents('tr').addClass('selected')
         that.controller.trigger('search:sub-content',
           query: query
-          view: 'daily')
+          view: 'daily'
+          # tab: Searchad.UserLatest.sub_tabs.current_tab
+        )
         new_path = 'poor_performing/query/' +
           encodeURIComponent(query)
         that.router.update_path(new_path)
-
-      render: ->
-        value = @model.get(@column.get('name'))
-        formatted_value = '<a class="query" href="#">' + value +
-          '</a>'
-        @$el.html(formatted_value)
-        @delegateEvents()
-        return this
+        false
     
     columns = [{
     name: 'query',

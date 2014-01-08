@@ -89,6 +89,7 @@ class Searchad.Views.SearchKPI.IndexView extends Backbone.View
       url: '/search_kpi/get_data.json'
       success: (json, status) =>
         paid_series = @process_data(json.paid)
+        console.log("paid_series", paid_series)
         @render('Paid Traffic', @paid_el, paid_series)
         unpaid_series = @process_data(json.unpaid)
         @render('Unpaid Traffic', @unpaid_el, unpaid_series)

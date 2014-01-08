@@ -14,7 +14,7 @@ class QueryCountSpcDaily < BaseModel
       order_str << ' ' << order
     end
     limit = 10000 if page == 0
-    if query
+    if query and query != ""
       if page > 0 
         self.select(selects).where([
            %q{signal_flag = 1 and query_date = ? AND cat_id = ? and 

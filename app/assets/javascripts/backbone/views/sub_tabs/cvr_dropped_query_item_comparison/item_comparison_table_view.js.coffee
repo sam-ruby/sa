@@ -74,7 +74,7 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     label: 'Rank',
     editable: false,
     cell: 'string'
-    headerCell:'custom'
+    headerCell:'helperDescending'
     helpInfo: 'The rank is the exact order that shown as result from search'
     },
 
@@ -116,8 +116,9 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     
 
   unrender: =>
-    @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').hide()
+    # @$el.children().not('.ajax-loader').remove()
+    # @$el.find('.ajax-loader').hide()
+    @$el.children().remove()
     @active = false
     @undelegateEvents()
   
@@ -134,8 +135,7 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
   render_error:  ->
     return unless @active
     @controller.trigger('search:sub-content:hide-spin')
-    @$el.append( $('<span>').addClass('label label-important').append(
-      "No data available for #{@data.query}") )
+    @$el.html(JST['backbone/templates/shared/no_data']({query:@data.query}))
   
   render: =>
     if @active == false

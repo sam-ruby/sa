@@ -47,13 +47,12 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
 
   active: false
 
-
   #when collection reset caused by get items, the rendering result is triggered
   render_query_results: =>
+    @search_results_cleanup()
     @query_results.find('.ajax-loader').hide()
     if @collection.length == 0
       return @render_error()
-
     # render the result label
     if (@data.query== "")
       result_label = "Conversion Rate Dropped Query Top 500 Report"
@@ -67,18 +66,17 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       "in_top_500_label": in_top_500_label
       "query" : @data.query
       "result_label": result_label
-    @query_results.append(result_label_template(label_data))
-    @query_results.append(@grid.render().$el)
+    @query_results.html(@grid.render().$el)
+    @query_results.find('.group-header-rows').remove()
+    @query_results.find('table thead').prepend(JST['backbone/templates/adhoc_query/table_group_header']())
+    @query_results.prepend(result_label_template(label_data))
+
     @query_results.append(@paginator.render().$el)
     @query_results.append(@export_csv_button())
-
-    if @trigger
-      @trigger = false
-      @$el.find('td a.query').first().trigger('click')
-     
-    $("li.cvr-dropped-item-comparison").show();
-
-    return this
+    $("li.cvr-dropped-item-comparison").show()
+    # if @trigger
+    #   @trigger = false
+    @$el.find('td a.query').first().trigger('click')
 
   render_error: ->
     @query_results.append($('<span>').addClass(
@@ -95,16 +93,20 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
 
   #get_items is usually the first triggered function. It could be trgger from the index or router.  
   get_items: (data) ->
+    @active = true
     if data== undefined
       data = @process_query_data(data)
-    # reset is bind wiht render_query_results.
+    # if the exact same data, don't redo the fetch
+    if  @collection.dataParam.query_date == data.query_date and
+     @collection.dataParam.weeks_apart == data.weeks_apart and 
+     @collection.dataParam.query == data.query and  
+     @collection.state.currentPage ==1 
+      @render_query_results()
+      return
+    # reset is bind with render_query_results.
     @collection.dataParam = data
-    # important, between switch top500 and certain query, must reset current page size to 1
-    @collection.state.currentPage = 1;
     @data = data
-    @collection.get_items()
-    @active = true
-    @trigger = true
+    @collection.getFirstPage()
 
 
   process_query_data:(data) =>
@@ -128,11 +130,10 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
   init_table: ()->
     columns =  @grid_columns()
     @grid = new Backgrid.Grid(
-      # className:'cvr-dropped-query-grid'
+      className:'cvr-dropped-query-grid backgrid'
       columns: columns
       collection: @collection
     )
-
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection
     )
@@ -140,31 +141,18 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
 
   grid_columns: =>
     that = this
-    class SearchQueryCell extends Backgrid.Cell
-      events:
-        'click': 'handleQueryClick'
+    class SearchQueryCell extends Backgrid.CADQueryCell
       handleQueryClick: (e) =>
-        e.preventDefault()
-        $(e.target).parents('table').find('tr.selected').removeClass(
-          'selected')
-        $(e.target).parents('tr').addClass('selected')
+        Backgrid.CADQueryCell.prototype.handleQueryClick.call(this, e)
         query = $(e.target).text()
         dataParam = @model.collection.dataParam
-
         that.controller.trigger('search:sub-content',
           query: query
           query_date: dataParam.query_date
           weeks_apart: dataParam.weeks_apart
-          tab: 'cvr-dropped-item-comparison')
+        )
         new_path = 'adhoc_query/mode/query_comparison'+ '/wks_apart/' + dataParam.weeks_apart + '/query_date/' + dataParam.query_date+"/query/"+ encodeURIComponent(query)
         that.router.update_path(new_path)
-      
-      render: =>
-        value = @model.get(@column.get('name'))
-        formatted_value = '<a class="query" href="#">' + value + '</a>'
-        @$el.html(formatted_value)
-        @delegateEvents()
-        return this
 
     helpInfo = Searchad.helpInfo.conversion_rate_dropped_query
     columns = [{name: 'query',
@@ -178,29 +166,29 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     editable:false,
     cell:'string',
     sortable:true,
-    headerCell:'custom'
+    headerCell:'helper'
     helpInfo:helpInfo.query_score
     },
     {name:'query_con_diff',
-    label:'Con Diff (%)',
+    label:'Difference (%)',
     editable:false
     cell:'number'},
     {name:'query_con_before',
-    label:'Con Before (%)',
+    label:'Before (%)',
     editable:false
     cell:'number',
     # className:'conversion-rate'
     },
     {name:'query_con_after',
-    label:'Con After (%)',
+    label:'After (%)',
     editable:false
     cell:'number'},
     {name:'query_revenue_before',
-    label:'Rev Before ($)',
+    label:'Before ($)',
     editable:false,
     cell:'number'},
     {name:'query_revenue_after',
-    label:'Rev After ($)',
+    label:'After ($)',
     editable:false,
     cell:'number'},
     {name:'expected_revenue_diff',
@@ -208,16 +196,16 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     editable:false,
     cell:'number'
     helpInfo: helpInfo.expected_revenue_diff
-    headerCell:'custom'
+    headerCell:'helper'
     },
     {name:'query_count_before',
-    label:'Count Before',
+    label:'Before',
     editable:false
-    cell:'number'},
+    cell:'integer'},
     {name:'query_count_after',
-    label:'Count After',
+    label:'After',
     editable:false
-    cell:'number'},
+    cell:'integer'},
     ]
 
     return columns

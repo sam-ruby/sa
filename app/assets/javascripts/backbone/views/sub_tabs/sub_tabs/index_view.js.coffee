@@ -8,11 +8,11 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     @controller.bind('search:sub-tab-cleanup', @unrender)
     @controller.bind('search:sub-content:show-spin', @show_spin)
     @controller.bind('search:sub-content:hide-spin', @hide_spin)
+    @user_tabs = Searchad.UserLatest.SubTab
     @active = false
   
   data:
     query: null
-
 
   events:
     'click li.search-stats-tab': 'stats'
@@ -29,101 +29,80 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
         @data.query)
       @router.navigate(path + newPath)
 
-  toggleTab: (e) =>
-    @$el.find('li.active').removeClass('active')
-    $(e.target).parents('li').addClass('active')
 
   stats: (e) =>
-    e.preventDefault()
-    @controller.trigger('sub-content-cleanup')
-    @select_stats_tab()
-    @controller.trigger('search:stats', query: @query)
-  
+    @toggleTab(e)
+    @controller.trigger('search:stats', @data)
+    # change user latest click tab to store stats, so when user stwitch between queries, 
+    # the tab won't jump from one to anoter
+    @user_tabs.update_selected_tab("stats")
+ 
+
   walmart_items: (e) =>
-    e.preventDefault()
-    @controller.trigger('sub-content-cleanup')
-    @select_walmart_tab()
-    @controller.trigger('search:walmart-items',
-      query: @query
-      view: @view)
+    @toggleTab(e)
+    @controller.trigger('search:walmart-items', @data)
+    @user_tabs.update_selected_tab("walmart")
+  
   
   amazon_items: (e) =>
-    e.preventDefault()
-    @controller.trigger('sub-content-cleanup')
-    @select_amazon_tab()
-    @controller.trigger('search:amazon-items',
-      query: @query
-      view: @view)
+    @toggleTab(e)
+    @controller.trigger('search:amazon-items', @data)
+    @user_tabs.update_selected_tab("amazon")
+
 
   rev_rel: (e) =>
-    e.preventDefault()
-    @controller.trigger('sub-content-cleanup')
-    @select_rev_rel_tab()
-    @controller.trigger('search:rel-rev',
-      query: @query
-      view: @view)
+    @toggleTab(e)
+    @controller.trigger('search:rel-rev', @data)
+    @user_tabs.update_selected_tab("rel-rev-analysis")
 
   show_cvr_dropped_item_comparison:(e)=>
+    @toggleTab(e)
+    @controller.trigger('cvr_dropped_query:item_comparison',@data)
+    @user_tabs.update_selected_tab("cvr-dropped-item-comparison")
+
+
+  toggleTab: (e) =>
     e.preventDefault()
+    @$el.find('li.active').removeClass('active')
+    $(e.target).parent().addClass('active')
     @controller.trigger('sub-content-cleanup')
-    @select_cvr_dropped_item_comparison_tab()
-    @controller.trigger('cvr_dropped_query:item_comparison',
-      query: @data.query
-      query_date: @data.query_date
-      weeks_apart: @data.weeks_apart
-    )
-  
-  select_stats_tab: () =>
-    e = {}
-    e.target = @$el.find('li.search-stats-tab a').get(0)
-    @toggleTab(e)
 
-  select_walmart_tab: () =>
-    e = {}
-    e.target = @$el.find('li.search-walmart-items-tab a').get(0)
-    @toggleTab(e)
-  
-  select_amazon_tab: () =>
-    e = {}
-    e.target = @$el.find('li.search-amazon-items-tab a').get(0)
-    @toggleTab(e)
-    
-  select_rev_rel_tab: () =>
-    e = {}
-    e.target = @$el.find('li.rev-rel-tab a').get(0)
-    @toggleTab(e)
-
-  select_cvr_dropped_item_comparison_tab:()=>
-    e = {}
-    e.target = @$el.find('li.cvr-dropped-item-comparison-tab a').get(0)
-    @toggleTab(e)
 
   unrender: =>
     @active = false
     @$el.children().not('.ajax-loader').remove()
     @hide_spin()
 
+
   render: (data) =>
-    @query = data.query if data.query
-    @view = data.view if data.view
     @data = data;
     @$el.prepend(@template()) unless @active
-    @delegateEvents() 
-    if data.tab =='cvr-dropped-item-comparison'
-      @$el.find('li.cvr-dropped-item-comparison-tab').show();
-      @$el.find('li.cvr-dropped-item-comparison-tab').first().trigger('click')  
+    @delegateEvents()
+    @active = true 
+    curr_tab = @user_tabs.current_tab
+    # only show cvr_dropped_item_comparison on certain url specificaly adhoc query
+    if @router.root_path_conains(/#adhoc_query/)
+      @$el.find('li.cvr-dropped-item-comparison-tab').show()
+      # toggle the subtabs
+      if @user_tabs.cvr_item_tab_selected
+        @$el.find('li.cvr-dropped-item-comparison-tab a').first().click()  
+        return
     else
-      @$el.find('li.cvr-dropped-item-comparison-tab').hide();
-      if data.tab == 'rel-rev-analysis'
-        @$el.find('li.rev-rel-tab').first().trigger('click')
-      else if data.tab == 'amazon'
-        @$el.find('li.search-amazon-items-tab').first().trigger('click')
-      else
-        @$el.find('li.search-stats-tab').first().trigger('click')
-    @active = true
+      @$el.find('li.cvr-dropped-item-comparison-tab').hide()
+
+    if curr_tab == 'rel-rev-analysis'
+      @$el.find('li.rev-rel-tab a').first().click()
+    else if curr_tab == 'amazon'
+      @$el.find('li.search-amazon-items-tab a').first().click()
+    else if curr_tab == 'walmart'
+      @$el.find('li.search-walmart-items-tab a').first().click()
+    else
+      @$el.find('li.search-stats-tab').first().click()
+
 
   show_spin: =>
     @$el.find('.ajax-loader').css('display', 'block')
   
+
   hide_spin: =>
     @$el.find('.ajax-loader').hide()

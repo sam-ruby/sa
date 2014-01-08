@@ -3,14 +3,12 @@ Searchad.Views.MasterTab ||= {}
 class Searchad.Views.MasterTab.IndexView extends Backbone.View
  initialize: (options) =>
     @controller = SearchQualityApp.Controller
-    @router = SearchQualityApp.Router
-    
+    @router = SearchQualityApp.Router   
     @controller.bind('poor-performing:index', @select_pp_tab)
     @controller.bind('search-rel:index', @select_sq_tab)
     @controller.bind('search-kpi:index', @select_search_kpi_tab)
     @controller.bind('query-monitoring-count:index', @select_qmc_tab)
-    @controller.bind('query-monitoring-metrics:index', @select_qmm_tab)
-    
+    @controller.bind('qm-metrics:index', @select_qm_metrics_tab)  
     @controller.bind('master-tabs:cleanup', @unrender)
     @active = false
 
@@ -35,6 +33,19 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       @controller.trigger('search-kpi:index')
       @router.update_path('search_kpi')
 
+
+    'click li.qm-count-top-tab a': (e) =>
+      e.preventDefault()
+      @controller.trigger('content-cleanup')
+      @controller.trigger('query-monitoring-count:index')
+      @router.update_path('query_monitoring/count')
+
+    'click li.qm-metrics-top-tab a': (e) =>
+      e.preventDefault()
+      @controller.trigger('content-cleanup')
+      @controller.trigger('qm-metrics:index')
+      @router.update_path('query_monitoring/metrics')
+
     
   get_tab_el: (data) ->
     css_classes = data.class.join(' ')
@@ -58,10 +69,16 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
 
   init_query_monitoring: =>
     tabs = [{
-      class: ['query-monitoring-count-tab','active']
+      class: ['qm-count-top-tab','active']
       href: '#query_monitoring/count'
-      title: 'Query Count Analysis'}]
+      title: 'Query Count'},
+     {
+      class: ['qm-metrics-top-tab']
+      href: '#query_monitoring/metrics'
+      title: 'Query Metrics'}
+    ]
     @$el.append(@get_tab_el(tabs[0]))
+    @$el.append(@get_tab_el(tabs[1]))
 
   toggleTab: (el) =>
     @$el.find('li.active').removeClass('active')
@@ -93,14 +110,14 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       @$el.css('display', 'block')
       @init_query_monitoring()
       @active = true
-    @toggleTab(@$el.find('li.query-monitoring-count-tab a'))
+    @toggleTab(@$el.find('li.qm-count-top-tab a'))
 
-  select_qmm_tab:=>
+  select_qm_metrics_tab:=>
     unless @active
       @$el.css('display', 'block')
       @init_query_monitoring()
       @active = true
-    @toggleTab(@$el.find('li.query-monitoring-metrics-tab a'))
+    @toggleTab(@$el.find('li.qm-metrics-top-tab a'))
 
   unrender: =>
     @$el.children().remove()
