@@ -81,7 +81,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     @active = true 
     curr_tab = @user_tabs.current_tab
     # only show cvr_dropped_item_comparison on certain url specificaly adhoc query
-    if @router.get_root_path()== "#adhoc_query"
+    if @router.root_path_conains(/#adhoc_query/)
       @$el.find('li.cvr-dropped-item-comparison-tab').show()
       # toggle the subtabs
       if @user_tabs.cvr_item_tab_selected

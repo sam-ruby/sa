@@ -140,6 +140,15 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     # this function will return the basic root url. like /#adhoc_query or /#search_rel etc
   get_root_path: =>
     url = window.location.hash
-    return url.match(/^#[^\/]*/)[0]
-
+    if url.match(/^#[^\/]*/)
+      return url.match(/^#[^\/]*/)[0]
+    else 
+      return ""
+  
+  root_path_conains:(url_regexp) =>
+    url = window.location.hash
+    if url.match(url_regexp)
+      return true
+    else 
+      return false
 

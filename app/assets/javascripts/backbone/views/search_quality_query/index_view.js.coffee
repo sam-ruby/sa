@@ -99,7 +99,6 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @active = true
     @trigger = true
     # if the date don't change, don't refetch every time
-    console.log(@collection.data.query)
     if @collection.data.query  == null && @collection.data.date == @controller.get_filter_params().date
       @render()
       return
