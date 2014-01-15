@@ -58,7 +58,6 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @advanced_search_on =false
 
   show_advanced:=>
-    console.log("show advanced")
     $('#simple_checkbox').attr('checked')
     @$filter.find(".row.advanced").show()
     @$filter.find(".row.simple").hide()
@@ -153,13 +152,12 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
       @$el.find('td a.query').first().trigger('click')
     this
    
-
   gridColumns: ->
     that = this
     class QueryCell extends Backgrid.CADQueryCell
       handleQueryClick: (e) ->
         Backgrid.CADQueryCell.prototype.handleQueryClick.call(this, e)
-        query = @model.get('query_str')
+        query = @model.get('query')
         that.controller.trigger('search:sub-content',
           query: query
           view: 'daily'
@@ -170,11 +168,11 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
         false
     
     columns = [{
-    name: 'query_str',
+    name: 'query',
     label: I18n.t('search_analytics.query_string'),
     editable: false,
     cell: QueryCell},
-    {name: 'query_count',
+    {name: 'uniq_count',
     label: I18n.t('search_analytics.query_count'),
     editable: false,
     cell: 'integer'},
@@ -201,7 +199,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     label: I18n.t('search_analytics.rev_rank_correlation'),
     editable: false,
     cell: 'number'},
-    {name: 'query_revenue',
+    {name: 'revenue',
     label: I18n.t('search_analytics.revenue'),
     editable: false,
     cell: 'number',

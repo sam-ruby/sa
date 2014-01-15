@@ -41,7 +41,7 @@ $ ->
 
       fromRaw: (rawValue) ->
         return '-' if !rawValue?
-        "#{super(rawValue)}%"
+        "#{super(parseFloat(rawValue))}%"
         
     class CustomNumberFormatter extends Backgrid.NumberFormatter
       decimals: 2
@@ -58,6 +58,7 @@ $ ->
       orderSeparator: ','
 
       fromRaw: (rawValue) ->
+        rawValue = parseFloat(rawValue)
         if rawValue == 0
           '$' + rawValue.toFixed(0)
         else if rawValue < 0
