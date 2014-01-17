@@ -11,8 +11,8 @@ class AllItemAttrs < BaseModel
     where item_id in (#{item_ids}) and 
     data_date in (#{query_dates.join(',')}) 
     and query = #{query} and 
-    channel = "ORGANIC_USER" and 
-    cat_id = 0 group by item_id) as item on 
+    channel = "ORGANIC_USER" and page_type = 'SEARCH'
+    group by item_id) as item on 
     item.item_id = item_attrs.item_id
     left outer join (select item_id, sum(revenue)/14 as total_revenue
     from item_cat_metrics_daily where data_date in

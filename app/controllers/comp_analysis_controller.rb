@@ -25,7 +25,7 @@ class CompAnalysisController < BaseController
       if view =='ranged'
         start_date = DateTime.strptime(params[:start_date], "%m-%d-%Y")  
         end_date = DateTime.strptime(params[:end_date], "%m-%d-%Y")  
-        walmart_items = ItemQueryCatMetricsDaily.get_walmart_items_over_time(query, start_date, end_date)
+        walmart_items = ItemQueryMetricsDaily.get_walmart_items_over_time(query, start_date, end_date)
       else
         # view = daily
         walmart_items = SearchQualityDaily.get_walmart_items_daily(query, @date)
