@@ -3,9 +3,9 @@ class QueryCountSpcDaily < BaseModel
 
   def self.get_words(
     query, query_date, page=1, order_column='query_score', order='desc', limit=10)
-    selects = %q{query_str, sqrt(query_count)*(100-query_con)*z_score  as 
-    query_score, query_count, query_con, days_alarmed, days_abovemean, 
-    z_score}
+    selects = %q{query query_str, sqrt(uniq_count)*(100-uniq_con)*z_score  as 
+    query_score, uniq_count query_count, uniq_con query_con, days_alarmed, 
+    days_abovemean, z_score}
 
     if order_column.blank?
       order_str = "query_score desc"
@@ -17,22 +17,22 @@ class QueryCountSpcDaily < BaseModel
     if query and query != ""
       if page > 0 
         self.select(selects).where([
-           %q{signal_flag = 1 and query_date = ? AND cat_id = ? and 
-           query_str = ?}, query_date, 0, query]).order(order_str).page(
+           %q{signal_flag = 1 and data_date = ? AND cat_id = ? and 
+           query = ?}, query_date, 0, query]).order(order_str).page(
              page).per(limit)
       else
         self.select(selects).where([
-           %q{signal_flag = 1 and query_date = ? and cat_id = ? and 
-           query_str = ?}, query_date, 0, query]).order(order_str).limit(limit)
+           %q{signal_flag = 1 and data_date = ? and cat_id = ? and 
+           query = ?}, query_date, 0, query]).order(order_str).limit(limit)
       end
     else
       if page > 0 
         self.select(selects).where([
-           %q{signal_flag = 1 and query_date = ? AND cat_id = ?},
+           %q{signal_flag = 1 and data_date = ? AND cat_id = ?},
            query_date, 0]).order(order_str).page(page).per(limit)
       else
         self.select(selects).where([
-           %q{signal_flag = 1 and query_date = ? AND cat_id = ?},
+           %q{signal_flag = 1 and data_date = ? AND cat_id = ?},
            query_date, 0]).order(order_str).limit(limit)
       end
     end
