@@ -34,6 +34,7 @@ end
 
 group :development do
   gem 'debugger'
+  gem 'capistrano-rails', '~> 1.0.0'
 end
 
 gem 'sass-rails'
@@ -56,6 +57,8 @@ gem 'jquery-rails'
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
+
+gem 'capistrano', '~> 3.1.0'
 
 group :test do
   # Pretty printed test output
