@@ -1,5 +1,5 @@
 set :stage, :development
-set :branch, :cdngm-570
+set :branch, 'cdngm-570'
 
 # Simple Role Syntax
 # ==================
