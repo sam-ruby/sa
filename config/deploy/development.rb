@@ -1,5 +1,5 @@
 set :stage, :development
-set :branch, 'cdngm-570'
+set :branch, :develop
 
 # Simple Role Syntax
 # ==================
@@ -9,7 +9,7 @@ set :branch, 'cdngm-570'
 #
 role :app, %w{deploy@srch-sa01.sv.walmartlabs.com}
 role :web, %w{deploy@srch-sa01.sv.walmartlabs.com}
-role :db, %w{deploy@srch-sa01.sv.walmartlabs.com} 
+role :db, %w{deploy@srch-sa01.sv.walmartlabs.com}
 
 # Extended Server Syntax
 # ======================
