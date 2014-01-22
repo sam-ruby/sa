@@ -21,7 +21,7 @@ class SearchRelController < BaseController
       end
       format.csv do |format|
         result = SearchQualityDaily.get_query_stats(
-          query, @year, week, @date, 1,10000).map do|record|
+          query, year, week, @date, 1,10000).map do|record|
             {'Query String' => record.query_str,
              'Query Count' => record.query_count,
              'Rank Metric' => record.rank_metric.to_f.round(2),
