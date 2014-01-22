@@ -59,6 +59,7 @@ gem 'jquery-rails'
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
 gem 'capistrano', '~> 3.1.0'
+gem 'capistrano-bundler'
 
 group :test do
   # Pretty printed test output
