@@ -1,0 +1,7 @@
+desc "this is hello world task for Capistrano"
+task :hello_world do
+  on roles(:all) do |host|
+    uptime = capture(:uptime)
+    info "The uptime is #{uptime}"
+  end
+end
