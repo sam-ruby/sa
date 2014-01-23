@@ -1,5 +1,8 @@
 set :stage, :development
-set :branch, :develop
+ask :branch, :develop
+puts "You entered #{fetch(:branch)}. Continue ?"
+ask 'Y/n', :Y
+exit unless fetch('Y/n') =~ /y+/i
 
 # Simple Role Syntax
 # ==================
@@ -9,7 +12,11 @@ set :branch, :develop
 #
 role :app, %w{deploy@srch-sa01.sv.walmartlabs.com}
 role :web, %w{deploy@srch-sa01.sv.walmartlabs.com}
-role :db, %w{deploy@srch-sa01.sv.walmartlabs.com}
+# Commenting out the DB role since there is no DB migrations
+# to be performed in the analytics DB, where there is a
+# read only access.
+#
+# role :db, %w{deploy@srch-sa01.sv.walmartlabs.com}
 
 # Extended Server Syntax
 # ======================
