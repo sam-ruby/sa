@@ -36,7 +36,7 @@ class QueryMetricsMonitoring < BaseModel
       p "do all query"
       QueryMetricsMonitoring.select(selects).where(%q{data_date = ? }, data_date)
       .order(order_str)
-      .page(page).limit(limit)
+      .page(page).per(limit)
     end
   end
 
