@@ -21,12 +21,12 @@
 //= require lunr
 //= require backgrid-extensions/backgrid-paginator
 //= require jade/runtime
-//= require bootstrap-tooltip
-//= require bootstrap-modal
-//= require bootstrap-popover
+//= require bootstrap/tooltip
+//= require bootstrap/modal
+//= require bootstrap/popover
 //= require bootstrap-datepicker
-//= require bootstrap-transition
-//= require bootstrap-dropdown
+//= require bootstrap/transition
+//= require bootstrap/dropdown
 //= require backbone/searchad
 //= require util/CADhelpInfo
 //= require util/backgrid.customize
