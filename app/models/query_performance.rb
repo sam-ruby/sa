@@ -7,20 +7,20 @@ class QueryPerformance < BaseModel
    
     order_str = order_col.nil? ? nil :
      order.nil? ? order_col : order_col + ' ' + order  
-    select_cols = %q{distinct query_str as query, cat_rate as catalog_overlap,
+    select_cols = %q{distinct query_str as query, assort_overlap_indexed as catalog_overlap,
     show_rate as results_shown_in_search, rel_score as overall_relevance_score}
   
     if query.nil? || query.empty?
-      select(select_cols).where(%q{week=? and year=? and cat_rate>0.5 and 
-        show_rate<0.5 and rel_score is not null}, week, year).order(
+      select(select_cols).where(%q{week=? and year=? and assort_overlap_indexed > 0.5
+        and show_rate < 0.5 and rel_score is not null}, week, year).order(
           order_str).page(page).per(limit)
     elsif !fuzzy
-      select(select_cols).where(%q{week=? and year=? and cat_rate>0.5 and 
-        show_rate<0.5 and rel_score is not null and query_str = ?},
+      select(select_cols).where(%q{week=? and year=? and assort_overlap_indexed > 0.5
+        and show_rate<0.5 and rel_score is not null and query_str = ?},
         week, year, query).order(order_str).page(page).per(limit)
     elsif fuzzy
-      select(select_cols).where(%q{week=? and year=? and cat_rate>0.5 and 
-        show_rate<0.5 and rel_score is not null and query_str like ?},
+      select(select_cols).where(%q{week=? and year=? and assort_overlap_indexed > 0.5
+        and show_rate<0.5 and rel_score is not null and query_str like ?},
         week, year, "%#{query}%").order(order_str).page(page).per(limit)
     end
   end
