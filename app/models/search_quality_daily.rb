@@ -53,7 +53,7 @@ class SearchQualityDaily < BaseModel
     search_daily.search_rev_rank_correlation, query_daily.query_count,
     query_daily.query_pvr, query_daily.query_atc, query_daily.query_con,
     query_daily.query_revenue, 
-    (select cat_rate * 100 from query_performance where year = #{year}
+    (select assort_overlap_indexed * 100 from query_performance where year = #{year}
       and week = #{week} and query_str = search_daily.query_str 
       limit 1) as cat_rate, 
     (select show_rate * 100 from query_performance where year = #{year}

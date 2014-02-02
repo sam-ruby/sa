@@ -41,7 +41,7 @@ gem "jade"
 gem "jquery-ui-rails"
 
 # sass version of bootstrap
-gem 'bootstrap-sass'
+gem 'bootstrap-sass', '~> 2.3.2'
 gem 'font-awesome-sass-rails'
 gem 'jquery-rails'
 
