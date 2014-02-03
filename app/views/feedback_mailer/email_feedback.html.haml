@@ -1,0 +1,29 @@
+!!!
+%html
+  %head
+    %meta{:content => 'text/html; charset=>UTF-8',
+    'http-equiv' => 'Content-Type'}
+    %body
+      %h1
+        Customer feedback from #{@customer_name}
+      %h3
+        Description
+      %p
+        = @description
+      %h3
+        URL Of the Page
+      %p
+        = @url
+      %h3
+        Browser Information
+      %p
+        = @browser_info
+      
+      - if attachments['image.png']
+        = image_tag attachments['image.png'].url
+
+      %p
+        Thank you
+        %br
+        Feedback Agent 
+

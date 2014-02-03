@@ -76,6 +76,9 @@ Searchad::Application.routes.draw do
   match 'search(/:action(.:format))',
     :to => 'search', :via => [:get, :post]
 
+  match 'feedback(/:action(.:format))',
+    :to => 'feedback', :via => [:get, :post]  
+  
   namespace :monitoring do
     match 'count(/:action(.:format))',
       :to => 'count', :via => [:get, :post]
