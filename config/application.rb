@@ -44,5 +44,13 @@ module Searchad
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    # Default settings for Action Mailer
+    config.action_mailer.delivery_method = :sendmail
+
+    # Default settings for Feedback mailer
+    config.feedback_mailer = OpenStruct.new
+    config.feedback_mailer.from = 'do-not-reply@walmartlabs.com'
+    config.feedback_mailer.subject = 'CAD Feedback send by Agent'
   end
 end
