@@ -3,6 +3,8 @@ lock '3.1.0'
 
 set :application, 'cad'
 set :repo_url, 'git@gecgithub01.walmart.com:svargh1/searchanalytics'
+set :stages, %w(production development)
+set :default_stage, 'development'
 
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }

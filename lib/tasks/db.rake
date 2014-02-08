@@ -1,5 +1,5 @@
-Rake.application.instance_variable_get('@tasks').delete('db:migrate')
-Rake.application.instance_variable_get('@tasks').delete('db:abort_if_pending_migrations')
+Rake::Task['db:migrate'].clear
+Rake::Task['db:abort_if_pending_migrations'].clear
 namespace 'db' do
   desc 'Migration scripts are not needed in cad'
   task 'migrate' do
