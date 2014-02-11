@@ -85,7 +85,7 @@ class ItemQueryMetricsDaily < BaseModel
     # if I direct do join it will be very slow to join item_query_cat_metrics_daily and all_items_attrs
     sql_for_items =
     "select b.title, b.image_url, b.curr_item_price,
-     a.item_con_ave as item_con, a. item_pvr_ave as item_pvr,
+     a.item_id, a.item_con_ave as item_con, a. item_pvr_ave as item_pvr,
      a.item_atc_ave as item_atc, a.sum_item_revenue as item_revenue, a.sum_shown_count as shown_count from
      (
      select item_id,

@@ -3,9 +3,9 @@ class QueryCountSpcDaily < BaseModel
 
   def self.get_words(
     query, query_date, page=1, order_column='query_score', order='desc', limit=10)
-    selects = %q{query query_str, sqrt(uniq_count)*(100-uniq_con)*z_score  as 
-    query_score, uniq_count query_count, uniq_con query_con, days_alarmed, 
-    days_abovemean, z_score}
+    selects = %q{query query_str, 
+    (sqrt(uniq_count)*(100-uniq_con)*z_score)*exp(-pow(days_alarmed-7, 2)/50) as query_score, uniq_count, uniq_con, days_alarmed, days_abovemean, 
+    z_score}
 
     if order_column.blank?
       order_str = "query_score desc"

@@ -231,5 +231,12 @@ $ ->
     e.preventDefault()
     SearchQualityApp.Router.navigate('/', trigger: true)
   )
+
+
+  # Enable feedback widget
+  $.feedback(
+    ajaxURL: '/feedback/send_feedback'
+    html2canvasURL: 'assets/feedback-master/html2canvas.js')
+  
   MDW.init({appId: 429415118})
 

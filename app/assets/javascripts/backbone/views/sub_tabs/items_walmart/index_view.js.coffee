@@ -110,7 +110,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     # when get_items it means user update the select, so save it to user latest selects
     Searchad.UserLatest.SubTab.walmart.start_date = data.start_date
     Searchad.UserLatest.SubTab.walmart.end_date = data.end_date
-
+    
     data = @process_data(data)
     # if the data param is the exact same stored with collection data. then directly render
     if JSON.stringify(data) == JSON.stringify(@collection.data)
@@ -125,8 +125,12 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
       @query = data.query
     else
       data.query = @query
-    data.view || = "daily"
+    if data.start_date == data.end_date
+      data.view = "daily"
+    else
+      data.view = "ranged"
     @data = data
+
     return data
 
 

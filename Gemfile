@@ -12,7 +12,6 @@ gem "haml"
 gem "redis"
 gem "redis-objects"
 gem "highcharts-rails"
-gem "devise"
 gem "rails-backbone"
 gem "i18n-js"
 gem "backbone-rails-pageable"
@@ -32,8 +31,15 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
-group :development do
+group :development, :test  do
   gem 'debugger'
+  gem 'capistrano-rails', '~> 1.0.0'
+  gem 'rspec-rails', '~> 3.0.0.beta'
+  gem 'capybara'
+  gem 'capybara-webkit'
+  # gem 'selenium-webdriver'
+  # gem 'poltergeist'
+  # gem 'phantomjs', :require => 'phantomjs/poltergeist'
 end
 
 gem 'sass-rails'
@@ -41,7 +47,7 @@ gem "jade"
 gem "jquery-ui-rails"
 
 # sass version of bootstrap
-gem 'bootstrap-sass'
+gem 'bootstrap-sass', '~> 2.3.2'
 gem 'font-awesome-sass-rails'
 gem 'jquery-rails'
 
@@ -56,6 +62,9 @@ gem 'jquery-rails'
 
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
+
+gem 'capistrano', '~> 3.1.0'
+gem 'capistrano-bundler'
 
 group :test do
   # Pretty printed test output

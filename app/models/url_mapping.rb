@@ -14,10 +14,8 @@ class URLMapping < BaseModel
       %Q{select distinct url_mapping.item_id, amazon.idd, amazon.name,
       amazon.brand, amazon.position, walmart_items.position as
       walmart_position,
-      amazon.name, amazon.brand, amazon.imgurl as img_url,
-      amazon.url, amazon.newprice,
-      (select curr_item_price from all_item_attrs
-      where item_id = concat(url_mapping.item_id) limit 1) as curr_item_price
+      amazon.imgurl as img_url, amazon.url, amazon.newprice,
+      item_attrs.curr_item_price 
       from url_mapping 
       left outer join
       (select item, position from walmart_query_top_32_items where

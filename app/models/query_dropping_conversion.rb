@@ -162,15 +162,17 @@ class QueryDroppingConversion < BaseModel
     #query item which id are in processed arr
     sql_statement = "select item_id, title, image_url, seller_name from
       (select item_id, title, image_url, seller_id 
-       FROM all_item_attrs where item_id in (?) order by Field(item_id, ?)
+       FROM all_item_attrs where item_id in (?) 
       )a 
       inner join 
       (select distinct seller_id, seller_name 
       from mp_seller_id_name_mapping_daily where data_date = ?
       )b
-      on a.seller_id = b.seller_id"
+      on a.seller_id = b.seller_id
+      order by Field(item_id, ?)
+      "
 
-      items = find_by_sql([sql_statement, item_ids_arr, item_ids_arr, query_date])
+      items = find_by_sql([sql_statement, item_ids_arr, query_date, item_ids_arr])
     return items
   end
 
