@@ -179,7 +179,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     {name: 'rank_metric',
     label: "Rank Metric",
     editable: false,
-    cell: 'number',
+    cell: 'integer',
     headerCell: "helper"},
     {name: 'cat_rate',
     label: I18n.t('dashboard.catalog_overlap'),

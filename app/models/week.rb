@@ -1,10 +1,6 @@
 class Week < BaseModel
   self.table_name = 'pipeline_log_weekly'
   
-  def self.get_week_from_date(date)
-    find_by_sql(["select week(?) as week, year(?) as year from categories limit 1", date, date])[0]
-  end
-
   def self.all_weeks(year)
     select("distinct week, year").where([%q{year = ?}]).order("week DESC").map {|x|
       {week: x.week, year: x.year}}

@@ -3,9 +3,10 @@ class SearchController < BaseController
   before_filter :set_common_data
   def get_query_stats_date
     query = params[:query]
-    week = get_week_from_date(@date)["week"]
-    year = get_week_from_date(@date)["year"]
-    
+    year_week = get_week_from_date(@date)
+    week = year_week[:week]
+    year = year_week[:year]
+
     respond_to do |format|
       format.json do 
         query_stats = QueryCatMetricsDaily.get_query_stats_date(

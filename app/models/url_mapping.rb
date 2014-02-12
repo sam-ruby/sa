@@ -3,13 +3,11 @@ class URLMapping < BaseModel
   attr_accessor :walmart_price
 
   def self.get_amazon_items(query_str, four_weeks_info)
-    # three_weeks_info is array of [{week,year},{week,year}] cuz it might 
-    # contain 3 week that cross years
+    # three_weeks_info is array of [{week,year},{week,year}] cuz it might contain 3 week that cross years
     latest_year = four_weeks_info[0]["year"]
     latest_weeks = four_weeks_info[0]["weeks"]
     previous_year = four_weeks_info[1]["year"]
     previous_weeks = four_weeks_info[1]["weeks"]
-    
     amazon_comparison_items = find_by_sql([
       %Q{select distinct url_mapping.item_id, amazon.idd, amazon.name,
       amazon.brand, amazon.position, walmart_items.position as
@@ -27,11 +25,11 @@ class URLMapping < BaseModel
       where 
      (year = ? and week in (?) OR year = ? and week in (?))
       and query = ? group by idd) as
-      amazon
-      where url_mapping.retailer_id = amazon.idd
-      group by amazon.idd order by position}, latest_year,
-      latest_weeks.last, latest_year, latest_weeks, previous_year, 
-      previous_weeks,query_str])
+      amazon, all_item_attrs item_attrs
+      where url_mapping.retailer_id = amazon.idd and
+      concat(url_mapping.item_id) = item_attrs.item_id
+      group by amazon.idd order by position}, latest_year, latest_weeks.last,
+      latest_year, latest_weeks, previous_year, previous_weeks,query_str])
    
     in_top_32 = amazon_comparison_items.select do |item|
       !item.walmart_position.nil?

@@ -4,8 +4,9 @@ class SearchRelController < BaseController
 
   def get_search_words
     query = params[:query] 
-    week = get_week_from_date(@date)["week"]
-    year = get_week_from_date(@date)["year"]
+    year_week = get_week_from_date(@date)
+    week = year_week[:week]
+    year = year_week[:year]
 
     respond_to do |format|
       format.json do 
@@ -128,8 +129,9 @@ class SearchRelController < BaseController
     else
       fuzzy = false
     end
-    week = get_week_from_date(@date)["week"]
-    year = get_week_from_date(@date)["year"]
+    year_week = get_week_from_date(@date)
+    week = year_week[:week]
+    year = year_week[:year]
 
     @search_words = QueryPerformance.get_comp_analysis(
       query, week, year, fuzzy, @page, @sort_by, @order, @limit)

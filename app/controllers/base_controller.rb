@@ -64,28 +64,49 @@ class BaseController < ApplicationController
 
   # output: {year=>, week =>} for multiple year handling
   def get_week_from_date(date)
-    date_info = Hash.new
-    # ALwasys get teh date for last friday. 
+    # Need to get the Merchant week for the current date
+    # Considerations
+    # - Identify the last Friday, which is the last day of week
+    # - If the last Friday date is in Jan, then the year is previous
+    #   year.
+    # - Indentfy the first Friday in Feb for the current year,
+    #   this is week 1
+    # - (last Friday date - first Feb friday date)/7 gives the complete
+    #   weeks. Add 1 to this to get the merchant week
+    
+    # Get the date for last friday. 
     last_friday_date = date - (date.wday+2)%7
-    return Week.get_week_from_date(last_friday_date)
+    year = last_friday_date.month == 1 ? last_friday_date.year - 1:
+      last_friday_date.year
+
+    # Get the first friday in Feb
+    feb_one = Date.new(year, 2, 1)
+    if feb_one.wday == 6
+      feb_one += 6.days
+    else
+      feb_one += (5 - feb_one.wday).days
+    end
+
+    {year: year,
+     # how many weeks between last_friday and feb_one friday
+     week: 1 + (last_friday_date.to_time.to_i - feb_one.to_time.to_i)/(60*60*24*7)}
   end
 
-  # when get previous weeks, it might contain two years. 
   def get_four_weeks_from_date(date)
-    # always suppose it has two years    [{week, year}, {week, year}]
-    current_week_info = get_week_from_date(date)
-    # p current_week_info.to_yaml
-    week = current_week_info["week"]
-    year = current_week_info["year"]
+    year_week  = get_week_from_date(date)
+    week = year_week[:week]
+    year= year_week[:year]
+
     weeks = Array.new(2) { Hash.new }
-    if week >= 3
-      weeks[0]= {"weeks" => (week-3..week).to_a, "year" => year}
+    if week > 3
+      weeks[0] = {"weeks" => (week-3..week).to_a, "year" => year}
     else
-      weeks[0] = {"weeks" => (0..week).to_a, "year" => year}
-      last_year_total_week = get_dod_week_info(year-1)["total_weeks"]
-      weeks[1] = {"weeks" => (last_year_total_week-(3-week-1)..last_year_total_week).to_a, "year" => year-1}
+      weeks[0] = {"weeks" => (1..week).to_a, "year" => year}
+      max_weeks = get_max_merchant_weeks(year) # 53 or 52
+      weeks[1] = {"weeks" => (max_weeks - (3-week)..max_weeks).to_a,
+                  "year" => year-1}
     end
-    return weeks
+    weeks
   end
  
   #not really in use 
@@ -130,13 +151,24 @@ class BaseController < ApplicationController
     return dod_date
   end
 
-  # TODO: gonna replace by automatic mapping
-  def get_dod_week_info(year)
-    week_mapping = Hash.new
-    week_mapping["2012"] = {"start_date" => Date.new(2012,1,5), "total_weeks" => 52}
-    week_mapping["2013"] = {"start_date" => Date.new(2013,1,5), "total_weeks" => 51}
-    week_mapping["2014"] = {"start_date" => Date.new(2014,1,5), "total_weeks" => 52}
-    return week_mapping[year.to_s]
+  def get_max_merchant_weeks(year)
+    # Get the first friday in Feb
+    feb_one = Date.new(year, 2, 1)
+    if feb_one.wday == 6
+      feb_one += 6.days
+    else
+      feb_one += (5 - feb_one.wday).days
+    end
+
+    # Get the last friday in Feb
+    jan_last_friday = Date.new(year + 1, 1, 31)
+    if jan_last_friday.wday > 5 
+      jan_last_friday -= 1.day  
+    else
+      jan_last_friday += (5 - jan_last_friday.wday).days
+    end
+
+    ((jan_last_friday.to_time.to_i - feb_one.to_time.to_i)/(60*60*24*7)) + 1
   end
 
   # def convert_to_merchant_week(week, year)

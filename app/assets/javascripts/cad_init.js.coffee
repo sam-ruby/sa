@@ -42,7 +42,16 @@ $ ->
       fromRaw: (rawValue) ->
         return '-' if !rawValue?
         "#{super(parseFloat(rawValue))}%"
-        
+   
+    class CustomNumberFormatterNoDecimals extends Backgrid.NumberFormatter
+      decimals: 0
+      decimalSeparator: '.'
+      orderSeparator: ','
+
+      fromRaw: (rawValue) ->
+        return '-' unless rawValue
+        super(rawValue)
+
     class CustomNumberFormatter extends Backgrid.NumberFormatter
       decimals: 2
       decimalSeparator: '.'
@@ -67,6 +76,7 @@ $ ->
           '$' + super(rawValue)
         else
           '-'
+
     UpdateURLParam: updateURLParam
     PercentFormatter: PercentFormatter
     CurrencyFormatter: CurrencyFormatter
