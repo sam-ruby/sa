@@ -69,7 +69,7 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     @active = true
     @trigger = true
     # if there is already collection, with the same date and no query param, then directly render
-    if @collection.data.date ==@controller.get_filter_params().date && @collection.data.query ==null      
+    if @collection.data.date ==@controller.get_filter_params().date && @collection.data.query ==null
         @render()
         return
     # if needs to fetch data, process first

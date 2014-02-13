@@ -76,13 +76,13 @@ class QueryCatMetricsDaily < BaseModel
     sum(query_daily.uniq_atc)/sum(query_daily.uniq_count) query_atc,
     sum(query_daily.uniq_con)/sum(query_daily.uniq_count) query_con,
     sum(query_daily.revenue) query_revenue,
-    (select cat_rate * 100 from query_performance where year = #{year}
+    (select assort_overlap * 100 from query_performance_week where year = #{year}
       and week = #{week} and query = query_daily.query
       limit 1) as cat_rate, 
-    (select show_rate * 100 from query_performance where year = #{year}
+    (select shown_overlap * 100 from query_performance_week where year = #{year}
       and week = #{week} and query = query_daily.query 
       limit 1) as show_rate, 
-    (select rel_score from query_performance where year = #{year}
+    (select rel_score from query_performance_week where year = #{year}
       and week = #{week} and query = query_daily.query
       limit 1) as rel_score}
 

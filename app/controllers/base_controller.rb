@@ -75,7 +75,12 @@ class BaseController < ApplicationController
     #   weeks. Add 1 to this to get the merchant week
     
     # Get the date for last friday. 
-    last_friday_date = date - (date.wday+2)%7
+    if date.wday == 5
+      last_friday_date = date - 7.days
+    else 
+      last_friday_date = date - (date.wday+2)%7
+    end
+
     year = last_friday_date.month == 1 ? last_friday_date.year - 1:
       last_friday_date.year
 

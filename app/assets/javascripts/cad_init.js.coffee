@@ -171,30 +171,34 @@ $ ->
         queryItemsView.get_items(data)
     )
 
-     #cvr dropped view
+    #cvr dropped view
     cvrDroppedQueryView = new Searchad.Views.AdhocQuery.cvrDroppedQueryView (
       el: '#adhoc-query-report'
       el_results: '#cvr-dropped-query-results'
       )
 
     cvrDroppedQueryView.listenTo(
-        controller, 'adhoc:cvr_dropped_query', (data) -> cvrDroppedQueryView.get_items(data))
+        controller, 'adhoc:cvr_dropped_query',
+        (data) -> cvrDroppedQueryView.get_items(data))
 
-    #cvr_dropped_view when click on q query show the item comparison regarding that query
-    cvrDroppedQueryItemComparisonView = new Searchad.Views.SubTabs.ItemComparisonView {
-      el: '#search-sub-content'
-    }
+    #cvr_dropped_view when click on q query show the item comparison
+    #regarding that query
+    cvrDroppedQueryItemComparisonView =
+      new Searchad.Views.SubTabs.ItemComparisonView(el: '#search-sub-content')
+
     cvrDroppedQueryItemComparisonView.listenTo(
       controller, 'cvr_dropped_query:item_comparison', (data) ->
          cvrDroppedQueryItemComparisonView.get_items(data)
     )
     
     adhocQueryView = new Searchad.Views.AdhocQuery.IndexView(
-      el: '#adhoc-query-report' 
+      el: '#adhoc-query-report'
       el_form: '#cvr-dropped-query-form'
     )
     adhocQueryView.listenTo(
-      controller, 'adhoc:toggle_search_mode',(query_comparison_on)->adhocQueryView.toggle_search_mode(query_comparison_on))
+      controller, 'adhoc:toggle_search_mode',
+      (query_comparison_on)->
+        adhocQueryView.toggle_search_mode(query_comparison_on))
 
     adhocQueryView.listenTo(
       controller, 'adhoc:index',(data)->adhocQueryView.render_form(data))

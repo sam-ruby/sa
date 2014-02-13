@@ -59,7 +59,7 @@ class Searchad.Views.PoorPerforming.IndexView extends Backbone.View
     label: I18n.t('query'),
     editable: false,
     cell: QueryCell},
-    {name: 'query_revenue',
+    {name: 'revenue',
     label: I18n.t('search_analytics.revenue'),
     editable: false,
     cell: 'number',
