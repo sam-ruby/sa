@@ -16,8 +16,7 @@ class SearchRelController < BaseController
           render :json => [{:total_entries => 0}, @search_words]
         else
           render :json => [
-            {:total_entries => @search_words.total_pages * @limit,
-             :date => @date}, @search_words]
+            {:total_entries => 500, :date => @date}, @search_words]
         end
       end
       format.csv do |format|

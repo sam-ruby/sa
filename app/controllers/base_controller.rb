@@ -73,16 +73,31 @@ class BaseController < ApplicationController
     #   this is week 1
     # - (last Friday date - first Feb friday date)/7 gives the complete
     #   weeks. Add 1 to this to get the merchant week
-    
+   
+    # If the following friday of the given data is less than the 
+    # current/todays date, go to next Friday. If not
     # Get the date for last friday. 
-    if date.wday == 5
-      last_friday_date = date - 7.days
-    else 
-      last_friday_date = date - (date.wday+2)%7
+    friday_date = date
+    if date.wday < 6
+      friday_date += (5 - date.wday).days
+    else
+      friday_date += 6.days
     end
 
-    year = last_friday_date.month == 1 ? last_friday_date.year - 1:
-      last_friday_date.year
+    time_now = Time.now
+    date_now = Date.new(time_now.year, time_now.month, time_now.day)
+
+    if friday_date >= date_now  
+      friday_date = date
+      if date.wday == 5
+        friday_date -= 7.days
+      else 
+        friday_date -= (date.wday+2)%7
+      end
+    end
+
+    year = friday_date.month == 1 ? friday_date.year - 1:
+      friday_date.year
 
     # Get the first friday in Feb
     feb_one = Date.new(year, 2, 1)
@@ -94,7 +109,7 @@ class BaseController < ApplicationController
 
     {year: year,
      # how many weeks between last_friday and feb_one friday
-     week: 1 + (last_friday_date.to_time.to_i - feb_one.to_time.to_i)/(60*60*24*7)}
+     week: 1 + (friday_date.to_time.to_i - feb_one.to_time.to_i)/(60*60*24*7)}
   end
 
   def get_four_weeks_from_date(date)

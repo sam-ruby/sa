@@ -45,62 +45,51 @@ class SearchQualityDaily < BaseModel
     query, year, week, query_date, 
     page=1,  limit=10, order_col=nil, order='asc')
     
-    order_str = order_col.nil? ? 'rank_metric desc' : 
-      order.nil? ? order_col : order_col + ' ' + order  
-    
-    join_stmt = %Q{as search_daily join
-    (select query, cat_id, page_type, channel, data_date, sum(uniq_count) 
-    uniq_count, sum(uniq_con) uniq_con, sum(revenue) revenue from 
-    query_cat_metrics_daily where cat_id=0 and page_type='SEARCH' and 
-    channel='ORGANIC_USER' and data_date='#{query_date}' group by 
-    page_type,data_date,query,cat_id,channel) as query_daily 
-    on search_daily.data_date = query_daily.data_date and
-    search_daily.query = query_daily.query}
+    order_str = order_col.nil? ? 'order by rank_metric desc' : 
+      order.nil? ? 'order by ' + order_col : %Q{order by #{order_col} #{order}}
+    offset = (page - 1) * 10
+    order_limit_str = %Q{ #{order_str} limit #{limit} offset #{offset}}
 
+    sql_stmt = %Q{select in_tab_a.*, 
+      (in_tab_a.query_con/in_tab_a.query_count)*100 query_con, 
+      (select SQRT(in_tab_a.query_count)*(100-(in_tab_a.query_con/in_tab_a.query_count)
+      )*(in_tab_a.cat_rate/100-in_tab_a.show_rate/100)) rank_metric 
+      from 
+        (select
+        a.query,
+        a.search_rev_rank_correlation, 
+        sum(b.uniq_count) as query_count, 
+        sum(b.uniq_con) as query_con, 
+        sum(b.revenue) revenue, 
+        (c.assort_overlap * 100) cat_rate, 
+        (c.shown_overlap * 100) show_rate, 
+        c.rel_score 
+        from 
+          (SELECT query, search_rev_rank_correlation, data_date FROM 
+          search_quality_daily WHERE data_date = ? %s) a,
+          query_cat_metrics_daily b,
+          query_performance_week c 
+          where 
+          b.cat_id = 0 and b.page_type='SEARCH' and b.channel = 'ORGANIC_USER' 
+          and b.data_date = a.data_date and b.query = a.query and 
+          c.year = ? and c.week = ? and c.query = a.query 
+          group by b.query, b.cat_id, b.channel) in_tab_a #{order_limit_str}} 
 
-    selects = %Q{search_daily.query,
-    search_daily.search_rev_rank_correlation, query_daily.uniq_count,
-    (query_daily.uniq_con/query_daily.uniq_count)*100 query_con,
-    query_daily.revenue, 
-    (select assort_overlap * 100 from query_performance_week where year = #{year}
-      and week = #{week} and query = search_daily.query 
-      limit 1) as cat_rate, 
-    (select shown_overlap * 100 from query_performance_week where year = #{year}
-      and week = #{week} and query = search_daily.query 
-      limit 1) as show_rate, 
-    (select rel_score from query_performance_week where year = #{year}
-      and week = #{week} and query = search_daily.query
-      limit 1) as rel_score,    
-    (select SQRT(query_daily.uniq_count)*(100-(
-    query_daily.uniq_con/query_daily.uniq_count))*(
-    cat_rate/100-show_rate/100)) as rank_metric}
-
-    where_conditions = []
-   
     if query.nil? or query.empty? 
-      where_conditions = sanitize_sql_array(
-        [%q{search_daily.data_date = '%s'}, query_date])
-      return joins(join_stmt).select(selects).where(
-        where_conditions).order(order_str).page(page).per(limit)
+      return find_by_sql([sql_stmt % '', query_date, year, week])
     end  
+    
     my_match= /^EXACT_WORD=(.*)ALL_WORD=(.*)ANY_WORD=(.*)NONE_WORD=(.*)$/.match(query)  
 
     if my_match.nil?  
-      where_conditions = sanitize_sql_array(
-        [%q{search_daily.data_date = '%s' and search_daily.query = '%s'},
-         query_date, query])
-      return joins(join_stmt).select(selects).where(where_conditions).order(
-        order_str).page(page).per(limit)  
+      return find_by_sql(
+        [sql_stmt % "and query = '#{query}'", query_date, year, week])
     end
-
 
     exact_word = my_match[1]
     if exact_word!= ''
-      where_conditions = sanitize_sql_array(
-        [%q{search_daily.data_date = '%s' and search_daily.query = '%s'},
-         query_date, exact_word])
-      return joins(join_stmt).select(selects).where(where_conditions).order(
-        order_str).page(page).per(limit)
+      return find_by_sql(
+        [sql_stmt % "and query = '#{exact_word}'", query_date, year, week])
     end
 
     # if it is not exact world need to generate that condition string
@@ -115,7 +104,7 @@ class SearchQualityDaily < BaseModel
       sub_match.collect!{|x|
         x = '%'+ x + '%'
       }
-      like_str= like_str +'and search_daily.query like'  + '\'' + 
+      like_str= like_str +'and query like'  + '\'' + 
         sub_match.join(' ') + '\''
     end
 
@@ -123,21 +112,18 @@ class SearchQualityDaily < BaseModel
     if any_word!= ''
       sub_match = any_word.split(/\s+/) 
 
-      like_str = like_str + ' and search_daily.query REGEXP' +  '\'' + 
+      like_str = like_str + ' and query REGEXP' +  '\'' + 
         sub_match.join("|") + '\''
     end
 
     #NOT REGEXP 'heater|desk'
     if none_word!= ''
       sub_match = none_word.split(/\s+/) 
-      like_str = like_str + 'and search_daily.query NOT REGEXP' +  '\'' + 
+      like_str = like_str + ' and query NOT REGEXP' +  '\'' + 
         sub_match.join("|") + '\''
     end
 
-    statement = %q{search_daily.data_date = ?} + like_str
-
-    where_conditions = sanitize_sql_array([statement, query_date])
-    return joins(join_stmt).select(selects).where(where_conditions).order(
-      order_str).page(page).per(limit)
+    return find_by_sql(
+      [sql_stmt % like_str, query_date, year, week])
   end
 end
