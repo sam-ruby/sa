@@ -76,7 +76,19 @@ class BaseController < ApplicationController
    
     # If the following friday of the given data is less than the 
     # current/todays date, go to next Friday. If not
-    # Get the date for last friday. 
+    # Get the date for last friday.p
+    
+    # Get the first friday in Feb
+    get_first_friday = Proc.new do|year|
+      feb_one = Date.new(year, 2, 1)
+      if feb_one.wday == 6
+        feb_one += 6.days
+      else
+        feb_one += (5 - feb_one.wday).days
+      end
+      feb_one
+    end
+ 
     friday_date = date
     if date.wday < 6
       friday_date += (5 - date.wday).days
@@ -92,22 +104,17 @@ class BaseController < ApplicationController
       if date.wday == 5
         friday_date -= 7.days
       else 
-        friday_date -= (date.wday+2)%7
+        friday_date -= ((date.wday+2)%7).days
       end
     end
 
-    year = friday_date.month == 1 ? friday_date.year - 1:
-      friday_date.year
-
     # Get the first friday in Feb
-    feb_one = Date.new(year, 2, 1)
-    if feb_one.wday == 6
-      feb_one += 6.days
-    else
-      feb_one += (5 - feb_one.wday).days
-    end
+    feb_one = get_first_friday.call(friday_date.year)
+    
+    feb_one = get_first_friday.call(friday_date.year - 1) if 
+      friday_date < get_first_friday.call(friday_date.year) 
 
-    {year: year,
+    {year: feb_one.year,
      # how many weeks between last_friday and feb_one friday
      week: 1 + (friday_date.to_time.to_i - feb_one.to_time.to_i)/(60*60*24*7)}
   end

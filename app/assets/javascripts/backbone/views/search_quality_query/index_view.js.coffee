@@ -172,7 +172,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     label: I18n.t('search_analytics.query_string'),
     editable: false,
     cell: QueryCell},
-    {name: 'uniq_count',
+    {name: 'query_count',
     label: I18n.t('search_analytics.query_count'),
     editable: false,
     cell: 'integer'},
