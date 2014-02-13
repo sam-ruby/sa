@@ -194,7 +194,8 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     {name:'expected_revenue_diff',
     label:'Potential Rev Loss ($)',
     editable:false,
-    cell:'number'
+    cell:'number',
+    formatter: Utils.CurrencyFormatter,
     helpInfo: helpInfo.expected_revenue_diff
     headerCell:'helper'
     },

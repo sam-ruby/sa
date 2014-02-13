@@ -34,7 +34,7 @@ class QueryDroppingConversion < BaseModel
           sum(revenue) as revenue 
          from query_cat_metrics_daily 
          where query=? and data_date between ? and ? and
-         cat_id=0 and channel="ORGANIC_USER" and page_type = "SEARCH")
+         cat_id=0 and channel="ORGANIC_USER" and page_type = "SEARCH"
       )b 
       inner join 
       (
@@ -44,7 +44,7 @@ class QueryDroppingConversion < BaseModel
            sum(uniq_con)/sum(uniq_count) as con, 
            sum(revenue) as revenue from query_cat_metrics_daily 
         where query = ? and data_date between ? and ? and cat_id=0 and 
-        channel="ORGANIC_USER" and page_type = "SEARCH") 
+        channel="ORGANIC_USER" and page_type = "SEARCH" 
       )d 
       on b.query=d.query'
 
