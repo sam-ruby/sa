@@ -23,3 +23,12 @@
       %li.date-week-holder
       %li{:style=>'margin-right: 1em'}
         %i#dp3.icon-th{:style=>'line-height:2em; font-size:1.5em; color: white;', 'data-date-format'=>'mm-dd-yyyy'}
+      %li.dropdown   
+        %a.dropdown-toggle{'data-toggle'=>'dropdown', :href=>"#"}
+          %span{:style=>'font-size:1.5em;font-weight:500;color:burlywood;'}
+            ?
+            %b.caret
+        %ul.dropdown-menu 
+          %li
+            %a{:href=>'/release_notes'}
+              Release Notes
