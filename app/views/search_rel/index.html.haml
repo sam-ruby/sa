@@ -1,2 +1,7 @@
+- content_for :title do
+  = render 'shared/title'
+
 - content_for :main_content do
+  = javascript_include_tag :application
+  = javascript_include_tag 'http://mdw.walmartlabs.com/mdw.js'
   = render :partial => 'shared/main_content'

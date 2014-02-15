@@ -1,0 +1,47 @@
+- releases = YAML.load_file(Rails.root.join('RELEASES.yml'))
+%h2
+  Release Notes
+
+%table.table.table-hover.table-condensed
+  %tr
+    %th
+      Release Version
+    %th
+      Release Date
+  - releases.keys.each do |release|
+    %tr
+      %td
+        %a{:href=>"##{release}"}
+          = release
+      %td
+        = releases[release]['Date']
+
+- releases.each do |release, data|
+  %span{:style=>'font-size: 1em;font-weight: bold;'}
+    %a{:name => release}
+      Version #{release}
+    %span{:style=>'font-weight:normal'}
+      &nbsp; &nbsp; Released on #{data['Date']}
+  %hr{:style=>'margin-top:.4em;border-top: thin solid silver;'}
+  
+  %div{:style=>'margin-left: 2em;'}
+    %table.table.table-hover.table-condensed
+      - data.each do |comp, details|
+        - next if comp =~ /date/i
+        %tr
+          %th{:style=>'border-color: white;'}
+            = comp
+        - details.each do|key, value|
+          %tr
+            %td
+              %span{:style=>'font-weight:normal'}
+                - if (match = key.match(/(cdngm-\d+)/))
+                  - jira = match.captures.first
+                  %a{:href=>'//jira.walmart.com/browse/' + jira,
+                    :target => '_blank'}
+                    = jira
+                - else
+                  = key
+            %td
+              %span{:style=>'font-weight:normal'}
+                = value
