@@ -1,5 +1,7 @@
 Searchad::Application.routes.draw do
 
+  get "help/index"
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -68,6 +70,7 @@ Searchad::Application.routes.draw do
     :to => 'poor_performing', :via => [:get, :post]  
   
   get 'test(/:action(.:format))', :to=>'test'
+  get 'release_notes(/:action(.:format))', :to=>'help'
   get 'comp_analysis(/:action(.:format))', :to=>'comp_analysis'
 
   match 'search_kpi(/:action(.:format))',

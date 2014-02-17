@@ -1,9 +1,4 @@
 set :stage, :production
-ask :branch, proc { `git tag`.split("\n").last }   
-puts "You entered #{fetch(:branch)}. Continue ?"
-ask 'Y/n', :Y
-exit unless fetch('Y/n') =~ /y+/i
-
 # Simple Role Syntax
 # ==================
 # Supports bulk-adding hosts to roles, the primary

@@ -120,14 +120,11 @@
   
   %body
     #mdw-toolbar
-    = render 'shared/title'
+    = yield :title
     .container
       .row
         %ul.nav.nav-tabs.master-tab{:style=>'display:none'}
       .row
         #data-container
           = yield :main_content
-    
-    = javascript_include_tag :application
-    = javascript_include_tag 'http://mdw.walmartlabs.com/mdw.js'
     = yield :javascript
