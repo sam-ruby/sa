@@ -1,0 +1,21 @@
+--- # This is a text file to mark the features/bug fixes that went in a Release
+
+1.6.1:
+    Date: Feb 14, 2014
+    Fixes:
+      cdngm-620: Walmart results subtab missing information for several metrics
+ 
+1.6.0:
+    Date: Feb 5, 2014
+    Features:
+      cdngm-580: Feedback widget to take Screen shot and email Support
+      cdngm-570: Automated deployment of Releases from Git using Capistrano
+      cdngm-571: Automated test suites for Regression testing
+    Fixes:
+      cdngm-519: Retain date range in Walmart Results Analysis subtab even after you navigate away from that section
+      cdngm-585: Sort the queries in the Query Count Monitoring feature to have the queries recently going up
+      cdngm-579: For Amazon comptetive analysis, instead of showing catalog overlap show the overlap between Amazon top 32 and the respective Walmart items that are searchable 
+      cdngm-567: Data inconsistency while shown in the screen
+      cdngm-558: Fix the Export to CSV feature for Query Analysis
+      cdngm-578: Data fix
+      
