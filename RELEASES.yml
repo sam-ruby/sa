@@ -1,4 +1,10 @@
 --- # This is a text file to mark the features/bug fixes that went in a Release
+
+1.6.1:
+    Date: Feb 14, 2014
+    Fixes:
+      cdngm-620: Walmart results subtab missing information for several metrics
+ 
 1.6.0:
     Date: Feb 5, 2014
     Features:
@@ -12,3 +18,4 @@
       cdngm-567: Data inconsistency while shown in the screen
       cdngm-558: Fix the Export to CSV feature for Query Analysis
       cdngm-578: Data fix
+      
