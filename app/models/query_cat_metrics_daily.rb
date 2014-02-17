@@ -2,47 +2,49 @@ class QueryCatMetricsDaily < BaseModel
   self.table_name = 'query_cat_metrics_daily'
 
   def self.get_search_words(
-    query, query_date, page=1, order_column=nil, order='asc', limit=10)
-    
-    selects = %q{query, channel, sum(revenue) revenue, 
-      sum(uniq_count) query_count, 
-      sum(uniq_pvr)/sum(uniq_count) query_pvr,
-      sum(uniq_atc)/sum(uniq_count) query_atc, 
-      sum(uniq_con)/sum(uniq_count) query_con, cat_id, data_date}
-    
+    query, query_dates, page=1, order_column=nil, order='asc', limit=10)
+  
+    sql_stmt = %Q{select tab_a.* from
+      (select query, sum(revenue) revenue, sum(uniq_count) query_count, 
+         sum(uniq_pvr)/sum(uniq_count) query_pvr, 
+         sum(uniq_atc)/sum(uniq_count) query_atc,
+         sum(uniq_con)/sum(uniq_count) query_con
+       from query_cat_metrics_daily 
+       where
+       page_type = 'SEARCH' and
+       cat_id = 0 and
+       (channel = 'ORGANIC_USER' or channel = 'ORGANIC_AUTO_COMPLETE') and
+       uniq_count > 100 and 
+       data_date in (?) %s 
+       group by query, cat_id) tab_a 
+       where tab_a.query_count > 500 and tab_a.query != ''
+       order by %s}
+  
     if order_column.nil?
-      order_str = "sqrt(sum(uniq_count))*(1-(sum(uniq_con)/sum(uniq_count))) desc"
+      order_str = "sqrt(tab_a.query_count*(1-tab_a.query_con)) desc"
     else
       order_str = order_column
       order_str << ' ' << order
     end
     
+    order_limit_str = %Q{ #{order_str} limit #{limit} offset %s}
     limit = 10000 if page == 0
-    
+   
     if query
-      if page > 0 
-        QueryCatMetricsDaily.select(selects).where([
-           %q{data_date = ? AND cat_id = ? AND channel = "ORGANIC_USER" and 
-           page_type = 'SEARCH' and query = ?}, query_date, 0, query]).group(
-             'query, data_date').order(order_str).page(page).per(limit)
-      else
-        QueryCatMetricsDaily.select(selects).where([
-           %q{data_date = ? AND cat_id = ? AND channel = "ORGANIC_USER" and 
-           page_type = 'SEARCH' and query = ?}, query_date, 0, query]).group(
-             'query, data_date').order(order_str).limit(limit)
-      end
+      query_str = 'and query = ? '
+      args = [query_dates, query]
     else
-      if page > 0 
-        QueryCatMetricsDaily.select(selects).where([
-           %q{data_date = ? AND cat_id = ? AND channel = "ORGANIC_USER" and 
-           page_type = 'SEARCH'}, query_date, 0]).group(
-             'query, data_date').order(order_str).page(page).per(limit)
-      else
-        QueryCatMetricsDaily.select(selects).where([
-           %q{data_date = ? AND cat_id = ? AND channel = "ORGANIC_USER" and
-           page_type = 'SEARCH'}, query_date, 0]).group(
-             'query, data_date').order(order_str).limit(limit)
-      end
+      query_str = ''
+      args = [query_dates]
+    end
+
+    if page > 0 
+      order_limit_str %= (page -1) * limit
+      find_by_sql([
+        sql_stmt % [query_str, order_limit_str], *args]) 
+    else
+      find_by_sql([
+        sql_stmt % [query_str, order_str], *args])
     end
   end
 

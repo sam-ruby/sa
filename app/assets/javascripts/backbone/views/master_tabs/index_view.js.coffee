@@ -3,12 +3,12 @@ Searchad.Views.MasterTab ||= {}
 class Searchad.Views.MasterTab.IndexView extends Backbone.View
  initialize: (options) =>
     @controller = SearchQualityApp.Controller
-    @router = SearchQualityApp.Router   
+    @router = SearchQualityApp.Router
     @controller.bind('poor-performing:index', @select_pp_tab)
     @controller.bind('search-rel:index', @select_sq_tab)
     @controller.bind('search-kpi:index', @select_search_kpi_tab)
     @controller.bind('query-monitoring-count:index', @select_qmc_tab)
-    @controller.bind('qm-metrics:index', @select_qm_metrics_tab)  
+    @controller.bind('qm-metrics:index', @select_qm_metrics_tab)
     @controller.bind('master-tabs:cleanup', @unrender)
     @active = false
 
@@ -63,9 +63,10 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       {class: ['poor-performing-tab']
       href: '#poor_performing'
       title: 'Poor Performing Intents'}]
-    @$el.prepend(@get_tab_el(tabs[2]))
-    @$el.prepend(@get_tab_el(tabs[1]))
-    @$el.prepend(@get_tab_el(tabs[0]))
+
+    @$el.append(@get_tab_el(tabs[2]))
+    @$el.append(@get_tab_el(tabs[1]))
+    @$el.append(@get_tab_el(tabs[0]))
 
   init_query_monitoring: =>
     tabs = [{

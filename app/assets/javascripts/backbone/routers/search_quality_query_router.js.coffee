@@ -7,9 +7,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "search_rel/item_id/:id(/filters/*wday)": "search_query_items"
     
     "search_kpi(/filters/*wday)": "search_kpi"
-    "(filters/*wday)": "search_kpi"
     
     "poor_performing(/query/:query)(/filters/*wday)": "poor_performing"
+    "(filters/*wday)": "poor_performing"
     
     "query_monitoring/count(/query/:query)(/filters/*wday)":
       "query_monitoring_count"
@@ -25,7 +25,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     curr_date = $('#dp3').datepicker('getDate')
     if date_part?
       date_parts = date_part.split('/')
-      for part, i in date_parts 
+      for part, i in date_parts
         if part == 'date'
           if curr_date != Selected_Date
             @controller.trigger('update_date', date_parts[i+1])
