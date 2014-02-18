@@ -2,40 +2,30 @@ class QueryCatMetricsDaily < BaseModel
   self.table_name = 'query_cat_metrics_daily'
 
   def self.get_search_words(
-    query, query_dates, page=1, order_column=nil, order='asc', limit=10)
-  
-    sql_stmt = %Q{select tab_a.* from
-      (select query, sum(revenue) revenue, sum(uniq_count) query_count, 
-         sum(uniq_pvr)/sum(uniq_count) query_pvr, 
-         sum(uniq_atc)/sum(uniq_count) query_atc,
-         sum(uniq_con)/sum(uniq_count) query_con
-       from query_cat_metrics_daily 
-       where
-       page_type = 'SEARCH' and
-       cat_id = 0 and
-       (channel = 'ORGANIC_USER' or channel = 'ORGANIC_AUTO_COMPLETE') and
-       uniq_count > 100 and 
-       data_date in (?) %s 
-       group by query, cat_id) tab_a 
-       where tab_a.query_count > 500 and tab_a.query != ''
-       order by %s}
+    query, data_date, page=1, order_column=nil, order='asc', limit=10)
+    
+    sql_stmt = %Q{select query, query_revenue revenue, query_count, 
+      query_pvr, query_atc, query_con, rank 
+      from poor_performing_queries_daily 
+      where data_date = ? %s 
+      order by %s}
   
     if order_column.nil?
-      order_str = "sqrt(tab_a.query_count*(1-tab_a.query_con)) desc"
+      order_str = "rank desc"
     else
       order_str = order_column
       order_str << ' ' << order
     end
     
     order_limit_str = %Q{ #{order_str} limit #{limit} offset %s}
-    limit = 10000 if page == 0
+    limit = 2000 if page == 0
    
     if query
       query_str = 'and query = ? '
-      args = [query_dates, query]
+      args = [data_date, query]
     else
       query_str = ''
-      args = [query_dates]
+      args = [data_date]
     end
 
     if page > 0 
