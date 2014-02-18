@@ -123,13 +123,12 @@ class BaseController < ApplicationController
     year_week  = get_week_from_date(date)
     week = year_week[:week]
     year= year_week[:year]
-
     weeks = Array.new(2) { Hash.new }
     if week > 3
       weeks[0] = {"weeks" => (week-3..week).to_a, "year" => year}
     else
       weeks[0] = {"weeks" => (1..week).to_a, "year" => year}
-      max_weeks = get_max_merchant_weeks(year) # 53 or 52
+      max_weeks = get_max_merchant_weeks(year-1) # 53 or 52
       weeks[1] = {"weeks" => (max_weeks - (3-week)..max_weeks).to_a,
                   "year" => year-1}
     end
