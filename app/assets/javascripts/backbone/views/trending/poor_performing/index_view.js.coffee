@@ -15,7 +15,16 @@ class Searchad.Views.PoorPerforming.IndexView extends Searchad.Views.Trending
       label: 'Rank',
       editable: false,
       cell: 'number'
-      formatter: Utils.CustomNumberFormatter}]
+      formatter: Utils.CustomNumberFormatter},
+      {name: 'revenue',
+      label: 'Total Revenue',
+      editable: false,
+      cell: 'number',
+      formatter: Utils.CurrencyFormatter},
+      {name: 'query_count',
+      label: 'Total Count',
+      editable: false,
+      cell: 'integer'}]
     
     super(options)
     @listenTo(@controller, 'trending:index',=>

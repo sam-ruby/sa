@@ -6,15 +6,6 @@ class Searchad.Views.Trending extends Backbone.View
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
     baseCols =  [
-      {name: 'revenue',
-      label: I18n.t('search_analytics.revenue'),
-      editable: false,
-      cell: 'number',
-      formatter: Utils.CurrencyFormatter},
-      {name: 'query_count',
-      label: I18n.t('search_analytics.queries'),
-      editable: false,
-      cell: 'integer'},
       {name: 'query_con',
       label: I18n.t('perf_monitor.conversion_rate'),
       editable: false,
