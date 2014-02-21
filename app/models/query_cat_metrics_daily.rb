@@ -39,13 +39,15 @@ class QueryCatMetricsDaily < BaseModel
   
   def self.get_query_stats(query)
     selects = %q{unix_timestamp(data_date) * 1000 as query_date, 
-    sum(uniq_count) query_count, sum(uniq_pvr)/sum(uniq_count) query_pvr, 
-    sum(uniq_atc)/sum(uniq_count) query_atc,
-    sum(uniq_con)/sum(uniq_count) query_con, 
+    sum(uniq_count) query_count, 
+    round(sum(uniq_pvr)/sum(uniq_count)*100, 2) query_pvr, 
+    round(sum(uniq_atc)/sum(uniq_count)*100, 2) query_atc,
+    round(sum(uniq_con)/sum(uniq_count)*100, 2) query_con, 
     sum(revenue) query_revenue}
 
     select(selects).where(
-    [%q{query = ? AND cat_id = ? AND channel = 'ORGANIC_USER' and 
+    [%q{query = ? AND cat_id = ? AND (channel = 'ORGANIC_USER' or
+     channel = 'ORGANIC_AUTO_COMPLETE') and 
      page_type = 'SEARCH'}, query, 0]).group('data_date').order('data_date')
   end
 

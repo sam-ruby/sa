@@ -12,7 +12,7 @@ class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
       editable: false,
       cell: @queryCell()},
       {name: 'rank',
-      label: 'Rank',
+      label: 'Increase By',
       editable: false,
       cell: 'number'
       formatter: Utils.PercentFormatter}]
