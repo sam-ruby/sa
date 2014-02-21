@@ -3,9 +3,10 @@ class QueryCatMetricsDaily < BaseModel
 
   def self.get_search_words(query, data_date, page=1, 
                             order_column=nil, order='asc', limit=10)
-    sql_stmt = %Q{select query, query_revenue revenue, query_count, 
-      query_pvr, query_atc, query_con, rank 
-      from poor_performing_queries_daily 
+    sql_stmt = %Q{select query, round(query_revenue) revenue, query_count, 
+      round(query_pvr*100, 2) query_pvr, round(query_atc*100, 2) query_atc, 
+      round(query_con*100, 2) query_con, query_score rank 
+      from poor_queries_30days_daily
       where data_date = ? %s 
       order by %s}
   
