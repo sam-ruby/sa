@@ -1,9 +1,8 @@
 class QueryCatMetricsDaily < BaseModel
   self.table_name = 'query_cat_metrics_daily'
 
-  def self.get_search_words(
-    query, data_date, page=1, order_column=nil, order='asc', limit=10)
-    
+  def self.get_search_words(query, data_date, page=1, 
+                            order_column=nil, order='asc', limit=10)
     sql_stmt = %Q{select query, query_revenue revenue, query_count, 
       query_pvr, query_atc, query_con, rank 
       from poor_performing_queries_daily 
@@ -37,7 +36,7 @@ class QueryCatMetricsDaily < BaseModel
         sql_stmt % [query_str, order_str], *args])
     end
   end
-
+  
   def self.get_query_stats(query)
     selects = %q{unix_timestamp(data_date) * 1000 as query_date, 
     sum(uniq_count) query_count, sum(uniq_pvr)/sum(uniq_count) query_pvr, 
@@ -51,7 +50,8 @@ class QueryCatMetricsDaily < BaseModel
   end
 
   def self.get_query_stats_date(
-    query, year, week, query_date, page=1, order_col=nil, order='asc', limit=10)
+    query, year, week, query_date, page=1, order_col=nil, 
+    order='asc', limit=10)
     
     order_str = order_col.nil? ? 'sum(query_daily.uniq_count) desc' : 
       order.nil? ?  order_col : order_col + ' ' + order  

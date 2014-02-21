@@ -8,8 +8,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     
     "search_kpi(/filters/*wday)": "search_kpi"
     
-    "poor_performing(/query/:query)(/filters/*wday)": "poor_performing"
-    "(filters/*wday)": "poor_performing"
+    "trending(/query/:query)(/filters/*wday)": "trending"
+    "trending/up(/query/:query)(/filters/*wday)": "up_trending"
+    "(filters/*wday)": "trending"
     
     "query_monitoring/count(/query/:query)(/filters/*wday)":
       "query_monitoring_count"
@@ -78,16 +79,26 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.trigger('content-cleanup')
     @controller.trigger('search-kpi:index')
   
-  poor_performing: (query, date_parts) =>
+  trending: (query, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('master-tabs:cleanup')
     @controller.trigger('content-cleanup')
     if query?
       query = decodeURIComponent(query)
       @controller.trigger(
-        'poor-performing:index', query: query)
+        'trending:index', query: query)
     else
-      @controller.trigger('poor-performing:index')
+      @controller.trigger('trending:index')
+
+  up_trending: (query, date_parts) =>
+    @set_date_info(date_parts)
+    @controller.trigger('master-tabs:cleanup')
+    @controller.trigger('content-cleanup')
+    if query?
+      query = decodeURIComponent(query)
+      @controller.trigger(
+        'up-trending:index', query: query)
+
 
   adhoc_search: (query, date_parts) =>
     @set_date_info(date_parts)
