@@ -63,7 +63,7 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       title: 'Query Analysis'},
       {class: ['trending-tab']
       href: '/#trending'
-      title: 'Trendng Queries'}]
+      title: 'Query Performance'}]
 
     @$el.append(@get_tab_el(tabs[2]))
     @$el.append(@get_tab_el(tabs[1]))

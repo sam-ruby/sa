@@ -11,6 +11,10 @@ class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
       label: I18n.t('query'),
       editable: false,
       cell: @queryCell()},
+      {name: 'query_count',
+      label: 'Count',
+      editable: false,
+      cell: 'integer'},
       {name: 'rank',
       label: 'Increase By',
       editable: false,
@@ -20,11 +24,7 @@ class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
       label: I18n.t('search_analytics.revenue'),
       editable: false,
       cell: 'number',
-      formatter: Utils.CurrencyFormatter},
-      {name: 'query_count',
-      label: 'Count',
-      editable: false,
-      cell: 'integer'}]
+      formatter: Utils.CurrencyFormatter}]
     
     super(options)
     @listenTo(@controller, 'up-trending:index',=>
