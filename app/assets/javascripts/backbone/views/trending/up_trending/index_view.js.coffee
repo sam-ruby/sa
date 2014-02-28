@@ -15,11 +15,6 @@ class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
       label: 'Count',
       editable: false,
       cell: 'integer'},
-      {name: 'rank',
-      label: 'Increase By',
-      editable: false,
-      cell: 'number'
-      formatter: Utils.PercentFormatter},
       {name: 'revenue',
       label: I18n.t('search_analytics.revenue'),
       editable: false,
@@ -35,7 +30,7 @@ class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
   events: =>
     'click ' + @options.content_selector + ' .export-csv a': (e) ->
       date = @controller.get_filter_params().date
-      fileName = "up_trendingg_#{date}.csv"
+      fileName = "up_trending_#{date}.csv"
       data =
         view: 'daily'
         date: date

@@ -3,7 +3,7 @@
 # @since Dec, 2013
 
 class QueryDroppingConversion < BaseModel
-  self.table_name = 'queries_with_dropping_conversion'
+  self.table_name = 'trending_queries_daily'
 
   # for one query get the result for conversion rate comparison
   # SV. Making the line width to a reasonable size
@@ -56,21 +56,19 @@ class QueryDroppingConversion < BaseModel
     #top 500 hundred or not
     #another alternative way is to cached the data from 
     #get_cvr_dropped_query_top_500 
-    if result_data.length ==0
-      return result_data
-    end
+    return result_data if result_data.length ==0
      
     in_top_500 = find_by_sql(
-    ['select query, query_score from queries_with_dropping_conversion where
+    ['select query, query_score from trending_queries_daily where
       query = ? and window_in_weeks = ? and data_date = ?', 
       query,weeks_apart, query_date]) 
 
      if in_top_500.length > 0
-       result_data[0].is_in_top_500 = true
+       result_data.first.is_in_top_500 = true
      else
-       result_data[0].is_in_top_500 = false
+       result_data.first.is_in_top_500 = false
      end
-     return result_data
+     result_data
   end
 
   def self.get_cvr_dropped_query_top_500(
@@ -79,7 +77,6 @@ class QueryDroppingConversion < BaseModel
     order_str = order_col.nil? ? 'query_score desc' : 
       order.nil? ? order_col : order_col + ' ' + order  
 
-    query_date = query_date.strftime("%Y-%m-%d")
     select_cols = %q{query, query_con_before, query_count_before, 
     query_revenue_before, query_count_after, query_con_after, 
     query_revenue_after, query_con_after, query_con_diff, 
@@ -91,11 +88,11 @@ class QueryDroppingConversion < BaseModel
     # the rank should be 11,12,13. The page starting from 1,2,3,4.
     # the starting_rank is to form the from_statement
     starting_rank = ((page-1) * limit).to_s
-    from_statement  =  "queries_with_dropping_conversion,(SELECT 
+    from_statement  =  "trending_queries_daily, (SELECT 
     @rank := " + starting_rank +") AS vars"
     select(select_cols).from(from_statement).where(
-      %q{window_in_weeks = ? and data_date = ?}, weeks_apart, query_date).order(
-        order_str).page(page).per(limit)
+      %q{window_in_weeks = ? and data_date = ?},
+      weeks_apart, query_date).order(order_str).page(page).per(limit)
   end
 
   # get item comparisons based on a query from cvr_dropped_query table, 
@@ -103,8 +100,8 @@ class QueryDroppingConversion < BaseModel
   def self.get_cvr_dropped_query_item_comparisons(
     query, before_start_date,before_end_date,after_start_date,after_end_date)
     
-    # reason for two separate resquest, need to merge two result into one row. 
-    # Join(no join condition) and Union(will produce 15*15 results.) don't work. 
+    # reason for two separate resquest, need to merge two result into one row 
+    # Join(no join condition) and Union(will produce 15*15 results.) don'tork. 
     # Plus, it is very small data set. total item count is 15
     # after_start_date is used for the query_date midpoint for two week 
     # before and  two week after
@@ -112,8 +109,10 @@ class QueryDroppingConversion < BaseModel
       query, before_start_date, before_end_date, after_start_date) 
     item_after_arr = get_top_items_between_date(
       query, after_start_date, after_end_date, after_start_date) 
+    
     #since this is a small list, it is ok to process the merge
-    result_arr = Array.new([item_before_arr.length, item_after_arr.length].max){Hash.new}
+    result_arr = Array.new(
+      [item_before_arr.length, item_after_arr.length].max){Hash.new}
 
     result_arr.each_with_index { |val, index|
       # index starts with 0, when displaying it as rank in UI, 
@@ -133,15 +132,15 @@ class QueryDroppingConversion < BaseModel
         val['seller_name_after'] = item_after_arr[index]['seller_name']
       end
     }
-   return result_arr;
+   result_arr
   end
 
   #input query: query 
   #input date_start: the starting date for one picked date range
   #input date_end: the end date for one picke date range
   #input query_date: specific date that is used to generate 
-  #two week before and two week after, this is used to determin the seller_name
-  # TODO: need to discuss with Hang, which date is the best to get the seller name
+  #two week before & two week after, this is used to determin the seller_name
+  # TODO: need to discuss with Hang, which date is best to get the seller name
   #out put array of top 15 item from a query between date range
   def self.get_top_items_between_date(query, date_start, date_end, query_date)
     # result: query_items: 
@@ -160,20 +159,15 @@ class QueryDroppingConversion < BaseModel
     item_ids_arr=item_ids[0]['query_items'].split(",")
     
     #query item which id are in processed arr
-    sql_statement = "select item_id, title, image_url, seller_name from
-      (select item_id, title, image_url, seller_id 
+    sql_statement = "select item_id, title, image_url, 
+      (select seller_name from mp_seller_id_name_mapping_daily 
+       where seller_id = seller_id order by data_date desc limit 1)
+       seller_name 
        FROM all_item_attrs where item_id in (?) 
-      )a 
-      inner join 
-      (select distinct seller_id, seller_name 
-      from mp_seller_id_name_mapping_daily where data_date = ?
-      )b
-      on a.seller_id = b.seller_id
-      order by Field(item_id, ?)
-      "
-
-      items = find_by_sql([sql_statement, item_ids_arr, query_date, item_ids_arr])
-    return items
+       order by Field(item_id, ?) "
+      items = find_by_sql(
+        [sql_statement, item_ids_arr, item_ids_arr])
+    items
   end
 
 

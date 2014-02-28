@@ -98,7 +98,8 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       query = decodeURIComponent(query)
       @controller.trigger(
         'up-trending:index', query: query)
-
+    else
+      @controller.trigger('up-trending:index')
 
   adhoc_search: (query, date_parts) =>
     @set_date_info(date_parts)

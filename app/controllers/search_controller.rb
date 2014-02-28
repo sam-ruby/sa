@@ -59,10 +59,11 @@ class SearchController < BaseController
 
     respond_to do |format|
       format.json do
-        #based on input, if there is no query param, get top 500, else do search 
+        #based on input, if there is no query param, get top 500,
+        #else do search 
         if query.nil? or query.empty?
           result= QueryDroppingConversion.get_cvr_dropped_query_top_500(
-            weeks_apart,query_date,@sort_by,@order,@page,@limit)
+            weeks_apart, query_date, @sort_by, @order, @page, @limit)
           render :json => [{:total_entries => result.total_pages * @limit,
                             :date => @date}, result]
         else

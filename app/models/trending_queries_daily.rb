@@ -3,7 +3,8 @@ class TrendingQueriesDaily < BaseModel
   
   def self.get_trending_words_count(data_date)
     count(
-      conditions: ['window_in_days = 2 and data_date = ?', data_date])
+      conditions: ['window_in_days = 2 and data_date = ? and ' + 
+        '(query_count_after+1)/(query_count_before+1)>=1.3', data_date])
   end
   
   def self.get_trending_words(query, data_date, page=1, 
@@ -12,7 +13,8 @@ class TrendingQueriesDaily < BaseModel
       query_count_after query_count, query_pvr_after query_pvr,
       query_atc_after query_atc, query_con_after query_con, query_score rank 
       from trending_queries_daily 
-      where window_in_days = 2 and data_date = ? %s 
+      where window_in_days = 2 and data_date = ? and 
+      (query_count_after + 1)/(query_count_before + 1) >= 1.3 %s 
       order by %s}
   
     if order_column.nil?

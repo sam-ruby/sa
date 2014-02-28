@@ -6,7 +6,8 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
     @router = SearchQualityApp.Router
     @controller.bind('search-kpi:index', @overview)
     @controller.bind('search-rel:index', @overview)
-    @controller.bind('poor-performing:index', @overview)
+    @controller.bind('trending:index', @overview)
+    @controller.bind('trending-up:index', @overview)
     @controller.bind('adhoc:index', @adhoc)
     @controller.bind('query-monitoring-count:index', @query_monitoring)
     @controller.bind('qm-metrics:index', @query_monitoring)
@@ -19,7 +20,7 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
       e.preventDefault()
       @controller.trigger('master-tabs:cleanup')
       @controller.trigger('content-cleanup')
-      @controller.trigger('search-kpi:index')
+      @controller.trigger('trending:index')
       @router.update_path('/')
 
     'click li.adhoc-query-tab a': (e) =>

@@ -47,7 +47,7 @@ class SearchQualityDaily < BaseModel
     
     order_str = order_col.nil? ? 'order by rank_metric desc' : 
       order.nil? ? 'order by ' + order_col : %Q{order by #{order_col} #{order}}
-    offset = (page - 1) * 10
+    offset = (query.nil? or query.empty?) ? (page - 1) * 10 : 0
     order_limit_str = %Q{ #{order_str} limit #{limit} offset #{offset}}
 
     sql_stmt = %Q{select in_tab_a.*, 

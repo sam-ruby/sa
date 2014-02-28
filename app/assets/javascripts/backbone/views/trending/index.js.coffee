@@ -64,7 +64,6 @@ class Searchad.Views.Trending extends Backbone.View
     @content_area.children().not('.ajax-loader').remove()
   
   unrender: =>
-    @active = false
     @$el.hide()
 
   render: (div)=>

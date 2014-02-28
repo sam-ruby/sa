@@ -11,11 +11,8 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
       @get_items(trigger: true) if @active)
     @controller.bind('content-cleanup', @unrender)
     @collection.bind('reset', @render)
-    @collection.bind('request', =>
-      @unrender_search_results()
-      @$ajax_loader.show()
-      @controller.trigger('qm:sub-content:cleanup')
-    )
+    @collection.bind('request', @prepare_for_render)
+
     Utils.InitExportCsv(this, "/monitoring/count/get_words.csv")
     @undelegateEvents()
     @$filter = @$el.find('#qm-filter')
@@ -36,13 +33,17 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
       data['query'] = @collection.query if @collection.query
       @export_csv($(e.target), fileName, data)
 
+  prepare_for_render: =>
+    @$el.find('.ajax-loader').css('display', 'block')
+    @controller.trigger('sub-content-cleanup')
+    @controller.trigger('qm:sub-content:cleanup')
   
   initTable: () =>
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
       collection: @collection
+      emptyText: 'No Data'
     )
-    
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection
     )
@@ -68,7 +69,8 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
   get_items: (data) =>
     @active = true
     @trigger = true
-    # if there is already collection, with the same date and no query param, then directly render
+    # if there is already collection, with the same date and no query param,
+    # then directly render
     if @collection.data.date ==@controller.get_filter_params().date && @collection.data.query ==null
         @render()
         return
@@ -81,31 +83,33 @@ class Searchad.Views.QueryMonitoring.Count.IndexView extends Backbone.View
     @collection.get_items()
   
   unrender_search_results: =>
-    @$result.empty()
     @$ajax_loader.hide()
   
   unrender: =>
     @active = false
     @unrender_search_results()
     @$filter.empty()
+    @$result.empty()
     @undelegateEvents()
-
-
-  render_error: (query) ->
-    @$result.html(JST['backbone/templates/shared/no_data']({query:query}))
 
   render: =>
     return unless @active
-    @$el.find('.ajax-loader').hide()
-    return @render_error(@collection.data.query) if @collection.size() == 0
-    @$filter.html(JST['backbone/templates/shared/general_filter'](@collection.data))
-    @$result.html(@grid.render().$el)
-    @$result.append( @paginator.render().$el)
-    @$result.append( @export_csv_button() )
-    @delegateEvents()   
-    if @trigger
-      @trigger = false
-      @$el.find('td a.query').first().trigger('click')
+    @unrender_search_results()
+    @$filter.html(
+      JST['backbone/templates/shared/general_filter'](@collection.data))
+    
+    if @collection.size() == 0
+      @$result.prepend(@grid.render().$el)
+      return
+    else
+      @$result.prepend(@paginator.render().$el)
+      @$result.prepend(@grid.render().$el)
+    
+    @$result.append( @export_csv_button() ) unless @$result.find(
+      '.export-csv').length > 0
+    @$result.find('td a.query').first().trigger('click')
+    @delegateEvents()
+    this
 
   gridColumns:  ->
     that = this
