@@ -1,31 +1,28 @@
 class AllItemAttrs < BaseModel
   self.table_name = 'all_item_attrs'
 
-  def self.get_item_details(query, item_id_list, query_date, query_dates)
-    item_ids = item_id_list.map {|x| "'#{x.to_s}'"}.join(',')
-    query = sanitize_sql_array([%q{'%s'}, query])
+  def self.get_item_details(query, item_id_list, query_dates)
+    # item_ids = item_id_list.map {|x| "'#{x.to_s}'"}.join(',')
+    query = sanitize_sql_array([query])
 
-    join_stmt = %Q{as item_attrs left outer join 
-    (select item_id, sum(revenue)/14 as item_revenue from 
-    item_query_metrics_daily 
-    where item_id in (#{item_ids}) and 
-    data_date in (#{query_dates.join(',')}) 
-    and query = #{query} and 
-    channel = "ORGANIC_USER" and page_type = 'SEARCH'
-    group by item_id) as item on 
-    item.item_id = item_attrs.item_id
-    left outer join (select item_id, sum(revenue)/14 as total_revenue
-    from item_cat_metrics_daily where data_date in
-    (#{query_dates.join(',')}) and item_id in (#{item_ids})
-    and cat_id = 0 group by item_id) as item_site_revenue on
-    item_site_revenue.item_id = item_attrs.item_id}
+    join_stmt = %q{as item_attrs, item_query_metrics_daily as item_metrics}
+    where_str = %q{item_attrs.item_id = item_metrics.item_id and
+      item_metrics.page_type = 'SEARCH' and 
+      item_metrics.channel in ("ORGANIC_USER", "ORGANIC_AUTO_COMPLETE") and 
+      item_metrics.data_date in (?) and 
+      item_attrs.item_id in (?) and 
+      item_metrics.query = ?}
+    selects = %q{item_attrs.item_id, item_attrs.title, 
+      item_attrs.image_url, item_attrs.curr_item_price, 
+      sum(item_metrics.revenue)/28 item_revenue}
 
     selects = %q{item_attrs.item_id, item_attrs.title, 
     item_attrs.image_url, item_attrs.curr_item_price, 
-    item.item_revenue, item_site_revenue.total_revenue}
+    sum(item_metrics.revenue)/28 item_revenue}
    
     joins(join_stmt).select(selects).where(
-      %q{item_attrs.item_id in (?)}, item_id_list)
+      where_str, query_dates, item_id_list, query).group(
+        'item_metrics.item_id')
   end
   
   def self.get_items(query, items, query_date)

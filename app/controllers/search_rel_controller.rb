@@ -22,15 +22,15 @@ class SearchRelController < BaseController
       format.csv do |format|
         result = SearchQualityDaily.get_query_stats(
           query, year, week, @date, 1,10000).map do|record|
-            {'Query String' => record.query_str,
+            {'Query String' => record.query,
              'Query Count' => record.query_count,
              'Rank Metric' => record.rank_metric.to_f.round(2),
              'Catalog Overlap' => record.cat_rate.to_f.round(2),
              'Results Shown in Search' => record.show_rate.to_f.round(2),
              'Overall Relevance Score' => record.rel_score.to_f.round(2), 
              'Rev Rank Correlation' =>
-                record.search_rev_rank_correlation.to_f.round(2),
-             'Query Revenue' => record.query_revenue,
+                record.search_con_rank_correlation.to_f.round(2),
+             'Query Revenue' => record.revenue,
              'Query Conversion' => record.query_con.to_f.round(2)}
           end
           render :json => result
@@ -55,29 +55,32 @@ class SearchRelController < BaseController
     result = []
     return result unless query_str
     date = @date
-    query_dates = (date-14.days..date-1.days).to_a.map {|d|
-      "'#{d.strftime('%Y-%m-%d')}'"}
+    # query_dates = (date-28.days..date-1.days).to_a.map {|d|
+    #  "'#{d.strftime('%Y-%m-%d')}'"}
 
+    query_dates = (date-28.days..date-1.days).to_a
     results = SearchQualityDaily.get_search_relevance_data_by_word(
       query_str, date)
     return result if results.empty?
     
-    query_items = results.first['32_query_items']
-    rev_ranks = results.first['rev_ranks']
-    top_rev_items = results.first['top_rev_items']
+    query_items = results.first['32_query_items'].split(',')[0..15] rescue nil
+    con_ranks = results.first['con_ranks'].split(',') rescue nil
+    top_con_items = results.first['top_con_items'].split(',') rescue nil
+    top_items_con = results.first['top_16_con'].split(',') rescue nil
+    top_items_site_rev = results.first[
+      'top_16_site_revenue'].split(',') rescue nil
     
-    return result if query_items.nil? or top_rev_items.nil?
-    query_items_list = query_items.split(',')[0..15]
-    top_rev_items_list = top_rev_items.split(',')
-    rev_ranks = rev_ranks.split(',')
-    
+    return result if query_items.nil? or top_con_items.nil?
+   
     item_details = {}
     AllItemAttrs.get_item_details(query_str,
-      (query_items_list + top_rev_items_list).uniq, date, query_dates).each do 
-      |item| item_details[item.item_id] = item end
+      (query_items + top_con_items).uniq, query_dates).each do 
+      |item| item_details[item.item_id] = item 
+    end
 
     index = 1
-    query_items_list.zip(top_rev_items_list, rev_ranks) do |items|
+    query_items.zip(
+      con_ranks, top_con_items, top_items_con, top_items_site_rev) do |items|
       if item_details[items[0]].nil? 
         walmart_item = {:item_id => items[0],
                         :image_url => nil}
@@ -85,36 +88,41 @@ class SearchRelController < BaseController
         walmart_item = item_details[items[0]]
       end
 
-      if item_details[items[1]].nil? 
-        rev_item = {:item_id => items[1],
+      if item_details[items[2]].nil? 
+        con_item = {:item_id => items[2],
                     :image_url => nil}
       else
-        rev_item = item_details[items[1]]
+        con_item = item_details[items[2]]
       end
 
-      revenue = rev_item.item_revenue rescue 0
-      site_revenue = rev_item.total_revenue rescue 0
+      revenue = con_item.item_revenue rescue 0
+      site_revenue = items[4]
+      con_rank = items[1].to_i + 1
+      top_item_con = items[3]
 
       if mode == :json
         result.push({:position => index,
                      :walmart_item => walmart_item,
-                     :rev_based_item => rev_item,
+                     :con_based_item => con_item,
+                     :con => top_item_con,
                      :revenue => revenue,
                      :site_revenue => site_revenue,
-                     :rev_rank => items[2].to_i + 1})
+                     :con_rank => con_rank})
       else
         result.push({'Position' => index,
                      'Walmart Item Id' => walmart_item[:item_id],
                      'Walmart Item Title' => walmart_item[:title],
-                     'Rev Rank' => items[2].to_i + 1,
+                     'Con Rank' => con_rank,
                      'Walmart Item Image URL' => walmart_item[:image_url],
-                     'Rev Based Item Id' => rev_item[:item_id],
-                     'Rev Based Item Title' => rev_item[:title],
-                     'Item Image URL' => rev_item[:image_url],
+                     'Con Based Item Id' => con_item[:item_id],
+                     'Con Based Item Title' => con_item[:title],
+                     'Item Image URL' => con_item[:image_url],
+                     'Average Daily Item Conversion Rate Percentage' =>
+                        top_item_con.to_f.round(2),
                      'Average Daily Item Revenue' =>
-                        rev_item[:item_revenue].to_f.round(2),
+                        revenue.to_f.round(2),
                      'Average Daily Site Item Revenue' =>
-                        rev_item[:total_revenue].to_f.round(2)})
+                        site_revenue.to_f.round(2)})
       end
       index += 1
     end

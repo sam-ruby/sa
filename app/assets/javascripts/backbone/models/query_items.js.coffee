@@ -8,13 +8,15 @@ class Searchad.Models.QueryItem extends Backbone.Model
       title: null
       image_url: null
       curr_item_price: null
-    rev_based_item:
+    con_based_item:
       item_id: null
       title: null
       image_url: null
       curr_item_price: null
     revenue: null
     site_revenue: null
+    con: null
+    con_rank: null
 
 class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollection
   initialize: (options) ->

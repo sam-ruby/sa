@@ -4,12 +4,12 @@ class SearchQualityDaily < BaseModel
     query_date, page=1, order_col='uniq_count', order='asc', limit=10)
     
     order_str = order_col.nil? ? 
-      'uniq_count desc, search_rev_rank_correlation asc' : 
+      'uniq_count desc, search_con_rank_correlation asc' : 
       order.nil? ? order_col : order_col + ' ' + order  
     
     select(%q{query, data_date, uniq_count, revenue,
-    search_rev_rank_correlation, query_items, rev_ranks,
-           top_rev_items}).where(
+    search_con_rank_correlation, query_items, con_ranks,
+           top_con_items}).where(
              'data_date = ? ', query_date).order(order_str).page(
                page).per(limit)
   end
@@ -21,7 +21,8 @@ class SearchQualityDaily < BaseModel
 
   def self.get_search_relevance_data_by_word(query_str, query_date)
     select(%q{query, data_date, uniq_count, revenue,
-    search_rev_rank_correlation, 32_query_items, rev_ranks, top_rev_items}
+           search_con_rank_correlation, 32_query_items, con_ranks, 
+           top_con_items, top_16_con, top_16_site_revenue}
     ).where('data_date = ? and query = ?', query_date, query_str)
   end
   
@@ -57,7 +58,7 @@ class SearchQualityDaily < BaseModel
       from 
         (select
         a.query,
-        a.search_rev_rank_correlation, 
+        a.search_con_rank_correlation, 
         sum(b.uniq_count) as query_count, 
         sum(b.uniq_con) as query_con, 
         sum(b.revenue) revenue, 
@@ -65,15 +66,16 @@ class SearchQualityDaily < BaseModel
         (c.shown_overlap * 100) show_rate, 
         c.rel_score 
         from 
-          (SELECT query, search_rev_rank_correlation, data_date FROM 
+          (SELECT query, search_con_rank_correlation, data_date FROM 
           search_quality_daily WHERE data_date = ? %s) a,
           query_cat_metrics_daily b,
           query_performance_week c 
           where 
-          b.cat_id = 0 and b.page_type='SEARCH' and b.channel = 'ORGANIC_USER' 
+          b.cat_id = 0 and b.page_type='SEARCH' and 
+          b.channel in ('ORGANIC_USER', 'ORGANIC_AUTO_COMPLETE') 
           and b.data_date = a.data_date and b.query = a.query and 
           c.year = ? and c.week = ? and c.query = a.query 
-          group by b.query, b.cat_id, b.channel) in_tab_a #{order_limit_str}} 
+          group by b.query, b.cat_id) in_tab_a #{order_limit_str}} 
 
     if query.nil? or query.empty? 
       return find_by_sql([sql_stmt % '', query_date, year, week])
