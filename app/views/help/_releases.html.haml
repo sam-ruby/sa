@@ -37,10 +37,10 @@
             &nbsp;
           %td
             %span{:style=>'font-weight:normal'}
-              - if (match = key.match(/(cdngm-\d+)/))
-                - jira = match.captures.first
+              - if (match = key.match(/((cdngm|PERSSERANA)-\d+)/i))
+                - jira = match.captures.first.downcase
                 %a{:href=>'//jira.walmart.com/browse/' + jira,
-                  :target => '_blank'}
+                  :target => '_blank', :style=>'white-space:nowrap;'}
                   = jira
               - else
                 = key
