@@ -46,12 +46,12 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
   gridColumns: =>
     class ItemCellBefore extends Backgrid.Cell
       item_template:
-        JST["backbone/templates/poor_performing/walmart_items/item"]     
+        JST["backbone/templates/poor_performing/walmart_items/item"]
       render: =>
         item =
           image_url: @model.get('image_url_before')
           item_id: @model.get('item_id_before')
-          title: @model.get('item_title_before')     
+          title: @model.get('item_title_before')
         formatted_value = @item_template(item)
         $(@$el).html(formatted_value)
         return this
@@ -64,7 +64,7 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
         item =
           image_url: @model.get('image_url_after')
           item_id: @model.get('item_id_after')
-          title: @model.get('item_title_after')  
+          title: @model.get('item_title_after')
         formatted_value = @item_template(item)
         $(@$el).html(formatted_value)
         return this
@@ -91,7 +91,7 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     cell: 'string'
     },
     {name: 'item_title_after',
-    label: 'Item showed two weeks after', 
+    label: 'Item showed two weeks after',
     editable: false,
     cell: ItemCellAfter
     },
@@ -128,7 +128,7 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     @data = data
     @unrender
     # important,must reset current page size to 1
-    @collection.state.currentPage = 1;
+    @collection.state.currentPage = 1
     @collection.get_items(data)
 
 
@@ -142,7 +142,7 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
       return
 
     if @collection.size() == 0
-      return @render_error() 
+      return @render_error()
     
     @$el.children().not('.ajax-loader').remove()
     @controller.trigger('search:sub-content:hide-spin')

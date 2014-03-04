@@ -7,9 +7,10 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "search_rel/item_id/:id(/filters/*wday)": "search_query_items"
     
     "search_kpi(/filters/*wday)": "search_kpi"
-    "(filters/*wday)": "search_kpi"
     
-    "poor_performing(/query/:query)(/filters/*wday)": "poor_performing"
+    "trending(/query/:query)(/filters/*wday)": "trending"
+    "trending/up(/query/:query)(/filters/*wday)": "up_trending"
+    "(filters/*wday)": "trending"
     
     "query_monitoring/count(/query/:query)(/filters/*wday)":
       "query_monitoring_count"
@@ -25,7 +26,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     curr_date = $('#dp3').datepicker('getDate')
     if date_part?
       date_parts = date_part.split('/')
-      for part, i in date_parts 
+      for part, i in date_parts
         if part == 'date'
           if curr_date != Selected_Date
             @controller.trigger('update_date', date_parts[i+1])
@@ -78,16 +79,27 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.trigger('content-cleanup')
     @controller.trigger('search-kpi:index')
   
-  poor_performing: (query, date_parts) =>
+  trending: (query, date_parts) =>
     @set_date_info(date_parts)
     @controller.trigger('master-tabs:cleanup')
     @controller.trigger('content-cleanup')
     if query?
       query = decodeURIComponent(query)
       @controller.trigger(
-        'poor-performing:index', query: query)
+        'trending:index', query: query)
     else
-      @controller.trigger('poor-performing:index')
+      @controller.trigger('trending:index')
+
+  up_trending: (query, date_parts) =>
+    @set_date_info(date_parts)
+    @controller.trigger('master-tabs:cleanup')
+    @controller.trigger('content-cleanup')
+    if query?
+      query = decodeURIComponent(query)
+      @controller.trigger(
+        'up-trending:index', query: query)
+    else
+      @controller.trigger('up-trending:index')
 
   adhoc_search: (query, date_parts) =>
     @set_date_info(date_parts)
@@ -137,18 +149,19 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     options['trigger'] ||= false
     @navigate(new_path, options)
 
-    # this function will return the basic root url. like /#adhoc_query or /#search_rel etc
+  # this function will return the basic root url. 
+  # like /#adhoc_query or /#search_rel etc
   get_root_path: =>
     url = window.location.hash
     if url.match(/^#[^\/]*/)
-      return url.match(/^#[^\/]*/)[0]
-    else 
-      return ""
+      url.match(/^#[^\/]*/)[0]
+    else
+      ""
   
-  root_path_conains:(url_regexp) =>
+  root_path_contains:(url_regexp) =>
     url = window.location.hash
     if url.match(url_regexp)
-      return true
-    else 
-      return false
+      true
+    else
+      false
 

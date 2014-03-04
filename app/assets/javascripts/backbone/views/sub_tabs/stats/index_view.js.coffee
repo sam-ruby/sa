@@ -79,10 +79,21 @@ class Searchad.Views.SubTabs.Stats.IndexView extends Backbone.View
       success: (json, status) =>
         if json.length > 0
           series = @process_data(json)
-          @render(data.query, series)
+          @render(data, series)
         else
           @render_error(data.query)
     )
+
+  show_only_series: (list) =>
+    if list and list.length > 0
+      for k in @seriesTypes
+        if k.column not in list
+          @$el.highcharts().get(k.column).hide()
+
+  slide_date_window: (obj) ->
+    if obj.max_date and obj.min_date
+      $('input[name=min].highcharts-range-selector').val(obj.min_date).change()
+      $('input[name=max].highcharts-range-selector').val(obj.max_date).change()
 
   process_data: (data) ->
     arr = []
@@ -97,6 +108,7 @@ class Searchad.Views.SubTabs.Stats.IndexView extends Backbone.View
     series = []
     for p, i in @seriesTypes
       series.push(
+        id: p.column
         name: p.name
         data: arr[i]
         cursor: 'pointer'
@@ -105,6 +117,7 @@ class Searchad.Views.SubTabs.Stats.IndexView extends Backbone.View
     
     series[0].fillOpacity = .1
     series[1].fillOpacity = .3
+
     series
 
   render_error: (query) ->
@@ -113,8 +126,10 @@ class Searchad.Views.SubTabs.Stats.IndexView extends Backbone.View
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
 
-  render: (query, data) ->
+  render: (data, series) ->
     return unless @active
     @controller.trigger('search:sub-content:hide-spin')
-    @initChart(query, data)
-    this
+    @initChart(data.query, series)
+    @show_only_series(data.show_only_series)
+    @slide_date_window(data.enable_range) if data.enable_range
+

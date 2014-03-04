@@ -1,58 +1,58 @@
 class AllItemAttrs < BaseModel
   self.table_name = 'all_item_attrs'
 
-  def self.get_item_details(query, item_id_list, query_date, query_dates)
-    item_ids = item_id_list.map {|x| "'#{x.to_s}'"}.join(',')
-    query = sanitize_sql_array([%q{'%s'}, query])
+  def self.get_item_details(query, item_id_list, query_dates)
+    # item_ids = item_id_list.map {|x| "'#{x.to_s}'"}.join(',')
+    query = sanitize_sql_array([query])
 
-    join_stmt = %Q{as item_attrs left outer join 
-    (select item_id, sum(item_revenue)/14 as item_revenue from 
-    item_query_cat_metrics_daily 
-    where item_id in (#{item_ids}) and 
-    query_date in (#{query_dates.join(',')}) 
-    and query = #{query} and 
-    (channel = "ORGANIC" or channel = "ORGANIC_USER") and 
-    cat_id = 0 group by item_id) as item on 
-    item.item_id = item_attrs.item_id
-    left outer join (select item, sum(revenue)/14 as total_revenue
-    from item_cat_total_revenue_daily where date in
-    (#{query_dates.join(',')}) and item in (#{item_ids})
-    and cat_id = 0 group by item) as item_site_revenue on
-    item_site_revenue.item = item_attrs.item_id}
+    join_stmt = %q{as item_attrs, item_query_metrics_daily as item_metrics}
+    where_str = %q{item_attrs.item_id = item_metrics.item_id and
+      item_metrics.page_type = 'SEARCH' and 
+      item_metrics.channel in ("ORGANIC_USER", "ORGANIC_AUTO_COMPLETE") and 
+      item_metrics.data_date in (?) and 
+      item_attrs.item_id in (?) and 
+      item_metrics.query = ?}
 
     selects = %q{item_attrs.item_id, item_attrs.title, 
     item_attrs.image_url, item_attrs.curr_item_price, 
-    item.item_revenue, item_site_revenue.total_revenue}
+    sum(item_metrics.revenue) item_revenue}
    
     joins(join_stmt).select(selects).where(
-      %q{item_attrs.item_id in (?)}, item_id_list)
+      where_str, query_dates, item_id_list, query).group(
+        'item_metrics.item_id')
   end
   
   def self.get_items(query, items, query_date)
     query_date = query_date.strftime('%Y-%m-%d')
-    # by deviding it into small set first, we could optimize this query from 1.5s to 50ms
-    sql_statement = '
+    # by deviding it into small set first, we could optimize this query 
+    # from 1.5s to 50ms
+    sql_statement = %q{
      select 
      a.item_id, a.image_url, a.curr_item_price, a.title,
-     b.item_revenue, b.shown_count, b.item_con, b.item_atc, b.item_pvr,
+     b.revenue, b.uniq_count shown_count, b.i_con, b.i_atc, b.i_pvr,
      c.revenue as site_revenue from (
-     (select item_id, image_url, curr_item_price, title from `all_item_attrs` where item_id in (?))a
+     (select item_id, image_url, curr_item_price, title from `all_item_attrs` 
+     where item_id in (?))a
 
      LEFT OUTER JOIN 
 
-     (select item_id, item_revenue, shown_count, item_con,
-     item_atc, item_pvr FROM item_query_cat_metrics_daily WHERE item_id in (?) and
-     query = ? and query_date = ? AND cat_id = 0
-     AND (channel = "ORGANIC" or channel = "ORGANIC_USER") ) b
+     (select item_id, sum(revenue) revenue, sum(uniq_count) uniq_count, 
+     sum(uniq_con)/sum(uniq_count)*100 i_con,
+     sum(uniq_atc)/sum(uniq_count)*100 i_atc, 
+     sum(uniq_pvr)/sum(uniq_count)*100 i_pvr 
+     FROM item_query_metrics_daily WHERE item_id in (?) and
+     query = ? and data_date = ?  AND channel in 
+     ("ORGANIC_USER", 'ORGANIC_AUTO_COMPLETE')  AND 
+     page_type = 'SEARCH' group by item_id) b
 
      on a.item_id = b.item_id
      
      left outer join 
-     (SELECT item, revenue FROM item_cat_total_revenue_daily WHERE cat_id = 0 AND date = ? and item in (?)) c
-     on a.item_id = c.item
-     )'
+     (SELECT item_id, revenue FROM item_cat_metrics_daily WHERE cat_id = 0 AND
+     data_date = ? and item_id in (?)) c on a.item_id = c.item_id
+     )}
 
-    items = find_by_sql([sql_statement,items, items, query, query_date, query_date, items ])
+     find_by_sql([sql_statement,items, items, query, query_date, query_date, items ])
 
     # item_selects = %q{item_attr.item_id, item.item_revenue,
     #   item.shown_count, item.item_con, item.item_atc, item.item_pvr,

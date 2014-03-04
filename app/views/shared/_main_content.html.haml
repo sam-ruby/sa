@@ -1,5 +1,6 @@
 :javascript
-  var Selected_Date = new Date(#{@date.year}, #{@date.month-1}, #{@date.day});
+  var Selected_Date = new Date(
+    #{@date.year}, #{@date.month-1}, #{@date.day});
   var Available_weeks = #{@available_weeks.to_json} 
   var Min_date = new Date(
     #{@min_date.year}, #{@min_date.month - 1}, #{@min_date.day});
@@ -30,10 +31,19 @@
     #search-quality-filter
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
    
-#poor-performing
-  #poor-performing-queries
+#trending{:style=>'display:none'}
+  %ul.nav.nav-pills.trending
+    %li.active
+      %a.pp{:href=>"#"}
+        Poor performing within last 30 days
+    %li
+      %a.up{:href=>"#"}
+        Trending within last 2 days
+  .pp-content
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-    
+  .up-content
+    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+
 #search-kpi
   .hcharts-paid
   .hcharts-unpaid

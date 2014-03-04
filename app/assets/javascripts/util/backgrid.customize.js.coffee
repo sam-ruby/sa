@@ -26,7 +26,7 @@ Backgrid.HelperHeaderCell = Backgrid.HeaderCell.extend(
     if @column.get("helpInfo")
       @$el.append "<i class=\"icon-question-sign icon-large info pull-right\" style=\"color:#49afcd\"/>"
     else if Searchad.helpInfo.hasOwnProperty(@column.get("name"))
-      @$el.append "<i class=\"icon-question-sign icon-large info pull-right\" style=\"color:#49afcd\"/>"  
+      @$el.append "<i class=\"icon-question-sign icon-large info pull-right\" style=\"color:#49afcd\"/>"
     this
 
   showDetails: (e) ->

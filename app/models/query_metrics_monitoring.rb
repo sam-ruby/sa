@@ -20,8 +20,8 @@ class QueryMetricsMonitoring < BaseModel
     # define select field
     # TODO: discuss the select with Hang, should we do con_trend_score * con_ooc_flag as con_trend_score,
   	selects = %q{query, count, 
-      con, con_ooc_score, con_trend_score, 
-      sqrt(count)*(con_ooc_score+con_trend_score) as con_rank_score, 
+      con, con_ooc_score, con_trend_score,
+      count*count*(con_OOC_score+con_trend_score) as con_rank_score, 
       pvr, pvr_ooc_score, pvr_trend_score,
       sqrt(count)*(pvr_ooc_score+pvr_trend_score) as pvr_rank_score, 
       atc, atc_ooc_score, atc_trend_score,
@@ -33,8 +33,7 @@ class QueryMetricsMonitoring < BaseModel
       .order(order_str)
     	.page(page).limit(limit)
     else
-      p "do all query"
-      QueryMetricsMonitoring.select(selects).where(%q{data_date = ? }, data_date)
+      QueryMetricsMonitoring.select(selects).where(%q{count > 100 and data_date = ? }, data_date)
       .order(order_str)
       .page(page).per(limit)
     end

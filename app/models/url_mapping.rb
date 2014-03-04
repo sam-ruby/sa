@@ -12,24 +12,24 @@ class URLMapping < BaseModel
       %Q{select distinct url_mapping.item_id, amazon.idd, amazon.name,
       amazon.brand, amazon.position, walmart_items.position as
       walmart_position,
-      amazon.name, amazon.brand, amazon.imgurl as img_url,
-      amazon.url, amazon.newprice,
-      (select curr_item_price from all_item_attrs
-      where item_id = concat(url_mapping.item_id) limit 1) as curr_item_price
+      amazon.imgurl as img_url, amazon.url, amazon.newprice,
+      item_attrs.curr_item_price 
       from url_mapping 
       left outer join
       (select item, position from walmart_query_top_32_items where
       year = ? and week = ? and query = '#{query_str}')
       as walmart_items
       on walmart_items.item = url_mapping.item_id,
-      (select max(check_week), idd, query_str,
+      (select max(week), idd, query,
       position,brand,name, imgurl, url,newprice from amazon_scrape_weekly
       where 
-     (check_year = ? and check_week in (?) OR check_year = ? and check_week in (?))
-      and query_str = ? group by idd) as
-      amazon
-      where url_mapping.retailer_id = amazon.idd
-      group by amazon.idd order by position}, latest_year,latest_weeks.last, latest_year, latest_weeks, previous_year, previous_weeks,query_str])
+     (year = ? and week in (?) OR year = ? and week in (?))
+      and query = ? group by idd) as
+      amazon, all_item_attrs item_attrs
+      where url_mapping.retailer_id = amazon.idd and
+      concat(url_mapping.item_id) = item_attrs.item_id
+      group by amazon.idd order by position}, latest_year, latest_weeks.last,
+      latest_year, latest_weeks, previous_year, previous_weeks,query_str])
    
     in_top_32 = amazon_comparison_items.select do |item|
       !item.walmart_position.nil?

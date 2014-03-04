@@ -1,79 +1,84 @@
 class QueryCatMetricsDaily < BaseModel
   self.table_name = 'query_cat_metrics_daily'
 
-  def self.get_search_words(
-    query, query_date, page=1, order_column=nil, order='asc', limit=10)
-    
-    selects = %q{id, query, channel, query_revenue, query_count, 
-      query_pvr, query_atc, query_con, cat_id, query_date}
-    
+  def self.get_search_words(query, data_date, page=1, 
+                            order_column=nil, order='asc', limit=10)
+    sql_stmt = %Q{select query, round(query_revenue) revenue, query_count, 
+      round(query_pvr, 2) query_pvr, round(query_atc, 2) query_atc, 
+      round(query_con, 2) query_con, query_score rank 
+      from poor_queries_30days_daily
+      where data_date = ? %s 
+      order by %s}
+  
     if order_column.nil?
-      order_str = "sqrt(query_count)*(1-query_con) desc"
+      order_str = "rank desc"
     else
       order_str = order_column
       order_str << ' ' << order
     end
     
-    limit = 10000 if page == 0
-    
+    order_limit_str = %Q{ #{order_str} limit #{limit} offset %s}
+    limit = 2000 if page == 0
+   
     if query
-      if page > 0 
-        QueryCatMetricsDaily.select(selects).where([
-           %q{query_date = ? AND cat_id = ? AND (channel = "ORGANIC" OR 
-           channel = "ORGANIC_USER") and query = ?},
-           query_date, 0, query]).order(order_str).page(page).per(limit)
-      else
-        QueryCatMetricsDaily.select(selects).where([
-           %q{query_date = ? AND cat_id = ? AND (channel = "ORGANIC" OR 
-           channel = "ORGANIC_USER") and query = ?},
-           query_date, 0, query]).order(order_str).limit(limit)
-      end
+      query_str = 'and query = ? '
+      args = [data_date, query]
     else
-      if page > 0 
-        QueryCatMetricsDaily.select(selects).where([
-           %q{query_date = ? AND cat_id = ? AND (channel = "ORGANIC" OR 
-           channel = "ORGANIC_USER")}, query_date, 0]).order(
-             order_str).page(page).per(limit)
-      else
-        QueryCatMetricsDaily.select(selects).where([
-           %q{query_date = ? AND cat_id = ? AND (channel = "ORGANIC" OR 
-           channel = "ORGANIC_USER")}, query_date, 0]).order(
-             order_str).limit(limit)
-      end
+      query_str = ''
+      args = [data_date]
+    end
+
+    if page > 0 
+      order_limit_str %= (page -1) * limit
+      find_by_sql([
+        sql_stmt % [query_str, order_limit_str], *args]) 
+    else
+      find_by_sql([
+        sql_stmt % [query_str, order_str], *args])
     end
   end
-
+  
   def self.get_query_stats(query)
-    selects = %q{unix_timestamp(query_date) * 1000 as query_date, query_count,
-      query_pvr, query_atc, query_con, query_revenue}
-    QueryCatMetricsDaily.select(selects).where(
-    [%q{query = ? AND cat_id = ? AND (channel = 'ORGANIC' OR channel = 
-    'ORGANIC_USER')}, query, 0]).order("query_date")
+    selects = %q{unix_timestamp(data_date) * 1000 as query_date, 
+    sum(uniq_count) query_count, 
+    round(sum(uniq_pvr)/sum(uniq_count)*100, 2) query_pvr, 
+    round(sum(uniq_atc)/sum(uniq_count)*100, 2) query_atc,
+    round(sum(uniq_con)/sum(uniq_count)*100, 2) query_con, 
+    sum(revenue) query_revenue}
+
+    select(selects).where(
+    [%q{query = ? AND cat_id = ? AND (channel = 'ORGANIC_USER' or
+     channel = 'ORGANIC_AUTO_COMPLETE') and 
+     page_type = 'SEARCH'}, query, 0]).group('data_date').order('data_date')
   end
 
   def self.get_query_stats_date(
-    query, year, week, query_date, page=1, order_col=nil, order='asc', limit=10)
+    query, year, week, query_date, page=1, order_col=nil, 
+    order='asc', limit=10)
     
-    order_str = order_col.nil? ? 'query_daily.query_count desc' : 
+    order_str = order_col.nil? ? 'sum(query_daily.uniq_count) desc' : 
       order.nil? ?  order_col : order_col + ' ' + order  
     
     join_stmt = %q{as query_daily
     left outer join search_quality_daily as search_daily on
-    search_daily.query_date = query_daily.query_date and
-    search_daily.query_str = query_daily.query} 
+    search_daily.data_date = query_daily.data_date and
+    search_daily.query = query_daily.query} 
     
-    selects = %Q{search_daily.id, query_daily.query,
-    search_daily.search_rev_rank_correlation, query_daily.query_count,
-    query_daily.query_pvr, query_daily.query_atc, query_daily.query_con,
-    query_daily.query_revenue,
-    (select cat_rate * 100 from query_performance where year = #{year}
-      and week = #{week} and query_str = query_daily.query
+    selects = %Q{query_daily.query,
+    search_daily.search_con_rank_correlation, 
+    sum(query_daily.uniq_count) query_count,
+    sum(query_daily.uniq_pvr)/sum(query_daily.uniq_count) query_pvr,
+    sum(query_daily.uniq_atc)/sum(query_daily.uniq_count) query_atc,
+    sum(query_daily.uniq_con)/sum(query_daily.uniq_count) query_con,
+    sum(query_daily.revenue) query_revenue,
+    (select assort_overlap * 100 from query_performance_week where year = #{year}
+      and week = #{week} and query = query_daily.query
       limit 1) as cat_rate, 
-    (select show_rate * 100 from query_performance where year = #{year}
-      and week = #{week} and query_str = query_daily.query 
+    (select shown_overlap * 100 from query_performance_week where year = #{year}
+      and week = #{week} and query = query_daily.query 
       limit 1) as show_rate, 
-    (select rel_score from query_performance where year = #{year}
-      and week = #{week} and query_str = query_daily.query
+    (select rel_score from query_performance_week where year = #{year}
+      and week = #{week} and query = query_daily.query
       limit 1) as rel_score}
 
     
@@ -81,30 +86,32 @@ class QueryCatMetricsDaily < BaseModel
     if !query.nil? and query.include?('*')
       query = query.gsub('*', '%')
       where_conditions = sanitize_sql_array([
-        %q{query_daily.query_date = '%s' and query_daily.query like '%s' 
-        and (query_daily.channel = "ORGANIC" or 
-        query_daily.channel = "ORGANIC_USER") and 
+        %q{query_daily.page_type = 'SEARCH' and 
+        query_daily.data_date = '%s' and query_daily.query like '%s' 
+        and query_daily.channel = "ORGANIC_USER" and 
         query_daily.cat_id = 0}, query_date, query])
     elsif !query.nil? and !query.empty?
       where_conditions = sanitize_sql_array([
-        %q{query_daily.query_date = '%s' and query_daily.query = '%s' 
-        and (query_daily.channel = "ORGANIC" or 
-        query_daily.channel = "ORGANIC_USER") and 
+        %q{query_daily.page_type = 'SEARCH' and 
+        query_daily.data_date = '%s' and query_daily.query = '%s' 
+        and query_daily.channel = "ORGANIC_USER" and 
         query_daily.cat_id = 0}, query_date, query])
     else
       where_conditions = sanitize_sql_array([
-        %q{query_daily.query_date = '%s'  
-        and (query_daily.channel = "ORGANIC" or 
-        query_daily.channel = "ORGANIC_USER") and 
+        %q{query_daily.page_type = 'SEARCH' and 
+        query_daily.data_date = '%s' and  
+        query_daily.channel = "ORGANIC_USER" and 
         query_daily.cat_id = 0}, query_date])
     end
 
     if page > 0
-      joins(join_stmt).select(selects).where(where_conditions).order(
+      joins(join_stmt).select(selects).where(where_conditions).group(
+        'query_daily.data_date, query_daily.query').order(
         order_str).page(page).per(limit)
     else
       limit = 10000
-      joins(join_stmt).select(selects).where(where_conditions).order(
+      joins(join_stmt).select(selects).where(where_conditions).group(
+        'query_daily.data_date, query_daily.query').order(
         order_str).limit(limit)
     end
   end

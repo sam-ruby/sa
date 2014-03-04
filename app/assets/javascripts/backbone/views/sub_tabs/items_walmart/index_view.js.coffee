@@ -50,8 +50,10 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
 
   render_result: =>
     return unless @active
-    # usually the clear is bind with request, since here is using client side pagination,
-    # there is not request available to trigger clean up when swiching pages. Clear here. 
+    # usually the clear is bind with request, since here is using client side 
+    # pagination,
+    # there is not request available to trigger clean up when swiching pages. 
+    # Clear here. 
     @$el.children().not('.ajax-loader').not('.walmart-items-form').remove()
     @controller.trigger('search:sub-content:hide-spin')
     $('.walmart-items-form').show()
@@ -67,7 +69,8 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     return unless @active
     @controller.trigger('search:sub-content:hide-spin')
     @$el.html(JST['backbone/templates/shared/no_data']({query:query}))
-    # need to delegate events because the "show popular item over time" and "top walmart 32" button needs it
+    # need to delegate events because the "show popular item over time" 
+    # and "top walmart 32" button needs it
     @delegateEvents()
 
   
@@ -101,18 +104,20 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
 
 
   get_items: (data) =>
-    @active = true  
+    @active = true
     start_date = @$el.find('input.start-date.datepicker').datepicker('getDate')
     end_date = @$el.find('input.end-date.datepicker').datepicker('getDate')
     data.start_date = start_date.toString('M-d-yyyy')
     data.end_date = end_date.toString('M-d-yyyy')
 
-    # when get_items it means user update the select, so save it to user latest selects
+    # when get_items it means user update the select, so save it 
+    # to user latest selects
     Searchad.UserLatest.SubTab.walmart.start_date = data.start_date
     Searchad.UserLatest.SubTab.walmart.end_date = data.end_date
-
+    
     data = @process_data(data)
-    # if the data param is the exact same stored with collection data. then directly render
+    # if the data param is the exact same stored with collection 
+    # data. then directly render
     if JSON.stringify(data) == JSON.stringify(@collection.data)
       @render_result()
       return
@@ -125,8 +130,12 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
       @query = data.query
     else
       data.query = @query
-    data.view || = "daily"
+    if data.start_date == data.end_date
+      data.view = "daily"
+    else
+      data.view = "ranged"
     @data = data
+
     return data
 
 
@@ -204,7 +213,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     label: I18n.t('dashboard2.item'),
     editable: false,
     cell: ItemCell},
-    {name: 'item_revenue',
+    {name: 'revenue',
     label: I18n.t('dashboard2.revenue'),
     editable: false,
     cell: 'number',
@@ -218,21 +227,21 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     helpInfo:helpInfo.curr_item_price
     },
     {name: 'shown_count',
-    label: I18n.t('dashboard2.shown_count'),
+    label: 'Impressions',
     editable: false,
     # formatter: Utils.CustomNumberFormatter,
     cell: 'integer'},
-    {name: 'item_con',
+    {name: 'i_con',
     label: 'Conversion',
     editable: false,
     cell: 'number',
     formatter: Utils.PercentFormatter},
-    {name: 'item_atc',
+    {name: 'i_atc',
     label: I18n.t('perf_monitor2.add_to_cart_rate'),
     editable: false,
     cell: 'number',
     formatter: Utils.PercentFormatter},
-    {name: 'item_pvr',
+    {name: 'i_pvr',
     label: I18n.t('perf_monitor.product_view_rate'),
     editable: false,
     cell: 'number',

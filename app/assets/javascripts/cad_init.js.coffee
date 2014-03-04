@@ -1,77 +1,4 @@
 $ ->
-  window.Utils = do ->
-    updateParam = (str, pName, pValue) ->
-      if str is ''
-        parts = []
-      else
-        parts = str.split('/')
-      partsCopy = parts.slice(0)
-
-      for name, i in parts when name is pName
-        partsCopy.splice(i, 2)
-      partsCopy.push(pName, pValue)
-      partsCopy.join('/')
-
-    updateURLParam = (location, fName, fValue, filter=false) ->
-      if location.indexOf('filters') >=0
-        parts = location.split('filters/')
-        filterURL = parts[1]
-        pathURL = parts[0]
-      else
-        filterURL = ''
-        pathURL = location
-      pathURL += '/' if pathURL.lastIndexOf('/') != (pathURL.length - 1)
-
-      if filter
-        newFilter = updateParam(filterURL, fName, fValue)
-        return pathURL + 'filters/' + newFilter
-      else
-        newPath = updateParam(pathURL, fName, fValue)
-        return newPath + 'filters/' + filterURL
-
-    init_csv_export_feature = (view, url) ->
-      view.export_csv_button = _.template('<span class="label label-info export-csv pull-right"><a href="#" id="download-csv-btn"><i class="icon icon-download-alt">&nbsp;</i>Download</a></span>')
-      view.export_csv = view.export_csv || (el, fileName, data) =>
-        MDW.CSVExport.genDownloadCSVFromUrl(el, fileName, url, data)
-     
-    class PercentFormatter extends Backgrid.NumberFormatter
-      decimals: 2
-      decimalSeparator: '.'
-      orderSeparator: ','
-
-      fromRaw: (rawValue) ->
-        return '-' if !rawValue?
-        "#{super(rawValue)}%"
-        
-    class CustomNumberFormatter extends Backgrid.NumberFormatter
-      decimals: 2
-      decimalSeparator: '.'
-      orderSeparator: ','
-
-      fromRaw: (rawValue) ->
-        return '-' unless rawValue
-        super(rawValue)
-
-    class CurrencyFormatter extends Backgrid.NumberFormatter
-      decimals: 2
-      decimalSeparator: '.'
-      orderSeparator: ','
-
-      fromRaw: (rawValue) ->
-        if rawValue == 0
-          '$' + rawValue.toFixed(0)
-        else if rawValue < 0
-          '- $' + super(Math.abs(rawValue))
-        else if rawValue > 0
-          '$' + super(rawValue)
-        else
-          '-'
-    UpdateURLParam: updateURLParam
-    PercentFormatter: PercentFormatter
-    CurrencyFormatter: CurrencyFormatter
-    CustomNumberFormatter: CustomNumberFormatter
-    InitExportCsv: init_csv_export_feature
-  
   do ->
     router = new Searchad.Routers.SearchQualityQuery()
     SearchQualityApp.Router = router
@@ -105,9 +32,16 @@ $ ->
       searchKPI.get_items)
 
     poorPerformingView = new Searchad.Views.PoorPerforming.IndexView(
-      el: '#poor-performing-queries')
+      el: '#trending'
+      content_selector: '.pp-content')
     poorPerformingView.listenTo(
-      controller, 'poor-performing:index', poorPerformingView.get_items)
+      controller, 'trending:index', poorPerformingView.get_items)
+
+    upTrendingView = new Searchad.Views.UpTrending.IndexView(
+      el: '#trending'
+      content_selector: '.up-content')
+    upTrendingView.listenTo(
+      controller, 'up-trending:index', upTrendingView.get_items)
 
     searchQualityQueryView = new Searchad.Views.SearchQualityQuery.IndexView(
       el: '#search-quality-queries'
@@ -160,30 +94,34 @@ $ ->
         queryItemsView.get_items(data)
     )
 
-     #cvr dropped view
+    #cvr dropped view
     cvrDroppedQueryView = new Searchad.Views.AdhocQuery.cvrDroppedQueryView (
       el: '#adhoc-query-report'
       el_results: '#cvr-dropped-query-results'
       )
 
     cvrDroppedQueryView.listenTo(
-        controller, 'adhoc:cvr_dropped_query', (data) -> cvrDroppedQueryView.get_items(data))
+        controller, 'adhoc:cvr_dropped_query',
+        (data) -> cvrDroppedQueryView.get_items(data))
 
-    #cvr_dropped_view when click on q query show the item comparison regarding that query
-    cvrDroppedQueryItemComparisonView = new Searchad.Views.SubTabs.ItemComparisonView {
-      el: '#search-sub-content'
-    }
+    #cvr_dropped_view when click on q query show the item comparison
+    #regarding that query
+    cvrDroppedQueryItemComparisonView =
+      new Searchad.Views.SubTabs.ItemComparisonView(el: '#search-sub-content')
+
     cvrDroppedQueryItemComparisonView.listenTo(
       controller, 'cvr_dropped_query:item_comparison', (data) ->
          cvrDroppedQueryItemComparisonView.get_items(data)
     )
     
     adhocQueryView = new Searchad.Views.AdhocQuery.IndexView(
-      el: '#adhoc-query-report' 
+      el: '#adhoc-query-report'
       el_form: '#cvr-dropped-query-form'
     )
     adhocQueryView.listenTo(
-      controller, 'adhoc:toggle_search_mode',(query_comparison_on)->adhocQueryView.toggle_search_mode(query_comparison_on))
+      controller, 'adhoc:toggle_search_mode',
+      (query_comparison_on)->
+        adhocQueryView.toggle_search_mode(query_comparison_on))
 
     adhocQueryView.listenTo(
       controller, 'adhoc:index',(data)->adhocQueryView.render_form(data))
@@ -230,5 +168,12 @@ $ ->
     e.preventDefault()
     SearchQualityApp.Router.navigate('/', trigger: true)
   )
+
+
+  # Enable feedback widget
+  $.feedback(
+    ajaxURL: '/feedback/send_feedback'
+    html2canvasURL: 'assets/feedback-master/html2canvas.js')
+  
   MDW.init({appId: 429415118})
 
