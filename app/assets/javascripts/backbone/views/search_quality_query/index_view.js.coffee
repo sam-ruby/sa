@@ -11,16 +11,12 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @initTable()
     @controller.bind('date-changed', =>
       @get_items() if @active)
+    
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('content-cleanup', @clear_filter)
-
     @collection.bind('reset', @render)
-    @collection.bind('request', =>
-      @unrender_search_results()
-      @$el.find('.ajax-loader').css('display', 'block')
-      @controller.trigger('sub-content-cleanup')
-      @controller.trigger('search:sub-tab-cleanup')
-    )
+    @collection.bind('request', @prepare_for_render)
+
     @advanced_search_on
     Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
     @undelegateEvents()
@@ -58,7 +54,6 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @advanced_search_on =false
 
   show_advanced:=>
-    console.log("show advanced")
     $('#simple_checkbox').attr('checked')
     @$filter.find(".row.advanced").show()
     @$filter.find(".row.simple").hide()
@@ -70,7 +65,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     all_words = @$el.find("#input-all-words").val()
     any_words= @$el.find("#input-any-words").val()
     none_words = @$el.find("#input-none-words").val()
-    @collection.data.query = 'EXACT_WORD='+ exact_words + 
+    @collection.data.query = 'EXACT_WORD='+ exact_words +
       'ALL_WORD='+ all_words + 'ANY_WORD='+ any_words+'NONE_WORD='+ none_words
     @collection.get_items()
     @active = true
@@ -85,14 +80,19 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @active = true
     @trigger = true
 
+  prepare_for_render: =>
+    @$el.find('.ajax-loader').css('display', 'block')
+    @controller.trigger('sub-content-cleanup')
+    @controller.trigger('search:sub-tab-cleanup')
+
   unrender_search_results: =>
-    @$el.children().not('.ajax-loader, #' + @$filter.attr('id')).remove()
     @$el.find('.ajax-loader').hide()
   
   initTable: () =>
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
       collection: @collection
+      emptyText: 'No Data'
     )
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection
@@ -121,19 +121,18 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     @active = false
     @unrender_search_results()
     @clear_filter()
+    @$el.children().not('.ajax-loader').not(@$filter).remove()
     @undelegateEvents()
     this
 
-  render_error: (query) ->
-    @$el.append(JST['backbone/templates/shared/no_data']({query:query}))
-  
   render: =>
     return unless @active
     @unrender_search_results()
-    return @render_error(@collection.data.query) if @collection.size() == 0
     @$filter.html(JST['backbone/templates/shared/advanced_search']())
+
     if @collection.data.query
-      results = @collection.data.query.match(/^EXACT_WORD=(.*)ALL_WORD=(.*)ANY_WORD=(.*)NONE_WORD=(.*)$/)
+      results = @collection.data.query.match(
+        /^EXACT_WORD=(.*)ALL_WORD=(.*)ANY_WORD=(.*)NONE_WORD=(.*)$/)
       @$filter.find('input#filter-text').val(results[1])
       @$filter.find('#input-exact-words').val(results[1])
       @$filter.find('#input-all-words').val(results[2])
@@ -143,23 +142,26 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
       @show_advanced()
     else
       @show_simple()
-    @$el.append( @grid.render().$el)
-    @$el.append( @paginator.render().$el)
-    @$el.append( @export_csv_button() )
-    @delegateEvents()
+      
+    if @collection.size() == 0
+      $(@grid.render().$el).insertAfter(@$filter)
+      return
+    else
+      $(@paginator.render().$el).insertAfter(@$filter)
+      $(@grid.render().$el).insertAfter(@$filter)
     
-    if @trigger
-      @trigger = false
-      @$el.find('td a.query').first().trigger('click')
+    @$el.append( @export_csv_button() ) unless @$el.find(
+      '.export-csv').length > 0
+    @$el.find('td a.query').first().trigger('click')
+    @delegateEvents()
     this
    
-
   gridColumns: ->
     that = this
     class QueryCell extends Backgrid.CADQueryCell
       handleQueryClick: (e) ->
         Backgrid.CADQueryCell.prototype.handleQueryClick.call(this, e)
-        query = @model.get('query_str')
+        query = @model.get('query')
         that.controller.trigger('search:sub-content',
           query: query
           view: 'daily'
@@ -170,7 +172,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
         false
     
     columns = [{
-    name: 'query_str',
+    name: 'query',
     label: I18n.t('search_analytics.query_string'),
     editable: false,
     cell: QueryCell},
@@ -181,7 +183,7 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     {name: 'rank_metric',
     label: "Rank Metric",
     editable: false,
-    cell: 'number',
+    cell: 'integer',
     headerCell: "helper"},
     {name: 'cat_rate',
     label: I18n.t('dashboard.catalog_overlap'),
@@ -197,11 +199,11 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     label: I18n.t('dashboard.overall_relevance_score'),
     editable: false,
     cell: 'number'},
-    {name: 'search_rev_rank_correlation',
-    label: I18n.t('search_analytics.rev_rank_correlation'),
+    {name: 'search_con_rank_correlation',
+    label: 'Con Rank Correlation',
     editable: false,
     cell: 'number'},
-    {name: 'query_revenue',
+    {name: 'revenue',
     label: I18n.t('search_analytics.revenue'),
     editable: false,
     cell: 'number',

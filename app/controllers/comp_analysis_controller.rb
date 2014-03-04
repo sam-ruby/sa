@@ -25,9 +25,9 @@ class CompAnalysisController < BaseController
       if view =='ranged'
         start_date = DateTime.strptime(params[:start_date], "%m-%d-%Y")  
         end_date = DateTime.strptime(params[:end_date], "%m-%d-%Y")  
-        walmart_items = ItemQueryCatMetricsDaily.get_walmart_items_over_time(query, start_date, end_date)
+        walmart_items = ItemQueryMetricsDaily.get_walmart_items_over_time(
+          query, start_date, end_date)
       else
-        # view = daily
         walmart_items = SearchQualityDaily.get_walmart_items_daily(query, @date)
       end
 
@@ -39,11 +39,11 @@ class CompAnalysisController < BaseController
         results = walmart_items.map do |record|
             {'Item Name' => record.title,
              'Item Image URL' => record.image_url,
-             'Item Revenue' => record.item_revenue.to_f.round(2),
+             'Item Revenue' => record.revenue.to_f.round(2),
              'Item Shown Count' => record.shown_count,
-             'Item Conversion' => record.item_con.to_f.round(2),
-             'Item ATC' => record.item_atc.to_f.round(2),
-             'Item PVR' => record.item_pvr.to_f.round(2)}
+             'Item Conversion' => record.i_con.to_f.round(2),
+             'Item ATC' => record.i_atc.to_f.round(2),
+             'Item PVR' => record.i_pvr.to_f.round(2)}
         end
         render :json => results
       end

@@ -3,12 +3,13 @@ Searchad.Views.MasterTab ||= {}
 class Searchad.Views.MasterTab.IndexView extends Backbone.View
  initialize: (options) =>
     @controller = SearchQualityApp.Controller
-    @router = SearchQualityApp.Router   
-    @controller.bind('poor-performing:index', @select_pp_tab)
+    @router = SearchQualityApp.Router
+    @controller.bind('trending:index', @select_trending_tab)
+    @controller.bind('up-trending:index', @select_trending_tab)
     @controller.bind('search-rel:index', @select_sq_tab)
     @controller.bind('search-kpi:index', @select_search_kpi_tab)
     @controller.bind('query-monitoring-count:index', @select_qmc_tab)
-    @controller.bind('qm-metrics:index', @select_qm_metrics_tab)  
+    @controller.bind('qm-metrics:index', @select_qm_metrics_tab)
     @controller.bind('master-tabs:cleanup', @unrender)
     @active = false
 
@@ -21,11 +22,11 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
       @controller.trigger('search-rel:index')
       @router.update_path('search_rel')
 
-    'click li.poor-performing-tab a': (e) =>
+    'click li.trending-tab a': (e) =>
       e.preventDefault()
       @controller.trigger('content-cleanup')
-      @controller.trigger('poor-performing:index', trigger: true)
-      @router.update_path('poor_performing')
+      @controller.trigger('trending:index', trigger: true)
+      @router.update_path('trending')
 
     'click li.search-kpi-tab a': (e) =>
       e.preventDefault()
@@ -55,17 +56,18 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
   init_overview: =>
     tabs = [{
       class: ['active', 'search-kpi-tab']
-      href: '#search_kpi'
+      href: '/#search_kpi'
       title: 'KPI'},
       {class: ['search-quality-tab']
       href: '/#search_rel'
       title: 'Query Analysis'},
-      {class: ['poor-performing-tab']
-      href: '#poor_performing'
-      title: 'Poor Performing Intents'}]
-    @$el.prepend(@get_tab_el(tabs[2]))
-    @$el.prepend(@get_tab_el(tabs[1]))
-    @$el.prepend(@get_tab_el(tabs[0]))
+      {class: ['trending-tab']
+      href: '/#trending'
+      title: 'Query Performance'}]
+
+    @$el.append(@get_tab_el(tabs[2]))
+    @$el.append(@get_tab_el(tabs[1]))
+    @$el.append(@get_tab_el(tabs[0]))
 
   init_query_monitoring: =>
     tabs = [{
@@ -84,12 +86,12 @@ class Searchad.Views.MasterTab.IndexView extends Backbone.View
     @$el.find('li.active').removeClass('active')
     $(el).parents('li').addClass('active')
 
-  select_pp_tab: =>
+  select_trending_tab: =>
     unless @active
       @$el.css('display', 'block')
       @init_overview()
       @active = true
-    @toggleTab(@$el.find('li.poor-performing-tab a'))
+    @toggleTab(@$el.find('li.trending-tab a'))
  
   select_sq_tab: =>
     unless @active

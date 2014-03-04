@@ -4,6 +4,15 @@ a.subcat {
 a.subcat:hover {
   color: #F7B800;
 }
+#search-quality-queries, #trending, #qm-filter, #qm-count-sub-tabs, #cvr-dropped-query-results, #search-results, #search-sub-tabs, #query-monitoring, #search-kpi {
+  position: relative;
+}
+.ajax-loader {
+  position: absolute;
+  top: 4em;
+  right: 50%;
+  z-index: 1;
+}
 .adv-search-opener {
   position: absolute;
   top: 5px;
@@ -423,6 +432,13 @@ a.cat-breadcrumb, a.daily, a.weekly {
 .title-p {
   display:table-cell;
   vertical-align:middle;
+}
+ul.trending.nav-pills {
+  li.active {
+    a {
+      background-color: #3a87ad;
+    }
+  }
 }
 .background-color-lightsilver {
   background-color: lightgray;

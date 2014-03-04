@@ -98,9 +98,9 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
       data = @process_query_data(data)
     # if the exact same data, don't redo the fetch
     if  @collection.dataParam.query_date == data.query_date and
-     @collection.dataParam.weeks_apart == data.weeks_apart and 
-     @collection.dataParam.query == data.query and  
-     @collection.state.currentPage ==1 
+     @collection.dataParam.weeks_apart == data.weeks_apart and
+     @collection.dataParam.query == data.query and
+     @collection.state.currentPage ==1
       @render_query_results()
       return
     # reset is bind with render_query_results.
@@ -115,11 +115,11 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     if data.weeks_apart
       data.weeks_apart= parseInt(data.weeks_apart)
     else
-      data.weeks_apart = @default_week_apart;
+      data.weeks_apart = @default_week_apart
     #query_date
     if !data.query_date
       current_date= @available_end_date
-      query_date = new Date(new Date(current_date) - data.weeks_apart*7*24*60*60*1000);
+      query_date = new Date(new Date(current_date) - data.weeks_apart*7*24*60*60*1000)
       data.query_date = query_date.toString('M-d-yyyy')
     #query
     data.query || = ""
@@ -167,7 +167,7 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     cell:'string',
     sortable:true,
     headerCell:'helper'
-    helpInfo:helpInfo.query_score
+    helpInfo: 'Score is derived from: Queries with higher count in P2, Higher conversion rate gap, and Lower conversion rate in P2'
     },
     {name:'query_con_diff',
     label:'Difference (%)',
@@ -194,7 +194,8 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     {name:'expected_revenue_diff',
     label:'Potential Rev Loss ($)',
     editable:false,
-    cell:'number'
+    cell:'number',
+    formatter: Utils.CurrencyFormatter,
     helpInfo: helpInfo.expected_revenue_diff
     headerCell:'helper'
     },

@@ -20,11 +20,11 @@ class URLMapping < BaseModel
       year = ? and week = ? and query = '#{query_str}')
       as walmart_items
       on walmart_items.item = url_mapping.item_id,
-      (select max(check_week), idd, query_str,
+      (select max(week), idd, query,
       position,brand,name, imgurl, url,newprice from amazon_scrape_weekly
       where 
-     (check_year = ? and check_week in (?) OR check_year = ? and check_week in (?))
-      and query_str = ? group by idd) as
+     (year = ? and week in (?) OR year = ? and week in (?))
+      and query = ? group by idd) as
       amazon, all_item_attrs item_attrs
       where url_mapping.retailer_id = amazon.idd and
       concat(url_mapping.item_id) = item_attrs.item_id

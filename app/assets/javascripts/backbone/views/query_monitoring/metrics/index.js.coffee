@@ -13,13 +13,11 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @controller.bind('date-changed', =>
       @get_items(trigger: true) if @active)
     @controller.bind('content-cleanup', @unrender)
-    @collection.bind('reset', => @render())
-    @collection.bind('request', =>
-      @clean_search_results()
-      @$ajax_loader.show()
-      @controller.trigger('qm:sub-content:cleanup')
-    )
-    Utils.InitExportCsv(this, "/monitoring/metrics/get_metric_monitor_table_data.csv")
+    @collection.bind('reset', @render)
+    @collection.bind('request', @prepare_for_render)
+
+    Utils.InitExportCsv(this,
+      "/monitoring/metrics/get_metric_monitor_table_data.csv")
     @undelegateEvents()
     @active = false
     @is_shown_all_columns = false
@@ -39,64 +37,71 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
         date: date
       @export_csv($(e.target), fileName, data)
 
+  prepare_for_render: =>
+    @$el.find('.ajax-loader').css('display', 'block')
+    @controller.trigger('sub-content-cleanup')
+    @controller.trigger('qm:sub-content:cleanup')
+
+  unrender_search_results: =>
+    @$ajax_loader.hide()
+  
   render: =>
     return unless @active
-    @$ajax_loader.hide()
-    if @collection.size() == 0
-      return @render_error(@collection.data.query) 
+    @unrender_search_results()
+
     # add filter
-    filter_template = JST['backbone/templates/query_monitoring/metrics/filter']
+    filter_template =
+      JST['backbone/templates/query_monitoring/metrics/filter']
     @$filter.html(filter_template(@collection.data))
-    # render grid
-    @$result.html(@grid.render().$el)
-    @$result.find('.group-header-rows').remove()
+    
+    if @collection.size() == 0
+      @$result.append(@grid.render().$el)
+      return
+    else
+      @$result.prepend(@paginator.render().$el)
+      @$result.prepend(@grid.render().$el)
+      @$result.find('.group-header-rows').remove()
+    
     # append group-header
-    @$result.find('table thead').prepend(JST['backbone/templates/query_monitoring/metrics/table_group_header']())
+    @$result.find('table thead').prepend(
+      JST['backbone/templates/query_monitoring/metrics/table_group_header']())
     if @is_shown_all_columns
       @show_all_columns()
     else
       @show_default_columns()
-    # add paginator
-    @$result.append( @paginator.render().$el)
-    @$result.append( @export_csv_button())
-    # when resetting the form, automaticlly choose the first item
-    @$result.find('td a.query').first().click()
-    @delegateEvents() 
-    # this
 
-  render_error: (query) ->
-    @$result.html(JST['backbone/templates/shared/no_data']({query:query}))
+    @$result.append( @export_csv_button() ) unless @$result.find(
+      '.export-csv').length > 0
+    @$result.find('td a.query').first().trigger('click')
+    @delegateEvents()
+    this
 
   unrender: =>
     @active = false
-    @clean_search_results()
-    @$filter.empty()
-    @undelegateEvents()
-
-
-  clean_search_results: =>
     @$result.empty()
     @$ajax_loader.hide()
-
+    @$filter.empty()
+    @undelegateEvents()
 
   init_table: () =>
     @grid = new Backgrid.Grid(
       columns: @grid_columns()
       collection: @collection
-    )   
-    @paginator = new Backgrid.Extension.Paginator(
-      collection: @collection
-    )
+      emptyText: 'No Data')
 
+    @paginator = new Backgrid.Extension.Paginator(
+      collection: @collection)
 
   get_items: (data) =>
     @active = true
     @trigger = true
-    # if there is already collection, with the same date and no query param, then directly render
-    # optional, if don't detect if it is one. it won't refresh to page 1 every render
+    # if there is already collection, with the same date and no
+    # query param, then directly render
+    # optional, if don't detect if it is one. it won't refresh to 
+    # page 1 every render
     if @collection.data.date == @controller.get_filter_params().date &&
     @collection.data.query == null &&
-    @collection.state.currentPage ==1 
+    @collection.state.currentPage ==1
       @render()
       return
     # if needs to fetch data, process first
@@ -108,7 +113,6 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     # get_first_page, backgrid function
     @collection.getPage(1)
 
-
   show_all_columns:(e) =>
     @$el.find('li').removeClass('active')
     @$el.find('li#show-all-columns').addClass('active')
@@ -117,7 +121,6 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @$el.find('tr#qm-group-head-all-cols').show()
     @$el.find('tr#qm-group-head-default-cols').hide()
     @is_shown_all_columns = true
-
 
   show_default_columns:(e)=>
     @$el.find('li').removeClass('active')
@@ -129,7 +132,6 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @$el.find('tr#qm-group-head-default-cols').show()
     @is_shown_all_columns = false
 
-  
   filter: (e) =>
     e.preventDefault()
     query = @$el.find("input#filter-text").val()
@@ -139,7 +141,6 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
       @active = true
       @trigger = true
 
-
   reset: (e) =>
     e.preventDefault()
     @router.update_path('/query_monitoring/metrics/query/')
@@ -148,7 +149,6 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     @active = true
     @collection.getPage(1)
     @trigger = true
-
 
   grid_columns:  ->
     that = this
@@ -161,21 +161,24 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
           query: query
           tab: "metrics"
           view: 'daily')
-        new_path = 'query_monitoring/metrics/query/' + encodeURIComponent(query)
+        new_path = 'query_monitoring/metrics/query/' +
+          encodeURIComponent(query)
         that.router.update_path(new_path)
 
-    helpInfo = {
-      trend: "Trend score for that metric on selected date. The higher the trend score is, 
-        the worse downwarding the trend of the metric is. 
-        If the trend score is 0, it indicates that query has no downward trending",
-      ooc: "Out of Control score for that metric on selected date. The higher the ooc score is, 
-        the more out of control the metric is (compare with predicted value) 
-        If the trend score is 0, it indicates that query has is in control",
-      rank_score: "Rank score is considering count, trend score and ooc score for the metric on the selected date. 
-        Larger query count, high out of control, and severe downward trending would cause high rank_score.
-        The formula is sqrt(query_count) * (ooc_score + trend_score)
-      "
-    }
+    helpInfo =
+      trend: """Trend score for that metric on selected date. The higher 
+      the trend score is, the worse downwarding the trend of the metric is. 
+      If the trend score is 0, it indicates that query has no downward 
+      trending""",
+      ooc: """Out of Control score for that metric on selected date.
+      The higher the ooc score is, the more out of control the metric is 
+      (compare with predicted value).  If the trend score is 0, it 
+      indicates that query has is in control""",
+      rank_score: """Rank score is considering count, trend score and 
+      ooc score for the metric on the selected date.  Larger query count,
+      high out of control, and severe downward trending would cause 
+      high rank_score. The formula is sqrt(query_count) * 
+        (ooc_score + trend_score)"""
  
     columns = [{
     name: 'query',
@@ -243,6 +246,6 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
     {name: 'atc_trend_score',
     label: 'Trend',
     editable: false,
-    cell: 'number'}
-    ]
-    return columns
+    cell: 'number'}]
+    
+    columns

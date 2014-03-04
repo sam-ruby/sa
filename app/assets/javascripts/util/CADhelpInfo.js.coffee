@@ -28,21 +28,13 @@ Searchad.helpInfo =
     name: "Product View Rate"
     description: "percentage of queries that customers clicked items recalled for a query"
 
-  site_revenue:
-    name: 'Site Revenue'
-    description: 'Average daily Site revenue for the item in last 14 days'
-      
-  revenue:
-    name: 'Revenue'
-    description: 'Average daily revenue for the item in last 14 days'
-
  # non-shared
   conversion_rate_dropped_query:
     query_score: "Ranked by most current traffic and most significant conversion drop. 
       Formula: sqrt(count_after)* con_diff"
 
     expected_revenue_diff: "If the conversion did not change, by using current traffic, what is the difference between the expected revenue and actual revenue roughly.
-       Formula: converion_difference/converion_after * revenue_after"   
+       Formula: converion_difference/converion_after * revenue_after"
 
 
 

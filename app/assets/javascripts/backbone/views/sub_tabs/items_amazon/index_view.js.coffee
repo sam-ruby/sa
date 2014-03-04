@@ -30,7 +30,7 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Backbone.View
 
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('sub-content-cleanup', @unrender)
-    Utils.InitExportCsv(this, "/poor_performing/get_amazon_items.csv")
+    Utils.InitExportCsv(this, "/comp_analysis/get_amazon_items.csv")
     @undelegateEvents()
     @active = false
  
@@ -130,6 +130,7 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Backbone.View
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
       collection: @amazonCollection
+      emptyText: 'No Data'
     )
     @paginator = new Backgrid.Extension.Paginator(
       collection: @amazonCollection
@@ -166,39 +167,21 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Backbone.View
     @delegateEvents()
     this
 
-  render_error: (query) ->
-    return unless @active
-    @$el.children().not('ul').remove()
-    @controller.trigger('search:sub-content:hide-spin')
-    @$el.show()
-    @$el.children('ul').hide()
-    @$el.append( $('<span>').addClass('label label-important').append(
-      "No data available for #{query}") )
-  
   render_all_items: =>
     @controller.trigger('search:sub-content:hide-spin')
     @$el.find('li.active').removeClass('active')
     @$el.find('li.all-items').addClass('active')
     data = @collection.at(0).get('all_items')
-    if data.length > 0
-      @processData(_.clone(data))
-    else
-      @render_error(@query)
+    @processData(_.clone(data))
 
   render_in_top_32: =>
     @$el.find('li.active').removeClass('active')
     @$el.find('li.in-top-32').addClass('active')
     data = @collection.at(0).get('in_top_32')
-    if data.length > 0
-      @processData(_.clone(data))
-    else
-      @render_error(@query)
+    @processData(_.clone(data))
 
   render_not_in_top_32: =>
     @$el.find('li.active').removeClass('active')
     @$el.find('li.not-in-top-32').addClass('active')
     data = @collection.at(0).get('not_in_top_32')
-    if data.length > 0
-      @processData(_.clone(data))
-    else
-      @render_error(@query)
+    @processData(_.clone(data))
