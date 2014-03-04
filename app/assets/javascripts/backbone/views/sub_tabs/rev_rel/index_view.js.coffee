@@ -72,18 +72,20 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Backbone.View
     formatter: Utils.PercentFormatter,
     cell: 'number'},
     {name: 'revenue',
-    label: 'Revenue',
+    label: 'Total Search Revenue',
+    helpInfo: 'Total Search Revenue for this item from last 28 days',
     editable: false,
     sortable: false,
     formatter: Utils.CurrencyFormatter,
     headerCell: 'helper',
     cell: 'number'},
     {name: 'site_revenue',
-    label: 'Site Revenue',
+    label: 'Total Site Revenue',
     editable: false,
     sortable: false,
     formatter: Utils.CurrencyFormatter,
     headerCell: 'helper',
+    helpInfo: 'Total Site Revenue for this item from last 28 days',
     cell: 'number'}]
 
     columns

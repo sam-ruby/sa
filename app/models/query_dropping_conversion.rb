@@ -80,7 +80,7 @@ class QueryDroppingConversion < BaseModel
     select_cols = %q{query, query_con_before, query_count_before, 
     query_revenue_before, query_count_after, query_con_after, 
     query_revenue_after, query_con_after, query_con_diff, 
-    ROUND(query_score, 0) as query_score, 
+    ROUND(query_score, 2) as query_score, 
     query_con_diff/query_con_after*query_revenue_after 
     as expected_revenue_diff, (@rank := @rank + 1) AS rank}
     

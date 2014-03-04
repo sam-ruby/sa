@@ -12,13 +12,10 @@ class AllItemAttrs < BaseModel
       item_metrics.data_date in (?) and 
       item_attrs.item_id in (?) and 
       item_metrics.query = ?}
-    selects = %q{item_attrs.item_id, item_attrs.title, 
-      item_attrs.image_url, item_attrs.curr_item_price, 
-      sum(item_metrics.revenue)/28 item_revenue}
 
     selects = %q{item_attrs.item_id, item_attrs.title, 
     item_attrs.image_url, item_attrs.curr_item_price, 
-    sum(item_metrics.revenue)/28 item_revenue}
+    sum(item_metrics.revenue) item_revenue}
    
     joins(join_stmt).select(selects).where(
       where_str, query_dates, item_id_list, query).group(
