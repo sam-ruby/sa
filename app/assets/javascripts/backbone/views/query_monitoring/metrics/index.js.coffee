@@ -166,19 +166,9 @@ class Searchad.Views.QueryMonitoring.Metric.IndexView extends Backbone.View
         that.router.update_path(new_path)
 
     helpInfo =
-      trend: """Trend score for that metric on selected date. The higher 
-      the trend score is, the worse downwarding the trend of the metric is. 
-      If the trend score is 0, it indicates that query has no downward 
-      trending""",
-      ooc: """Out of Control score for that metric on selected date.
-      The higher the ooc score is, the more out of control the metric is 
-      (compare with predicted value).  If the trend score is 0, it 
-      indicates that query has is in control""",
-      rank_score: """Rank score is considering count, trend score and 
-      ooc score for the metric on the selected date.  Larger query count,
-      high out of control, and severe downward trending would cause 
-      high rank_score. The formula is sqrt(query_count) * 
-        (ooc_score + trend_score)"""
+      trend: 'Trend score for that metric on selected date. The higher the trend score is, the worse downwarding the trend of the metric is.  If the trend score is 0, it indicates that query has no downward trending',
+      ooc: 'Out of Control score for that metric on selected date. The higher the ooc score is, the more out of control the metric is (compare with predicted value).  If the trend score is 0, it indicates that query has is in control',
+      rank_score: 'Score is derived from: Higher query count, Larger deviation from expectation, and Larger downward trending lead.'
  
     columns = [{
     name: 'query',
