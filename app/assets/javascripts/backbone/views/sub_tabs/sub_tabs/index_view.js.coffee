@@ -79,7 +79,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
         tab.addClass('active')
       else if @router.root_path_contains(/#search_rel/)
         @$el.find('li.cvr-dropped-item-comparison-tab').hide()
-        tab = @$el.find('li.search-amazon-items-tab').first()
+        tab = @$el.find('li.search-walmart-items-tab').first()
         tab.addClass('active')
       else
         @$el.find('li.cvr-dropped-item-comparison-tab').hide()

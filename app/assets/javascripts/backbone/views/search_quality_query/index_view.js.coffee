@@ -165,7 +165,6 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
         that.controller.trigger('search:sub-content',
           query: query
           view: 'daily'
-          # tab: Searchad.UserLatest.sub_tabs.current_tab
         )
         new_path = 'search_rel/query/' + encodeURIComponent(query)
         that.router.update_path(new_path)
