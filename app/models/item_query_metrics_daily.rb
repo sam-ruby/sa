@@ -15,7 +15,7 @@ class ItemQueryMetricsDaily < BaseModel
         item.item_id = item_attrs.item_id}
       ItemQueryCatMetricsDaily.joins(join_stmt).select(
         item_selects).where(%q{item.query_date = ? AND item.query = ? 
-        AND item.cat_id = ? AND (item.channel = "ORGANIC" or 
+        AND item.cat_id = ? AND (item.channel = "ORGANIC_AUTO_COMPLETE" or 
                             item.channel = "ORGANIC_USER")}, date, query, 
         cat_id).order('item_revenue DESC, shown_count DESC').limit(32)
   end
@@ -34,7 +34,7 @@ class ItemQueryMetricsDaily < BaseModel
         item.item_id = item_attrs.item_id}
       ItemQueryCatMetricsDaily.joins(join_stmt).select(
         item_selects).where(%q{item.query_date = ? AND item.query = ? 
-        AND item.cat_id = ? AND (item.channel = "ORGANIC" or 
+        AND item.cat_id = ? AND (item.channel = "ORGANIC_AUTO_COMPLETE" or 
         item.channel = "ORGANIC_USER") AND item.item_id in (?)},
         date, query, cat_id, item_ids).order(
           'item_revenue DESC, shown_count DESC').limit(32)
@@ -46,66 +46,19 @@ class ItemQueryMetricsDaily < BaseModel
     date_range = start_date..end_date
     
     select_cols = %q{item.item_id, sum(uniq_count) shown_count, 
-    sum(uniq_pvr)/sum(uniq_count) item_pvr,
-    sum(uniq_con)/sum(uniq_count) item_con,
-    sum(uniq_atc)/sum(uniq_count) item_atc, 
-    sum(revenue) as item_revenue,
+    sum(uniq_pvr)/sum(uniq_count)*100 i_pvr,
+    sum(uniq_con)/sum(uniq_count)*100 i_con,
+    sum(uniq_atc)/sum(uniq_count)*100 i_atc, 
+    sum(revenue) as revenue,
     item.title, item.image_url, item.curr_item_price}
 
     join_stmt = %q{as item_daily left outer join all_item_attrs item
     on item_daily.item_id = item.item_id}
 
-    return joins(join_stmt).select(select_cols).where(
-      %q{data_date in (?) and query = ? and channel = 'ORGANIC_USER' 
+    joins(join_stmt).select(select_cols).where(
+      %q{item_daily.data_date in (?) and query = ? and channel = 'ORGANIC_USER' 
       and page_type = 'SEARCH'}, date_range, query).group(
         'item_daily.item_id').order(
-        'shown_count DESC, item_pvr DESC, item_atc DESC').limit(32)
-
-    # Leaving the old code below
-    sql_for_item_ids = 
-     "select item_id,
-     sum(shown_count) as sum_shown_count,
-     sum(item_pvr *shown_count)/sum(shown_count) as item_pvr_ave,
-     sum(item_con *shown_count)/sum(shown_count) as item_con_ave,
-     sum(item_atc *shown_count)/sum(shown_count) as item_atc_ave
-     from item_query_cat_metrics_daily 
-     where query_date in (?) and query = ? and cat_id = 0 and (channel = 'ORGANIC' or channel = 'ORGANIC_USER') 
-     group by item_id
-     
-     order by sum_shown_count DESC,item_pvr_ave DESC, item_atc_ave DESC limit 32"
-
-    date_range = start_date..end_date
-
-    ids = ItemQueryCatMetricsDaily.find_by_sql([sql_for_item_ids, date_range, query])
-    ids_array = Array.new
-
-    ids.each { |x| 
-      ids_array << x.item_id 
-    }
-    # if I direct do join it will be very slow to join item_query_cat_metrics_daily and all_items_attrs
-    sql_for_items =
-    "select b.title, b.image_url, b.curr_item_price,
-     a.item_id, a.item_con_ave as item_con, a. item_pvr_ave as item_pvr,
-     a.item_atc_ave as item_atc, a.sum_item_revenue as item_revenue, a.sum_shown_count as shown_count from
-     (
-     select item_id,
-     sum(shown_count) as sum_shown_count,
-     sum(item_pvr *shown_count)/sum(shown_count) as item_pvr_ave,
-     sum(item_con *shown_count)/sum(shown_count) as item_con_ave,
-     sum(item_atc *shown_count)/sum(shown_count) as item_atc_ave,
-     sum(item_revenue) as sum_item_revenue
-     from item_query_cat_metrics_daily 
-     where query_date in (?) and query = ? and cat_id = 0 and (channel = 'ORGANIC' or channel = 'ORGANIC_USER')
-      group by item_id
-     
-     order by sum_shown_count DESC,item_pvr_ave DESC, item_atc_ave DESC limit 32
-     )a
-     left join 
-     (select item_id, title, image_url, curr_item_price from all_item_attrs where item_id in (?)) b
-     on b.item_id = a.item_id
-    "
-   items =ItemQueryCatMetricsDaily.find_by_sql([sql_for_items, date_range, query, ids_array])
-
-    return items
+        'shown_count DESC, i_pvr DESC, i_atc DESC').limit(32)
   end
 end

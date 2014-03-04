@@ -28,7 +28,7 @@ class SearchRelController < BaseController
              'Catalog Overlap' => record.cat_rate.to_f.round(2),
              'Results Shown in Search' => record.show_rate.to_f.round(2),
              'Overall Relevance Score' => record.rel_score.to_f.round(2), 
-             'Rev Rank Correlation' =>
+             'Conversion Rank Correlation' =>
                 record.search_con_rank_correlation.to_f.round(2),
              'Query Revenue' => record.revenue,
              'Query Conversion' => record.query_con.to_f.round(2)}

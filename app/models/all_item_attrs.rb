@@ -27,22 +27,26 @@ class AllItemAttrs < BaseModel
   
   def self.get_items(query, items, query_date)
     query_date = query_date.strftime('%Y-%m-%d')
-    # by deviding it into small set first, we could optimize this query from 1.5s to 50ms
+    # by deviding it into small set first, we could optimize this query 
+    # from 1.5s to 50ms
     sql_statement = %q{
      select 
      a.item_id, a.image_url, a.curr_item_price, a.title,
-     b.revenue, b.uniq_count, b.con, b.atc, b.pvr,
+     b.revenue, b.uniq_count shown_count, b.i_con, b.i_atc, b.i_pvr,
      c.revenue as site_revenue from (
      (select item_id, image_url, curr_item_price, title from `all_item_attrs` 
      where item_id in (?))a
 
      LEFT OUTER JOIN 
 
-     (select item_id, revenue, uniq_count, (uniq_con/uniq_count)*100 con,
-     (uniq_atc/uniq_count)*100 atc, (uniq_pvr/uniq_count)*100 pvr 
+     (select item_id, sum(revenue) revenue, sum(uniq_count) uniq_count, 
+     sum(uniq_con)/sum(uniq_count)*100 i_con,
+     sum(uniq_atc)/sum(uniq_count)*100 i_atc, 
+     sum(uniq_pvr)/sum(uniq_count)*100 i_pvr 
      FROM item_query_metrics_daily WHERE item_id in (?) and
-     query = ? and data_date = ?  AND channel = "ORGANIC_USER"  AND 
-     page_type = 'SEARCH') b
+     query = ? and data_date = ?  AND channel in 
+     ("ORGANIC_USER", 'ORGANIC_AUTO_COMPLETE')  AND 
+     page_type = 'SEARCH' group by item_id) b
 
      on a.item_id = b.item_id
      
@@ -51,7 +55,7 @@ class AllItemAttrs < BaseModel
      data_date = ? and item_id in (?)) c on a.item_id = c.item_id
      )}
 
-    items = find_by_sql([sql_statement,items, items, query, query_date, query_date, items ])
+     find_by_sql([sql_statement,items, items, query, query_date, query_date, items ])
 
     # item_selects = %q{item_attr.item_id, item.item_revenue,
     #   item.shown_count, item.item_con, item.item_atc, item.item_pvr,

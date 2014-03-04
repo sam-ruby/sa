@@ -19,7 +19,9 @@ class PoorPerformingController < BaseController
         results = QueryCatMetricsDaily.get_search_words(
           query, @date, 0).map do |record|
             {'Query' => record.query,
-             'Query Revenue' => record.query_revenue.to_f.round(2),
+             'Rank' => record.rank,
+             'Total Search Revenue' => record.revenue.to_f.round(2),
+             'Total Count' => record.query_count,
              'Conversion' => record.query_con.to_f.round(2),
              'ATC' => record.query_atc.to_f.round(2),
              'PVR' => record.query_pvr.to_f.round(2)}
@@ -58,7 +60,8 @@ class PoorPerformingController < BaseController
         results = TrendingQueriesDaily.get_trending_words(
           query, @date, 0).map do |record|
             {'Query' => record.query,
-             'Query Revenue' => record.query_revenue.to_f.round(2),
+             'Total Count' => record.query_count,
+             'Total Search Revenue' => record.revenue.to_f.round(2),
              'Conversion' => record.query_con.to_f.round(2),
              'ATC' => record.query_atc.to_f.round(2),
              'PVR' => record.query_pvr.to_f.round(2)}

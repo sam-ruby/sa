@@ -5,18 +5,18 @@ class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
     @collection = new Searchad.Collections.UpTrendingCollection()
     @content_area = @$el.find(options.content_selector).first()
     Utils.InitExportCsv(
-      this, "/trending/get_search_words.csv")
+      this, "/poor_performing/get_trending_words.csv")
     @gridCols = [{
       name: 'query',
       label: I18n.t('query'),
       editable: false,
       cell: @queryCell()},
       {name: 'query_count',
-      label: 'Count',
+      label: 'Total Count',
       editable: false,
       cell: 'integer'},
       {name: 'revenue',
-      label: I18n.t('search_analytics.revenue'),
+      label: 'Total Revenue',
       editable: false,
       cell: 'number',
       formatter: Utils.CurrencyFormatter}]
@@ -28,20 +28,23 @@ class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
     )
 
   events: =>
-    'click ' + @options.content_selector + ' .export-csv a': (e) ->
+    csv_event = "click #{@options.content_selector} .export-csv"
+    events = {}
+    events[csv_event] = (e)->
       date = @controller.get_filter_params().date
       fileName = "up_trending_#{date}.csv"
       data =
         view: 'daily'
         date: date
       @export_csv($(e.target), fileName, data)
-    
-    'click a.up': (e) ->
+    events['click a.up'] = (e) ->
       $(e.target).parents('ul').children('li').removeClass('active')
       $(e.target).parents('li').addClass('active')
       @controller.trigger('trending:cleanup')
       @get_items()
       false
+
+    events
  
   unrender: =>
     @clean_content()

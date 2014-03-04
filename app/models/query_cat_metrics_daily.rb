@@ -65,7 +65,7 @@ class QueryCatMetricsDaily < BaseModel
     search_daily.query = query_daily.query} 
     
     selects = %Q{query_daily.query,
-    search_daily.search_rev_rank_correlation, 
+    search_daily.search_con_rank_correlation, 
     sum(query_daily.uniq_count) query_count,
     sum(query_daily.uniq_pvr)/sum(query_daily.uniq_count) query_pvr,
     sum(query_daily.uniq_atc)/sum(query_daily.uniq_count) query_atc,

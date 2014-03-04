@@ -33,20 +33,24 @@ class Searchad.Views.PoorPerforming.IndexView extends Searchad.Views.Trending
     )
      
   events: =>
-    'click ' + @options.content_selector + ' .export-csv a': (e) ->
+    csv_event = "click #{@options.content_selector} .export-csv"
+    events = {}
+
+    events[csv_event] = (e)->
       date = @controller.get_filter_params().date
       fileName = "poor_performing_#{date}.csv"
       data =
         view: 'daily'
         date: date
       @export_csv($(e.target), fileName, data)
-    
-    'click a.pp': (e) ->
+    events['click a.pp'] = (e) ->
       $(e.target).parents('ul').children('li').removeClass('active')
       $(e.target).parents('li').addClass('active')
       @controller.trigger('trending:cleanup')
       @get_items()
       false
+    
+    events
   
   unrender: =>
     @clean_content()
