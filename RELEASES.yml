@@ -1,5 +1,14 @@
 --- # This is a text file to mark the features/bug fixes that went in a Release
-
+1.7.0:
+    Date: Mar 4, 2014
+    Features:
+      PERSSERANA-371: CAD UI Migration to Standard Schema
+      PERSSERANA-347: Create a trending query report for use in CAD
+      PERSSERANA-313: Create a new report- Poor performing queries over 30 days and put it in the CAD Home page
+    Fixes:
+      PERSSERANA-387: Comptetive analysis tab is missing the sub tabs
+      PERSSERANA-1: Rename columns rev to con to reflect the change in comparing relevance ranking against to conversion ranking
+ 
 1.6.1:
     Date: Feb 14, 2014
     Fixes:
