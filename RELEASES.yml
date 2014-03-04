@@ -1,4 +1,9 @@
 --- # This is a text file to mark the features/bug fixes that went in a Release
+1.7.1:
+    Date: Mar 4, 2014
+    Fixes:
+      PERSSERANA-407: Making Walmart results tab the default one
+ 
 1.7.0:
     Date: Mar 4, 2014
     Features:
@@ -8,6 +13,8 @@
     Fixes:
       PERSSERANA-387: Comptetive analysis tab is missing the sub tabs
       PERSSERANA-1: Rename columns rev to con to reflect the change in comparing relevance ranking against to conversion ranking
+      PERSSERANA-401: Queries with Dropping Conversion Rate; rank score by query_count*Conversion_diff
+      PERSSERANA-403: Changing the ranking formula for table under 'Query Metrics' tab for CAD 
  
 1.6.1:
     Date: Feb 14, 2014
