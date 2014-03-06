@@ -36,7 +36,6 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
     @available_end_date = Max_date
     @data
 
-    
   events:
     'click .export-csv a': (e) ->
       if @data
@@ -44,7 +43,6 @@ class Searchad.Views.AdhocQuery.cvrDroppedQueryView extends Backbone.View
           #{@data.query_date}_week_apart_#{@data.weeks_apart}.csv"
         @export_csv($(e.target), fileName, @data)
       
-
   active: false
 
   #when collection reset caused by get items, the rendering result is triggered
