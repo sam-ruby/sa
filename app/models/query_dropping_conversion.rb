@@ -105,34 +105,38 @@ class QueryDroppingConversion < BaseModel
     # Plus, it is very small data set. total item count is 15
     # after_start_date is used for the query_date midpoint for two week 
     # before and  two week after
-    item_before_arr = get_top_items_between_date(
+    data_date_before, item_before_arr = get_top_items_between_date(
       query, before_start_date, before_end_date, after_start_date) 
-    item_after_arr = get_top_items_between_date(
+    data_date_after, item_after_arr = get_top_items_between_date(
       query, after_start_date, after_end_date, after_start_date) 
     
     #since this is a small list, it is ok to process the merge
     result_arr = Array.new(
-      [item_before_arr.length, item_after_arr.length].max){Hash.new}
+      [(item_before_arr.length rescue 0), 
+       (item_after_arr.length rescue 0)].max){Hash.new}
 
     result_arr.each_with_index { |val, index|
       # index starts with 0, when displaying it as rank in UI, 
       # it should start with 1;  
-      val['cvr_dropped_item_comparison_rank'] = index+1
-      if (index < item_before_arr.length )
+      if index < (item_before_arr.length rescue 0)
+        val['cvr_dropped_item_comparison_rank'] = index+1
         val['item_id_before'] = item_before_arr[index]['item_id']
         val['item_title_before'] = item_before_arr[index]['title']
         val['image_url_before'] = item_before_arr[index]['image_url']
         val['seller_name_before'] = item_before_arr[index]['seller_name']
       end
 
-      if (index < item_after_arr.length)
+      if index < (item_after_arr.length rescue 0)
         val['item_id_after'] = item_after_arr[index]['item_id']
         val['item_title_after'] = item_after_arr[index]['title']
         val['image_url_after'] = item_after_arr[index]['image_url']
         val['seller_name_after'] = item_after_arr[index]['seller_name']
       end
     }
-   result_arr
+
+    {data_date_before: data_date_before,
+     data_date_after: data_date_after, 
+     items: result_arr}
   end
 
   #input query: query 
@@ -147,7 +151,7 @@ class QueryDroppingConversion < BaseModel
     # "21630182,19423472,4764723,14237607,4764726,10992861, there is 
     # no related rank for that sequence.
     item_ids = find_by_sql(
-    ['select query_items from search_quality_daily where query = ?
+    ['select query_items, data_date from search_quality_daily where query = ?
       and data_date=(select max(data_date) from 
       search_quality_daily where query = ? and 
         data_date in (?))', query, query,date_start..date_end])
@@ -156,7 +160,8 @@ class QueryDroppingConversion < BaseModel
     end
     
     #process the result, split the string to array
-    item_ids_arr=item_ids[0]['query_items'].split(",")
+    item_ids_arr = item_ids[0]['query_items'].split(",")
+    data_date = item_ids.first.data_date
     
     #query item which id are in processed arr
     sql_statement = "select item_id, title, image_url, 
@@ -165,9 +170,7 @@ class QueryDroppingConversion < BaseModel
        seller_name 
        FROM all_item_attrs where item_id in (?) 
        order by Field(item_id, ?) "
-      items = find_by_sql(
-        [sql_statement, item_ids_arr, item_ids_arr])
-    items
+    [data_date, find_by_sql([sql_statement, item_ids_arr, item_ids_arr])]
   end
 
 

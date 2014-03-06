@@ -30,7 +30,6 @@ class CompAnalysisController < BaseController
       else
         walmart_items = SearchQualityDaily.get_walmart_items_daily(query, @date)
       end
-
       format.json do 
         render :json => walmart_items
       end

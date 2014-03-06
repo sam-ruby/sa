@@ -7,7 +7,6 @@ Conversion Rate Dropping Query Item Comparison View
 
 Item showed for a query comparison for before and after based on selected week range and time from adhoc_query_report. 
 ###
-
 Searchad.Views.SubTabs ||= {}
 Searchad.Views.SubTabs.ItemComparisonView ||= {}
 
@@ -16,7 +15,6 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     @controller = SearchQualityApp.Controller
     @collection =
       new Searchad.Collections.CvrDroppedQueryComparisonItemCollection()
-    @initTable()
     # @controller.bind('date-changed', => @get_items() if @active)
     @collection.bind('reset', @render)
     @collection.bind('changed', @render)
@@ -28,7 +26,8 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
       @controller.trigger('search:sub-content:show-spin')
       @undelegateEvents()
     )
-    Utils.InitExportCsv(this, '/search/get_cvr_dropped_query_item_comparison.csv')
+    Utils.InitExportCsv(this,
+      '/search/get_cvr_dropped_query_item_comparison.csv')
     @undelegateEvents()
     @data = {}
     @active = false
@@ -44,6 +43,22 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
       @export_csv($(e.target), fileName, @data)
   
   gridColumns: =>
+    if @collection.data_date_before
+      before_items_label =
+        "Item shown on #{new Date(@collection.data_date_before).toString(
+          'MMM d, yyyy')}"
+    else
+      before_items_label =
+        "Item list not present"
+
+    if @collection.data_date_after
+      after_items_label =
+        "Item shown on #{new Date(@collection.data_date_after).toString(
+          'MMM d, yyyy')}"
+    else
+      after_items_label =
+        "Item list not present"
+
     class ItemCellBefore extends Backgrid.Cell
       item_template:
         JST["backbone/templates/poor_performing/walmart_items/item"]
@@ -71,16 +86,15 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
 
     columns = [{
     name: 'cvr_dropped_item_comparison_rank',
-    label: 'Rank',
+    label: 'Position',
     editable: false,
     cell: 'string'
     headerCell:'helperDescending'
-    helpInfo: 'The rank is the exact order that shown as result from search'
+    helpInfo: 'Position is the order of the items shown'
     },
-
     {
     name: 'item_title_before',
-    label: 'Item showed two weeks before',
+    label: before_items_label,
     editable: false,
     cell: ItemCellBefore
     },
@@ -91,7 +105,7 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     cell: 'string'
     },
     {name: 'item_title_after',
-    label: 'Item showed two weeks after',
+    label: after_items_label,
     editable: false,
     cell: ItemCellAfter
     },
@@ -100,8 +114,7 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     label: 'Seller',
     editable: false,
     cell: 'string'
-    }
-    ]
+    }]
     
     columns
 
@@ -110,11 +123,11 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
       className:'query-dropped-item-comparison backgrid'
       columns: @gridColumns()
       collection: @collection
+      emptyText: 'No Data'
     )
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection)
     
-
   unrender: =>
     # @$el.children().not('.ajax-loader').remove()
     # @$el.find('.ajax-loader').hide()
@@ -122,27 +135,22 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     @active = false
     @undelegateEvents()
   
-
   get_items: (data) =>
     @active = true
     @data = data
     @unrender
+
     # important,must reset current page size to 1
     @collection.state.currentPage = 1
     @collection.get_items(data)
 
-
-  render_error:  ->
-    return unless @active
-    @controller.trigger('search:sub-content:hide-spin')
-    @$el.html(JST['backbone/templates/shared/no_data']({query:@data.query}))
-  
   render: =>
-    if @active == false
-      return
+    return unless @active
+    @initTable()
 
     if @collection.size() == 0
-      return @render_error()
+      @$el.append(@grid.render().$el)
+      return
     
     @$el.children().not('.ajax-loader').remove()
     @controller.trigger('search:sub-content:hide-spin')
@@ -150,4 +158,4 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
     @$el.append( @paginator.render().$el)
     @$el.append(@export_csv_button())
     @delegateEvents()
-    return this
+    this

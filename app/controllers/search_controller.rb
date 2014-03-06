@@ -104,7 +104,8 @@ class SearchController < BaseController
   end
 
   def get_cvr_dropped_query_item_comparison
-    date = DateTime.strptime(params[:query_date], "%m-%d-%Y") rescue DateTime.now
+    date = DateTime.strptime(
+      params[:query_date], "%m-%d-%Y") rescue DateTime.now
     days_range = params[:weeks_apart] ? Integer(params[:weeks_apart]) * 7 : 7
     query = params[:query]
     before_start_date = date-1.day-days_range+1.day
@@ -114,7 +115,10 @@ class SearchController < BaseController
 
     respond_to do |format|
       format.json do 
-        results = QueryDroppingConversion.get_cvr_dropped_query_item_comparisons(query, before_start_date,before_end_date,after_start_date,after_end_date)
+        results = 
+          QueryDroppingConversion.get_cvr_dropped_query_item_comparisons(
+            query, before_start_date,before_end_date,
+            after_start_date,after_end_date)
         render :json => results
       end
 
