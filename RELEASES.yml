@@ -1,4 +1,14 @@
 --- # This is a text file to mark the features/bug fixes that went in a Release
+1.7.3:
+    Date: Mar 10, 2014
+    Fixes:
+      PERSSERANA-476: For the query conversion dropping feature, incorrect merchant name
+ 
+1.7.2:
+    Date: Mar 6, 2014
+    Fixes:
+      PERSSERANA-407: Sorting by pvr not working
+ 
 1.7.1:
     Date: Mar 4, 2014
     Fixes:

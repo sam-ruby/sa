@@ -166,7 +166,7 @@ class QueryDroppingConversion < BaseModel
     #query item which id are in processed arr
     sql_statement = "select item_id, title, image_url, 
       (select seller_name from mp_seller_id_name_mapping_daily 
-       where seller_id = seller_id order by data_date desc limit 1)
+       where seller_id = all_item_attrs.seller_id order by data_date desc limit 1)
        seller_name 
        FROM all_item_attrs where item_id in (?) 
        order by Field(item_id, ?) "
