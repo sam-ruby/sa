@@ -91,9 +91,20 @@ class Searchad.Views.SubTabs.Stats.IndexView extends Backbone.View
           @$el.highcharts().get(k.column).hide()
 
   slide_date_window: (obj) ->
-    if obj.max_date and obj.min_date
-      $('input[name=min].highcharts-range-selector').val(obj.min_date).change()
-      $('input[name=max].highcharts-range-selector').val(obj.max_date).change()
+    hc = @$el.highcharts()
+    if hc.get('query_count').data and hc.get('query_count').data.length > 0
+      s_data = hc.get('query_count').data
+      series_min_date = new Date(s_data[0].x)
+      series_max_date = new Date(s_data[s_data.length-1].x)
+    else
+      return
+
+    if obj.max_date? and obj.min_date?
+      given_min_date = new Date(obj.min_date)
+      given_max_date = new Date(obj.max_date)
+      if given_min_date >= series_min_date and given_max_date <= series_max_date
+        $('input[name=min].highcharts-range-selector').val(obj.min_date).change()
+        $('input[name=max].highcharts-range-selector').val(obj.max_date).change()
 
   process_data: (data) ->
     arr = []

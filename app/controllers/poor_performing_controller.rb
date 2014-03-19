@@ -33,18 +33,7 @@ class PoorPerformingController < BaseController
   
   def get_trending_words
     query = params[:query]
-    period = params[:period] || '2d'
-    if period == '2d'
-      period_days = 2
-    elsif period == '1w'
-      period_days = 7
-    elsif period == '2w'
-      period_days = 14
-    elsif period == '3w'
-      period_days = 21
-    elsif period == '4w'
-      period_days = 28
-    end
+    period_days = (params[:days] and params[:days].to_i) || 2
 
     if query.nil? or query.empty?
       if params[:total_entries].nil? or 
