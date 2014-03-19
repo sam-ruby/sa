@@ -42,6 +42,8 @@ class PoorPerformingController < BaseController
       period_days = 14
     elsif period == '3w'
       period_days = 21
+    elsif period == '4w'
+      period_days = 28
     end
 
     if query.nil? or query.empty?

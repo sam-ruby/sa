@@ -65,6 +65,10 @@ class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
       @controller.trigger('trending:cleanup')
       @get_items(period: '3w')
 
+    events['change input[type=radio].four-week'] = (e) =>
+      @controller.trigger('trending:cleanup')
+      @get_items(period: '4w')
+    
     events
 
   unrender: =>
