@@ -78,7 +78,7 @@ window.Utils = do ->
 
     fromRaw: (rawValue) ->
       return '-' unless rawValue
-      super(rawValue)
+      super(parseFloat(rawValue))
 
   class CustomNumberFormatter extends Backgrid.NumberFormatter
     decimals: 2
@@ -87,7 +87,7 @@ window.Utils = do ->
 
     fromRaw: (rawValue) ->
       return '-' unless rawValue
-      super(rawValue)
+      super(parseFloat(rawValue))
 
   class CurrencyFormatter extends Backgrid.NumberFormatter
     decimals: 0
@@ -108,6 +108,7 @@ window.Utils = do ->
   PercentFormatter: PercentFormatter
   CurrencyFormatter: CurrencyFormatter
   CustomNumberFormatter: CustomNumberFormatter
+  CustomNumberFormatterNoDecimals: CustomNumberFormatterNoDecimals
   InitExportCsv: init_csv_export_feature
   
 
