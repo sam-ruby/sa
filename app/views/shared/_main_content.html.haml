@@ -38,7 +38,28 @@
         Poor performing within last 30 days
     %li
       %a.up{:href=>"#"}
-        Trending within last 2 days
+        Trending Queries
+
+    %li.period-selector{:style=>'display:none'}
+      %span
+        &nbsp;
+      %label.radio.inline
+        %input.two-days{:type => :radio, :value => '2d', 
+          :name=>:trending_radio, :checked => true}
+        last 2 days
+      
+      %label.radio.inline
+        %input.one-week{:type => :radio, :value => '1w', :name=>:trending_radio}
+        last 1 week
+
+      %label.radio.inline
+        %input.two-week{:type => :radio, :value => '2w', :name=>:trending_radio}
+        last 2 weeks
+
+      %label.radio.inline
+        %input.three-week{:type => :radio, :value => '3w', :name=>:trending_radio}
+        last 3 weeks
+
   .pp-content
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
   .up-content

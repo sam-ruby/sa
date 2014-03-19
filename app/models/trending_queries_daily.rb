@@ -1,20 +1,28 @@
 class TrendingQueriesDaily < BaseModel
   self.table_name = 'trending_queries_daily'
-  
-  def self.get_trending_words_count(data_date)
+ 
+  def self.get_trending_words_count(data_date, period)
+    start_date = data_date - period.days
     count(
-      conditions: ['window_in_days = 2 and data_date = ? and ' + 
-        '(query_count_after+1)/(query_count_before+1)>=1.3', data_date])
+      select: 'query',
+      distinct: true,
+      conditions: ['window_in_days = 1 and data_date >= ? and data_date <= ?',
+                   start_date, data_date])
   end
-  
-  def self.get_trending_words(query, data_date, page=1, 
+
+  def self.get_trending_words(query, data_date, period=2, page=1,  
                               order_column=nil, order='asc', limit=10)
-    sql_stmt = %Q{select query, query_revenue_after revenue, 
-      query_count_after query_count, query_pvr_after query_pvr,
-      query_atc_after query_atc, query_con_after query_con, query_score rank 
+
+    start_date = data_date - (period - 2).days
+    sql_stmt = %q{select query, sum(query_revenue_after) revenue, 
+      sum(query_count_after) query_count,
+      round(sum(query_pvr_after)/sum(query_count_after)*100, 2)  query_pvr,
+      round(sum(query_atc_after)/sum(query_count_after)*100, 2) query_atc,
+      round(sum(query_con_after)/sum(query_count_after)*100, 2) query_con,
+      avg(query_score) rank 
       from trending_queries_daily 
-      where window_in_days = 2 and data_date = ? and 
-      (query_count_after + 1)/(query_count_before + 1) >= 1.3 %s 
+      where window_in_days = 1 and data_date >= ? and  data_date <= ? %s 
+      group by query
       order by %s}
   
     if order_column.nil?
@@ -24,15 +32,15 @@ class TrendingQueriesDaily < BaseModel
       order_str << ' ' << order
     end
     
-    order_limit_str = %Q{ #{order_str} limit #{limit} offset %s}
     limit = 2000 if page == 0
+    order_limit_str = %Q{ #{order_str} limit #{limit} offset %s}
    
     if query
       query_str = 'and query = ? '
-      args = [data_date, query]
+      args = [start_date, data_date, query]
     else
       query_str = ''
-      args = [data_date]
+      args = [start_date, data_date]
     end
 
     if page > 0 
