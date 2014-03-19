@@ -16,6 +16,11 @@ class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
       label: 'Total Count',
       editable: false,
       cell: 'integer'},
+      {name: 'query_count_diff',
+      label: 'Traffic Delta',
+      editable: false,
+      cell: 'integer'},
+
       {name: 'revenue',
       label: 'Total Revenue',
       editable: false,
