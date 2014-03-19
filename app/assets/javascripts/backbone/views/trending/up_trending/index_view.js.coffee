@@ -3,7 +3,6 @@ Searchad.Views.UpTrending ||= {}
 class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
   initialize: (options) =>
     @collection = new Searchad.Collections.UpTrendingCollection()
-    @period = 5
     @content_area = @$el.find(options.content_selector).first()
     Utils.InitExportCsv(
       this, "/poor_performing/get_trending_words.csv")
