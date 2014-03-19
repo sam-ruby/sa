@@ -98,7 +98,7 @@ class SearchRelController < BaseController
       revenue = con_item.item_revenue rescue 0
       site_revenue = items[4]
       con_rank = items[1].to_i + 1
-      top_item_con = items[3]
+      top_item_con = items[3].to_f
 
       if mode == :json
         result.push({:position => index,
