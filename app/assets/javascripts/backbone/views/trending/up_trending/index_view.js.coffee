@@ -41,11 +41,36 @@ class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
       $(e.target).parents('ul').children('li').removeClass('active')
       $(e.target).parents('li').addClass('active')
       @controller.trigger('trending:cleanup')
-      @get_items()
+      selected_val = @$el.find('input[type=radio]:checked')
+      if selected_val.length > 0
+        period = selected_val.val()
+      else
+        period = '2d'
+      @get_items(period: period)
       false
 
+    events['change input[type=radio].two-days'] = (e) =>
+      @controller.trigger('trending:cleanup')
+      @get_items(period: '2d')
+
+    events['change input[type=radio].one-week'] = (e) =>
+      @controller.trigger('trending:cleanup')
+      @get_items(period: '1w')
+    
+    events['change input[type=radio].two-week'] = (e) =>
+      @controller.trigger('trending:cleanup')
+      @get_items(period: '2w')
+    
+    events['change input[type=radio].three-week'] = (e) =>
+      @controller.trigger('trending:cleanup')
+      @get_items(period: '3w')
+
+    events['change input[type=radio].four-week'] = (e) =>
+      @controller.trigger('trending:cleanup')
+      @get_items(period: '4w')
+    
     events
- 
+
   unrender: =>
     @clean_content()
     @content_area.find('.ajax-loader').hide()
@@ -53,9 +78,12 @@ class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
 
   prepare_for_render: =>
     super()
+    @$el.find('li.period-selector').css('display', 'block')
     @content_area.find('.ajax-loader').css('display', 'block')
    
   render: =>
+    @$el.find('li.active').removeClass('active')
+    @$el.find('li a.up').parents('li').addClass('active')
     super(@content_area)
     
   queryCell:  ->
