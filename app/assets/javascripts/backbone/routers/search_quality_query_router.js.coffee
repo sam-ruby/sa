@@ -10,6 +10,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     
     "trending(/query/:query)(/filters/*wday)": "trending"
     "trending/up(/query/:query)(/filters/*wday)": "up_trending"
+    "trending/up(/query/:query)(/days/:days)(/filters/*wday)": "up_trending_days"
     "(filters/*wday)": "trending"
     
     "query_monitoring/count(/query/:query)(/filters/*wday)":
@@ -89,6 +90,24 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
         'trending:index', query: query)
     else
       @controller.trigger('trending:index')
+
+  up_trending_days: (query, days, date_parts) =>
+    @set_date_info(date_parts)
+    @controller.trigger('master-tabs:cleanup')
+    @controller.trigger('content-cleanup')
+    if query? and days?
+      query = decodeURIComponent(query)
+      @controller.trigger('up-trending:index',
+        days: days
+        query: query)
+    else if query?
+      query = decodeURIComponent(query)
+      @controller.trigger('up-trending:index', query: query)
+    else if days?
+      query = decodeURIComponent(query)
+      @controller.trigger('up-trending:index', days: days)
+    else
+      @controller.trigger('up-trending:index')
 
   up_trending: (query, date_parts) =>
     @set_date_info(date_parts)

@@ -33,11 +33,13 @@ class PoorPerformingController < BaseController
   
   def get_trending_words
     query = params[:query]
+    period_days = (params[:days] and params[:days].to_i) || 2
+
     if query.nil? or query.empty?
       if params[:total_entries].nil? or 
         params[:total_entries].empty? or params[:total_entries].to_i <= 1
         total_entries =
-          TrendingQueriesDaily.get_trending_words_count(@date)
+          TrendingQueriesDaily.get_trending_words_count(@date, period_days)
       else
         total_entries = params[:total_entries].to_i
       end
@@ -47,18 +49,18 @@ class PoorPerformingController < BaseController
 
     respond_to do |format|
       format.json do 
-        @search_words = TrendingQueriesDaily.get_trending_words(
-          query, @date, @page, @sort_by, @order, @limit)
-        if @search_words.nil? or @search_words.empty?
-          render :json => [{:total_entries => 0}, @search_words]
+        search_words = TrendingQueriesDaily.get_trending_words(
+          query, @date, period_days, @page, @sort_by, @order, @limit)
+        if search_words.nil? or search_words.empty?
+          render :json => [{:total_entries => 0}, search_words]
         else
           render :json => [
-              {:total_entries => total_entries}, @search_words]
+              {:total_entries => total_entries}, search_words]
         end
       end
       format.csv do
         results = TrendingQueriesDaily.get_trending_words(
-          query, @date, 0).map do |record|
+          query, @date, period_days, 0).map do |record|
             {'Query' => record.query,
              'Total Count' => record.query_count,
              'Total Search Revenue' => record.revenue.to_f.round(2),

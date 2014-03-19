@@ -56,6 +56,7 @@ class Searchad.Views.Trending extends Backbone.View
 
   prepare_for_render: =>
     @$el.css('display', 'block')
+    @$el.find('li.period-selector').hide()
     @controller.trigger('sub-content-cleanup')
     @controller.trigger('search:sub-tab-cleanup')
 

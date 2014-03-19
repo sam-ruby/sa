@@ -51,47 +51,53 @@ class SearchQualityDaily < BaseModel
     offset = (query.nil? or query.empty?) ? (page - 1) * 10 : 0
     order_limit_str = %Q{ #{order_str} limit #{limit} offset #{offset}}
 
-    sql_stmt = %Q{select in_tab_a.*, 
-      (in_tab_a.query_con/in_tab_a.query_count)*100 query_con, 
-      (select SQRT(in_tab_a.query_count)*(100-(in_tab_a.query_con/in_tab_a.query_count)
-      )*(in_tab_a.cat_rate/100-in_tab_a.show_rate/100)) rank_metric 
+    sql_stmt = %Q{select query, search_con_rank_correlation,
+      query_count, query_con order_count, revenue, cat_rate, show_rate, 
+      rel_score, conversion_rate query_con,
+      if(cat_rate is null, pow(query_count,2)/(query_con+1)*30/1000,
+      pow(query_count,2)/(query_con+1)*(cat_rate-show_rate)/1000) 
+      rank_metric
       from 
-        (select
-        a.query,
-        a.search_con_rank_correlation, 
-        sum(b.uniq_count) as query_count, 
-        sum(b.uniq_con) as query_con, 
-        sum(b.revenue) revenue, 
-        (c.assort_overlap * 100) cat_rate, 
-        (c.shown_overlap * 100) show_rate, 
-        c.rel_score 
-        from 
-          (SELECT query, search_con_rank_correlation, data_date FROM 
-          search_quality_daily WHERE data_date = ? %s) a,
-          query_cat_metrics_daily b,
-          query_performance_week c 
-          where 
-          b.cat_id = 0 and b.page_type='SEARCH' and 
-          b.channel in ('ORGANIC_USER', 'ORGANIC_AUTO_COMPLETE') 
-          and b.data_date = a.data_date and b.query = a.query and 
-          c.year = ? and c.week = ? and c.query = a.query 
-          group by b.query, b.cat_id) in_tab_a #{order_limit_str}} 
+      (SELECT a.query as query, search_con_rank_correlation, 
+      sum(b.uniq_count) query_count, 
+      sum(b.uniq_con) query_con,
+      sum(b.revenue) as revenue, 
+
+      (select assort_overlap_indexed*100 from query_performance_week 
+      where week=#{week} and year=#{year} and query = a.query) as cat_rate, 
+      
+      (select shown_overlap*100 from query_performance_week 
+      where week=#{week} and year=#{year} and query=a.query) as show_rate, 
+      
+      (select rel_score from query_performance_week where 
+      week=#{week} and year=#{year} and query=a.query) as rel_score, 
+      
+      sum(b.uniq_con)/sum(b.uniq_count)*100 conversion_rate 
+      FROM search_quality_daily as a, query_cat_metrics_daily as b 
+      WHERE 
+      a.data_date = b.data_date and 
+      a.query=b.query and 
+      b.cat_id=0 and 
+      b.page_type='SEARCH' and 
+      b.channel in ('ORGANIC_USER','ORGANIC_AUTO_COMPLETE') and 
+      a.data_date= ? %s group by b.query)c 
+      #{order_limit_str}}
 
     if query.nil? or query.empty? 
-      return find_by_sql([sql_stmt % '', query_date, year, week])
+      return find_by_sql([sql_stmt % '', query_date])
     end  
     
     my_match= /^EXACT_WORD=(.*)ALL_WORD=(.*)ANY_WORD=(.*)NONE_WORD=(.*)$/.match(query)  
 
     if my_match.nil?  
       return find_by_sql(
-        [sql_stmt % "and query = '#{query}'", query_date, year, week])
+        [sql_stmt % "and a.query = '#{query}'", query_date])
     end
 
     exact_word = my_match[1]
     if exact_word!= ''
       return find_by_sql(
-        [sql_stmt % "and query = '#{exact_word}'", query_date, year, week])
+        [sql_stmt % "and a.query = '#{exact_word}'", query_date])
     end
 
     # if it is not exact world need to generate that condition string
@@ -106,7 +112,7 @@ class SearchQualityDaily < BaseModel
       sub_match.collect!{|x|
         x = '%'+ x + '%'
       }
-      like_str= like_str +'and query like'  + '\'' + 
+      like_str= like_str +'and a.query like'  + '\'' + 
         sub_match.join(' ') + '\''
     end
 
@@ -114,18 +120,18 @@ class SearchQualityDaily < BaseModel
     if any_word!= ''
       sub_match = any_word.split(/\s+/) 
 
-      like_str = like_str + ' and query REGEXP' +  '\'' + 
+      like_str = like_str + ' and a.query REGEXP' +  '\'' + 
         sub_match.join("|") + '\''
     end
 
     #NOT REGEXP 'heater|desk'
     if none_word!= ''
       sub_match = none_word.split(/\s+/) 
-      like_str = like_str + ' and query NOT REGEXP' +  '\'' + 
+      like_str = like_str + ' and q.uery NOT REGEXP' +  '\'' + 
         sub_match.join("|") + '\''
     end
 
     return find_by_sql(
-      [sql_stmt % like_str, query_date, year, week])
+      [sql_stmt % like_str, query_date])
   end
 end

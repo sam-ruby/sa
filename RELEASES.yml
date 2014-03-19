@@ -1,4 +1,12 @@
 --- # This is a text file to mark the features/bug fixes that went in a Release
+1.8.0:
+    Date: Mar 19, 2014
+    Features:
+      PERSSERANA-415: Trending Queries now available for std. date ranges; 1,2,3 and 4 weeks
+    Fixes:
+      PERSSERANA-409: Top queries now shown in Query Analysis not dependent on Amazon Comparison data
+      PERSSERANA-322: Revenue Relevance comparison report is now sorted based on the Order count
+ 
 1.7.3:
     Date: Mar 10, 2014
     Fixes:
