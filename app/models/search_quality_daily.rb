@@ -52,8 +52,8 @@ class SearchQualityDaily < BaseModel
     order_limit_str = %Q{ #{order_str} limit #{limit} offset #{offset}}
 
     sql_stmt = %Q{select query, search_con_rank_correlation,
-      query_count, query_con, revenue, cat_rate, show_rate, 
-      rel_score, conversion_rate,
+      query_count, query_con order_count, revenue, cat_rate, show_rate, 
+      rel_score, conversion_rate query_con,
       if(cat_rate is null, pow(query_count,2)/(query_con+1)*30/1000,
       pow(query_count,2)/(query_con+1)*(cat_rate-show_rate)/1000) 
       rank_metric

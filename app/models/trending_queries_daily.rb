@@ -18,7 +18,8 @@ class TrendingQueriesDaily < BaseModel
       query_pvr_after  query_pvr,
       query_atc_after query_atc,
       query_con_after query_con,
-      query_score rank 
+      query_score rank,
+      (query_count_after - query_count_before) query_count_diff
       from trending_queries_daily 
       where window_in_days = ? and data_date = ? %s 
       group by query
