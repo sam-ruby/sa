@@ -93,9 +93,9 @@ class Searchad.Views.SubTabs.Stats.IndexView extends Backbone.View
   slide_date_window: (obj) ->
     hc = @$el.highcharts()
     if hc.get('query_count').data and hc.get('query_count').data.length > 0
-      s_data = hc.get('query_count').data
-      series_min_date = new Date(s_data[0].x)
-      series_max_date = new Date(s_data[s_data.length-1].x)
+      s_data = hc.get('query_count').xData
+      series_min_date = new Date(s_data[0])
+      series_max_date = new Date(s_data[s_data.length-1])
     else
       return
 
