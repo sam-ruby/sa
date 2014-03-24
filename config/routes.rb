@@ -72,6 +72,7 @@ Searchad::Application.routes.draw do
   get 'test(/:action(.:format))', :to=>'test'
   get 'release_notes(/:action(.:format))', :to=>'help'
   get 'comp_analysis(/:action(.:format))', :to=>'comp_analysis'
+  get 'category(/:action(.:format))', :to=>'categories'
 
   match 'search_kpi(/:action(.:format))',
     :to => 'search_k_p_i', :via => [:get, :post]  

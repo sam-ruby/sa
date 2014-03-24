@@ -16,13 +16,32 @@ $ ->
           controller.set_view('daily')
           controller.trigger('view-change', view: 'daily'))
     
-
+    categoriesView = new Searchad.Views.Categories.IndexView(
+      el: '#cat-container')
     weekView = new Searchad.Views.WeekPicker.IndexView(
       el: '#dp3')
 
     topTabsView = new Searchad.Views.TopTabs.IndexView(
-      el: '#top-nav')
+      el: '#top-bar')
+    
+    searchTabsView = new Searchad.Views.SearchTabs.IndexView(
+      el: '#search-bar')
 
+    browseTabsView = new Searchad.Views.BrowseTabs.IndexView(
+      el: '#browse-bar')
+    
+    categoryTabsView = new Searchad.Views.CategoryTabs.IndexView(
+      el: '#category-bar')
+
+    masterTabView = new Searchad.Views.MasterTab.IndexView(
+      el: '#search-sub-tasks .tabs')
+
+    poorPerformingView = new Searchad.Views.PoorPerforming.IndexView(
+      el: '#search-sub-tasks .search-content')
+
+    upTrendingView = new Searchad.Views.UpTrending.IndexView(
+      el: '#search-sub-tasks .search-content')
+    
     searchKPI = new Searchad.Views.SearchKPI.IndexView(
       el: '#search-kpi'
       paid_dom_selector: '.hcharts-paid'
@@ -30,18 +49,6 @@ $ ->
     )
     searchKPI.listenTo(controller, 'search-kpi:index',
       searchKPI.get_items)
-
-    poorPerformingView = new Searchad.Views.PoorPerforming.IndexView(
-      el: '#trending'
-      content_selector: '.pp-content')
-    poorPerformingView.listenTo(
-      controller, 'trending:index', poorPerformingView.get_items)
-
-    upTrendingView = new Searchad.Views.UpTrending.IndexView(
-      el: '#trending'
-      content_selector: '.up-content')
-    upTrendingView.listenTo(
-      controller, 'up-trending:index', upTrendingView.get_items)
 
     searchQualityQueryView = new Searchad.Views.SearchQualityQuery.IndexView(
       el: '#search-quality-queries'
@@ -149,16 +156,16 @@ $ ->
         queryMonitoringMetricView.get_items(data)
     )
 
-    qmMetricStatsView = new Searchad.Views.QueryMonitoring.Metric.Stats.IndexView ( 
+    qmMetricStatsView = new Searchad.Views.QueryMonitoring.Metric.Stats.IndexView (
       el: '#qm-count-sub-content'
       con_el:'#con-stats'
       atc_el:'#atc-stats'
       pvr_el:'#pvr-stats'
     )
     qmCountStatsView.listenTo(
-      controller, 'qm-metrics:stats', 
+      controller, 'qm-metrics:stats',
       (data)-> qmMetricStatsView.get_items(data))
-   
+
   Backbone.history.start()
   
   $('div.content').css('height', ($(window).height() + 50) + 'px')
@@ -175,5 +182,5 @@ $ ->
     ajaxURL: '/feedback/send_feedback'
     html2canvasURL: 'assets/feedback-master/html2canvas.js')
   
-  MDW.init({appId: 429415118})
+  #MDW.init({appId: 429415118})
 

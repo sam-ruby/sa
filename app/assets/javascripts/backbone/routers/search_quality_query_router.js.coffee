@@ -3,6 +3,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller = SearchQualityApp.Controller
 
   routes:
+    "search(/:task)(/:sub_task)(/*args)": "search"
+    "browse(/:task)(/:sub_task)(/*args)": "browse"
+    "category(/:task)(/:sub_task)(/*args)": "category"
     "search_rel(/query/:query)(/filters/*wday)": "search_rel"
     "search_rel/item_id/:id(/filters/*wday)": "search_query_items"
     
@@ -23,9 +26,26 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "adhoc_query(/mode/query_comparison)(/wks_apart/:weeks/query_date/:date/query/)(:query)(/filters/*wday)":
       "adhoc_query_comparison"
 
+  get_cat_id: (filters) ->
+    if filters?
+      parts = filters.split('/')
+      for part, i in parts
+        if part == 'cat_path'
+          cat_path = parts[i+1]
+          cats = cat_path.split(/_/)
+          @cat_id = cats[cats.length-1] if cats? and cats.length > 0
+          @cat_path = cat_path if cat_path?
+    @cat_id ||=0
+  
   set_date_info: (date_part) =>
+    @get_cat_id(date_part)
     curr_date = $('#dp3').datepicker('getDate')
     if date_part?
+      arg = date_part.match(/filter/)
+      if arg? and arg.length > 0
+        date_part = arg[0].split(/filter/)[1]
+      else
+        return
       date_parts = date_part.split('/')
       for part, i in date_parts
         if part == 'date'
@@ -39,7 +59,15 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     else if curr_date != Selected_Date
       @controller.trigger('update_date', Selected_Date.toString('M-d-yyyy'))
 
+  search:(@task, @sub_task, @task_args) =>
+    @set_date_info(@task_args)
 
+  browse:(@task, @sub_task, @task_args) =>
+    @set_date_info(@task_args)
+  
+  catalog:(@task, @sub_task, @task_args) =>
+    @set_date_info(@task_args)
+  
   adhoc_query_comparison: (weeks, date, query, date_parts) =>
     @set_date_info(date_parts)
     data=

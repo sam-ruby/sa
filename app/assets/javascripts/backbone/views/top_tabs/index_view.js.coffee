@@ -4,51 +4,46 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
   initialize: (options) =>
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
-    @controller.bind('search-kpi:index', @overview)
-    @controller.bind('search-rel:index', @overview)
-    @controller.bind('trending:index', @overview)
-    @controller.bind('trending-up:index', @overview)
-    @controller.bind('adhoc:index', @adhoc)
-    @controller.bind('query-monitoring-count:index', @query_monitoring)
-    @controller.bind('qm-metrics:index', @query_monitoring)
-    
-    @masterTabView = new Searchad.Views.MasterTab.IndexView(
-        el: 'ul.master-tab')
-  
+ 
+    @listenTo(@router, 'route', (route, params) =>
+      @$el.find('li.active').removeClass('active')
+      if route == 'search'
+        @$el.find('li.search-tab').addClass('active')
+      else if route == 'browse'
+        @$el.find('li.browse-tab').addClass('active')
+      else if route == 'category'
+        @$el.find('li.category-tab').addClass('active')
+
+    )
+   
   events: =>
-    'click li.overview-tab a': (e) =>
+    'click li.search-tab a': (e) =>
       e.preventDefault()
-      @controller.trigger('master-tabs:cleanup')
       @controller.trigger('content-cleanup')
-      @controller.trigger('trending:index')
-      @router.update_path('/')
+      @router.update_path('/search/performance/poor_performing',
+        trigger: true)
 
-    'click li.adhoc-query-tab a': (e) =>
+    'click li.browse-tab a': (e) =>
       e.preventDefault()
-      @controller.trigger('master-tabs:cleanup')
       @controller.trigger('content-cleanup')
-      @controller.trigger('adhoc:index')
-      @controller.trigger('adhoc:cvr_dropped_query')
-      @controller.trigger('adhoc:toggle_search_mode', true)
-      @router.update_path('adhoc_query/mode/query_comparison')
+      @router.update_path('/browse', trigger: true)
 
-    'click li.query-monitoring-tab a': (e) =>
+    'click li.category-tab a': (e) =>
       e.preventDefault()
-      @controller.trigger('master-tabs:cleanup')
       @controller.trigger('content-cleanup')
-      @controller.trigger('query-monitoring-count:index')
-      @router.update_path('query_monitoring/count')
+      @router.update_path('/category', trigger: true)
    
   toggleTab: (el) =>
     @$el.find('li.active').removeClass('active')
     $(el).parents('li').addClass('active')
 
-  overview: =>
-    @toggleTab(@$el.find('li.overview-tab a'))
+  search: =>
+    @toggleTab(@$el.find('.search-tab a'))
 
-  adhoc: =>
-    @toggleTab(@$el.find('li.adhoc-query-tab a'))
+  browse: =>
+    @toggleTab(@$el.find('.browse-tab a'))
   
-  query_monitoring: (e, data) =>
-    @toggleTab(@$el.find('li.query-monitoring-tab a'))
-  
+  category: (e, data) =>
+    @toggleTab(@$el.find('.category-tab a'))
+
+
