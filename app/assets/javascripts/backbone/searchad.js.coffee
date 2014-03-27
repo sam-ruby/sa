@@ -15,15 +15,15 @@ window.SearchQualityApp = do ->
   controller.set_view = (@view) =>
   controller.get_view = => @view
   controller.set_date = (@date) =>
-  # controller.set_week = (@week) =>
-  # controller.set_year = (@year) =>
   controller.set_cat_id = (@cat_id) =>
+  controller.set_query_segment = (@query_segment) =>
 
   controller.get_filter_params = =>
     date: @date
     week: @week
     year: @year
     cat_id: @cat_id
+    query_segment: @query_segment
 
   Controller: controller
   
@@ -41,6 +41,7 @@ window.Utils = do ->
     partsCopy.join('/')
 
   updateURLParam = (location, fName, fValue, filter=false) ->
+    debugger
     if location.indexOf('filters') >=0
       parts = location.split('filters/')
       filterURL = parts[1]

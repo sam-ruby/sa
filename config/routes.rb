@@ -69,7 +69,7 @@ Searchad::Application.routes.draw do
   match 'poor_performing(/:action(.:format))',
     :to => 'poor_performing', :via => [:get, :post]  
   
-  get 'test(/:action(.:format))', :to=>'test'
+  get 'ndcg(/:action(.:format))', :to=>'ndcg'
   get 'release_notes(/:action(.:format))', :to=>'help'
   get 'comp_analysis(/:action(.:format))', :to=>'comp_analysis'
   get 'category(/:action(.:format))', :to=>'categories'

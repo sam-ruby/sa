@@ -1,6 +1,3 @@
-# require lib/jquery-plugins/jquery.ba-outside-events.js
-# require models/saved-category.js
-# require collections/saved-categories.js
 Searchad.Views.Categories ||= {}
 
 class Searchad.Views.Categories.IndexView extends Backbone.View
@@ -25,7 +22,6 @@ class Searchad.Views.Categories.IndexView extends Backbone.View
     "<img src='/assets/ajax_spinner.gif' style='height:20px;width:20px;'/>"
 
   render: =>
-    debugger
     @$el.find('ul.cat-list').empty()
     @$el.find('ul.cat-list').first().append(
       @cat_template(

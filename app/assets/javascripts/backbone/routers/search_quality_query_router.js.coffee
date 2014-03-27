@@ -40,24 +40,17 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   set_date_info: (date_part) =>
     @get_cat_id(date_part)
     curr_date = $('#dp3').datepicker('getDate')
-    if date_part?
-      arg = date_part.match(/filter/)
-      if arg? and arg.length > 0
-        date_part = arg[0].split(/filter/)[1]
-      else
-        return
-      date_parts = date_part.split('/')
-      for part, i in date_parts
-        if part == 'date'
-          if curr_date != Selected_Date
-            @controller.trigger('update_date', date_parts[i+1])
-            @controller.set_date(date_parts[i+1])
-        # else if part == 'year'
-        #   @controller.set_year(date_parts[i+1])
-        # else if part == 'week'
-        #   @controller.set_week(date_parts[i+1])
-    else if curr_date != Selected_Date
-      @controller.trigger('update_date', Selected_Date.toString('M-d-yyyy'))
+    return unless date_part?
+    
+    arg = date_part.match(/filters/)
+    return unless arg? or arg.length == 0
+    date_part = date_part.split(/filters/)[1]
+    date_parts = date_part.split('/')
+    
+    for part, i in date_parts
+      if part == 'date' and date_parts[i+1]?
+        @controller.trigger('update_date', date_parts[i+1])
+        @controller.set_date(date_parts[i+1])
 
   search:(@task, @sub_task, @task_args) =>
     @set_date_info(@task_args)

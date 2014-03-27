@@ -42,6 +42,15 @@ $ ->
     upTrendingView = new Searchad.Views.UpTrending.IndexView(
       el: '#search-sub-tasks .search-content')
     
+    topQueryView = new Searchad.Views.TopQuery(
+      el: '#search-sub-tasks .overview')
+  
+    ndcgDistributionView = new Searchad.Views.NDCG.Distribution(
+      el: '#distribution')
+
+    ndcgWinnersView = new Searchad.Views.NDCG.Winners(
+      el: '#ndcg .winner')
+    
     searchKPI = new Searchad.Views.SearchKPI.IndexView(
       el: '#search-kpi'
       paid_dom_selector: '.hcharts-paid'

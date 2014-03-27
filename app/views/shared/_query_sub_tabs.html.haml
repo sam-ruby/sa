@@ -1,17 +1,23 @@
-.second-navbar{style: 'margin-bottom:1em'}
+.navbar{style: 'margin-bottom:1em'}
   .navbar-inner
     %ul#top-nav.nav
-      %li.active.query-performance-tab
-        %a{:href=>'#'}
+      %li.active.top-tab
+        %a{:href=>'#search/top'} 
           %span
-            Query Performance
-
-      %li.query-analysis-tab
-        %a{:href=>'#'}
+            Top Queries
+      %li.trending-tab
+        %a{:href=>'#search/trending'}
           %span
-            Query Analysis
-      
-      %li.ndcg-tab
-        %a{:href=>'#'} 
+            Trending
+      %li.poor-performing-tab
+        %a{:href=>'#search/poor_performing'}
           %span
-            NDCG
+            Poor Performing
+      %li.random-tab
+        %a{:href=>'#search/random'}
+          %span
+            Random
+      %li.conv-dropped-tab
+        %a{:href=>'#search/conv_dropped'}
+          %span
+            Conversion Dropped
