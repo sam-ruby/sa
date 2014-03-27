@@ -49,7 +49,10 @@ $ ->
       el: '#distribution')
 
     ndcgWinnersView = new Searchad.Views.NDCG.Winners(
-      el: '#ndcg .winner')
+      el: '#ndcg .winners')
+    
+    ndcgLoosersView = new Searchad.Views.NDCG.Loosers(
+      el: '#ndcg .loosers')
     
     searchKPI = new Searchad.Views.SearchKPI.IndexView(
       el: '#search-kpi'

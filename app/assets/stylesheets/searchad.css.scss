@@ -579,12 +579,24 @@ sup.beta-tag {
 }
 
 .second-navbar {
-  $background: #AAA;
+  $tabBackground: #AAA;
+  // $background: #007796;
+  // $backgroundHighlight: #008dd4;
+  $background: #fff;
+  $backgroundHighlight: #fff;
   @extend .navbar;
   
   .navbar-inner {
+    // @include gradient-vertical(#ffffff, darken(#ffffff, 5%));
+    @include gradient-vertical($background, $backgroundHighlight);
+    border: 0;
+    border-bottom: 1px solid $navbarBorder;
     @include border-radius(0);
+    @include box-shadow(0 0 0 rgba(0,0,0,.065)); 
+    // Prevent floats from breaking the navbar
+    @include clearfix();
   }
+
   .nav {
     li.active {
       a {
@@ -597,8 +609,8 @@ sup.beta-tag {
         }
 
         span {
-          background: $background;
-          border: 1px solid $background;
+          background: $tabBackground;
+          border: 1px solid $tabBackground;
           border-radius: 5px;
           color: white;
           margin: 6px 4px;
@@ -634,5 +646,12 @@ td.metric-name1 {
 }
 .metrics-col-head {
   font-size: 90%;
+}
+.fixed-navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1003;
+  margin-right: 2em;
 }
 
