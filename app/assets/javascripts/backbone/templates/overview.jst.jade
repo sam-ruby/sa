@@ -1,0 +1,29 @@
+table.table.table-condensed
+  caption.metrics-summary-head Metrics Summary
+    
+  tbody
+    tr.metrics-col-head
+      td Metric
+      td(style='text-align:right') Change
+      td Sample Queries
+    each metric in metrics
+      tr
+        td.metric-name
+          a(href='#')
+            = metric.name
+        td(class=metric.change>0?'green-change':'red-change')
+          span.pull-right
+            | &nbsp;
+            if metric.change>0 
+              i.icon-arrow-up.green-change
+            else
+              i.icon-arrow-down.red-change
+          span.pull-right
+            = metric.change + '%'
+        td
+          each query in metric.queries
+            a(href='#')= query
+            |,&nbsp
+          a(href='#')
+            |more
+
