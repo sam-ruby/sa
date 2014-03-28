@@ -39,4 +39,39 @@ class NdcgController < BaseController
   def get_loosers
     get_queries(false)
   end
+
+  def get_daily_change
+    query_segment = params[:query_segment] || 'TOP QUERIES'  
+    cat_id = params[:cat_id] || 3944
+    metric_id = params[:metric_id]
+
+    respond_to do |format|
+      if metric_id =~ /conv_rel_corr/i
+        results = SearchQualityDaily.get_daily_metrics(
+          query_segment, cat_id, @date)
+        change = results.first.score/results.last.score*100 - 100
+        format.json do render :json => {
+          metric_id: metric_id,
+          daily_metrics: results,
+          change: change.to_f.round(2),
+          queries: queries}
+        end
+      else
+        results = Ndcg.get_daily_metrics(
+          query_segment, cat_id, @date)
+        change = results.first.score/results.last.score*100 - 100
+        queries = []
+        Ndcg.get_queries(true, nil, query_segment, cat_id,
+                         @date, 1, 5).each do |record|
+          queries.push record.query
+        end
+        format.json do render :json => {
+          metric_id: metric_id,
+          daily_metrics: results,
+          change: change.to_f.round(2),
+          queries: queries}
+        end
+      end
+    end
+  end
 end

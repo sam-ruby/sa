@@ -134,4 +134,22 @@ class SearchQualityDaily < BaseModel
     return find_by_sql(
       [sql_stmt % like_str, query_date])
   end
+
+  def self.get_daily_metrics(segment, cat_id, date)
+    cols = %q{s.data_date,
+    sum(s.uniq_count*(s.search_con_rank_correlation+1)/2)/sum(s.uniq_count)
+     score, sum(s.uniq_count) count}
+    
+    join_str = %q{as s JOIN query_segmentation_daily qs ON 
+      (s.query=qs.query and s.data_date=qs.data_date ) 
+      JOIN query_categorization_daily qc ON 
+      (s.query=qc.query and s.data_date=qc.data_date)}
+
+    where_str = %q{s.data_date in (?, ?) and 
+      qs.segmentation = ? and qc.cat_id = ?}
+
+    select(cols).joins(join_str).where(
+      [where_str, date, date - 1.day, segment, cat_id]).group(
+        's.data_date').having('count > 500').order('s.data_date desc') 
+  end
 end

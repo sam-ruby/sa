@@ -6,6 +6,23 @@ class Ndcg < BaseModel
     select(cols).where(%q{data_date = ?}, data_date).group('round(ndcg, 1)')
   end
 
+  def self.get_daily_metrics(segment, cat_id, date)
+    cols = %q{n.data_date, avg(n.ndcg) score,
+      if(count(*)>1000,100,count(*)/10) confidence}
+
+    join_str = %q{as n JOIN query_segmentation_daily s ON 
+      (n.query=s.query and n.data_date=s.data_date ) 
+      JOIN query_categorization_daily c ON 
+      (n.query=c.query and n.data_date=c.data_date)}
+
+    where_str = %q{n.data_date in (?, ?) and 
+      s.segmentation = ? and c.cat_id = ?}
+
+    select(cols).joins(join_str).where(
+      [where_str, date, date - 1.day, segment, cat_id]).group(
+        'n.data_date').order('n.data_date desc') 
+  end
+  
   def self.get_queries(winning, query, query_segment, cat_id, data_date,
                        page=1,  limit=10, order_col=nil, order='asc')
   

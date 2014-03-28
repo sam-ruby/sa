@@ -19,8 +19,6 @@ class Searchad.Views.NDCG.Distribution extends Searchad.Views.NDCG.Index
     )
 
   events: =>
-    'scroll': (e) =>
-      console.log 'Just doing the scrolling now'
     'click a.distribution': (e) =>
       e.preventDefault()
       $('html, body').animate({scrollTop: @$el.offset().top}, 1000)
