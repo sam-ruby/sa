@@ -46,6 +46,8 @@ class Searchad.Views.TopQuery extends Backbone.View
     , 500)
 
   renderMetrics: (metric_id, change, queries) =>
-    @$el.find("tr.#{metric_id} span.metric-change").text(
-      change)
-    @$el.find("tr.#{metric_id} td.metric-queries").text(queries.join)
+    @$el.find("tr.#{metric_id} td").not('.metric-name').remove()
+    @$el.find("tr.#{metric_id}").append(
+      JST['backbone/templates/daily_metric'](
+        change: change
+        queries: queries) )

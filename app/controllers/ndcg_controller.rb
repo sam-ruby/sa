@@ -54,7 +54,7 @@ class NdcgController < BaseController
           metric_id: metric_id,
           daily_metrics: results,
           change: change.to_f.round(2),
-          queries: queries}
+          queries: []}
         end
       else
         results = Ndcg.get_daily_metrics(
