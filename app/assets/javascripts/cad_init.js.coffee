@@ -46,11 +46,17 @@ $ ->
       el: '#search-sub-tasks .overview')
   
     ndcgDistributionView = new Searchad.Views.NDCG.Distribution(
-      el: '#distribution')
+      el: '#ndcg-distribution')
 
     ndcgWinnersView = new Searchad.Views.NDCG.Winners(
       el: '#ndcg .winners')
-    
+ 
+    convCorDistributionView = new Searchad.Views.ConvCorrelation.Distribution(
+      el: '#conv-cor-distribution')
+
+    convCorWinnersView = new Searchad.Views.ConvCorrelation.Winners(
+      el: '#conv-cor .winners')
+   
     ndcgLoosersView = new Searchad.Views.NDCG.Loosers(
       el: '#ndcg .loosers')
     

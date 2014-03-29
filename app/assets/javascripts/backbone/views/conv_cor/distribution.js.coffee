@@ -1,9 +1,9 @@
-#= require backbone/views/ndcg/index
+#= require backbone/views/conv_cor/index
 
-class Searchad.Views.NDCG.Distribution extends Searchad.Views.NDCG.Index
+class Searchad.Views.ConvCorrelation.Distribution extends Searchad.Views.ConvCorrelation.Index
   initialize: (options) ->
     active: false
-    @navBar = JST["backbone/templates/ndcg_navbar"]
+    @navBar = JST["backbone/templates/conv_cor_navbar"]
     super(options)
     $(document).scroll((e) =>
       return unless @active
@@ -21,8 +21,6 @@ class Searchad.Views.NDCG.Distribution extends Searchad.Views.NDCG.Index
   events: =>
     'click a.distribution': (e) =>
       e.preventDefault()
-      $(e.target).parents('ul').children('li').removeClass('active')
-      $(e.target).parents('li').addClass('active')
       $('html, body').animate({scrollTop: @$el.offset().top}, 1000)
     'click a.brand': (e) =>
       e.preventDefault()
@@ -31,19 +29,13 @@ class Searchad.Views.NDCG.Distribution extends Searchad.Views.NDCG.Index
       e.preventDefault()
       $(e.target).parents('ul').children('li').removeClass('active')
       $(e.target).parents('li').addClass('active')
-      div = @$el.parents('#ndcg').children('div.winners')
-      $('html, body').animate({scrollTop: div.offset().top}, 1000)
-    'click a.loosers': (e) =>
-      e.preventDefault()
-      $(e.target).parents('ul').children('li').removeClass('active')
-      $(e.target).parents('li').addClass('active')
-      div = @$el.parents('#ndcg').children('div.loosers')
+      div = @$el.parents('#conv-cor-distribution').children('div.winners')
       $('html, body').animate({scrollTop: div.offset().top}, 1000)
     'click a.timeline': (e) =>
       e.preventDefault()
       $(e.target).parents('ul').children('li').removeClass('active')
       $(e.target).parents('li').addClass('active')
-      div = @$el.parents('#ndcg').children('div.timeline')
+      div = @$el.parents('#conv-cor-distribution').children('div.timeline')
       $('html, body').animate({scrollTop: div.offset().top}, 1000)
 
   initChart: (cat_data, series_data) ->
@@ -60,7 +52,7 @@ class Searchad.Views.NDCG.Distribution extends Searchad.Views.NDCG.Index
         title:
           text: 'Query Count'
       title:
-        text: 'Query Distribution over NDCG@16'
+        text: 'Query Distribution'
         useHTML: true
         align: "center"
         floating: true
@@ -78,7 +70,7 @@ class Searchad.Views.NDCG.Distribution extends Searchad.Views.NDCG.Index
         verticalAlign: 'bottom'
         borderWidth: 0
       series: [{
-        name: 'NDCG @16'
+        name: 'Conversion Relevance Correlation Score'
         data: series_data}]
     )
     @$el.prepend('<div class="metrics-summary-head">Query Distribution</div>')
@@ -97,7 +89,7 @@ class Searchad.Views.NDCG.Distribution extends Searchad.Views.NDCG.Index
       continue unless v
       data[k] = v
     $.ajax(
-      url: '/ndcg/get_distribution.json'
+      url: '/conv_cor/get_distribution.json'
       data: data
       success: (json, status) =>
         if json.length > 0

@@ -49,13 +49,21 @@ class NdcgController < BaseController
       if metric_id =~ /conv_rel_corr/i
         results = SearchQualityDaily.get_daily_metrics(
           query_segment, cat_id, @date)
+        queries = []
+        SearchQualityDaily.get_daily_queries(
+          query_segment, cat_id, @date, 1, 5).each do |record|
+          queries.push(record.query)
+          end
         change = results.first.score/results.last.score*100 - 100
+        score = results.first.score
+        
         format.json do render :json => {
           metric_id: metric_id,
-          daily_metrics: results,
+          score: results.first.score.to_f.round(3),
           change: change.to_f.round(2),
-          queries: []}
+          queries: queries}
         end
+
       else
         results = Ndcg.get_daily_metrics(
           query_segment, cat_id, @date)
@@ -67,7 +75,7 @@ class NdcgController < BaseController
         end
         format.json do render :json => {
           metric_id: metric_id,
-          daily_metrics: results,
+          score: results.first.score.to_f.round(3),
           change: change.to_f.round(2),
           queries: queries}
         end

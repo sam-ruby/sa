@@ -36,18 +36,19 @@ class Searchad.Views.TopQuery extends Backbone.View
             query_segment: filter_params.query_segment
             cat_id: filter_params.cat_id
           success: (json, status) =>
-            debugger
             if json?
               metric_id = json.metric_id
+              score = json.score
               change = json.change
               queries = json.queries
-              that.renderMetrics(metric_id, change, queries)
+              that.renderMetrics(metric_id, score, change, queries)
         )
     , 500)
 
-  renderMetrics: (metric_id, change, queries) =>
+  renderMetrics: (metric_id, score, change, queries) =>
     @$el.find("tr.#{metric_id} td").not('.metric-name').remove()
     @$el.find("tr.#{metric_id}").append(
       JST['backbone/templates/daily_metric'](
+        score: score
         change: change
         queries: queries) )

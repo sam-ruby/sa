@@ -3,14 +3,16 @@ table.table.table-condensed
     
   tbody
     tr.metrics-col-head
-      td Metric
-      td(style='text-align:right') Change
-      td Sample Queries
+      td(width='20%') Metric
+      td(width='10%') Score
+      td(width='15%', style='text-align:right') Change
+      td(width='55%') Top Winning Queries
     each metric in metrics
       tr(class=metric.id)
         td.metric-name
           a(href='#')
             = metric.name
+        td --
         td
           span.pull-right.metric-change --
         td --
