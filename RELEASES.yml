@@ -1,4 +1,15 @@
 --- # This is a text file to mark the features/bug fixes that went in a Release
+1.8.2:
+    Date: Apr 1, 2014
+    Fixes:
+      PERSSERANA-513: Download to csv not working for trending queries
+      PERSSERANA-514: Trending queries list is only shown for one page
+
+1.8.1:
+    Date: Mar 19, 2014
+    Fixes:
+      PERSSERANA-401: Fixing the bug with charts date rage for trending queries
+ 
 1.8.0:
     Date: Mar 19, 2014
     Features:

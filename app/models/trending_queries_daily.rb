@@ -1,13 +1,12 @@
 class TrendingQueriesDaily < BaseModel
   self.table_name = 'trending_queries_daily'
  
-  def self.get_trending_words_count(data_date, period)
-    start_date = data_date - period.days
+  def self.get_trending_words_count(period_in_days, data_date)
     count(
       select: 'query',
       distinct: true,
-      conditions: ['window_in_days = 1 and data_date >= ? and data_date <= ?',
-                   start_date, data_date])
+      conditions: ['window_in_days = ? and data_date = ?',
+                   data_date, period_in_days])
   end
 
   def self.get_trending_words(query, data_date, period=2, page=1,  
@@ -22,18 +21,17 @@ class TrendingQueriesDaily < BaseModel
       (query_count_after - query_count_before) query_count_diff
       from trending_queries_daily 
       where window_in_days = ? and data_date = ? %s 
-      group by query
-      order by %s}
+      group by query %s}
   
     if order_column.nil?
-      order_str = "rank desc"
+      order_str = "order by rank desc"
     else
       order_str = order_column
-      order_str << ' ' << order
+      order_str = "order by #{order_column} #{order}"
     end
     
     limit = 2000 if page == 0
-    order_limit_str = %Q{ #{order_str} limit #{limit} offset %s}
+    order_limit_str = %Q{ #{order_str} %s}
    
     if query
       query_str = 'and query = ? '
@@ -44,10 +42,11 @@ class TrendingQueriesDaily < BaseModel
     end
 
     if page > 0 
-      order_limit_str %= (page -1) * limit
+      order_limit_str %= "limit #{limit} offset #{(page -1) * limit}"
       find_by_sql([
         sql_stmt % [query_str, order_limit_str], *args]) 
     else
+      order_limit_str %= "limit #{limit}"
       find_by_sql([
         sql_stmt % [query_str, order_limit_str], *args])
     end
