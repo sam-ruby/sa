@@ -17,8 +17,18 @@ class Searchad.Views.TopQuery extends Backbone.View
     )
   active: false
   render: =>
-    metrics_data = [{
-      name: 'NDCG',
+    metrics_data = [
+      {name: 'Traffic',
+      id: 'trafic'},
+      {name: 'PVR',
+      id: 'pvr'},
+      {name: 'ATC',
+      id: 'atc'},
+      {name: 'Conversion',
+      id: 'conversion'},
+      {name: 'Revenue',
+      id: 'revenue'},
+      {name: 'NDCG',
       id: 'ndcg'},
       {name: 'Rev Relevance Correlation',
       id: 'conv_rel_corr'}]

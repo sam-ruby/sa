@@ -57,6 +57,10 @@ $ ->
     convCorWinnersView = new Searchad.Views.ConvCorrelation.Winners(
       el: '#conv-cor .winners')
    
+    convCorStatsView = new Searchad.Views.ConvCorrelation.Stats(
+      el: '#conv-cor .timeline')
+   
+
     ndcgLoosersView = new Searchad.Views.NDCG.Loosers(
       el: '#ndcg .loosers')
     

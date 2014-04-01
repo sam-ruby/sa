@@ -10,8 +10,8 @@ a.subcat:hover {
 .ajax-loader {
   position: absolute;
   top: 4em;
-  right: 50%;
   z-index: 1;
+  display: none;
 }
 .adv-search-opener {
   position: absolute;
@@ -585,6 +585,8 @@ sup.beta-tag {
   $background: #fff;
   $backgroundHighlight: #fff;
   @extend .navbar;
+  margin-bottom: 0;
+  padding-bottom: 1.5em;
   
   .navbar-inner {
     // @include gradient-vertical(#ffffff, darken(#ffffff, 5%));
@@ -643,6 +645,17 @@ td.metric-name1 {
   text-align:left;
   font-weight: 700;
   margin-bottom: .5em;
+  span.winners {
+    padding-right: 1.5em;
+    border-right: 1px solid black;
+  }
+  span.loosers {
+    padding-left: 1.5em;
+  }
+}
+div.winners, div.loosers, div.timeline, div.hcharts {
+  position: relative;
+  text-align: center;
 }
 .metrics-col-head {
   font-size: 90%;
@@ -653,5 +666,17 @@ td.metric-name1 {
   width: 100%;
   z-index: 1003;
   margin-right: 2em;
+}
+
+table.backgrid {
+  border: 0;
+  thead {
+    border: 1px solid #ddd;
+  }
+  th, td {
+    border: 0;
+    border-bottom: 1px solid #ddd;
+    padding: 3px 5px;
+  }
 }
 

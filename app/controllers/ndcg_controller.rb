@@ -42,20 +42,20 @@ class NdcgController < BaseController
 
   def get_daily_change
     query_segment = params[:query_segment] || 'TOP QUERIES'  
-    cat_id = params[:cat_id] || 3944
+    cat_id = params[:cat_id] || 0
     metric_id = params[:metric_id]
 
     respond_to do |format|
       if metric_id =~ /conv_rel_corr/i
         results = SearchQualityDaily.get_daily_metrics(
           query_segment, cat_id, @date)
-        queries = []
-        SearchQualityDaily.get_daily_queries(
-          query_segment, cat_id, @date, 1, 5).each do |record|
-          queries.push(record.query)
-          end
         change = results.first.score/results.last.score*100 - 100
         score = results.first.score
+        queries = []
+        SearchQualityDaily.get_daily_queries(
+          true, query_segment, cat_id, @date, 1, 5).each do |record|
+          queries.push(record.query)
+          end
         
         format.json do render :json => {
           metric_id: metric_id,

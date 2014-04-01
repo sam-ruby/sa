@@ -1,4 +1,6 @@
 class Searchad.Models.ConvCorWinner extends Backbone.Model
+class Searchad.Models.ConvCorDistribution extends Backbone.Model
+class Searchad.Models.ConvCorStats extends Backbone.Model
 
 class Searchad.Collections.ConvCorrelation extends Backbone.PageableCollection
   initialize: (options) ->
@@ -28,4 +30,12 @@ class Searchad.Collections.ConvCorrelation extends Backbone.PageableCollection
 
 class Searchad.Collections.ConvCorWinners extends Searchad.Collections.ConvCorrelation
   model: Searchad.Models.ConvCorWinner
-  url: '/conv_cor/get_winners'
+  url: '/conv_cor/get_trending'
+
+class Searchad.Collections.ConvCorDistribution extends Searchad.Collections.ConvCorrelation
+  model: Searchad.Models.ConvCorDistribution
+  url: '/conv_cor/get_distribution.json'
+  
+class Searchad.Collections.ConvCorStats extends Searchad.Collections.ConvCorrelation
+  model: Searchad.Models.ConvCorStats
+  url: '/conv_cor/get_stats.json'
