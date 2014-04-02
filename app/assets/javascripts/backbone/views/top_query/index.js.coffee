@@ -4,6 +4,10 @@ class Searchad.Views.TopQuery extends Backbone.View
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
+    
+    # @collection = new Searchad.Collections.SummaryMetric()
+    # @listenTo(@collection, 'reset', @render)
+    # @listenTo(@collection, 'request', @prepare_for_render)
     @controller.bind('content-cleanup', @unrender)
     @overview_template = JST["backbone/templates/overview"]
     
@@ -19,17 +23,17 @@ class Searchad.Views.TopQuery extends Backbone.View
   render: =>
     metrics_data = [
       {name: 'Traffic',
-      id: 'trafic'},
+      id: 'traffic'},
       {name: 'PVR',
       id: 'pvr'},
       {name: 'ATC',
       id: 'atc'},
       {name: 'Conversion',
       id: 'conversion'},
-      {name: 'Revenue',
-      id: 'revenue'},
-      {name: 'NDCG',
-      id: 'ndcg'},
+      #{name: 'Revenue',
+      #id: 'revenue'},
+      #{name: 'NDCG',
+      #id: 'ndcg'},
       {name: 'Rev Relevance Correlation',
       id: 'conv_rel_corr'}]
     

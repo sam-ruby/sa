@@ -1,11 +1,11 @@
-class ConvCorController < BaseController
+class RevenueController < BaseController
   before_filter :set_common_data
 
   def get_distribution
     query_segment = params[:query_segment] || 'TOP QUERIES'  
     cat_id = params[:cat_id] || 0
     respond_to do |format|
-      format.json { render :json => SearchQualityDaily.get_distribution(
+      format.json { render :json => Revenue.get_distribution(
         query_segment, cat_id, @date) }
     end		        
   end
@@ -14,7 +14,7 @@ class ConvCorController < BaseController
     cat_id = params[:cat_id] || 0
     query_segment = params[:query_segment]
     respond_to do |format|
-      format.json { render :json => SearchQualityDaily.get_stats(
+      format.json { render :json => Pvr.get_stats(
         query_segment, cat_id) }
     end		        
   end
@@ -29,7 +29,7 @@ class ConvCorController < BaseController
     if query.nil? or query.empty?
       if params[:total_entries].nil? or 
         params[:total_entries].empty? or params[:total_entries].to_i <= 1
-        total_entries = SearchQualityDaily.get_queries(
+        total_entries = Revenue.get_queries(
            winning, query_segment, cat_id, @date, 0).length
       else
         total_entries = params[:total_entries].to_i
@@ -41,7 +41,7 @@ class ConvCorController < BaseController
     respond_to do |format|
       format.json { render :json => [
         {total_entries: total_entries},
-        SearchQualityDaily.get_queries(winning,
+        Revenue.get_queries(winning,
           query_segment, cat_id, @date, @page, @limit, @sort_by, @order)]}
     end	
   end

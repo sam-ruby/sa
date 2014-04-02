@@ -71,6 +71,10 @@ Searchad::Application.routes.draw do
   
   get 'ndcg(/:action(.:format))', :to=>'ndcg'
   get 'conv_cor(/:action(.:format))', :to=>'conv_cor'
+  get 'traffic(/:action(.:format))', :to=>'traffic'
+  get 'pvr(/:action(.:format))', :to=>'pvr'
+  get 'atc(/:action(.:format))', :to=>'atc'
+  get 'conversion(/:action(.:format))', :to=>'conversion'
   get 'release_notes(/:action(.:format))', :to=>'help'
   get 'comp_analysis(/:action(.:format))', :to=>'comp_analysis'
   get 'category(/:action(.:format))', :to=>'categories'

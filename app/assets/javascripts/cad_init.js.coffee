@@ -59,7 +59,42 @@ $ ->
    
     convCorStatsView = new Searchad.Views.ConvCorrelation.Stats(
       el: '#conv-cor .timeline')
+  
+    trafficDistributionView = new Searchad.Views.Traffic.Distribution(
+      el: '#traffic-distribution')
+
+    trafficWinnersView = new Searchad.Views.Traffic.Winners(
+      el: '#traffic .winners')
    
+    trafficStatsView = new Searchad.Views.Traffic.Stats(
+      el: '#traffic .timeline')
+ 
+    pvrDistributionView = new Searchad.Views.Pvr.Distribution(
+      el: '#pvr-distribution')
+
+    pvrWinnerView = new Searchad.Views.Pvr.Winners(
+      el: '#pvr .winners')
+   
+    pvrStatsView = new Searchad.Views.Pvr.Stats(
+      el: '#pvr .timeline')
+ 
+    atcDistributionView = new Searchad.Views.Atc.Distribution(
+      el: '#atc-distribution')
+
+    atcWinnerView = new Searchad.Views.Atc.Winners(
+      el: '#atc .winners')
+   
+    atcStatsView = new Searchad.Views.Atc.Stats(
+      el: '#atc .timeline')
+
+    conversionDistributionView = new Searchad.Views.Conversion.Distribution(
+      el: '#conversion-distribution')
+
+    conversionWinnerView = new Searchad.Views.Conversion.Winners(
+      el: '#conversion .winners')
+   
+    conversionStatsView = new Searchad.Views.Conversion.Stats(
+      el: '#conversion .timeline')
 
     ndcgLoosersView = new Searchad.Views.NDCG.Loosers(
       el: '#ndcg .loosers')

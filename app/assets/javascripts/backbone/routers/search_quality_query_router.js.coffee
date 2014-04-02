@@ -43,7 +43,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     return unless date_part?
     
     arg = date_part.match(/filters/)
-    return unless arg? or arg.length == 0
+    return if !arg? or arg.length == 0
     date_part = date_part.split(/filters/)[1]
     date_parts = date_part.split('/')
     

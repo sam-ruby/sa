@@ -45,40 +45,43 @@ class NdcgController < BaseController
     cat_id = params[:cat_id] || 0
     metric_id = params[:metric_id]
 
-    respond_to do |format|
-      if metric_id =~ /conv_rel_corr/i
-        results = SearchQualityDaily.get_daily_metrics(
-          query_segment, cat_id, @date)
-        change = results.first.score/results.last.score*100 - 100
-        score = results.first.score
-        queries = []
-        SearchQualityDaily.get_daily_queries(
-          true, query_segment, cat_id, @date, 1, 5).each do |record|
-          queries.push(record.query)
-          end
-        
-        format.json do render :json => {
-          metric_id: metric_id,
-          score: results.first.score.to_f.round(3),
-          change: change.to_f.round(2),
-          queries: queries}
-        end
+    if metric_id =~ /conv_rel_corr/i
+      get_metrics(SearchQualityDaily, query_segment, cat_id, metric_id)
+    
+    elsif metric_id =~ /ndcg/i
+      get_metrics(Ndcg, query_segment, cat_id, metric_id)
+    
+    elsif metric_id =~ /traffic/i
+      get_metrics(Traffic, query_segment, cat_id, metric_id)
+    
+    elsif metric_id =~ /pvr/i
+      get_metrics(Pvr, query_segment, cat_id, metric_id)
+    
+    elsif metric_id =~ /atc/i
+      get_metrics(Atc, query_segment, cat_id, metric_id)
+    
+    elsif metric_id =~ /conversion/i
+      get_metrics(Conversion, query_segment, cat_id, metric_id)
+    end
+  end
 
-      else
-        results = Ndcg.get_daily_metrics(
-          query_segment, cat_id, @date)
-        change = results.first.score/results.last.score*100 - 100
-        queries = []
-        Ndcg.get_queries(true, nil, query_segment, cat_id,
-                         @date, 1, 5).each do |record|
-          queries.push record.query
-        end
-        format.json do render :json => {
-          metric_id: metric_id,
-          score: results.first.score.to_f.round(3),
-          change: change.to_f.round(2),
-          queries: queries}
-        end
+  def get_metrics(klass, query_segment, cat_id, metric_id)
+    results = klass.send(
+      :get_daily_metrics, query_segment, cat_id, @date)
+    change = results.first.score.to_f/results.last.score*100 - 100
+    score = results.first.score
+    queries = []
+    klass.send(:get_queries, true, query_segment,
+               cat_id, @date, 1, 5).each do |record|
+      queries.push(record.query)
+    end
+        
+    respond_to do |format|
+      format.json do render :json => {
+        metric_id: metric_id,
+        score: results.first.score.to_f.round(3),
+        change: change.to_f.round(2),
+        queries: queries}
       end
     end
   end

@@ -151,7 +151,7 @@ class SearchQualityDaily < BaseModel
         's.data_date').having('count > 500').order('s.data_date desc') 
   end
   
-  def self.get_daily_queries(winning, query_segment, cat_id, data_date,
+  def self.get_queries(winning, query_segment, cat_id, data_date,
                              page=1,  limit=10, order_col=nil, order='asc')
     cols = nil
     if winning
@@ -185,8 +185,8 @@ class SearchQualityDaily < BaseModel
   end
   
   def self.get_distribution(query_segment, cat_id, data_date)
-    cols = %q{round((s.search_con_rank_correlation+1)/2,1) conv_cor_cat,
-    count(*) query_vol}
+    cols = %q{round((s.search_con_rank_correlation+1)/2,1) cat,
+    count(*) vol}
     
     join_str = %q{as s JOIN query_segmentation_daily qs ON 
       (s.query=qs.query and s.data_date=qs.data_date )}
@@ -195,7 +195,7 @@ class SearchQualityDaily < BaseModel
       qs.segmentation = ? and qs.cat_id = ?}
     
     select(cols).joins(join_str).where(
-      [where_str, data_date, query_segment, cat_id]).group('conv_cor_cat')
+      [where_str, data_date, query_segment, cat_id]).group('cat')
   end
   
   def self.get_stats(query_segment, cat_id)
