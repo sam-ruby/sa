@@ -19,6 +19,8 @@ class Searchad.Collections.ConvCorrelation extends Backbone.PageableCollection
       @controller.get_filter_params().query_segment
     cat_id: ->
       @controller.get_filter_params().cat_id
+    winning: ->
+      @winning
 
   mode: 'server'
 

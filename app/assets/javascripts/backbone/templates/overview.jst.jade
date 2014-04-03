@@ -1,6 +1,8 @@
+- intFormatter = new Backgrid.NumberFormatter({decimals: 0})
+- numFormatter = new Backgrid.NumberFormatter()
+- metrics = [metrics.traffic, metrics.pvr, metrics.atc, metrics.conversion, metrics['relevance conversion correlation']]
 table.table.table-condensed
   caption.metrics-summary-head Metrics Summary
-    
   tbody
     tr.metrics-col-head
       td(width='20%') Metric
@@ -10,9 +12,29 @@ table.table.table-condensed
     each metric in metrics
       tr(class=metric.id)
         td.metric-name
-          a(href='#')
+          a(href='#', style='text-transform:capitalize;')
             = metric.name
-        td --
         td
-          span.pull-right.metric-change --
-        td --
+          if ['traffic', 'revenue'].indexOf(metric.name)>-1
+            = intFormatter.fromRaw(metric.score)
+          else
+            = numFormatter.fromRaw(metric.score)
+        td(class=metric.change>0?'green-change':'red-change')
+          span.pull-right
+            | &nbsp;
+            if metric.change>0 
+              i.icon-arrow-up.green-change
+            else
+              i.icon-arrow-down.red-change
+          span.pull-right.metric-change
+            = numFormatter.fromRaw(metric.change)
+            |%
+        td.metric-queries
+          if metric.queries
+            each query in metric.queries.split(',')
+              a(href='#')= query
+              |,&nbsp
+            a(href='#')
+              |more...
+          else
+            |--

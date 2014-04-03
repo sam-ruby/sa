@@ -42,8 +42,8 @@ $ ->
     upTrendingView = new Searchad.Views.UpTrending.IndexView(
       el: '#search-sub-tasks .search-content')
     
-    topQueryView = new Searchad.Views.TopQuery(
-      el: '#search-sub-tasks .overview')
+    summaryMetricsView = new Searchad.Views.SummaryMetrics(
+      el: '#summary-metrics')
   
     ndcgDistributionView = new Searchad.Views.NDCG.Distribution(
       el: '#ndcg-distribution')

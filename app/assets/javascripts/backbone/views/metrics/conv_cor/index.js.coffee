@@ -8,7 +8,6 @@ class Searchad.Views.ConvCorrelation.Winners extends Searchad.Views.ConvCorrelat
   initialize: (options) =>
     @collection = new Searchad.Collections.ConvCorWinners()
     super(options)
-    @init_cols()
     @init_table()
     Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
         
@@ -45,7 +44,10 @@ class Searchad.Views.ConvCorrelation.Distribution extends Searchad.Views.ConvCor
     super(options)
     
   render: =>
-    @renderBarChart(@collection.toJSON())
+    @renderBarChart(@collection.toJSON(),
+      'Rel Conv Correlation Bucket',
+      'Number of Queries',
+      'Query Distribution over Rel Conv Correlation Rate')
 
 class Searchad.Views.ConvCorrelation.Stats extends Searchad.Views.ConvCorrelation
   initialize: (options) ->
@@ -54,6 +56,6 @@ class Searchad.Views.ConvCorrelation.Stats extends Searchad.Views.ConvCorrelatio
    
    render: =>
     @renderLineChart(@collection.toJSON(),
-      'Conv Relevance Correlation Score',
-      'Score')
+      'Rel Conv Correlation',
+      'Rel Conv Correlation Statistics')
 

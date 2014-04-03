@@ -35,8 +35,11 @@ class Conversion < BaseModel
       order_limit_str = %Q{ #{order_str} limit #{limit} offset #{offset}}
     end
    
-    cols ||= %q{s.query, sum(s.uniq_count) uniq_count,
-     sum(s.uniq_con)/sum(s.uniq_count)*100 uniq_con,
+    cols ||= %q{s.query,
+     sum(s.uniq_count) c_o_u_n_t, 
+     sum(s.uniq_pvr)/sum(s.uniq_count)*100 p_v_r,
+     sum(s.uniq_atc)/sum(s.uniq_count)*100 a_t_c,
+     sum(s.uniq_con)/sum(s.uniq_count)*100 c_o_n,
      sqrt(sum(s.uniq_count))*(sum(s.uniq_con)/sum(s.uniq_count)*100+1) score}
 
     join_str = %q{as s JOIN query_segmentation_daily qs ON 

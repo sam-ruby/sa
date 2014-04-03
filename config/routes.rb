@@ -78,7 +78,7 @@ Searchad::Application.routes.draw do
   get 'release_notes(/:action(.:format))', :to=>'help'
   get 'comp_analysis(/:action(.:format))', :to=>'comp_analysis'
   get 'category(/:action(.:format))', :to=>'categories'
-  get 'get_daily_change', :to=>'ndcg#get_daily_change'
+  get 'get_daily_change', :to=>'summary_metrics#get_daily_change'
 
   match 'search_kpi(/:action(.:format))',
     :to => 'search_k_p_i', :via => [:get, :post]  

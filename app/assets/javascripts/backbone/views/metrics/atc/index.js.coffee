@@ -9,7 +9,6 @@ class Searchad.Views.Atc.Winners extends Searchad.Views.Atc
   initialize: (options) =>
     @collection = new Searchad.Collections.AtcWinner()
     super(options)
-    @init_cols()
     @init_table()
     Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
  
@@ -19,16 +18,26 @@ class Searchad.Views.Atc.Winners extends Searchad.Views.Atc
     editable: false,
     headerCell: @QueryHeaderCell,
     cell: @QueryCell},
-    {name: 'uniq_count',
-    label: 'Query Count',
+    {name: 'c_o_u_n_t',
+    label: 'Count',
     editable: false,
     headerCell: @NumericHeaderCell,
     cell: 'integer'},
-    {name: 'uniq_atc',
-    label: 'Query ATC',
+    {name: 'p_v_r',
+    label: 'Product View Rate',
     editable: false,
     headerCell: @NumericHeaderCell,
-    cell: 'number'},
+    cell: @PercentCell},
+    {name: 'a_t_c',
+    label: 'Add To Cart Rate',
+    editable: false,
+    headerCell: @NumericHeaderCell,
+    cell: @PercentCell},
+    {name: 'c_o_n',
+    label: 'Conversion Rate',
+    editable: false,
+    headerCell: @NumericHeaderCell,
+    cell: @PercentCell},
     {name: 'score',
     label: "Score",
     editable: false,
@@ -46,7 +55,11 @@ class Searchad.Views.Atc.Distribution extends Searchad.Views.Atc
     super(options)
     
   render: =>
-    @renderBarChart(@collection.toJSON())
+    @renderBarChart(@collection.toJSON(),
+      'Query ATC Bucket',
+      'Number of Queries',
+      'Query Distribution over Add To Cart Rate')
+
 
 class Searchad.Views.Atc.Stats extends Searchad.Views.Atc
   initialize: (options) ->
@@ -54,5 +67,7 @@ class Searchad.Views.Atc.Stats extends Searchad.Views.Atc
     super(options)
    
    render: =>
-    @renderLineChart(@collection.toJSON())
+    @renderLineChart(@collection.toJSON(),
+      'Query ATC',
+      'Query ATC Statistics')
 

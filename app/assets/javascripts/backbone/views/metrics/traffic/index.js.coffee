@@ -9,7 +9,6 @@ class Searchad.Views.Traffic.Winners extends Searchad.Views.Traffic
   initialize: (options) =>
     @collection = new Searchad.Collections.TrafficWinner()
     super(options)
-    @init_cols()
     @init_table()
     Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
         
@@ -19,6 +18,21 @@ class Searchad.Views.Traffic.Winners extends Searchad.Views.Traffic
     editable: false,
     headerCell: @QueryHeaderCell,
     cell: @QueryCell},
+    {name: 'p_v_r',
+    label: 'Query PVR',
+    editable: false,
+    headerCell: @NumericHeaderCell,
+    cell: @PercentCell},
+    {name: 'a_t_c',
+    label: 'Query ATC',
+    editable: false,
+    headerCell: @NumericHeaderCell,
+    cell: @PercentCell},
+    {name: 'c_o_n',
+    label: 'Query Conversion',
+    editable: false,
+    headerCell: @NumericHeaderCell,
+    cell: @PercentCell},
     {name: 'score',
     label: "Query Count",
     editable: false,
@@ -36,7 +50,10 @@ class Searchad.Views.Traffic.Distribution extends Searchad.Views.Traffic
     super(options)
     
   render: =>
-    @renderBarChart(@collection.toJSON())
+    @renderBarChart(@collection.toJSON(),
+      'Query Traffic Bucket',
+      'Number of Queries',
+      'Query Distribution over Query Traffic')
 
 class Searchad.Views.Traffic.Stats extends Searchad.Views.Traffic
   initialize: (options) ->
@@ -44,5 +61,7 @@ class Searchad.Views.Traffic.Stats extends Searchad.Views.Traffic
     super(options)
    
    render: =>
-    @renderLineChart(@collection.toJSON())
+    @renderLineChart(@collection.toJSON(),
+      'Query Traffic',
+      'Query Traffic Statistics')
 

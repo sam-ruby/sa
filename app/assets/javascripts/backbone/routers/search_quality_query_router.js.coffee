@@ -37,14 +37,13 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
           @cat_path = cat_path if cat_path?
     @cat_id ||=0
   
-  set_date_info: (date_part) =>
-    @get_cat_id(date_part)
+  set_date_info: () =>
+    # @get_cat_id()
     curr_date = $('#dp3').datepicker('getDate')
-    return unless date_part?
-    
-    arg = date_part.match(/filters/)
+    url = "#{@task}/#{@sub_task}/#{@task_args}"
+    arg = url.match(/filters/)
     return if !arg? or arg.length == 0
-    date_part = date_part.split(/filters/)[1]
+    date_part = url.split(/filters/)[1]
     date_parts = date_part.split('/')
     
     for part, i in date_parts
@@ -53,13 +52,13 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
         @controller.set_date(date_parts[i+1])
 
   search:(@task, @sub_task, @task_args) =>
-    @set_date_info(@task_args)
+    @set_date_info()
 
   browse:(@task, @sub_task, @task_args) =>
-    @set_date_info(@task_args)
+    @set_date_info()
   
   catalog:(@task, @sub_task, @task_args) =>
-    @set_date_info(@task_args)
+    @set_date_info()
   
   adhoc_query_comparison: (weeks, date, query, date_parts) =>
     @set_date_info(date_parts)
@@ -102,15 +101,17 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.trigger('search-kpi:index')
   
   trending: (query, date_parts) =>
-    @set_date_info(date_parts)
-    @controller.trigger('master-tabs:cleanup')
-    @controller.trigger('content-cleanup')
-    if query?
-      query = decodeURIComponent(query)
-      @controller.trigger(
-        'trending:index', query: query)
-    else
-      @controller.trigger('trending:index')
+    @navigate('search/top/traffic', trigger: true)
+
+    #@set_date_info(date_parts)
+    #@controller.trigger('master-tabs:cleanup')
+    #@controller.trigger('content-cleanup')
+    #if query?
+    #query = decodeURIComponent(query)
+    #  @controller.trigger(
+    # 'trending:index', query: query)
+    #else
+    #  @controller.trigger('trending:index')
 
   up_trending_days: (query, days, date_parts) =>
     @set_date_info(date_parts)

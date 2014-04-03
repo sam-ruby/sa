@@ -1,10 +1,9 @@
+#= require backbone/views/base
 Searchad.Views.Metrics ||= {}
 
-class Searchad.Views.Metrics.Index extends Backbone.View
+class Searchad.Views.Metrics.Index extends Searchad.Views.Base
   initialize: (feature) ->
-    @controller = SearchQualityApp.Controller
-    @router = SearchQualityApp.Router
-  
+    super()
     if @collection?
       @listenTo(@collection, 'reset', @render)
       @listenTo(@collection, 'request', @prepare_for_render)
@@ -37,7 +36,6 @@ class Searchad.Views.Metrics.Index extends Backbone.View
         @navBarDiv.css('width', '')
     )
 
-    super()
 
   events: =>
     'click caption .winners a': (e) =>
@@ -45,17 +43,21 @@ class Searchad.Views.Metrics.Index extends Backbone.View
       @winning = true
       @toggle_tab(e)
       @active = true
-      @collection.get_items(winning: true)
+      @collection.winning = true
+      @collection.get_items()
 
     'click caption .loosers a': (e) =>
       e.preventDefault()
       @winning = false
       @toggle_tab(e)
       @active = true
-      @collection.get_items(winning: false)
+      @collection.winning = false
+      @collection.get_items()
     
     'click a.distribution': (e) =>
       e.preventDefault()
+      $(e.target).parents('ul').children('li').removeClass('active')
+      $(e.target).parents('li').addClass('active')
       $('html, body').animate({scrollTop: @$el.offset().top}, 1000)
    
     'click a.brand': (e) =>
@@ -88,7 +90,7 @@ class Searchad.Views.Metrics.Index extends Backbone.View
 
   get_items: (data) =>
     @active = true
-    @collection.get_items()
+    @collection.get_items(data)
 
   toggle_tab: (e) =>
     $(e.target).parents('caption').find('a').remove()
@@ -148,42 +150,12 @@ class Searchad.Views.Metrics.Index extends Backbone.View
     @active = false
     @$el.highcharts().destroy() if @$el and @$el.highcharts()
     
-  init_cols: ->
-    that = this
-    class @SortedHeaderCell extends Backgrid.HeaderCell
-      initialize: (options) ->
-        super(options)
-        @direction('descending')
-        @$el.css('text-align', 'right')
-
-    class @NumericHeaderCell extends Backgrid.HeaderCell
-      initialize: (options) ->
-        super(options)
-        @$el.css('text-align', 'right')
-
-    class @QueryHeaderCell extends Backgrid.HeaderCell
-      initialize: (options) ->
-        super(options)
-        @$el.css('width', '30%')
-
-    class @QueryCell extends Backgrid.CADQueryCell
-      handleQueryClick: (e) ->
-        Backgrid.CADQueryCell.prototype.handleQueryClick.call(this, e)
-        query = @model.get('query')
-        that.controller.trigger('search:sub-content',
-          query: query
-          view: 'daily'
-        )
-        new_path = 'search_rel/query/' + encodeURIComponent(query)
-        that.router.update_path(new_path)
-        false
-
-  renderLineChart: (data, title, series_name) ->
+  renderLineChart: (data, y_title, chart_title) ->
     return unless @active
     
     seriesTypes = [{
-      column: "score"
-      name: series_name}]
+      column: 'score'
+      name: y_title}]
     
     series = []
     arr = []
@@ -220,10 +192,10 @@ class Searchad.Views.Metrics.Index extends Backbone.View
             Highcharts.dateFormat('%b %e', @value)
       yAxis: {
         title:
-          text: 'Score'
+          text: y_title
         gridLineWidth: 0}
       title:
-        text: title
+        text: chart_title
         useHTML: true
         align: "center"
         floating: true
@@ -235,14 +207,10 @@ class Searchad.Views.Metrics.Index extends Backbone.View
               hover:
                 enabled: true
       legend:
-        enabled: true
-        layout: 'horizontal'
-        align: 'center'
-        verticalAlign: 'bottom'
-        borderWidth: 0
+        enabled: false
       series: series)
      
-  renderBarChart: (data, y_title, chart_title, series_name) ->
+  renderBarChart: (data, x_title, y_title, chart_title) ->
     return unless @active
     process_data = (data) ->
       cat_data = []
@@ -262,15 +230,25 @@ class Searchad.Views.Metrics.Index extends Backbone.View
         enabled: false
       xAxis:
         categories: cat_data
+        title:
+          text: x_title
       yAxis:
         title:
-          text: 'Query Count'
+          text: y_title
       title:
-        text: 'Query Distribution'
+        text: chart_title
         useHTML: true
         align: "center"
         floating: true
       plotOptions:
+        column:
+          tooltip:
+            headerFormat:
+              "<span style='color:{series.color}'>#{x_title}</span>: " +
+              "<b>{point.key}</b><br/>"
+            pointFormat:
+              "<span style='color:{series.color}'>#{y_title}</span>: " +
+              "<b>{point.y}</b><br/>"
         series:
           marker:
             enabled: false
@@ -278,13 +256,9 @@ class Searchad.Views.Metrics.Index extends Backbone.View
               hover:
                 enabled: true
       legend:
-        enabled: true
-        layout: 'horizontal'
-        align: 'center'
-        verticalAlign: 'bottom'
-        borderWidth: 0
+        enabled: false
       series: [{
-        name: 'Conversion Relevance Correlation Score'
+        name: ''
         data: series_data}]
     )
     @$el.prepend( "<div>#{ @navBar }</div>" )

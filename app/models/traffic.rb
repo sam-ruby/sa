@@ -35,7 +35,10 @@ class Traffic < BaseModel
       order_limit_str = %Q{ #{order_str} limit #{limit} offset #{offset}}
     end
    
-    cols ||= %q{s.query, sum(s.uniq_count) score}
+    cols ||= %q{s.query, sum(s.uniq_count) score, 
+    sum(s.uniq_pvr)/sum(s.uniq_count)*100 p_v_r,
+    sum(s.uniq_atc)/sum(s.uniq_count)*100 a_t_c,
+    sum(s.uniq_con)/sum(s.uniq_count)*100 c_o_n}
 
     join_str = %q{as s JOIN query_segmentation_daily qs ON 
       (s.query=qs.query and s.data_date=qs.data_date )}
