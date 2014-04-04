@@ -39,6 +39,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   
   set_date_info: () =>
     # @get_cat_id()
+    @date_changed = false
     curr_date = $('#dp3').datepicker('getDate')
     url = "#{@task}/#{@sub_task}/#{@task_args}"
     arg = url.match(/filters/)
@@ -50,6 +51,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       if part == 'date' and date_parts[i+1]?
         @controller.trigger('update_date', date_parts[i+1])
         @controller.set_date(date_parts[i+1])
+        @date_changed = true
 
   search:(@task, @sub_task, @task_args) =>
     @set_date_info()
@@ -101,7 +103,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.trigger('search-kpi:index')
   
   trending: (query, date_parts) =>
-    @navigate('search/top/traffic', trigger: true)
+    @navigate('search/top/traffic/filters/date/3-19-2014', trigger: true)
 
     #@set_date_info(date_parts)
     #@controller.trigger('master-tabs:cleanup')

@@ -8,6 +8,7 @@ class Searchad.Views.Conversion extends Searchad.Views.Metrics.Index
 class Searchad.Views.Conversion.Winners extends Searchad.Views.Conversion
   initialize: (options) =>
     @collection = new Searchad.Collections.ConversionWinner()
+    @tableCaption = JST["backbone/templates/win_lose"]
     super(options)
     @init_table()
     Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")

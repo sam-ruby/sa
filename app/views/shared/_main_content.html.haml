@@ -42,65 +42,25 @@
   .winners
   .loosers
       
-#conv-cor
-  #conv-cor-distribution.hcharts
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  .timeline
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  .winners
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-
-#traffic
+#metric
   .tab-holder
-  #traffic-car.carousel.slide{'data-interval' => 'false', style:'display:none'}
+    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+  #metric-car.carousel.slide{'data-interval' => 'false', style:'display:none'}
     %ol.carousel-indicators
-      %li.active{'data-target' => '#traffic-car', 'data-slide-to' => '0'}
-      %li{'data-target' => '#traffic-car', 'data-slide-to' => '1'}
+      %li.active{'data-target' => '#metric-car', 'data-slide-to' => '0'}
+      %li{'data-target' => '#metric-car', 'data-slide-to' => '1'}
         
     .carousel-inner
       .distribution.hcharts.active.item
-        = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
       .item.timeline
 
-    %a.carousel-control.left{href: '#traffic-car', 'data-slide' => 'prev'}
+    %a.carousel-control.left{href: '#metric-car', 'data-slide' => 'prev'}
       &lsaquo;
-    %a.carousel-control.right{href: '#traffic-car', 'data-slide' => 'next'}
+    %a.carousel-control.right{href: '#metric-car', 'data-slide' => 'next'}
       &rsaquo;
 
-#traffic-winners
+#winners.winners
   = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-
-#pvr
-  #pvr-distribution.hcharts
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  .timeline
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  .winners
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-
-#atc
-  #atc-distribution.hcharts
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  .timeline
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  .winners
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-
-#conversion
-  #conversion-distribution.hcharts
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  .timeline
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  .winners
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-
-#revenue
-  #revenue-distribution.hcharts
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  .timeline
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  .winners
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
 
 #search-quality
   #search-quality-queries

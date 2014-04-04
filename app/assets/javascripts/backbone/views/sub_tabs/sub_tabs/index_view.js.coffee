@@ -60,7 +60,6 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     @$el.children().not('.ajax-loader').remove()
     @hide_spin()
 
-
   render: (data) =>
     @data = data
     @$el.prepend(@template()) unless @active

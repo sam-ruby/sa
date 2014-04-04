@@ -13,25 +13,6 @@ class Searchad.Views.Traffic.Winners extends Searchad.Views.Traffic
     @init_table()
     Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
  
-  events: =>
-    events = super()
-    events['click caption.win-loose-head li.winners a'] = (e) =>
-      e.preventDefault()
-      @winning = true
-      @toggle_tab(e)
-      @active = true
-      @collection.winning = true
-      @collection.get_items()
-
-    events['click caption.win-loose-head li.loosers a'] = (e) =>
-      e.preventDefault()
-      @winning = false
-      @toggle_tab(e)
-      @active = true
-      @collection.winning = false
-      @collection.get_items()
-    events
-    
   grid_cols: =>
     [{name: 'query',
     label: I18n.t('search_analytics.query_string'),
@@ -70,25 +51,11 @@ class Searchad.Views.Traffic.Distribution extends Searchad.Views.Traffic
     super(options)
     
   render: =>
-    @$el.find('.carousel').show()
     @renderBarChart(@collection.toJSON(),
       'Query Traffic Bucket',
       'Number of Queries',
       'Query Distribution over Query Traffic')
    
-    @$el.find('.carousel').on('slid', =>
-      active_slide = @$el.find('.carousel-inner div.active')
-      if active_slide.hasClass('distribution')
-        @$el.find('.tab-holder li.active').removeClass('active')
-        @$el.find('.tab-holder li.distribution').addClass('active')
-      else if active_slide.hasClass('timeline')
-        @$el.find('.tab-holder li.active').removeClass('active')
-        @$el.find('.tab-holder li.timeline').addClass('active')
-    )
-  unrender: =>
-    @$el.find('.carousel').hide()
-
-
 class Searchad.Views.Traffic.Stats extends Searchad.Views.Traffic
   initialize: (options) ->
     @collection = new Searchad.Collections.TrafficStats()
@@ -98,4 +65,3 @@ class Searchad.Views.Traffic.Stats extends Searchad.Views.Traffic
     @renderLineChart(@collection.toJSON(),
       'Query Traffic',
       'Query Traffic Statistics')
-

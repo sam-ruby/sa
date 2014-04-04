@@ -8,6 +8,7 @@ class Searchad.Views.Pvr extends Searchad.Views.Metrics.Index
 class Searchad.Views.Pvr.Winners extends Searchad.Views.Pvr
   initialize: (options) =>
     @collection = new Searchad.Collections.PvrWinner()
+    @tableCaption = JST["backbone/templates/win_lose"]
     super(options)
     @init_table()
     Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")

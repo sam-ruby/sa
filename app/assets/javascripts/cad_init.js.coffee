@@ -52,49 +52,49 @@ $ ->
       el: '#ndcg .winners')
  
     convCorDistributionView = new Searchad.Views.ConvCorrelation.Distribution(
-      el: '#conv-cor-distribution')
+      el: '#metric')
 
     convCorWinnersView = new Searchad.Views.ConvCorrelation.Winners(
-      el: '#conv-cor .winners')
+      el: '#winners')
    
     convCorStatsView = new Searchad.Views.ConvCorrelation.Stats(
-      el: '#conv-cor .timeline')
+      el: '#metric .timeline')
   
     trafficDistributionView = new Searchad.Views.Traffic.Distribution(
-      el: '#traffic')
+      el: '#metric')
 
     trafficWinnersView = new Searchad.Views.Traffic.Winners(
-      el: '#traffic-winners')
+      el: '#winners')
    
     trafficStatsView = new Searchad.Views.Traffic.Stats(
-      el: '#traffic .timeline')
+      el: '#metric .timeline')
  
     pvrDistributionView = new Searchad.Views.Pvr.Distribution(
-      el: '#pvr-distribution')
+      el: '#metric')
 
     pvrWinnerView = new Searchad.Views.Pvr.Winners(
-      el: '#pvr .winners')
+      el: '#winners')
    
     pvrStatsView = new Searchad.Views.Pvr.Stats(
-      el: '#pvr .timeline')
+      el: '#metric .timeline')
  
     atcDistributionView = new Searchad.Views.Atc.Distribution(
-      el: '#atc-distribution')
+      el: '#metric')
 
     atcWinnerView = new Searchad.Views.Atc.Winners(
-      el: '#atc .winners')
+      el: '#winners')
    
     atcStatsView = new Searchad.Views.Atc.Stats(
-      el: '#atc .timeline')
+      el: '#metric .timeline')
 
     conversionDistributionView = new Searchad.Views.Conversion.Distribution(
-      el: '#conversion-distribution')
+      el: '#metric')
 
     conversionWinnerView = new Searchad.Views.Conversion.Winners(
-      el: '#conversion .winners')
+      el: '#winners')
    
     conversionStatsView = new Searchad.Views.Conversion.Stats(
-      el: '#conversion .timeline')
+      el: '#metric .timeline')
 
     ndcgLoosersView = new Searchad.Views.NDCG.Loosers(
       el: '#ndcg .loosers')

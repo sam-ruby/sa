@@ -7,6 +7,7 @@ class Searchad.Views.ConvCorrelation extends Searchad.Views.Metrics.Index
 class Searchad.Views.ConvCorrelation.Winners extends Searchad.Views.ConvCorrelation
   initialize: (options) =>
     @collection = new Searchad.Collections.ConvCorWinners()
+    @tableCaption = JST["backbone/templates/win_lose"]
     super(options)
     @init_table()
     Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")

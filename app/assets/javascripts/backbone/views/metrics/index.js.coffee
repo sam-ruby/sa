@@ -4,22 +4,40 @@ Searchad.Views.Metrics ||= {}
 class Searchad.Views.Metrics.Index extends Searchad.Views.Base
   initialize: (feature) ->
     super()
-    if @collection?
-      @listenTo(@collection, 'reset', @render)
+    if @collection? and @grid_cols?
+      @listenTo(@collection, 'backgrid:refresh', @render)
       @listenTo(@collection, 'request', @prepare_for_render)
       @winning = true
+    else if @collection? and !@grid_cols?
+      @listenTo(@collection, 'reset', @render)
+      @listenTo(@collection, 'request', @prepare_for_render)
+
 
     @active = false
     @show_query_mode = false
     
     @listenTo(@router, 'route', (route, params) =>
+      @controller.trigger('content-cleanup')
+      @$el.find('.tab-holder, .distribution, .timeline').children().not(
+        '.ajax-loader').empty()
+      @$el.find('.ajax-loader, .carousel').hide()
+      @$el.children().not('.ajax-loader').remove() if @$el.hasClass('winners')
       if route == 'search' and @router.sub_task == feature
-        @get_items() unless @active
+        @get_items()
       else
         @active = false
-        @$el.children().not('.ajax-loader').not(
-          '.tab-holder').not('.carousel').remove()
     )
+    
+    @$el.find('.carousel').on('slid', =>
+      active_slide = @$el.find('.carousel-inner div.active')
+      if active_slide.hasClass('distribution')
+        @$el.find('.tab-holder li.active').removeClass('active')
+        @$el.find('.tab-holder li.distribution').addClass('active')
+      else if active_slide.hasClass('timeline')
+        @$el.find('.tab-holder li.active').removeClass('active')
+        @$el.find('.tab-holder li.timeline').addClass('active')
+    )
+
     """
     $(document).scroll((e) =>
       return unless @active
@@ -62,6 +80,22 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
 
     'click div.show-others a': 'show_other_queries'
 
+    'click caption.win-loose-head li.winners a': (e) =>
+      e.preventDefault()
+      return unless @active
+      @toggle_tab(e)
+      @winning = true
+      @collection.winning = true
+      @collection.get_items()
+
+    'click caption.win-loose-head li.loosers a': (e) =>
+      e.preventDefault()
+      return unless @active
+      @toggle_tab(e)
+      @winning = false
+      @collection.winning = false
+      @collection.get_items()
+ 
   init_table: () =>
     @grid = new Backgrid.Grid(
       columns: @grid_cols()
@@ -114,7 +148,6 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
 
     @$el.append( @export_csv_button() ) unless @$el.find(
       '.export-csv').length > 0
-    debugger
     @$el.find('td a.query').first().trigger('click')
     @delegateEvents()
     this
@@ -122,6 +155,7 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
   unrender: =>
     @active = false
     @$el.highcharts().destroy() if @$el and @$el.highcharts()
+    @$el.find('.carousel').hide()
     
   renderLineChart: (data, y_title, chart_title) ->
     return unless @active
@@ -196,7 +230,7 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       [cat_data, series_data]
     
     [cat_data, series_data] = process_data(data)
-
+    @$el.find('.carousel').show()
     @$el.find('.distribution').highcharts(
       chart:
         type: 'column'
@@ -237,7 +271,9 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
         name: ''
         data: series_data}]
     )
-    @$el.find('.tab-holder').append( "<div>#{ @navBar }</div>" )
+    @$el.find('.tab-holder').children().not('.ajax-loader').remove()
+    @$el.find('.tab-holder').append(@navBar)
+    @$el.find('.ajax-loader').hide()
     @navBarDiv = @$el.find('.second-navbar')
     @delegateEvents()
     
