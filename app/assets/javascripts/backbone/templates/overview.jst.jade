@@ -8,10 +8,18 @@ table.table.table-condensed
       td(width='15%', style='text-align:right') Change
       td(width='55%') Top Winning Queries
     each metric in metrics
-      tr(class=metric.id)
+      if !metric
+        - continue
+      - metric_name_o = view.metrics_name[metric.name]
+      if !metric_name_o
+        - continue
+      tr(class=metric_name_o.id)
         td.metric-name
           a(href='#', style='text-transform:capitalize;')
-            = metric.name
+            if metric_name_o
+              = metric_name_o.name
+            else
+              | Name not known
         td
           if ['traffic', 'revenue'].indexOf(metric.name)>-1
             = intFormatter.fromRaw(metric.score)

@@ -54,7 +54,7 @@ class Searchad.Views.Pvr.Distribution extends Searchad.Views.Pvr
     @navBar = JST["backbone/templates/conv_cor_navbar"](title: 'PVR')
     @collection = new Searchad.Collections.PvrDistribution()
     super(options)
-    
+ 
   render: =>
     @renderBarChart(@collection.toJSON(),
       'Query PVR Bucket',

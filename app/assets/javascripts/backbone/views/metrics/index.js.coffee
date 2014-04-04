@@ -6,20 +6,18 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     super()
     if @collection? and @grid_cols?
       @listenTo(@collection, 'backgrid:refresh', @render)
-      @listenTo(@collection, 'request', @prepare_for_render)
       @winning = true
     else if @collection? and !@grid_cols?
       @listenTo(@collection, 'reset', @render)
-      @listenTo(@collection, 'request', @prepare_for_render)
 
-
+    @listenTo(@collection, 'request', @prepare_for_render)
     @active = false
     @show_query_mode = false
     
     @listenTo(@router, 'route', (route, params) =>
       # debugger if feature == 'traffic'
       @controller.trigger('content-cleanup')
-      @$el.find('.ajax-loader, .carousel').hide()
+      @$el.find('.carousel').hide()
       @$el.find('.tab-holder').children().not('.ajax-loader').empty()
       @$el.empty() if @$el.hasClass('winners')
       if route == 'search' and @router.sub_task == feature
@@ -231,6 +229,8 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     
     [cat_data, series_data] = process_data(data)
     @$el.find('.carousel').show()
+    @$el.find('.carousel').carousel(0)
+    @$el.find('.carousel').carousel('pause')
     @$el.find('.distribution').highcharts(
       chart:
         type: 'column'

@@ -17,35 +17,71 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
         @$el.children().not('.ajax-loader').not('ul.metrics').remove()
         @$el.find('ul.metrics').hide()
     )
+  
+  metrics_name:
+    traffic:
+      name: 'Traffic'
+      id: 'traffic'
+    pvr:
+      name: 'PVR'
+      id: 'pvr'
+    atc:
+      name: 'ATC'
+      id: 'atc'
+    conversion:
+      name: 'Conversion'
+      id: 'conversion'
+    'relevance conversion correlation':
+      name: 'Rel Conv Correlation'
+      id: 'conv_cor'
+    revenue:
+      name: 'Revenue'
+      id: 'revenue'
+    FCT:
+      name: 'Earliest Item Click'
+      id: 'first_click'
+    LCT:
+      name: 'Latest Item Click'
+      id: 'latest_click'
+    QDT:
+      name: 'Query Dwell Time'
+      id: 'dwell_time'
+    CPQ:
+      name: 'Clicks Per Query'
+      id: 'clicks_query'
+    CAF:
+      name: 'Clicks on First Item'
+      id: 'clicks_f_item'
+    AR:
+      name: 'Abandon Rate'
+      id: 'aband_rate'
+    'count per session':
+      name: 'Queries per Session'
+      id: 'queries_session'
     
   events: =>
-    'click li.general-metrics a': (e)->
-      @toggleTab(e)
-      @show_general_metrics()
-    'click li.user-engagement-metrics a': (e)->
-      @toggleTab(e)
-      @show_user_engagement_metrics()
-    'click li.session-metrics a': (e)->
-      @toggleTab(e)
-      @show_session_metrics()
-    'click tr.traffic a': (e) =>
-      e.preventDefault()
-      @navigate('traffic')
-    'click tr.atc a': (e) =>
-      e.preventDefault()
-      @navigate('atc')
-    'click tr.pvr a': (e) =>
-      e.preventDefault()
-      @navigate('pvr')
-    'click tr.conversion a': (e) =>
-      e.preventDefault()
-      @navigate('conversion')
-    'click tr.revenue a': (e) =>
-      e.preventDefault()
-      @navigate('revenue')
-    'click tr.relevance_conversion_correlation a': (e) =>
-      e.preventDefault()
-      @navigate('conv_cor')
+    events =
+      'click li.general-metrics a': (e)->
+        @toggleTab(e)
+        @show_general_metrics()
+      'click li.user-engagement-metrics a': (e)->
+        @toggleTab(e)
+        @show_user_engagement_metrics()
+      'click li.session-metrics a': (e)->
+        @toggleTab(e)
+        @show_session_metrics()
+
+    that = this
+    for metric, details of @metrics_name
+      metric_id = details.id
+      events["click tr.#{metric_id}"] = do (metric_id, that) ->
+        (e) =>
+          $(e.target).parents('table').find('tr.selected').removeClass(
+            'selected')
+          $(e.target).parents('tr').addClass('selected')
+          e.preventDefault()
+          that.navigate(metric_id)
+    events
 
   get_items: (data) =>
     @active = true
@@ -72,19 +108,25 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     metrics = @collection.toJSON()[0]
     general_metrics = [metrics.traffic, metrics.pvr, metrics.atc,
       metrics.conversion, metrics['relevance conversion correlation']]
-    @$el.append(@summary_template(metrics: general_metrics))
-
+    @$el.append(@summary_template(
+      metrics: general_metrics
+      view: this))
+  
   show_user_engagement_metrics: =>
     @$el.children().not('.ajax-loader').not('ul.metrics').remove()
     metrics = @collection.toJSON()[0]
-    user_engage_metrics = [metrics['QDT'],  metrics['AR'], metrics['CPQ']]
-    @$el.append(@summary_template(metrics: user_engage_metrics))
+    user_engage_metrics = [metrics['count per session'], metrics['QDT'], metrics['FCT'], metrics['LCT'], metrics['CPQ'],metrics['CAF'], metrics['AR']]
+    @$el.append(@summary_template(
+      metrics: user_engage_metrics
+      view: this))
 
   show_session_metrics: =>
     @$el.children().not('.ajax-loader').not('ul.metrics').remove()
     metrics = @collection.toJSON()[0]
     session_metrics = [metrics.traffic, metrics.pvr, metrics.atc]
-    @$el.append(@summary_template(metrics: session_metrics))
+    @$el.append(@summary_template(
+      metrics: session_metrics
+      view: this))
 
   unrender: =>
     @active = false

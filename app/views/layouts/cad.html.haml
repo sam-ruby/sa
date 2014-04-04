@@ -87,7 +87,8 @@
         margin-bottom: 1em;
       }
       tr.selected {
-        background-color: rgba(47, 126, 216, .07);
+        background-color: rgba(47, 126, 216, .17);
+        font-weight: 800;
       }
       .date-week-holder {
         color: white;
@@ -114,7 +115,7 @@
   
   %body
     = yield :title
-    .container{style:'margin-top:2em'}
+    .container{style:'margin-top:1.5em; height: 120em;'}
       .row
         %ul.nav.nav-tabs.master-tab{:style=>'display:none'}
       .row

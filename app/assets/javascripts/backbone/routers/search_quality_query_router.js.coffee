@@ -38,19 +38,20 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   
   set_date_info: () =>
     # @get_cat_id()
-    @date_changed = false
-    curr_date = $('#dp3').datepicker('getDate')
     url = "#{@task}/#{@sub_task}/#{@task_args}"
     arg = url.match(/filters/)
     return if !arg? or arg.length == 0
     date_part = url.split(/filters/)[1]
     date_parts = date_part.split('/')
-    
+    filter_params = @controller.get_filter_params()
     for part, i in date_parts
       if part == 'date' and date_parts[i+1]?
-        @controller.trigger('update_date', date_parts[i+1])
-        @controller.set_date(date_parts[i+1])
-        @date_changed = true
+        if filter_params.date != date_parts[i+1]
+          @controller.trigger('update_date', date_parts[i+1])
+          @controller.set_date(date_parts[i+1])
+          @date_changed = true
+        else
+          @date_changed = false
 
   search:(@route_name, @task, @sub_task, @task_args) =>
     @task = 'top' unless @task?
