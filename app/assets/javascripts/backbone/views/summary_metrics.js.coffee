@@ -9,15 +9,24 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @summary_template = JST["backbone/templates/overview"]
     
     @listenTo(@router, 'route', (route, params) =>
-      @$el.children().not('.ajax-loader').remove() if @active
       if route == 'search'
-        @get_items()
+        @get_items() unless @active
       else
         @active = false
+        @$el.children().not('.ajax-loader').not('ul.metrics').remove()
+        @$el.find('ul.metrics').hide()
     )
-    @active = false
     
   events: =>
+    'click li.general-metrics a': (e)->
+      @toggleTab(e)
+      @show_general_metrics()
+    'click li.user-engagement-metrics a': (e)->
+      @toggleTab(e)
+      @show_user_engagement_metrics()
+    'click li.session-metrics a': (e)->
+      @toggleTab(e)
+      @show_session_metrics()
     'click tr.traffic a': (e) =>
       e.preventDefault()
       @navigate('traffic')
@@ -39,6 +48,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
 
   get_items: (data) =>
     @active = true
+    @$el.find('ul.metrics').css('display', 'block')
     @collection.get_items()
 
   prepare_for_render: =>
@@ -47,10 +57,34 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
   render: =>
     return unless @active
     @$el.find('.ajax-loader').hide()
-    @$el.append( @summary_template(metrics: @collection.toJSON()[0]) )
+    @show_general_metrics()
     @delegateEvents()
     this
-  
+    
+  toggleTab: (e) =>
+    e.preventDefault()
+    @$el.find('li.active').removeClass('active')
+    $(e.target).parent().addClass('active')
+
+  show_general_metrics: =>
+    @$el.children().not('.ajax-loader').not('ul.metrics').remove()
+    metrics = @collection.toJSON()[0]
+    general_metrics = [metrics.traffic, metrics.pvr, metrics.atc,
+      metrics.conversion, metrics['relevance conversion correlation']]
+    @$el.append(@summary_template(metrics: general_metrics))
+
+  show_user_engagement_metrics: =>
+    @$el.children().not('.ajax-loader').not('ul.metrics').remove()
+    metrics = @collection.toJSON()[0]
+    user_engage_metrics = [metrics['QDT'],  metrics['AR'], metrics['CPQ']]
+    @$el.append(@summary_template(metrics: user_engage_metrics))
+
+  show_session_metrics: =>
+    @$el.children().not('.ajax-loader').not('ul.metrics').remove()
+    metrics = @collection.toJSON()[0]
+    session_metrics = [metrics.traffic, metrics.pvr, metrics.atc]
+    @$el.append(@summary_template(metrics: session_metrics))
+
   unrender: =>
     @active = false
 

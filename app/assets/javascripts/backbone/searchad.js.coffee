@@ -41,7 +41,6 @@ window.Utils = do ->
     partsCopy.join('/')
 
   updateURLParam = (location, fName, fValue, filter=false) ->
-    debugger
     if location.indexOf('filters') >=0
       parts = location.split('filters/')
       filterURL = parts[1]

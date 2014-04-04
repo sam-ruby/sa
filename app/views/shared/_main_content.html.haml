@@ -26,6 +26,16 @@
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
 
 #summary-metrics
+  %ul.nav.nav-tabs.metrics{style: 'display:none'}
+    %li.active.general-metrics
+      %a{href: '#'}
+        General Metrics
+    %li.user-engagement-metrics
+      %a{href: '#'}
+        User Engagement Metrics
+    %li.session-metrics
+      %a{href: '#'}
+        Session Metrics
  
 #ndcg
   #ndcg-distribution
@@ -41,12 +51,24 @@
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
 
 #traffic
-  #traffic-distribution.hcharts
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  .timeline
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  .winners
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+  .tab-holder
+  #traffic-car.carousel.slide{'data-interval' => 'false', style:'display:none'}
+    %ol.carousel-indicators
+      %li.active{'data-target' => '#traffic-car', 'data-slide-to' => '0'}
+      %li{'data-target' => '#traffic-car', 'data-slide-to' => '1'}
+        
+    .carousel-inner
+      .distribution.hcharts.active.item
+        = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+      .item.timeline
+
+    %a.carousel-control.left{href: '#traffic-car', 'data-slide' => 'prev'}
+      &lsaquo;
+    %a.carousel-control.right{href: '#traffic-car', 'data-slide' => 'next'}
+      &rsaquo;
+
+#traffic-winners
+  = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
 
 #pvr
   #pvr-distribution.hcharts

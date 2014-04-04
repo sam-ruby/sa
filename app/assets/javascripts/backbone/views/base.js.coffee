@@ -2,6 +2,7 @@ class Searchad.Views.Base extends Backbone.View
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     @router = SearchQualityApp.Router
+    @active = false
     
     that = this
     class @SortedHeaderCell extends Backgrid.HeaderCell
@@ -22,12 +23,14 @@ class Searchad.Views.Base extends Backbone.View
 
     class @QueryCell extends Backgrid.CADQueryCell
       handleQueryClick: (e) ->
+        e.preventDefault()
         Backgrid.CADQueryCell.prototype.handleQueryClick.call(this, e)
         query = @model.get('query')
         that.controller.trigger('search:sub-content',
           query: query
           view: 'daily'
         )
+        that.show_query()
         # new_path = 'search_rel/query/' + encodeURIComponent(query)
         # that.router.update_path(new_path)
         false

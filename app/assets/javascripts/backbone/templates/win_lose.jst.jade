@@ -1,0 +1,21 @@
+.second-navbar
+  .navbar-inner
+    ul.nav
+      if tab == 'winners'
+        li.winners.active
+          a(href="#")
+            span
+              |Winners
+        li.loosers
+          a(href="#")
+            span
+              |Losers
+      else
+        li.winners
+          a(href="#")
+            span
+              |Winners
+        li.active.loosers
+          a(href="#")
+            span
+              |Losers

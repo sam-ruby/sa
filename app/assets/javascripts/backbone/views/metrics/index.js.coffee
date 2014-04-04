@@ -10,16 +10,17 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       @winning = true
 
     @active = false
+    @show_query_mode = false
     
     @listenTo(@router, 'route', (route, params) =>
-      @$el.children().not('.ajax-loader').remove() if @active
       if route == 'search' and @router.sub_task == feature
-        @$el.children().not('.ajax-loader').remove()
-        @get_items()
+        @get_items() unless @active
       else
         @active = false
+        @$el.children().not('.ajax-loader').not(
+          '.tab-holder').not('.carousel').remove()
     )
-
+    """
     $(document).scroll((e) =>
       return unless @active
       return unless @navBarDiv?
@@ -35,48 +36,31 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
         @navBarDiv.removeClass('fixed-navbar')
         @navBarDiv.css('width', '')
     )
-
+    """
 
   events: =>
-    'click caption .winners a': (e) =>
-      e.preventDefault()
-      @winning = true
-      @toggle_tab(e)
-      @active = true
-      @collection.winning = true
-      @collection.get_items()
-
-    'click caption .loosers a': (e) =>
-      e.preventDefault()
-      @winning = false
-      @toggle_tab(e)
-      @active = true
-      @collection.winning = false
-      @collection.get_items()
-    
-    'click a.distribution': (e) =>
+    'click li.distribution a': (e) =>
       e.preventDefault()
       $(e.target).parents('ul').children('li').removeClass('active')
       $(e.target).parents('li').addClass('active')
-      $('html, body').animate({scrollTop: @$el.offset().top}, 1000)
+      @$el.find('.carousel').carousel(0)
+      @$el.find('.carousel').carousel('pause')
+      # $('html, body').animate({scrollTop: @$el.offset().top}, 1000)
    
     'click a.brand': (e) =>
       e.preventDefault()
       window.scrollTo(0, 0)
    
-    'click a.winners': (e) =>
+    'click li.timeline a': (e) =>
       e.preventDefault()
       $(e.target).parents('ul').children('li').removeClass('active')
       $(e.target).parents('li').addClass('active')
-      div = @$el.parent().children('div.winners')
-      $('html, body').animate({scrollTop: div.offset().top}, 1000)
-    
-    'click a.timeline': (e) =>
-      e.preventDefault()
-      $(e.target).parents('ul').children('li').removeClass('active')
-      $(e.target).parents('li').addClass('active')
-      div = @$el.parent().children('div.timeline')
-      $('html, body').animate({scrollTop: div.offset().top}, 1000)
+      @$el.find('.carousel').carousel(1)
+      @$el.find('.carousel').carousel('pause')
+      # div = @$el.parent().find('div.timeline')
+      # $('html, body').animate({scrollTop: div.offset().top}, 1000)
+
+    'click div.show-others a': 'show_other_queries'
 
   init_table: () =>
     @grid = new Backgrid.Grid(
@@ -93,21 +77,23 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     @collection.get_items(data)
 
   toggle_tab: (e) =>
-    $(e.target).parents('caption').find('a').remove()
-    winners = @$el.find('span.winners')
-    loosers = @$el.find('span.loosers')
-    winners.empty()
-    loosers.empty()
-
-    if @winning
-      loosers.append('<a href="#">Loosers</a>')
-      winners.append('Winners')
-    else
-      winners.append('<a href="#">Winners</a>')
-      loosers.append('Loosers')
+    $(e.target).parents('caption').find('li.active').removeClass('active')
+    $(e.target).parents('li').addClass('active')
 
   prepare_for_render: =>
     @$el.find('.ajax-loader').css('display', 'inline-block')
+
+  show_query: =>
+    return if @show_query_mode
+    that = this
+    trs = @$el.find('table.backgrid tbody tr').not('.selected')
+    trs.addClass('visually-hidden')
+    @show_query_mode = true
+
+  show_other_queries: (e) =>
+    e.preventDefault()
+    @$el.find('table.backgrid tbody tr.visually-hidden').removeClass(
+      'visually-hidden')
 
   renderTable: =>
     return unless @active
@@ -118,31 +104,18 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     else
       @$el.prepend( @paginator.render().$el )
       @$el.prepend( @grid.render().$el )
-   
-    unless @$el.find('caption.metrics-summary-head').length > 0
-      if @winning == true
-        @$el.find('table.backgrid').append(
-          """
-          <caption class="metrics-summary-head">
-          <span class="winners">Winners</span>
-          <span class="loosers">
-          <a href="#">Loosers</a></span>
-          </caption>
-        """
-        )
-      else
-        @$el.find('table.backgrid').append(
-          """
-          <caption class="metrics-summary-head">
-          <span class="winners">
-            <a href="#">Winners</a>
-          </span>
-          <span class="loosers">Loosers</span>
-          </caption>
-        """
-        )
+  
+    if @winning
+      div = @tableCaption(tab: 'winners')
+    else
+      div = @tableCaption(tab: 'loosers')
+    @$el.find('table.backgrid').append(
+      "<caption class='win-loose-head'>#{ div }</caption>" )
+
     @$el.append( @export_csv_button() ) unless @$el.find(
       '.export-csv').length > 0
+    debugger
+    @$el.find('td a.query').first().trigger('click')
     @delegateEvents()
     this
   
@@ -181,6 +154,8 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     @$el.highcharts(
       chart:
         alignTicks: false
+        height: 400
+        width: 960
       rangeSelector:
         selected: 0
       credits:
@@ -222,10 +197,11 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     
     [cat_data, series_data] = process_data(data)
 
-    @$el.highcharts(
+    @$el.find('.distribution').highcharts(
       chart:
         type: 'column'
         height: 400
+        width: 960
       credits:
         enabled: false
       xAxis:
@@ -261,8 +237,9 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
         name: ''
         data: series_data}]
     )
-    @$el.prepend( "<div>#{ @navBar }</div>" )
+    @$el.find('.tab-holder').append( "<div>#{ @navBar }</div>" )
     @navBarDiv = @$el.find('.second-navbar')
+    @delegateEvents()
     
   render_error: (query) ->
     return unless @active

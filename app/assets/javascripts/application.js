@@ -27,6 +27,8 @@
 //= require bootstrap-datepicker
 //= require bootstrap-transition
 //= require bootstrap-dropdown
+//= require bootstrap-carousel
+//= require bootstrap-collapse
 //= require backbone/searchad
 //= require feedback-master/feedback.min
 //= require util/CADhelpInfo

@@ -61,10 +61,10 @@ $ ->
       el: '#conv-cor .timeline')
   
     trafficDistributionView = new Searchad.Views.Traffic.Distribution(
-      el: '#traffic-distribution')
+      el: '#traffic')
 
     trafficWinnersView = new Searchad.Views.Traffic.Winners(
-      el: '#traffic .winners')
+      el: '#traffic-winners')
    
     trafficStatsView = new Searchad.Views.Traffic.Stats(
       el: '#traffic .timeline')

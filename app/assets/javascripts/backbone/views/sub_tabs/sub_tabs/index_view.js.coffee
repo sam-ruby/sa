@@ -52,7 +52,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
   toggleTab: (e) =>
     e.preventDefault()
     @$el.find('li.active').removeClass('active')
-    $(e.target).parent().addClass('active')
+    $(e.target).parents('li').addClass('active')
     @controller.trigger('sub-content-cleanup')
 
   unrender: =>

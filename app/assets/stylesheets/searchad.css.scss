@@ -653,12 +653,19 @@ td.metric-name1 {
     padding-left: 1.5em;
   }
 }
+div.highcharts-container {
+  margin-right: auto;
+  margin-left: auto;
+}
 div.winners, div.loosers, div.timeline, div.hcharts {
   position: relative;
   text-align: center;
 }
-.metrics-col-head {
+tr.metrics-col-head {
   font-size: 90%;
+  td {
+    border-top: 0;
+  }
 }
 .fixed-navbar {
   position: fixed;
@@ -671,12 +678,40 @@ div.winners, div.loosers, div.timeline, div.hcharts {
 table.backgrid {
   border: 0;
   thead {
-    border: 1px solid #ddd;
+    //border: 1px solid #ddd;
+    th { 
+      background-color: #fff;
+      font-weight: 400;
+    }
+  }
+  tbody {
+    tr.selected {
+      font-weight: bold;
+    }
   }
   th, td {
     border: 0;
     border-bottom: 1px solid #ddd;
     padding: 3px 5px;
   }
+  tr {
+    display: table-row;
+    transition: all 1s linear;
+  }
+  tr.hidden {
+    display: none;
+  }
+  tr.visually-hidden {
+    opacity: 0.7;
+  }
 }
 
+.show-others {
+  text-align: center;
+  @extend .backgrid-paginator;
+  a.btn {
+    padding: 0.2em 1em;
+    margin: 1em 0;
+    display: inline-block;
+  }
+}
