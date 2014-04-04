@@ -9,8 +9,6 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @summary_template = JST["backbone/templates/overview"]
     
     @listenTo(@router, 'route', (route, params) =>
-      # Refresh first time
-      # All other cases refresh except for features.
       if route == 'search'
         if @router.date_changed or @router.cat_changed or !@active or @router.segment_changed
           @get_items()

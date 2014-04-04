@@ -3,7 +3,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller = SearchQualityApp.Controller
 
   routes:
-    "search(/:task)(/:sub_task)(/*args)": "search"
+    "(:search)(/:task)(/:sub_task)(/*args)": "search"
     "browse(/:task)(/:sub_task)(/*args)": "browse"
     "category(/:task)(/:sub_task)(/*args)": "category"
     "search_rel(/query/:query)(/filters/*wday)": "search_rel"
@@ -14,7 +14,6 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "trending(/query/:query)(/filters/*wday)": "trending"
     "trending/up(/query/:query)(/filters/*wday)": "up_trending"
     "trending/up(/query/:query)(/days/:days)(/filters/*wday)": "up_trending_days"
-    "(filters/*wday)": "trending"
     
     "query_monitoring/count(/query/:query)(/filters/*wday)":
       "query_monitoring_count"
@@ -53,7 +52,10 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
         @controller.set_date(date_parts[i+1])
         @date_changed = true
 
-  search:(@task, @sub_task, @task_args) =>
+  search:(@route_name, @task, @sub_task, @task_args) =>
+    @task = 'top' unless @task?
+    @sub_task = 'traffic' unless @sub_task?
+    @task_args = '/filters/date/3-19-2014' unless @task_args
     @set_date_info()
 
   browse:(@task, @sub_task, @task_args) =>

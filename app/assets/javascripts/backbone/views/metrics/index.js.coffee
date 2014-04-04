@@ -17,11 +17,11 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     @show_query_mode = false
     
     @listenTo(@router, 'route', (route, params) =>
+      # debugger if feature == 'traffic'
       @controller.trigger('content-cleanup')
-      @$el.find('.tab-holder, .distribution, .timeline').children().not(
-        '.ajax-loader').empty()
       @$el.find('.ajax-loader, .carousel').hide()
-      @$el.children().not('.ajax-loader').remove() if @$el.hasClass('winners')
+      @$el.find('.tab-holder').children().not('.ajax-loader').empty()
+      @$el.empty() if @$el.hasClass('winners')
       if route == 'search' and @router.sub_task == feature
         @get_items()
       else
