@@ -10,7 +10,8 @@ class SummaryMetricsController < BaseController
     metrics_name = ''
     results.each_with_index do |record, index|
       next if metrics_name == record.metrics_name
-      if results[index+1].nil? or results[index+1].metrics_name.nil?
+      if results[index+1].nil? or results[index+1].metrics_name.nil? or
+        results[index+1].value.nil?
         change = 100
       elsif record.metrics_name == results[index+1].metrics_name
         change = record.value.to_f/results[index+1].value*100 - 100

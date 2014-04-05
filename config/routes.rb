@@ -75,6 +75,7 @@ Searchad::Application.routes.draw do
   get 'pvr(/:action(.:format))', :to=>'pvr'
   get 'atc(/:action(.:format))', :to=>'atc'
   get 'conversion(/:action(.:format))', :to=>'conversion'
+  get 'revenue(/:action(.:format))', :to=>'revenue'
   get 'release_notes(/:action(.:format))', :to=>'help'
   get 'comp_analysis(/:action(.:format))', :to=>'comp_analysis'
   get 'category(/:action(.:format))', :to=>'categories'

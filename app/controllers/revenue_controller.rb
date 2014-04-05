@@ -14,7 +14,7 @@ class RevenueController < BaseController
     cat_id = params[:cat_id] || 0
     query_segment = params[:query_segment]
     respond_to do |format|
-      format.json { render :json => Pvr.get_stats(
+      format.json { render :json => Revenue.get_stats(
         query_segment, cat_id) }
     end		        
   end
@@ -24,7 +24,7 @@ class RevenueController < BaseController
     winning = (params[:winning].nil? or params[:winning].empty?) ? true :
       params[:winning] == 'true'
     query_segment = params[:query_segment] || 'TOP QUERIES'  
-    cat_id = params[:cat_id] || 3944
+    cat_id = params[:cat_id] || 0
    
     if query.nil? or query.empty?
       if params[:total_entries].nil? or 

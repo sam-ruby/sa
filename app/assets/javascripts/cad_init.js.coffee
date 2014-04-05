@@ -96,6 +96,15 @@ $ ->
     conversionStatsView = new Searchad.Views.Conversion.Stats(
       el: '#metric .timeline')
 
+    revenueDistributionView = new Searchad.Views.Revenue.Distribution(
+      el: '#metric')
+
+    revenueWinnerView = new Searchad.Views.Revenue.Winners(
+      el: '#winners')
+   
+    revenueStatsView = new Searchad.Views.Revenue.Stats(
+      el: '#metric .timeline')
+
     ndcgLoosersView = new Searchad.Views.NDCG.Loosers(
       el: '#ndcg .loosers')
     

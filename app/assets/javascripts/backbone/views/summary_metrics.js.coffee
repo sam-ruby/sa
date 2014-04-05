@@ -94,8 +94,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
   render: =>
     return unless @active
     @$el.find('.ajax-loader').hide()
-    @show_general_metrics()
-    @delegateEvents()
+    @$el.find('ul li.active a').trigger('click')
     this
     
   toggleTab: (e) =>
@@ -107,10 +106,12 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @$el.children().not('.ajax-loader').not('ul.metrics').remove()
     metrics = @collection.toJSON()[0]
     general_metrics = [metrics.traffic, metrics.pvr, metrics.atc,
-      metrics.conversion, metrics['relevance conversion correlation']]
+      metrics.conversion, metrics['relevance conversion correlation'],
+      metrics.revenue]
     @$el.append(@summary_template(
       metrics: general_metrics
       view: this))
+    @$el.find('table tr:nth-child(2)').trigger('click')
   
   show_user_engagement_metrics: =>
     @$el.children().not('.ajax-loader').not('ul.metrics').remove()
@@ -119,6 +120,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @$el.append(@summary_template(
       metrics: user_engage_metrics
       view: this))
+    @$el.find('table tr:nth-child(2)').trigger('click')
 
   show_session_metrics: =>
     @$el.children().not('.ajax-loader').not('ul.metrics').remove()
@@ -127,6 +129,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @$el.append(@summary_template(
       metrics: session_metrics
       view: this))
+    @$el.find('table tr:nth-child(2)').trigger('click')
 
   unrender: =>
     @active = false

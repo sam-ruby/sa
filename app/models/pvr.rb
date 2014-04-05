@@ -56,7 +56,7 @@ class Pvr < BaseModel
 
   def self.get_distribution(query_segment, cat_id, data_date)
     find_by_sql([%q{select cat, count(*) vol from 
-      (select query, if(pvr<5,5,if(pvr<10,10,if(pvr<15,15,if(pvr<20,20,if(pvr<25,25,if(pvr<30,30,if(pvr<35,35,if(pvr<40,40,if(pvr<45,45,50))))))))) cat
+      (select query, if(pvr<10,10,if(pvr<20,20,if(pvr<30,30,if(pvr<40,40,if(pvr<50,50,if(pvr<60,60,if(pvr<70,70,if(pvr<80,80,if(pvr<90,90,100))))))))) cat
       from (select s.query query, sum(s.uniq_pvr)/sum(s.uniq_count)*100 pvr  FROM 
       query_cat_metrics_daily as s JOIN query_segmentation_daily qs ON 
       ( s.query=qs.query and s.data_date=qs.data_date )
