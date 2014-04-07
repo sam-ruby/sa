@@ -3,10 +3,11 @@
 table.table.table-condensed
   tbody
     tr.metrics-col-head
-      td(width='20%') Metric
-      td(width='10%') Score
-      td(width='15%', style='text-align:right') Change
-      td(width='55%') Top Winning Queries
+      td(width='10%').text-col Metric
+      td.numerical-col(width='10%') Score
+      td.text-col(width='10%') Confidence
+      td.numerical-col(width='15%') Change
+      td.text-col(width='55%') Top Winning Queries
     each metric in metrics
       if !metric
         - continue
@@ -14,18 +15,24 @@ table.table.table-condensed
       if !metric_name_o
         - continue
       tr(class=metric_name_o.id)
-        td.metric-name
+        td.metric-name.text-col
           a(href='#', style='text-transform:capitalize;')
             if metric_name_o
               = metric_name_o.name
             else
               | Name not known
-        td
+        td.numerical-col
           if ['traffic', 'revenue'].indexOf(metric.name)>-1
             = intFormatter.fromRaw(metric.score)
           else
             = numFormatter.fromRaw(metric.score)
-        td(class=metric.change>0?'green-change':'red-change')
+        td.text-col
+          if metric.confidence == true
+            i.icon-thumbs-up.green-change
+          else
+            | &nbsp;
+            
+        td(class=metric.change>0?['green-change', 'numerical-col']:['red-change', 'numerical-col'])
           span.pull-right
             | &nbsp;
             if metric.change>0 
@@ -35,7 +42,7 @@ table.table.table-condensed
           span.pull-right.metric-change
             = numFormatter.fromRaw(metric.change)
             |%
-        td.metric-queries
+        td.metric-queries.text-col
           if metric.queries
             each query in metric.queries.split(',')
               a(href='#')= query

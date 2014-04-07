@@ -57,7 +57,7 @@ class Searchad.Views.Conversion.Distribution extends Searchad.Views.Conversion
     
   render: =>
     @renderBarChart(@collection.toJSON(),
-      'Query Conversion Bucket',
+      'Conversion Rate',
       'Number of Queries',
       'Query Distribution over Conversion Rate')
 
@@ -68,5 +68,5 @@ class Searchad.Views.Conversion.Stats extends Searchad.Views.Conversion
    
    render: =>
     @renderLineChart(@collection.toJSON(),
-      'Query Conversion',
-      'Query Conversion Statistics')
+      'Conversion Rate',
+      'Conversion Rate Statistics')

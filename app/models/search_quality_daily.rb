@@ -170,7 +170,7 @@ class SearchQualityDaily < BaseModel
       order_limit_str = %Q{ #{order_str} limit #{limit} offset #{offset}}
     end
    
-    cols ||= %q{s.query, round(s.search_con_rank_correlation, 2) correlation,
+    cols ||= %q{s.query, round((s.search_con_rank_correlation+1)/2, 2) correlation,
       round(s.uniq_count*(s.search_con_rank_correlation+1)/2) score,
       uniq_count count}
 

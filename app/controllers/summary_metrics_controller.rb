@@ -18,10 +18,21 @@ class SummaryMetricsController < BaseController
       else
         change = 100
       end
+
+      if (!results[index+1].nil? and !results[index+1].lcl.nil? and
+        !results[index+1].value.nil?)
+        if (record.value > results[index+1].ucl) or 
+          (record.value < results[index+1].lcl)
+          confidence = true
+        else
+          confidence = false
+        end
+      end
       metrics[record.metrics_name] =  {
         id: record.metrics_name.gsub(/\s+/, '_'),
         name: record.metrics_name,
         change: change,
+        confidence: confidence,
         queries: record.winners,
         score: record.value}
       metrics_name = record.metrics_name

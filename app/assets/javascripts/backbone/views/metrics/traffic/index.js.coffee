@@ -52,9 +52,9 @@ class Searchad.Views.Traffic.Distribution extends Searchad.Views.Traffic
     
   render: =>
     @renderBarChart(@collection.toJSON(),
-      'Query Traffic Bucket',
+      'Count',
       'Number of Queries',
-      'Query Distribution over Query Traffic')
+      'Query Distribution over Traffic')
    
 class Searchad.Views.Traffic.Stats extends Searchad.Views.Traffic
   initialize: (options) ->
@@ -63,5 +63,5 @@ class Searchad.Views.Traffic.Stats extends Searchad.Views.Traffic
    
    render: =>
     @renderLineChart(@collection.toJSON(),
-      'Query Traffic',
-      'Query Traffic Statistics')
+      'Traffic',
+      'Traffic Statistics')

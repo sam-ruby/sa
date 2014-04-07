@@ -57,7 +57,7 @@ class Searchad.Views.Revenue.Distribution extends Searchad.Views.Revenue
     
   render: =>
     @renderBarChart(@collection.toJSON(),
-      'Query Revenue Bucket',
+      'Revenue',
       'Number of Queries',
       'Query Distribution over Revenue')
 
@@ -68,5 +68,5 @@ class Searchad.Views.Revenue.Stats extends Searchad.Views.Revenue
    
    render: =>
     @renderLineChart(@collection.toJSON(),
-      'Query Revenue',
-      'Query Revenue Statistics')
+      'Revenue',
+      'Revenue Statistics')

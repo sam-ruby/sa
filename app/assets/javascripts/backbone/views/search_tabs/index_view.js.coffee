@@ -17,7 +17,7 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
         @controller.set_query_segment('TRENDING QUERIES IN 2 DAYS')
         @toggleTab(@$el.find('li.trending-tab a'))
       else if @router.task == 'poor_performing'
-        @controller.set_query_segment('POOR PERFORMING')
+        @controller.set_query_segment('POOR QUERIES IN 30 DAYS')
         @toggleTab(@$el.find('li.poor-performing-tab a'))
       else if @router.task == 'random'
         @controller.set_query_segment('RANDOM')

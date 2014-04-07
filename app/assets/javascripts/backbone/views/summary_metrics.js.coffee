@@ -67,6 +67,9 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       'click li.user-engagement-metrics a': (e)->
         @toggleTab(e)
         @show_user_engagement_metrics()
+      'click li.rel-eval-metrics a': (e)->
+        @toggleTab(e)
+        @show_rel_eval_metrics()
       'click li.session-metrics a': (e)->
         @toggleTab(e)
         @show_session_metrics()
@@ -102,12 +105,20 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @$el.find('li.active').removeClass('active')
     $(e.target).parent().addClass('active')
 
+  show_rel_eval_metrics: =>
+    @$el.children().not('.ajax-loader').not('ul.metrics').remove()
+    metrics = @collection.toJSON()[0]
+    general_metrics = [metrics['relevance conversion correlation']]
+    @$el.append(@summary_template(
+      metrics: general_metrics
+      view: this))
+    @$el.find('table tr:nth-child(2)').trigger('click')
+  
   show_general_metrics: =>
     @$el.children().not('.ajax-loader').not('ul.metrics').remove()
     metrics = @collection.toJSON()[0]
     general_metrics = [metrics.traffic, metrics.pvr, metrics.atc,
-      metrics.conversion, metrics['relevance conversion correlation'],
-      metrics.revenue]
+      metrics.conversion, metrics.revenue]
     @$el.append(@summary_template(
       metrics: general_metrics
       view: this))

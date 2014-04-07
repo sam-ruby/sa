@@ -46,7 +46,7 @@ class Searchad.Views.ConvCorrelation.Distribution extends Searchad.Views.ConvCor
     
   render: =>
     @renderBarChart(@collection.toJSON(),
-      'Rel Conv Correlation Bucket',
+      'Rel Conv Correlation',
       'Number of Queries',
       'Query Distribution over Rel Conv Correlation Rate')
 

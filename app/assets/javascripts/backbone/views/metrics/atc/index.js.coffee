@@ -57,7 +57,7 @@ class Searchad.Views.Atc.Distribution extends Searchad.Views.Atc
     
   render: =>
     @renderBarChart(@collection.toJSON(),
-      'Query ATC Bucket',
+      'Add To Cart Rate',
       'Number of Queries',
       'Query Distribution over Add To Cart Rate')
 
@@ -69,6 +69,6 @@ class Searchad.Views.Atc.Stats extends Searchad.Views.Atc
    
    render: =>
     @renderLineChart(@collection.toJSON(),
-      'Query ATC',
-      'Query ATC Statistics')
+      'Add To Cart Rate',
+      'Add To Cart Rate Statistics')
 

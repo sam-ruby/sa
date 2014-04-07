@@ -57,7 +57,7 @@ class Searchad.Views.Pvr.Distribution extends Searchad.Views.Pvr
  
   render: =>
     @renderBarChart(@collection.toJSON(),
-      'Query PVR Bucket',
+      'Product View Rate',
       'Number of Queries',
       'Query Distribution over Product View Rate')
 
@@ -68,6 +68,6 @@ class Searchad.Views.Pvr.Stats extends Searchad.Views.Pvr
    
    render: =>
     @renderLineChart(@collection.toJSON(),
-      'Query PVR',
-      'Query PVR Statistics')
+      'Product View Rate',
+      'Product View Rate Statistics')
 

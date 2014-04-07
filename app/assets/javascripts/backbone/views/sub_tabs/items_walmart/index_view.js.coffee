@@ -47,7 +47,6 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     @init_all_date_pickers(walmart.start_date,walmart.end_date )
     @get_items(data)
 
-
   render_result: =>
     return unless @active
     # usually the clear is bind with request, since here is using client side 

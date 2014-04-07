@@ -680,6 +680,18 @@ tr.metrics-col-head {
   text-align: center;
 }
 
+.numerical-col, .text-col {
+  padding: 4px 15px !important;
+}
+
+.numerical-col {
+  text-align: right !important;
+}
+
+.text-col {
+  text-align: left!important;
+}
+
 table.backgrid {
   border: 0;
   thead {
@@ -707,7 +719,7 @@ table.backgrid {
     display: none;
   }
   tr.visually-hidden {
-    opacity: 0.7;
+    opacity: 0.94;
   }
 }
 
