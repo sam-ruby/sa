@@ -15,11 +15,10 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     @show_query_mode = false
     
     @listenTo(@router, 'route', (route, params) =>
-      # debugger if feature == 'traffic'
       @controller.trigger('content-cleanup')
       @$el.find('.carousel').hide()
       @$el.find('.tab-holder').children().not('.ajax-loader').empty()
-      @$el.empty() if @$el.hasClass('winners')
+      @$el.children().not('.ajax-loader').remove() if @$el.hasClass('winners')
       if route == 'search' and @router.sub_task == feature
         @get_items()
       else
@@ -142,7 +141,7 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       div = @tableCaption(tab: 'winners')
     else
       div = @tableCaption(tab: 'loosers')
-    @$el.find('table.backgrid').append(
+    @$el.find('table.winners-grid').append(
       "<caption class='win-loose-head'>#{ div }</caption>" )
 
     @$el.append( @export_csv_button() ) unless @$el.find(

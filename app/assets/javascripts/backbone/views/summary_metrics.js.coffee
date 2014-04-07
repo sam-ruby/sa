@@ -10,7 +10,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     
     @listenTo(@router, 'route', (route, params) =>
       if route == 'search'
-        if @router.date_changed or @router.cat_changed or !@active or @router.segment_changed
+        if @router.date_changed or @router.cat_changed or !@active or @router.query_segment_changed
           @get_items()
       else
         @active = false
@@ -116,6 +116,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
   
   show_general_metrics: =>
     @$el.children().not('.ajax-loader').not('ul.metrics').remove()
+    @$el.find('.ajax-loader').hide()
     metrics = @collection.toJSON()[0]
     general_metrics = [metrics.traffic, metrics.pvr, metrics.atc,
       metrics.conversion, metrics.revenue]

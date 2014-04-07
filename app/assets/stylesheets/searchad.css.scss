@@ -4,14 +4,19 @@ a.subcat {
 a.subcat:hover {
   color: #F7B800;
 }
-#search-quality-queries, #trending, #qm-filter, #qm-count-sub-tabs, #cvr-dropped-query-results, #search-results, #search-sub-tabs, #query-monitoring, #search-kpi, #summary-metrics {
+#search-quality-queries, #trending, #qm-filter, #qm-count-sub-tabs, #cvr-dropped-query-results, #search-results, #search-sub-tabs, #query-monitoring, #search-kpi, #summary-metrics, #metric {
   position: relative;
 }
 .ajax-loader {
   position: absolute;
-  top: 4em;
+  top: 5em;
   z-index: 1;
   display: none;
+}
+#summary-metrics, .tab-holder, .winners {
+  .ajax-loader {
+    top: 7em;
+  }
 }
 .adv-search-opener {
   position: absolute;
