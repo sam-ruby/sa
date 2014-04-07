@@ -34,4 +34,4 @@
 //= require util/CADhelpInfo
 //= require util/backgrid.customize
 //= require cad_init
-// require user_latest_status.js
+//= require user_latest_status.js

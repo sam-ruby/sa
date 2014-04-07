@@ -3,11 +3,11 @@
 table.table.table-condensed
   tbody
     tr.metrics-col-head
-      td(width='10%').text-col Metric
+      td(width='15%').text-col Metric
       td.numerical-col(width='10%') Score
-      td.text-col(width='10%') Confidence
+      td.text-col(width='10%') Significant 
       td.numerical-col(width='15%') Change
-      td.text-col(width='55%') Top Winning Queries
+      td.text-col(width='50%') Top Winning Queries
     each metric in metrics
       if !metric
         - continue

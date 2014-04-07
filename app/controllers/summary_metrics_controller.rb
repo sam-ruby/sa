@@ -5,37 +5,40 @@ class SummaryMetricsController < BaseController
     query_segment = params[:query_segment] || 'TOP QUERIES'  
     cat_id = params[:cat_id] || 0
 
-    results = SummaryMetrics.get_metrics(query_segment, cat_id, @date)
-    metrics = {}
-    metrics_name = ''
-    results.each_with_index do |record, index|
-      next if metrics_name == record.metrics_name
-      if results[index+1].nil? or results[index+1].metrics_name.nil? or
-        results[index+1].value.nil?
-        change = 100
-      elsif record.metrics_name == results[index+1].metrics_name
-        change = record.value.to_f/results[index+1].value*100 - 100
-      else
-        change = 100
-      end
+    results = {}
+    SummaryMetrics.get_metrics(query_segment, cat_id, @date).each do 
+      |record|
+      results[record.metrics_name] = [] if (
+        results[record.metrics_name].nil?)
+      results[record.metrics_name].push record
+    end
 
-      if (!results[index+1].nil? and !results[index+1].lcl.nil? and
-        !results[index+1].value.nil?)
-        if (record.value > results[index+1].ucl) or 
-          (record.value < results[index+1].lcl)
-          confidence = true
-        else
-          confidence = false
+    metrics = {}
+    
+    results.each do |key, values|
+      change = 100
+      significant = false
+      if values.size == 2 
+        if !values.last[:value].nil? and !values.first[:value].nil?
+          change = values.first[:value].to_f/values.last[:value]*100 - 100
+        end
+      
+        if !values.first[:value].nil? and !values.last[:lcl].nil? and
+          !values.last[:ucl].nil?
+          if values.first[:value] > values.last[:ucl] or 
+              values.first[:value] < values.last[:lcl]
+            significant = true
+          end
         end
       end
-      metrics[record.metrics_name] =  {
-        id: record.metrics_name.gsub(/\s+/, '_'),
-        name: record.metrics_name,
+      
+      metrics[key] =  {
+        id: key.gsub(/\s+/, '_'),
+        name: values.first[:metrics_name],
         change: change,
-        confidence: confidence,
-        queries: record.winners,
-        score: record.value}
-      metrics_name = record.metrics_name
+        confidence: significant,
+        queries: values.first[:winners],
+        score: values.first[:value]}
     end
     respond_to do |format|
       format.json do render :json => metrics end

@@ -99,6 +99,7 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       columns: @grid_cols()
       collection: @collection
       emptyText: 'No Data'
+      className: 'winners-grid'
     )
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection

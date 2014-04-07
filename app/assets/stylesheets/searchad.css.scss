@@ -692,7 +692,8 @@ tr.metrics-col-head {
   text-align: left!important;
 }
 
-table.backgrid {
+.winners-grid {
+  @extend .backgrid;
   border: 0;
   thead {
     //border: 1px solid #ddd;
