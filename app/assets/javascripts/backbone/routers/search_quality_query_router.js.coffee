@@ -56,10 +56,6 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   search:(@route_name, @task, @sub_task, @task_args) =>
     filter_params = @controller.get_filter_params()
     @task = 'top' unless @task?
-    if filter_params.query_segment != @task
-      @query_segment_changed = true
-    else
-      @query_segment_changed = false
     @sub_task = 'traffic' unless @sub_task?
     @task_args = '/filters/date/3-19-2014' unless @task_args
     @set_date_info()
