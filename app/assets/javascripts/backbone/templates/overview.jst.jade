@@ -2,52 +2,57 @@
 - numFormatter = new Backgrid.NumberFormatter()
 table.table.table-condensed
   tbody
-    tr.metrics-col-head
-      td(width='15%').text-col Metric
-      td.numerical-col(width='10%') Score
-      td.text-col(width='10%') Significant 
-      td.numerical-col(width='15%') Change
-      td.text-col(width='50%') Top Winning Queries
-    each metric in metrics
-      if !metric
-        - continue
-      - metric_name_o = view.metrics_name[metric.name]
-      if !metric_name_o
-        - continue
-      tr(class=metric_name_o.id)
-        td.metric-name.text-col
-          a(href='#', style='text-transform:capitalize;')
-            if metric_name_o
-              = metric_name_o.name
+    each metric_cat in metrics
+      tr.info
+        td(colspan="5")
+          =metric_cat.name
+      tr.metrics-col-head
+        td(width='15%').text-col Metric
+        td.numerical-col(width='10%') Score
+        td.numerical-col(width='15%') Change
+        td.text-col(width='10%') Significant 
+        td.text-col(width='50%') Top Opportunities
+      each metric in metric_cat.metrics
+        if !metric
+          - continue
+        - m_obj = view.metrics_name[metric.name]
+        if !m_obj
+          - continue
+        tr(class=m_obj.id)
+          td.metric-name.text-col
+            a(href='#', style='text-transform:capitalize;')
+              if m_obj && m_obj.name
+                = m_obj.name
+              else
+                | Name not known
+          td.numerical-col
+            if ['traffic', 'revenue'].indexOf(metric.name)>-1
+              = intFormatter.fromRaw(metric.score)
             else
-              | Name not known
-        td.numerical-col
-          if ['traffic', 'revenue'].indexOf(metric.name)>-1
-            = intFormatter.fromRaw(metric.score)
-          else
-            = numFormatter.fromRaw(metric.score)
-        td.text-col
-          if metric.confidence == true
-            i.icon-thumbs-up.green-change
-          else
-            | &nbsp;
-            
-        td(class=metric.change>0?['green-change', 'numerical-col']:['red-change', 'numerical-col'])
-          span.pull-right
-            | &nbsp;
-            if metric.change>0 
-              i.icon-arrow-up.green-change
+              = numFormatter.fromRaw(metric.score)
+              
+          td(class=metric.change>0?['green-change', 'numerical-col']:['red-change', 'numerical-col'])
+            span.pull-right
+              | &nbsp;
+              if metric.change>0 
+                i.icon-arrow-up.green-change
+              else
+                i.icon-arrow-down.red-change
+            span.pull-right.metric-change
+              = numFormatter.fromRaw(metric.change)
+              |%
+          td.text-col
+            if metric.confidence == true
+              i.icon-thumbs-up.green-change
             else
-              i.icon-arrow-down.red-change
-          span.pull-right.metric-change
-            = numFormatter.fromRaw(metric.change)
-            |%
-        td.metric-queries.text-col
-          if metric.queries
-            each query in metric.queries.split(',')
-              a(href='#')= query
-              |,&nbsp
-            a(href='#')
-              |more...
-          else
-            |--
+              | &nbsp;
+
+          td.metric-queries.text-col
+            if metric.queries
+              each query in metric.queries.split(',')
+                a(href='#')= query
+                |,&nbsp
+              a(href='#')
+                |more...
+            else
+              |--
