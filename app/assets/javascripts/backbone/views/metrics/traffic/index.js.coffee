@@ -49,7 +49,7 @@ class Searchad.Views.Traffic.Distribution extends Searchad.Views.Traffic
     @navBar = JST["backbone/templates/conv_cor_navbar"](title: 'Traffic')
     @collection = new Searchad.Collections.TrafficDistribution()
     super(options)
-    
+  
   render: =>
     @renderBarChart(@collection.toJSON(),
       'Count',

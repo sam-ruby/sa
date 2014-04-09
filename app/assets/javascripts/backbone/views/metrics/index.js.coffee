@@ -6,7 +6,8 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     super()
     if @collection? and @grid_cols?
       @listenTo(@collection, 'backgrid:refresh', @render)
-      @winning = true
+      @collection.winning = false
+      @winning = false
     else if @collection? and !@grid_cols?
       @listenTo(@collection, 'reset', @render)
 
@@ -14,12 +15,8 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     @active = false
     @show_query_mode = false
     
-    @listenTo(@router, 'route', (route, params) =>
-      @controller.trigger('content-cleanup')
-      @$el.find('.carousel').hide()
-      @$el.find('.tab-holder').children().not('.ajax-loader').empty()
-      @$el.children().not('.ajax-loader').remove() if @$el.hasClass('winners')
-      if route == 'search' and @router.sub_task == feature
+    @listenTo(@router, 'route:search', (path, filter) =>
+      if path.page == feature
         @get_items()
       else
         @active = false
@@ -35,25 +32,12 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
         @$el.find('.tab-holder li.timeline').addClass('active')
     )
 
-    """
-    $(document).scroll((e) =>
-      return unless @active
-      return unless @navBarDiv?
-      topPosition = @$el.position().top
-      navBarWidth = @navBarDiv.width()
-      navBarHeight = @navBarDiv.parent().height()
-
-      if window.pageYOffset >= topPosition
-        @navBarDiv.parent().height(navBarHeight)
-        @navBarDiv.addClass('fixed-navbar')
-        @navBarDiv.css('width', navBarWidth)
-      else if window.pageYOffset < topPosition and @navBarDiv.hasClass('fixed-navbar')
-        @navBarDiv.removeClass('fixed-navbar')
-        @navBarDiv.css('width', '')
-    )
-    """
-
   events: =>
+    'click a.go-back-sm': (e) =>
+      query_segment = @router.path.search
+      @router.update_path(
+        "search/#{query_segment}/page/overview", trigger: true)
+
     'click li.distribution a': (e) =>
       e.preventDefault()
       $(e.target).parents('ul').children('li').removeClass('active')
@@ -106,6 +90,8 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
 
   get_items: (data) =>
     @active = true
+    @$el.find('.tab-holder').children().not('.ajax-loader').remove()
+    @$el.find('.tab-holder').append(@navBar)
     @collection.get_items(data)
 
   toggle_tab: (e) =>
@@ -130,6 +116,8 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
   renderTable: =>
     return unless @active
     @$el.find('.ajax-loader').hide()
+    @$el.children().not('.ajax-loader').remove()
+
     if @collection.size() == 0
       @$el.prepend( @grid.render() )
       return
@@ -228,10 +216,9 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       [cat_data, series_data]
     
     [cat_data, series_data] = process_data(data)
-    @$el.find('.carousel').show()
-    @$el.find('.carousel').carousel(0)
-    @$el.find('.carousel').carousel('pause')
-    @$el.find('.distribution').highcharts(
+    
+    # @controller.trigger('hide_summary')
+    @$el.find('.distribution.item').highcharts(
       chart:
         type: 'column'
         height: 400
@@ -271,9 +258,13 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
         name: ''
         data: series_data}]
     )
-    @$el.find('.tab-holder').children().not('.ajax-loader').remove()
-    @$el.find('.tab-holder').append(@navBar)
+    
     @$el.find('.ajax-loader').hide()
+    @$el.find('.carousel').show()
+    @$el.find('.carousel').carousel(0)
+    @$el.find('.distribution.hcharts').addClass('active')
+    @$el.find('.carousel').carousel('pause')
+
     @navBarDiv = @$el.find('.second-navbar')
     @delegateEvents()
     

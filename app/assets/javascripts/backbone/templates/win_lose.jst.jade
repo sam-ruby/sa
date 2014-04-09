@@ -2,20 +2,20 @@
   .navbar-inner
     ul.nav
       if tab == 'winners'
+        li.loosers
+          a(href="#")
+            span
+              |Opportunities
         li.winners.active
           a(href="#")
             span
               |Winners
-        li.loosers
+      else
+        li.active.loosers
           a(href="#")
             span
-              |Losers
-      else
+              |Opportunities
         li.winners
           a(href="#")
             span
               |Winners
-        li.active.loosers
-          a(href="#")
-            span
-              |Losers

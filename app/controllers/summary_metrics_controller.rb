@@ -37,7 +37,7 @@ class SummaryMetricsController < BaseController
         name: values.first[:metrics_name],
         change: change,
         confidence: significant,
-        queries: values.first[:winners],
+        queries: values.first[:losers],
         score: values.first[:value]}
     end
     respond_to do |format|

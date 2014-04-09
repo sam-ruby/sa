@@ -3,6 +3,8 @@
 table.table.table-condensed
   tbody
     each metric_cat in metrics
+      if metric_cat.metrics.length == 0
+        - continue
       tr.info
         td(colspan="5")
           =metric_cat.name

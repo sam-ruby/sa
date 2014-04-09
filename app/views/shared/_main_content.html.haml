@@ -25,33 +25,51 @@
   .category-content
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
 
-#summary-metrics.talign-center{style: 'width: 100%'}
-  = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
- 
+#summary-metric-car.carousel.slide{'data-interval' => 'false'}
+  .carousel-inner
+    #summary-metrics.talign-center.active.item
+      = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+    .item
+      #metric
+        .tab-holder
+          = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+        #metric-car.carousel.slide{'data-interval' => 'false',
+          style: 'height:400px'}
+          .carousel-inner
+            .distribution.hcharts.active.item
+            .item.timeline
+
+          %a.carousel-control.left{href: '#metric-car',
+            'data-slide' => 'prev'}
+            &lsaquo;
+          %a.carousel-control.right{href: '#metric-car',
+            'data-slide' => 'next'}
+            &rsaquo;
+      
+      #winners.winners
+        = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+
+      #search-view
+        #search-sub-tabs
+          = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+        #search-sub-content
+        #search-amazon-content{:style=>'display:none;'}
+          %ul.nav.nav-pills
+            %li.all-items.active
+              %a{:href=>'#'}
+                All Items
+            %li.in-top-32
+              %a{:href=>'#'}
+                Items In Top 32
+            %li.not-in-top-32
+              %a{:href=>'#'}
+                Items Not In Top 32
+
 #ndcg
   #ndcg-distribution
   .winners
   .loosers
       
-#metric
-  .tab-holder
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  #metric-car.carousel.slide{'data-interval' => 'false', style:'display:none'}
-    %ol.carousel-indicators
-      %li.active{'data-target' => '#metric-car', 'data-slide-to' => '0'}
-      %li{'data-target' => '#metric-car', 'data-slide-to' => '1'}
-        
-    .carousel-inner
-      .distribution.hcharts.active.item
-      .item.timeline
-
-    %a.carousel-control.left{href: '#metric-car', 'data-slide' => 'prev'}
-      &lsaquo;
-    %a.carousel-control.right{href: '#metric-car', 'data-slide' => 'next'}
-      &rsaquo;
-
-#winners.winners
-  = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
 
 #search-quality
   #search-quality-queries
@@ -127,18 +145,4 @@
   #search-results
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
 
-#search-view
-  #search-sub-tabs
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  #search-sub-content
-  #search-amazon-content{:style=>'display:none;'}
-    %ul.nav.nav-pills
-      %li.all-items.active
-        %a{:href=>'#'}
-          All Items
-      %li.in-top-32
-        %a{:href=>'#'}
-          Items In Top 32
-      %li.not-in-top-32
-        %a{:href=>'#'}
-          Items Not In Top 32
+

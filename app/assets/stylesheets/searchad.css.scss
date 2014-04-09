@@ -602,6 +602,7 @@ sup.beta-tag {
     @include box-shadow(0 0 0 rgba(0,0,0,.065)); 
     // Prevent floats from breaking the navbar
     @include clearfix();
+    padding-left: 0px;
   }
 
   .nav {

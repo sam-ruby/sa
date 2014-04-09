@@ -7,16 +7,25 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     super(options)
     
     @summary_template = JST["backbone/templates/overview"]
-    @navBar = JST["backbone/templates/summary_metrics"](title: 'Summary Metrics')
+    @navBar = JST["backbone/templates/summary_metrics"](
+      title: 'Summary Metrics')
+    @carousel = @$el.parents('.carousel.slide')
     
-    @listenTo(@router, 'route', (route, params) =>
-      if route == 'search'
-        if @router.date_changed or @router.cat_changed or !@active or @router.query_segment_changed
-          @get_items()
+    @listenTo(@router, 'route:search', (path, filter) =>
+      if @router.date_changed or @router.cat_changed or !@active or @router.query_segment_changed
+        @get_items()
+
+      if path? and path.page? and path.page == 'overview'
+        @carousel.carousel(0)
+        @carousel.carousel('pause')
       else
-        @active = false
-        @$el.children().not('.ajax-loader').not('ul.metrics').remove()
-        @$el.find('ul.metrics').hide()
+        @carousel.carousel(1)
+        @carousel.carousel('pause')
+
+    )
+    @listenTo(@controller, 'ide_summary', =>
+      @carousel.carousel(1)
+      @carousel.carousel('pause')
     )
   
   metrics_name:
@@ -41,32 +50,42 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     FCT:
       name: 'Earliest Item Click'
       id: 'first_click'
+      disabled: true
     LCT:
       name: 'Latest Item Click'
       id: 'latest_click'
+      disabled: true
     QDT:
       name: 'Query Dwell Time'
       id: 'dwell_time'
+      disabled: true
     CPQ:
       name: 'Clicks Per Query'
       id: 'clicks_query'
+      disabled: true
     CAF:
       name: 'Clicks on First Item'
       id: 'clicks_f_item'
+      disabled: true
     AR:
       name: 'Abandon Rate'
       id: 'aband_rate'
+      disabled: true
     'count per session':
       name: 'Queries per Session'
       id: 'queries_session'
+      disabled: true
     
   events: =>
     events = {}
     that = this
     for metric, details of @metrics_name
       metric_id = details.id
-      events["click tr.#{metric_id}"] = do (metric_id, that) ->
+      disabled = (details.disabled == true)
+      events["click tr.#{metric_id}"] = do (metric_id, disabled, that) ->
         (e) =>
+          e.preventDefault()
+          return if disabled
           $(e.target).parents('table').find('tr.selected').removeClass(
             'selected')
           $(e.target).parents('tr').addClass('selected')
@@ -98,13 +117,13 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     overall_metrics =
       general:
         name: 'General'
-        metrics: (metrics[m] for m in general_metrics)
+        metrics: (metrics[m] for m in general_metrics when metrics[m]?)
       correl_metrics:
         name: 'Relevance Evaluation Metrics'
-        metrics: (metrics[m] for m in correl_metrics)
+        metrics: (metrics[m] for m in correl_metrics when metrics[m]?)
       user_engage_metrics:
         name: 'User Engagement Metrics'
-        metrics: (metrics[m] for m in user_engage_metrics)
+        metrics: (metrics[m] for m in user_engage_metrics when metrics[m]?)
     
     @$el.append(@summary_template(
       metrics: overall_metrics
@@ -114,4 +133,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @active = false
 
   navigate: (metric) =>
-    @router.update_path("search/#{@router.task}/#{metric}", trigger: true)
+    query_segment = @router.path.search
+    @router.path.page = metric
+    @router.update_path(
+      "search/#{query_segment}/page/#{metric}", trigger: true)

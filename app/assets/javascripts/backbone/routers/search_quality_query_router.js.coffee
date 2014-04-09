@@ -3,7 +3,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller = SearchQualityApp.Controller
 
   routes:
-    "(:search)(/:task)(/:sub_task)(/*args)": "search"
+    "(:search)(/*args)": "search"
     "browse(/:task)(/:sub_task)(/*args)": "browse"
     "category(/:task)(/:sub_task)(/*args)": "category"
     "search_rel(/query/:query)(/filters/*wday)": "search_rel"
@@ -36,33 +36,42 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
           @cat_path = cat_path if cat_path?
     @cat_id ||=0
   
-  set_date_info: () =>
+  set_date_info: (filter) =>
     # @get_cat_id()
-    url = "#{@task}/#{@sub_task}/#{@task_args}"
-    arg = url.match(/filters/)
-    return if !arg? or arg.length == 0
-    date_part = url.split(/filters/)[1]
-    date_parts = date_part.split('/')
-    filter_params = @controller.get_filter_params()
-    for part, i in date_parts
-      if part == 'date' and date_parts[i+1]?
-        if filter_params.date != date_parts[i+1]
-          @controller.trigger('update_date', date_parts[i+1])
-          @controller.set_date(date_parts[i+1])
-          @date_changed = true
-        else
-          @date_changed = false
+    @date_changed = false
+    if filter and filter.date?
+      if !@filter or (@filter? and filter.date != @filter.date)
+        @controller.trigger('update_date', filter.date)
+        @controller.set_date(filter.date)
+        @date_changed = true
+      
+  _extractParameters: (route, fragment) =>
+    return if !fragment?
+    [path_parts, filter_parts] = fragment.split('filters')
+    get_parts = (fragment) ->
+      results = {}
+      parts = (part for part in fragment.split('/') when part != '')
+      for part, i in parts
+        continue unless i%2 == 0
+        continue if !part? or part == ''
+        results[part] = parts[i+1]
+      results
+    path_parts = if path_parts? then get_parts(path_parts) else {}
+    filter_parts = if filter_parts? then get_parts(filter_parts) else {}
+    [path_parts, filter_parts]
 
-  search:(@route_name, @task, @sub_task, @task_args) =>
-    filter_params = @controller.get_filter_params()
-    @task = 'top' unless @task?
-    if filter_params.query_segment != @task
-      @controller.set_query_segment(@task)
-      @query_segment_changed = true
+  search:(path, filter) =>
+    path.search ||= 'top'
+    @query_segment_changed = false
+    if path.search
+      if !@path? or (@path? and @path.search != path.search)
+        @query_segment_changed = true
 
-    @sub_task = 'traffic' unless @sub_task?
-    @task_args = '/filters/date/3-19-2014' unless @task_args
-    @set_date_info()
+    path.page ||= 'overview'
+    filter.date ||= '3-19-2014'
+    @set_date_info(filter)
+    @path = path
+    @filter = filter
 
   browse:(@task, @sub_task, @task_args) =>
     @set_date_info()
@@ -185,6 +194,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
         'qm-metrics:index', query: query)
     else
       @controller.trigger('qm-metrics:index')
+
 
   update_path: (path, options=null) =>
     url_parts = window.location.hash.replace('#', '').split('filters')
