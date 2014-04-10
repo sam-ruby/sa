@@ -54,7 +54,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       for part, i in parts
         continue unless i%2 == 0
         continue if !part? or part == ''
-        results[part] = parts[i+1]
+        results[part] = decodeURIComponent(parts[i+1])
       results
     path_parts = if path_parts? then get_parts(path_parts) else {}
     filter_parts = if filter_parts? then get_parts(filter_parts) else {}
