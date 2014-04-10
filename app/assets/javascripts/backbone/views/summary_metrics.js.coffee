@@ -105,23 +105,22 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @$el.append(@navBar)
 
     metrics = @collection.toJSON()[0]
-    general_metrics = ['traffic', 'pvr', 'atc', 'conversion',
-      'revenue' ]
+    general_metrics = ['traffic', 'conversion', 'pvr', 'atc', 'revenue' ]
     correl_metrics = ['relevance conversion correlation']
-    user_engage_metrics = ['count per session', 'QDT', 'FCT', 'LCT', 'CPQ', 'CAF',
-      'AR']
+    user_engage_metrics = ['CAF', 'AR', 'count per session', 'QDT', 'FCT',
+      'LCT', 'CPQ']
 
     overall_metrics =
       general:
         name: 'General'
         metrics: (metrics[m] for m in general_metrics when metrics[m]?)
-      correl_metrics:
-        name: 'Relevance Evaluation Metrics'
-        metrics: (metrics[m] for m in correl_metrics when metrics[m]?)
       user_engage_metrics:
         name: 'User Engagement Metrics'
         metrics: (metrics[m] for m in user_engage_metrics when metrics[m]?)
-    
+      correl_metrics:
+        name: 'Relevance Evaluation Metrics'
+        metrics: (metrics[m] for m in correl_metrics when metrics[m]?)
+          
     @$el.append(@summary_template(
       metrics: overall_metrics
       view: this))

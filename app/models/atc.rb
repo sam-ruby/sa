@@ -20,9 +20,9 @@ class Atc < BaseModel
                        page=1,  limit=10, order_col=nil, order='asc')
     cols = nil
     if winning
-      default_order = 'score desc'
-    else
       default_order = 'score asc'
+    else
+      default_order = 'score desc'
     end
     order_str = order_col.nil? ? default_order : 
       order.nil? ? order_col : %Q{#{order_col} #{order}}
@@ -40,7 +40,7 @@ class Atc < BaseModel
      sum(s.uniq_pvr)/sum(s.uniq_count)*100 p_v_r,
      sum(s.uniq_atc)/sum(s.uniq_count)*100 a_t_c,
      sum(s.uniq_con)/sum(s.uniq_count)*100 c_o_n,
-     sqrt(sum(s.uniq_count))*(sum(s.uniq_atc)/sum(s.uniq_count)*100+1) score}
+     sum(s.uniq_count)/(sum(s.uniq_atc)/sum(s.uniq_count)*100+1) score}
 
     join_str = %q{as s JOIN query_segmentation_daily qs ON 
       (s.query=qs.query and s.data_date=qs.data_date )}

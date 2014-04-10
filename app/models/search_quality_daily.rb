@@ -170,9 +170,11 @@ class SearchQualityDaily < BaseModel
       order_limit_str = %Q{ #{order_str} limit #{limit} offset #{offset}}
     end
    
-    cols ||= %q{s.query, round((s.search_con_rank_correlation+1)/2, 2) correlation,
-      round(s.uniq_count*(s.search_con_rank_correlation+1)/2) score,
-      uniq_count count}
+    cols ||= %q{s.query,
+      s.uniq_count c_o_u_n_t,
+      round((s.search_con_rank_correlation+1)/2, 2) correlation,
+      round(((s.search_con_rank_correlation+1)/2+0.1)/s.uniq_count,7)*1000000 score}
+
 
     join_str = %q{as s JOIN query_segmentation_daily qs ON 
       (s.query=qs.query and s.data_date=qs.data_date )}

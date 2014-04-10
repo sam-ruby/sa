@@ -18,7 +18,7 @@ class Searchad.Views.ConvCorrelation.Winners extends Searchad.Views.ConvCorrelat
     editable: false,
     headerCell: @QueryHeaderCell,
     cell: @QueryCell},
-    {name: 'count',
+    {name: 'c_o_u_n_t',
     label: I18n.t('search_analytics.query_count'),
     editable: false,
     headerCell: @NumericHeaderCell,

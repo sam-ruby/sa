@@ -20,9 +20,9 @@ class Traffic < BaseModel
                        page=1,  limit=10, order_col=nil, order='asc')
     cols = nil
     if winning
-      default_order = 'score desc'
-    else
       default_order = 'score asc'
+    else
+      default_order = 'score desc'
     end
     order_str = order_col.nil? ? default_order : 
       order.nil? ? order_col : %Q{#{order_col} #{order}}
@@ -35,7 +35,9 @@ class Traffic < BaseModel
       order_limit_str = %Q{ #{order_str} limit #{limit} offset #{offset}}
     end
    
-    cols ||= %q{s.query, sum(s.uniq_count) score, 
+    cols ||= %q{s.query, 
+    sum(s.uniq_count) c_o_u_n_t,
+    pow(sum(s.uniq_count),2)/(sum(s.uniq_con)/sum(s.uniq_count)+0.01) score,
     sum(s.uniq_pvr)/sum(s.uniq_count)*100 p_v_r,
     sum(s.uniq_atc)/sum(s.uniq_count)*100 a_t_c,
     sum(s.uniq_con)/sum(s.uniq_count)*100 c_o_n}
