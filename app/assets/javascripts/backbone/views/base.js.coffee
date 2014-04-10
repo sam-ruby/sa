@@ -26,14 +26,12 @@ class Searchad.Views.Base extends Backbone.View
         e.preventDefault()
         Backgrid.CADQueryCell.prototype.handleQueryClick.call(this, e)
         query = @model.get('query')
-        that.controller.trigger('search:sub-content',
-          query: query
-          view: 'daily'
-        )
         that.show_query()
-        # new_path = 'search_rel/query/' + encodeURIComponent(query)
-        # that.router.update_path(new_path)
-        false
+        segment = (that.router.path? and that.router.path.search) || 'top'
+        feature = (that.router.path? and that.router.path.page) || 'traffic'
+        new_path = "search/#{segment}/page/#{feature}/details/1/query/" +
+          encodeURIComponent(query)
+        that.router.update_path(new_path, trigger: true)
         
     class @PercentCell extends Backgrid.NumberCell
       render: =>

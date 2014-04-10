@@ -41,6 +41,7 @@ class Searchad.Views.Traffic.Winners extends Searchad.Views.Traffic
     headerCell: @SortedHeaderCell,
     cell: 'integer'}]
 
+  
   render: =>
     @renderTable()
 

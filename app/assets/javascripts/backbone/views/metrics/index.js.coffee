@@ -6,12 +6,12 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     super()
     if @collection? and @grid_cols?
       @listenTo(@collection, 'backgrid:refresh', @render)
+      @listenTo(@collection, 'request', @prepare_for_table)
       @collection.winning = false
       @winning = false
     else if @collection? and !@grid_cols?
       @listenTo(@collection, 'reset', @render)
 
-    @listenTo(@collection, 'request', @prepare_for_render)
     @active = false
     @show_query_mode = false
     
@@ -101,6 +101,10 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
   prepare_for_render: =>
     @$el.find('.ajax-loader').css('display', 'inline-block')
 
+  prepare_for_table: =>
+    @$el.children().not('.ajax-loader').remove()
+    @$el.find('.ajax-loader').css('display', 'inline-block')
+  
   show_query: =>
     return if @show_query_mode
     that = this
@@ -134,7 +138,6 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
 
     @$el.append( @export_csv_button() ) unless @$el.find(
       '.export-csv').length > 0
-    @$el.find('td a.query').first().trigger('click')
     @delegateEvents()
     this
   
@@ -258,13 +261,12 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
         name: ''
         data: series_data}]
     )
-    
+
     @$el.find('.ajax-loader').hide()
     @$el.find('.carousel').show()
     @$el.find('.carousel').carousel(0)
     @$el.find('.distribution.hcharts').addClass('active')
     @$el.find('.carousel').carousel('pause')
-
     @navBarDiv = @$el.find('.second-navbar')
     @delegateEvents()
     

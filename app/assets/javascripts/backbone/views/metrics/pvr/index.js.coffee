@@ -51,7 +51,7 @@ class Searchad.Views.Pvr.Winners extends Searchad.Views.Pvr
     
 class Searchad.Views.Pvr.Distribution extends Searchad.Views.Pvr
   initialize: (options) ->
-    @navBar = JST["backbone/templates/conv_cor_navbar"](title: 'PVR')
+    @navBar = JST["backbone/templates/conv_cor_navbar"](title: 'Product View Rate')
     @collection = new Searchad.Collections.PvrDistribution()
     super(options)
  

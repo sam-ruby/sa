@@ -51,7 +51,7 @@ class Searchad.Views.Atc.Winners extends Searchad.Views.Atc
     
 class Searchad.Views.Atc.Distribution extends Searchad.Views.Atc
   initialize: (options) ->
-    @navBar = JST["backbone/templates/conv_cor_navbar"](title: 'ATC')
+    @navBar = JST["backbone/templates/conv_cor_navbar"](title: 'Add To Cart Rate')
     @collection = new Searchad.Collections.AtcDistribution()
     super(options)
     

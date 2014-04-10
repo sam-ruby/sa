@@ -697,7 +697,9 @@ tr.metrics-col-head {
 .text-col {
   text-align: left!important;
 }
-
+tr.selected {
+  background-color: #dff0d8;
+}
 .winners-grid {
   @extend .backgrid;
   border: 0;

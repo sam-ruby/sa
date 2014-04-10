@@ -8,6 +8,13 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     @controller.bind('search:sub-tab-cleanup', @unrender)
     @controller.bind('search:sub-content:show-spin', @show_spin)
     @controller.bind('search:sub-content:hide-spin', @hide_spin)
+    
+    @listenTo(@router, 'route:search', (path, filter) =>
+      if path? and path.details? and path.query?
+        query = path.query
+        @render(query: query)
+    )
+     
     @active = false
   
   data:

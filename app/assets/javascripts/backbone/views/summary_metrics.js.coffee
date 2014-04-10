@@ -8,24 +8,21 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     
     @summary_template = JST["backbone/templates/overview"]
     @navBar = JST["backbone/templates/summary_metrics"](
-      title: 'Summary Metrics')
+      title: 'Metrics Overview')
     @carousel = @$el.parents('.carousel.slide')
     
     @listenTo(@router, 'route:search', (path, filter) =>
       if @router.date_changed or @router.cat_changed or !@active or @router.query_segment_changed
         @get_items()
-
       if path? and path.page? and path.page == 'overview'
         @carousel.carousel(0)
         @carousel.carousel('pause')
-      else
+      else if path? and path.details? and path.details == '1'
+        @carousel.carousel(2)
+        @carousel.carousel('pause')
+      else if path? and path.page? and path.page != 'overview'
         @carousel.carousel(1)
         @carousel.carousel('pause')
-
-    )
-    @listenTo(@controller, 'ide_summary', =>
-      @carousel.carousel(1)
-      @carousel.carousel('pause')
     )
   
   metrics_name:
