@@ -83,5 +83,5 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
   update_query_segment: (e) =>
     e.preventDefault()
     segment = $(e.target).parents('li').attr('class')
-    segment = segment.replace(' active')
+    segment = segment.replace(' active', '')
     @router.update_path("search/#{segment}", trigger: true)
