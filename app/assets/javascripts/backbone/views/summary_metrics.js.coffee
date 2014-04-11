@@ -14,6 +14,9 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @listenTo(@router, 'route:search', (path, filter) =>
       if @router.date_changed or @router.cat_changed or !@active or @router.query_segment_changed
         @get_items()
+      
+      path? and (@segment = path.search)
+
       if path? and path.page? and path.page == 'overview'
         @carousel.carousel(0)
         @carousel.carousel('pause')
@@ -75,19 +78,60 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     
   events: =>
     events = {}
+    events['click .info a'] = (e)=>
+      metric = $(e.target).attr('class')
+      icon = $(e.target).find('i')
+      info = $(e.target).parents('.info')
+
+      if icon.hasClass('icon-resize-horizontal')
+        icon.removeClass('icon-resize-horizontal')
+        icon.addClass('icon-resize-vertical')
+        info.css('margin-bottom', '1em')
+      else
+        icon.removeClass('icon-resize-vertical')
+        icon.addClass('icon-resize-horizontal')
+        info.css('margin-bottom', '0')
+
+      $(e.target).parents('div.overview').find(
+        'div.metric.' + metric).toggle('slideup')
+
     that = this
     for metric, details of @metrics_name
       metric_id = details.id
       disabled = (details.disabled == true)
-      events["click tr.#{metric_id}"] = do (metric_id, disabled, that) ->
+      events["click div.#{metric_id} .metric-name"] = do (
+        metric_id, disabled, that) ->
         (e) =>
           e.preventDefault()
           return if disabled
-          $(e.target).parents('table').find('tr.selected').removeClass(
-            'selected')
-          $(e.target).parents('tr').addClass('selected')
+          selected_row = $(e.target).parents('.overview').find(
+            '.mrow.selected')
+          if selected_row?
+            selected_row.removeClass('selected')
+            for col in selected_row.children()
+              $(col).height('auto')
+
+          max_height = 0
+          for col in $(e.target).parents('.mrow').children()
+            $(col).height() > max_height and (
+              max_height = $(col).height())
+          for col in $(e.target).parents('.mrow').children()
+            $(col).height(max_height)
+          $(e.target).parents('.mrow').addClass('selected')
           e.preventDefault()
           that.navigate(metric_id)
+          
+      events["click div.#{metric_id} .metric-queries"] = do (
+        metric_id, disabled, that) ->
+        (e) =>
+          e.preventDefault()
+          query = encodeURIComponent($(e.target).text())
+          segment = that.segment
+          feature = metric_id
+          that.router.update_path(
+            "search/#{segment}/page/#{feature}/details/1/query/#{query}",
+            trigger: true)
+
     events
 
   get_items: (data) =>
@@ -113,12 +157,15 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     overall_metrics =
       general:
         name: 'General'
+        class: 'general'
         metrics: (metrics[m] for m in general_metrics when metrics[m]?)
       user_engage_metrics:
         name: 'User Engagement Metrics'
+        class: 'user_eng'
         metrics: (metrics[m] for m in user_engage_metrics when metrics[m]?)
       correl_metrics:
         name: 'Relevance Evaluation Metrics'
+        class: 'rel_eval'
         metrics: (metrics[m] for m in correl_metrics when metrics[m]?)
           
     @$el.append(@summary_template(

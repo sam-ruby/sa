@@ -37,19 +37,19 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
       path_name_routes = (key for key, value of path_names)
       search_page = path.page
       
-      if !search_page? or search_page == 'overview'
-        bc_paths.push(name: 'Overview of Metrics', active: true)
-      else if search_page? and path_name_routes.indexOf(search_page) != -1 and path.details?
+      if search_page? and path_name_routes.indexOf(search_page) != -1 and path.details? and path.query?
+        query = decodeURIComponent(path.query)
         bc_paths.push(name: 'Overview of Metrics', class: 'overview')
         bc_paths.push(name: path_names[search_page],  class: search_page)
-        bc_paths.push(name: "Details", active: true)
+        bc_paths.push(name: query, active: true)
       else if search_page? and search_page != 'overview'
         bc_paths.push(name: 'Overview of Metrics', class: 'overview')
         bc_paths.push(name: path_names[search_page], active: true)
 
       $(document).find('#cad-breadcrumb').empty()
-      $(document).find('#cad-breadcrumb').append(
-        JST['backbone/templates/search_bc'](bc_paths: bc_paths) )
+      if bc_paths.length > 0
+        $(document).find('#cad-breadcrumb').append(
+          JST['backbone/templates/search_bc'](bc_paths: bc_paths) )
     )
 
   events:

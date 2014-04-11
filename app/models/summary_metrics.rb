@@ -8,7 +8,7 @@ class SummaryMetrics < BaseModel
     segmentation in (?, ?)}
 
     select(cols).where(
-      [where_str, cat_id, date, date - 1.day, segment, 'ALL QUERIES']).order(
+      [where_str, cat_id, date, date - 7.days, segment, 'ALL QUERIES']).order(
       'metrics_name, data_date desc') 
   end
 end

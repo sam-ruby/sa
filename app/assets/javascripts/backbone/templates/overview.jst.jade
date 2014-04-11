@@ -1,39 +1,44 @@
 - intFormatter = new Backgrid.NumberFormatter({decimals: 0})
 - numFormatter = new Backgrid.NumberFormatter()
-table.table.table-condensed
-  tbody
-    each metric_cat in metrics
-      if metric_cat.metrics.length == 0
-        - continue
-      tr.info
-        td(colspan="5")
-          =metric_cat.name
-      tr.metrics-col-head
-        td(width='15%').text-col Metric
-        td.numerical-col(width='10%') Score
-        td.numerical-col(width='15%') Change
-        td.text-col(width='10%') Significant 
-        td.text-col(width='50%') Top Opportunities
+.overview
+  .col-head
+    .name Metric
+    .score.numerical-col Score
+    .change.numerical-col Change
+    .significant Significant 
+    .top Top Opportunities
+  each metric_cat in metrics
+    if metric_cat.metrics.length == 0
+      - continue
+    .info
+      a(href='#', class=metric_cat.class)
+        i.icon-resize-horizontal
+        |&nbsp;
+        = metric_cat.name
+    .metric(class=metric_cat.class)
       each metric in metric_cat.metrics
         if !metric
           - continue
         - m_obj = view.metrics_name[metric.name]
         if !m_obj
           - continue
-        tr(class=m_obj.id)
-          td.metric-name.text-col
+        div(class=[m_obj.id, 'mrow'])
+          .name.metric-name
             a(href='#', style='text-transform:capitalize;')
               if m_obj && m_obj.name
                 = m_obj.name
               else
                 | Name not known
-          td.numerical-col
+          .score.numerical-col
             if ['traffic', 'revenue'].indexOf(metric.name)>-1
               = intFormatter.fromRaw(metric.score)
             else
               = numFormatter.fromRaw(metric.score)
-              
-          td(class=metric.change>0?['green-change', 'numerical-col']:['red-change', 'numerical-col'])
+          if metric.change > 0
+            - class_name = 'green-change'
+          else
+            - class_name = 'red-change'
+          div(class=[class_name, 'numerical-col', 'change'])
             span.pull-right
               | &nbsp;
               if metric.change>0 
@@ -43,16 +48,16 @@ table.table.table-condensed
             span.pull-right.metric-change
               = numFormatter.fromRaw(metric.change)
               |%
-          td.text-col
+          .significant
             if metric.confidence == true
               i.icon-thumbs-up.green-change
             else
               | &nbsp;
 
-          td.metric-queries.text-col
+          .top.metric-queries
             if metric.queries
               each query in metric.queries.split(',')
-                a(href='#')= query
+                a(href='')= query
                 |,&nbsp
               a(href='#')
                 |more...

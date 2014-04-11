@@ -741,3 +741,66 @@ tr.selected {
     display: inline-block;
   }
 }
+div.overview {
+  .name, .score, .change, .significant, .top, .info {
+    display: inline-block;
+    padding: 4px 8px !important;
+    line-height: 20px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .name {
+    width: 20%;
+  }
+  .score {
+    width: 10%;
+  }
+  .change {
+    width: 10%;
+  }
+  .significant {
+    width: 8%;
+  }
+  .top {
+    width: 40%;
+  }
+  .col-head {
+    font-weight: 300;
+    font-size: 17px;
+    color: #777777;
+    border-top: 0;
+  }
+  .info {
+      text-align:left;
+      width: 100%;
+      background-color: #d9edf7;
+      span {
+        font-size: 16px;
+      }
+      a {
+        color: black;
+      }
+    }
+  .metric {
+    div:first-child {
+      .name, .score, .change, .significant, .top {
+        border-top: 0;
+      }
+    }
+    div:last-child {
+      .name, .score, .change, .significant, .top {
+        margin-bottom: .75em;
+      }
+    }
+
+    .name, .score, .change, .significant, .top {
+      border-top: 1px solid #dddddd;
+    }
+    .selected {
+      .name, .score, .change, .significant, .top {
+        background-color: #dff0d8;
+        border-top: 0;
+      }
+    }
+  }
+}
