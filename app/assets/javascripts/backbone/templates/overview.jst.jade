@@ -4,14 +4,24 @@
   .col-head
     .name Metric
     .score.numerical-col Score
-    .change.numerical-col Change
+    .change.numerical-col
+      |Change
+      if segment == 'trending'
+        span(style='font-size:14px')
+          br
+          |From Yesterday
+      else
+        span(style='font-size:14px')
+          br
+          |From a Week Ago
+
     .significant Significant 
     .top Top Opportunities
   each metric_cat in metrics
     if metric_cat.metrics.length == 0
       - continue
-    .info
-      a(href='#', class=metric_cat.class)
+    .info(class=metric_cat.class)
+      a(href='#')
         i.icon-resize-horizontal
         |&nbsp;
         = metric_cat.name

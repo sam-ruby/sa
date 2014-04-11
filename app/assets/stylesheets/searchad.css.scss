@@ -774,6 +774,7 @@ div.overview {
       text-align:left;
       width: 100%;
       background-color: #d9edf7;
+      cursor: pointer;
       span {
         font-size: 16px;
       }
@@ -784,7 +785,7 @@ div.overview {
   .metric {
     div:first-child {
       .name, .score, .change, .significant, .top {
-        border-top: 0;
+        border-top: 2px solid white;
       }
     }
     div:last-child {
@@ -799,7 +800,6 @@ div.overview {
     .selected {
       .name, .score, .change, .significant, .top {
         background-color: #dff0d8;
-        border-top: 0;
       }
     }
   }

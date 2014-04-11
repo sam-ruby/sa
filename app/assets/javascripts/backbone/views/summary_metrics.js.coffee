@@ -78,10 +78,15 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     
   events: =>
     events = {}
-    events['click .info a'] = (e)=>
-      metric = $(e.target).attr('class')
-      icon = $(e.target).find('i')
-      info = $(e.target).parents('.info')
+    events['click .info'] = (e)=>
+      if $(e.target).hasClass('info')
+        metric = $(e.target).attr('class').replace(/(\s+)?info(\s+)?/, '')
+        info = $(e.target)
+      else
+        metric = $(e.target).parents('.info').attr(
+          'class').replace(/(\s+)?info(\s+)?/, '')
+        info = $(e.target).parents('.info')
+      icon = info.find('i')
 
       if icon.hasClass('icon-resize-horizontal')
         icon.removeClass('icon-resize-horizontal')
@@ -92,7 +97,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
         icon.addClass('icon-resize-horizontal')
         info.css('margin-bottom', '0')
 
-      $(e.target).parents('div.overview').find(
+      info.parents('div.overview').find(
         'div.metric.' + metric).toggle('slideup')
 
     that = this
@@ -170,6 +175,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
           
     @$el.append(@summary_template(
       metrics: overall_metrics
+      segment: @segment
       view: this))
 
   unrender: =>
