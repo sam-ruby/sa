@@ -23,7 +23,8 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
         @controller.set_query_segment('RANDOM')
         @toggleTab(@$el.find('li.random a'))
       else if path.search == 'conv_dropped'
-        @controller.set_query_segment('CONVERSION DROPPED')
+        @controller.set_query_segment(
+          'QUERIES WITH DROPPING CONVERSION RATES IN 1 WEEK')
         @toggleTab(@$el.find('li.conv_dropped a'))
       bc_paths = []
       path_names =
