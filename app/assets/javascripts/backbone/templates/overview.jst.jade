@@ -6,14 +6,24 @@
     .score.numerical-col Score
     .change.numerical-col
       |Change
-      if segment == 'trending'
+      if segment == 'trend_2'
         span(style='font-size:14px')
-          br
-          |From Yesterday
+          |in 2 days
+      else if segment == 'trend_7'
+        span(style='font-size:14px')
+          |in 7 days
+      else if segment == 'trend_14'
+        span(style='font-size:14px')
+          |in 14 days
+      else if segment == 'trend_21'
+        span(style='font-size:14px')
+          |in 21 days
+      else if segment == 'trend_28'
+        span(style='font-size:14px')
+          |in 28 days
       else
         span(style='font-size:14px')
-          br
-          |From a Week Ago
+          |in 7 days
 
     .significant Significant 
     .top Top Opportunities
@@ -66,10 +76,12 @@
 
           .top.metric-queries
             if metric.queries
-              each query in metric.queries.split(',')
-                a(href='')= query
-                |,&nbsp
-              a(href='#')
-                |more...
+              each query, index in metric.queries.split(',')
+                if index == 0
+                  a(href='#')= query
+                else
+                  a(href='#')
+                    |,&nbsp;
+                    = query
             else
               |--

@@ -1,3 +1,32 @@
 .second-navbar
   .navbar-inner
-    span.brand= title
+    span.brand Metrics Overview
+    ul.nav
+      if segment == 'trending'
+        li.divider-vertical
+        li(style='margin:12px 10px 0 0') Trending Queries In
+        li
+          .trending-periods
+            .btn-group
+              each active, period in periods
+                if active
+                  - classes = ['btn', 'btn-primary']
+                else
+                  - classes = ['btn']
+                button(class=classes)
+                  = period
+        li(style='margin:10px 0 0 10px') Days
+      else if segment == 'poor_performing'
+        li.divider-vertical
+        li(style='margin:12px 10px 0 0') Conversion Dropped Queries In
+        li
+          .conv-drop-periods
+            .btn-group
+              each active, period in periods
+                if active
+                  - classes = ['btn', 'btn-primary']
+                else
+                  - classes = ['btn']
+                button(class=classes)
+                  = period 
+        li(style='margin:10px 0 0 10px') Weeks 

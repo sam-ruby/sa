@@ -7,8 +7,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     super(options)
     
     @summary_template = JST["backbone/templates/overview"]
-    @navBar = JST["backbone/templates/summary_metrics"](
-      title: 'Metrics Overview')
+    @navBar = JST["backbone/templates/summary_metrics"]
     @carousel = @$el.parents('.carousel.slide')
     
     @listenTo(@router, 'route:search', (path, filter) =>
@@ -100,6 +99,23 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       info.parents('div.overview').find(
         'div.metric.' + metric).toggle('slideup')
 
+    events['click .conv-drop-periods button'] = (e) =>
+      e.preventDefault()
+      weeks = $(e.target).text()
+      new_path = "search/drop_con_#{weeks}"
+      $(e.target).parents('.btn-group').find('.btn.btn.primary').removeClass(
+        'btn-primary')
+      $(e.target).addClass('btn-primary')
+      @router.update_path(new_path, trigger: true)
+
+    events['click .trending-periods button'] = (e) =>
+      days = $(e.target).text()
+      new_path = "search/trend_#{days}"
+      $(e.target).parents('.btn-group').find('.btn.btn.primary').removeClass(
+        'btn-primary')
+      $(e.target).addClass('btn-primary')
+      @router.update_path(new_path, trigger: true)
+
     that = this
     for metric, details of @metrics_name
       metric_id = details.id
@@ -151,7 +167,32 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     return unless @active
     @$el.find('.ajax-loader').hide()
     @$el.children().not('.ajax-loader').hide()
-    @$el.append(@navBar)
+    
+    periods = []
+    segment = ''
+    if @segment? and (match = @segment.match(/trend_(\d+)/))
+      days = parseInt(match[1])
+      periods =
+        2: (days == 2 ? true: false)
+        7: (days == 7 ? true: false)
+        14: (days == 14 ? true: false)
+        21: (days == 21 ? true: false)
+        28: (days == 28 ? true: false)
+      segment = 'trending'
+    else if @segment? and (
+      (match = @segment.match(/poor_perform/)) or
+      (match = @segment.match(/drop_con_(\d+)/)))
+      weeks = parseInt(match[1])
+      periods =
+        1: (weeks == 1 ? true: false)
+        2: (weeks == 2 ? true: false)
+        3: (weeks == 3 ? true: false)
+        4: (weeks == 4 ? true: false)
+      segment = 'poor_performing'
+
+    @$el.append( @navBar(
+      periods: periods
+      segment: segment) )
 
     metrics = @collection.toJSON()[0]
     general_metrics = ['traffic', 'conversion', 'pvr', 'atc', 'revenue' ]

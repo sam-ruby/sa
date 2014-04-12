@@ -8,47 +8,52 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
       'ul.search li a', 'click', (e)=>
         @update_feature(e))
 
+    segment_lookup =
+      top: 'TOP QUERIES'
+      trend_2: 'TREND_2'
+      trend_7: 'TREND_7'
+      trend_14: 'TREND_14'
+      trend_21: 'TREND_21'
+      trend_28: 'TREND_28'
+      poor_perform: 'POOR QUERIES IN 30 DAYS'
+      drop_con_1: 'DROP_CON_1_WK'
+      drop_con_2: 'DROP_CON_2_WK'
+      drop_con_3: 'DROP_CON_3_WK'
+      drop_con_4: 'DROP_CON_4_WK'
+      poor_amzn: 'POOR_QUERIES_AMAZON'
+      random: 'RANDOM'
+      
+    feature_names =
+      traffic: 'Traffic'
+      pvr: 'Product View Rate'
+      atc: 'Add To Cart Rate'
+      revenue: 'Revenue'
+      conversion: 'Conversion'
+      conv_cor: 'Conversion Relevance'
+    path_name_routes = (key for key, value of feature_names)
+    
     @listenTo(@router, 'route:search', (path, filter) =>
       @$el.css('display', 'block')
-      if path.search == 'top'
-        @toggleTab(@$el.find('li.top a'))
-        @controller.set_query_segment('TOP QUERIES')
-      else if path.search == 'trending'
-        @controller.set_query_segment('TRENDING QUERIES IN 2 DAYS')
-        @toggleTab(@$el.find('li.trending a'))
-      else if path.search == 'poor_performing'
-        @controller.set_query_segment('POOR QUERIES IN 30 DAYS')
-        @toggleTab(@$el.find('li.poor_performing a'))
-      else if path.search == 'random'
-        @controller.set_query_segment('RANDOM')
-        @toggleTab(@$el.find('li.random a'))
-      else if path.search == 'conv_dropped'
-        @controller.set_query_segment('DROP_CONV_1_WEEK')
-        @toggleTab(@$el.find('li.conv_dropped a'))
-      else if path.search == 'poor_amzn'
-        @controller.set_query_segment('POOR_QUERIES_AMAZON')
-        @toggleTab(@$el.find('li.poor_amzn a'))
+      for key, value of segment_lookup when path.search == key
+        if key.match(/drop_con/)
+          route_class = 'poor_perform'
+        else if key.match(/trend/)
+          route_class = 'trend_2'
+        else
+          route_class = key
+        @toggleTab(@$el.find("li.#{route_class} a"))
+        @controller.set_query_segment(value)
 
       bc_paths = []
-      path_names =
-        traffic: 'Traffic'
-        pvr: 'Product View Rate'
-        atc: 'Add To Cart Rate'
-        revenue: 'Revenue'
-        conversion: 'Conversion'
-        conv_cor: 'Conversion Relevance'
-      
-      path_name_routes = (key for key, value of path_names)
       search_page = path.page
-      
       if search_page? and path_name_routes.indexOf(search_page) != -1 and path.details? and path.query?
         query = decodeURIComponent(path.query)
         bc_paths.push(name: 'Overview of Metrics', class: 'overview')
-        bc_paths.push(name: path_names[search_page],  class: search_page)
+        bc_paths.push(name: feature_names[search_page],  class: search_page)
         bc_paths.push(name: query, active: true)
       else if search_page? and search_page != 'overview'
         bc_paths.push(name: 'Overview of Metrics', class: 'overview')
-        bc_paths.push(name: path_names[search_page], active: true)
+        bc_paths.push(name: feature_names[search_page], active: true)
 
       $(document).find('#cad-breadcrumb').empty()
       if bc_paths.length > 0
@@ -86,6 +91,6 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
 
   update_query_segment: (e) =>
     e.preventDefault()
-    segment = $(e.target).parents('li').attr('class')
-    segment = segment.replace(' active', '')
+    segment = $(e.target).parents('li').attr('class').replace(
+      /(\s+)?(active|dropdown)(\s+)?/, '')
     @router.update_path("search/#{segment}", trigger: true)
