@@ -2,7 +2,7 @@ class SummaryMetrics < BaseModel
   self.table_name = 'segmentation_summary_metrics_daily'
  
   def self.get_metrics(segment, cat_id, date)
-    cols = %q{metrics_name, value, losers, ucl, lcl}
+    cols = %q{metrics_name, value, losers, ucl, lcl, data_date}
     
     where_str = %q{cat_id in (-1, ?) and data_date in (?, ?) and 
     segmentation in (?, ?)}

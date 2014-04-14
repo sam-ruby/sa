@@ -16,7 +16,7 @@ class SummaryMetricsController < BaseController
     metrics = {}
     
     results.each do |key, values|
-      change = 100
+      change = 'N/A'
       significant = false
       if values.size == 2 
         if !values.last[:value].nil? and !values.first[:value].nil?
@@ -31,14 +31,21 @@ class SummaryMetricsController < BaseController
           end
         end
       end
-      
+      if values.first.data_date == @data_date
+        score = values.first[:value]
+        queries = values.first[:losers]
+      else
+        score = 'N/A'
+        queries = 'N/A'
+      end
+
       metrics[key] =  {
         id: key.gsub(/\s+/, '_'),
         name: values.first[:metrics_name],
         change: change,
         confidence: significant,
-        queries: values.first[:losers],
-        score: values.first[:value]}
+        queries: queries,
+        score: score}
     end
     respond_to do |format|
       format.json do render :json => metrics end

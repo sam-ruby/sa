@@ -21,7 +21,7 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
       drop_con_3: 'DROP_CON_3_WK'
       drop_con_4: 'DROP_CON_4_WK'
       poor_amzn: 'POOR_QUERIES_AMAZON'
-      random: 'RANDOM'
+      random: 'TYPICAL_QUERY'
       
     feature_names =
       traffic: 'Traffic'
