@@ -53,14 +53,14 @@
             - class_name = 'red-change'
           div(class=[class_name, 'numerical-col', 'change'])
             span.pull-right
-              | &nbsp;
               if metric.change>0 
                 i.icon-arrow-up.green-change
-              else
+              else if metric.change<=0
                 i.icon-arrow-down.red-change
             span.pull-right.metric-change
               if metric.change == 'N/A'
-                |N/A
+                span(style='margin-right:31px')
+                  |N/A
               else
                 = numFormatter.fromRaw(metric.change)
                 |%
