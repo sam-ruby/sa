@@ -1,4 +1,4 @@
-.second-navbar(style='margin-bottom:10px')
+.second-navbar
   .navbar-inner
     span.brand Metrics Overview
     ul.nav
@@ -15,7 +15,7 @@
                   - classes = ['btn']
                 button(class=classes)
                   = period
-        li(style='margin:10px 0 0 10px') Days
+        li(style='margin:12px 0 0 10px') Days
       else if segment == 'poor_performing'
         li.divider-vertical
         li(style='margin:12px 10px 0 0') Conversion Dropped Queries In
@@ -29,4 +29,4 @@
                   - classes = ['btn']
                 button(class=classes)
                   = period 
-        li(style='margin:10px 0 0 10px') Weeks 
+        li(style='margin:12px 0 0 10px') Weeks 

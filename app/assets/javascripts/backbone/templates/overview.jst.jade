@@ -1,26 +1,15 @@
 - intFormatter = new Backgrid.NumberFormatter({decimals: 0})
 - numFormatter = new Backgrid.NumberFormatter()
+- numForm3Decimals = new Backgrid.NumberFormatter({decimals: 4})
 .overview
   .col-head
     .name Metric
     .score.numerical-col Score
     .change.numerical-col
       |Change
-      if segment == 'trend_2'
+      if segment && segment.match(/trend_\d+/)
         span(style='font-size:14px')
-          |in 2 days
-      else if segment == 'trend_7'
-        span(style='font-size:14px')
-          |in 7 days
-      else if segment == 'trend_14'
-        span(style='font-size:14px')
-          |in 14 days
-      else if segment == 'trend_21'
-        span(style='font-size:14px')
-          |in 21 days
-      else if segment == 'trend_28'
-        span(style='font-size:14px')
-          |in 28 days
+          |in 1 day
       else
         span(style='font-size:14px')
           |in 7 days
@@ -50,8 +39,12 @@
               else
                 | Name not known
           .score.numerical-col
-            if ['traffic', 'revenue'].indexOf(metric.name)>-1
+            if metric.score == 'N/A'
+              = 'N/A'
+            else if ['traffic', 'revenue'].indexOf(metric.name)>-1
               = intFormatter.fromRaw(metric.score)
+            else if m_obj.id == 'queries_session'
+              = numForm3Decimals.fromRaw(metric.score)
             else
               = numFormatter.fromRaw(metric.score)
           if metric.change > 0
@@ -66,8 +59,11 @@
               else
                 i.icon-arrow-down.red-change
             span.pull-right.metric-change
-              = numFormatter.fromRaw(metric.change)
-              |%
+              if metric.change == 'N/A'
+                |N/A
+              else
+                = numFormatter.fromRaw(metric.change)
+                |%
           .significant
             if metric.confidence == true
               i.icon-thumbs-up.green-change
@@ -75,7 +71,9 @@
               | &nbsp;
 
           .top.metric-queries
-            if metric.queries
+            if !metric.queries || metric.queries.match(/N\/A/i)
+              |N/A
+            else if metric.queries && metric.queries.match(/\w+/)
               each query, index in metric.queries.split(',')
                 if index == 0
                   a(href='#')= query
@@ -83,5 +81,5 @@
                   |,&nbsp;
                   a(href='#')
                     = query
-            else
-              |--
+              a(href="#")
+                |&nbsp;...

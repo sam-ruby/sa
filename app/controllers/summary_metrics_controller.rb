@@ -31,7 +31,8 @@ class SummaryMetricsController < BaseController
           end
         end
       end
-      if values.first.data_date == @data_date
+
+      if values.first[:data_date] == @date
         score = values.first[:value]
         queries = values.first[:losers]
       else

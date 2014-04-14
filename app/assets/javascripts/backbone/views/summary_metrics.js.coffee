@@ -146,12 +146,17 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
         metric_id, disabled, that) ->
         (e) =>
           e.preventDefault()
+          return if disabled
           query = encodeURIComponent($(e.target).text())
           segment = that.segment
           feature = metric_id
-          that.router.update_path(
-            "search/#{segment}/page/#{feature}/details/1/query/#{query}",
-            trigger: true)
+          if query.match(/[\.]{3}/)
+            that.router.update_path(
+              "search/#{segment}/page/#{feature}", trigger: true)
+          else
+            that.router.update_path(
+              "search/#{segment}/page/#{feature}/details/1/query/#{query}",
+              trigger: true)
 
     events
 
