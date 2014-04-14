@@ -1,4 +1,9 @@
 --- # This is a text file to mark the features/bug fixes that went in a Release
+1.8.3:
+    Date: Apr 14, 2014
+    Fixes:
+      PERSSERANA-553: Duplicate records in query_performance_week table is breaking the UI
+
 1.8.2:
     Date: Apr 1, 2014
     Fixes:

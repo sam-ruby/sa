@@ -64,13 +64,13 @@ class SearchQualityDaily < BaseModel
       sum(b.revenue) as revenue, 
 
       (select assort_overlap_indexed*100 from query_performance_week 
-      where week=#{week} and year=#{year} and query = a.query) as cat_rate, 
+      where week=#{week} and year=#{year} and query = a.query limit 1) as cat_rate, 
       
       (select shown_overlap*100 from query_performance_week 
-      where week=#{week} and year=#{year} and query=a.query) as show_rate, 
+      where week=#{week} and year=#{year} and query=a.query limit 1) as show_rate, 
       
       (select rel_score from query_performance_week where 
-      week=#{week} and year=#{year} and query=a.query) as rel_score, 
+      week=#{week} and year=#{year} and query=a.query limit 1) as rel_score, 
       
       sum(b.uniq_con)/sum(b.uniq_count)*100 conversion_rate 
       FROM search_quality_daily as a, query_cat_metrics_daily as b 
