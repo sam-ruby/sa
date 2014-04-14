@@ -37,7 +37,6 @@ class SearchQualityDaily < BaseModel
     }
   end
 
-
   def self.get_max_min_dates
     select(%q{max(data_date) as max_date, min(data_date) as min_date})
   end

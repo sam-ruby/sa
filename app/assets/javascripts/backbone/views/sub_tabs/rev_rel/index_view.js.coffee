@@ -1,12 +1,13 @@
+#= require backbone/views/base
+#
 Searchad.Views.SubTabs ||= {}
 Searchad.Views.SubTabs.RelRev ||= {}
 
-class Searchad.Views.SubTabs.RelRev.IndexView extends Backbone.View
+class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
   initialize: (options) =>
-    
     _.bindAll(this, 'render', 'initTable')
-    @controller = SearchQualityApp.Controller
     @collection = new Searchad.Collections.QueryItemsCollection()
+    super(options)
     @initTable()
     
     @controller.bind('date-changed', =>
@@ -43,10 +44,10 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Backbone.View
         formatted_value = @item_template(item)
         $(@$el).html(formatted_value)
         return this
-    
     columns = [{
     name: 'position',
     label: 'Position',
+    headerCell: @NumericHeaderCell,
     editable: false,
     sortable: false,
     cell: 'integer'},
@@ -59,6 +60,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Backbone.View
     label: 'ConversionRank',
     editable: false,
     sortable: false,
+    headerCell: @NumericHeaderCell,
     cell: 'integer'},
     {name: 'con_based_item',
     label: 'Best Seller Order',
@@ -67,26 +69,17 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Backbone.View
     cell: ItemCell},
     {name: 'con',
     label: 'Order Count',
+    headerCell: @NumericHeaderCell,
     editable: false,
     sortable: false,
     formatter: Utils.CustomNumberFormatterNoDecimals,
     cell: 'integer'},
-    {name: 'revenue',
-    label: 'Total Search Revenue',
-    helpInfo: 'Total Search Revenue for this item from last 28 days',
+    {name: 'oos',
+    label: 'Out of Stock Rate',
+    headerCell: @NumericHeaderCell,
     editable: false,
-    sortable: false,
-    formatter: Utils.CurrencyFormatter,
-    headerCell: 'helper',
-    cell: 'number'},
-    {name: 'site_revenue',
-    label: 'Total Site Revenue',
-    editable: false,
-    sortable: false,
-    formatter: Utils.CurrencyFormatter,
-    headerCell: 'helper',
-    helpInfo: 'Total Site Revenue for this item from last 28 days',
-    cell: 'number'}]
+    cell: @OosCell}
+    ]
 
     columns
 

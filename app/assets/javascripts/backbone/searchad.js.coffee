@@ -90,7 +90,7 @@ window.Utils = do ->
       super(parseFloat(rawValue))
 
   class CurrencyFormatter extends Backgrid.NumberFormatter
-    decimals: 0
+    decimals: 2
     orderSeparator: ','
 
     fromRaw: (rawValue) ->

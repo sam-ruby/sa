@@ -39,3 +39,19 @@ class Searchad.Views.Base extends Backbone.View
         val = super(@model.get(@column.get('name'))).$el.text()
         @$el.html( val + '%' )
         this
+    
+    class @OosCell extends Backgrid.NumberCell
+      render: =>
+        @$el.empty()
+        val = parseFloat(@model.get(@column.get('name')))
+        val = 0 unless val?
+        if val < 25
+          class_name = 'badge-info'
+        else if val < 50
+          class_name = 'badge-warning'
+        else
+          class_name = 'badge-important'
+        el = $("<span class='badge #{class_name}'>#{val.toFixed(2)}%</span>")
+        @$el.append(el)
+        this
+

@@ -95,18 +95,16 @@ class SearchRelController < BaseController
         con_item = item_details[items[2]]
       end
 
-      revenue = con_item.item_revenue rescue 0
-      site_revenue = items[4]
       con_rank = items[1].to_i + 1
       top_item_con = items[3].to_f
+      oos_rate = walmart_item[:i_oos]
 
       if mode == :json
         result.push({:position => index,
                      :walmart_item => walmart_item,
                      :con_based_item => con_item,
                      :con => top_item_con,
-                     :revenue => revenue,
-                     :site_revenue => site_revenue,
+                     :oos => oos_rate, 
                      :con_rank => con_rank})
       else
         result.push({'Position' => index,
@@ -117,12 +115,7 @@ class SearchRelController < BaseController
                      'Con Based Item Id' => con_item[:item_id],
                      'Con Based Item Title' => con_item[:title],
                      'Item Image URL' => con_item[:image_url],
-                     'Average Daily Item Conversion Rate Percentage' =>
-                        top_item_con.to_f.round(2),
-                     'Average Daily Item Revenue' =>
-                        revenue.to_f.round(2),
-                     'Average Daily Site Item Revenue' =>
-                        site_revenue.to_f.round(2)})
+                     'Out of Stock Rate' => walmart_item[:i_oos]})
       end
       index += 1
     end

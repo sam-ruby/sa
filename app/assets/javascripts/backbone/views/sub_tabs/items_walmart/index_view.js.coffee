@@ -1,13 +1,15 @@
+#= require backbone/views/base
+
 Searchad.Views.SubTabs ||= {}
 Searchad.Views.SubTabs.WalmartItems ||= {}
 
-class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
+class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
   initialize: (options) =>
-    @controller = SearchQualityApp.Controller
     @collection =
       new Searchad.Collections.CAWalmartItemsCollection()
-    @init_table()
+    super(options)
     
+    @init_table()
     @controller.bind('date-changed', @date_changed )
     @collection.bind('reset', @render_result)
     @collection.bind('request', =>
@@ -212,11 +214,6 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     label: I18n.t('dashboard2.item'),
     editable: false,
     cell: ItemCell},
-    {name: 'revenue',
-    label: I18n.t('dashboard2.revenue'),
-    editable: false,
-    cell: 'number',
-    formatter: Utils.CurrencyFormatter},
     {name: 'curr_item_price',
     label: 'Current Item Price',
     editable: false,
@@ -228,22 +225,19 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     {name: 'shown_count',
     label: 'Impressions',
     editable: false,
+    headerCell: @NumericHeaderCell,
     # formatter: Utils.CustomNumberFormatter,
     cell: 'integer'},
     {name: 'i_con',
     label: 'Conversion',
     editable: false,
     cell: 'number',
+    headerCell: @NumericHeaderCell,
     formatter: Utils.PercentFormatter},
-    {name: 'i_atc',
-    label: I18n.t('perf_monitor2.add_to_cart_rate'),
+    {name: 'i_oos',
+    label: 'Out Of Stock Rate',
     editable: false,
-    cell: 'number',
-    formatter: Utils.PercentFormatter},
-    {name: 'i_pvr',
-    label: I18n.t('perf_monitor.product_view_rate'),
-    editable: false,
-    cell: 'number',
-    formatter: Utils.PercentFormatter}]
+    headerCell: @NumericHeaderCell,
+    cell: @OosCell}]
     
     columns
