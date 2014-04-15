@@ -140,6 +140,10 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
         (e) =>
           e.preventDefault()
           return if disabled
+          $(e.target).parents('.overview').find(
+            '.mrow.selected').removeClass('selected')
+          $(e.target).parents('.mrow').addClass('selected')
+          
           query = encodeURIComponent($(e.target).text())
           segment = that.segment
           feature = metric_id

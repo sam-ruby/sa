@@ -12,7 +12,9 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     @listenTo(@router, 'route:search', (path, filter) =>
       if path? and path.details? and path.query?
         query = path.query
-        @render(query: query)
+        if path.search? and (match = path.search.match(/drop_con_(\d+)/))
+          weeks_apart = match[1]
+        @render(query: query, weeks_apart: weeks_apart)
     )
      
     @active = false
@@ -54,7 +56,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
 
   show_cvr_dropped_item_comparison:(e)=>
     @toggleTab(e)
-    @controller.trigger('cvr_dropped_query:item_comparison',@data)
+    @controller.trigger('cvr_dropped_query:item_comparison', @data)
 
   toggleTab: (e) =>
     e.preventDefault()
@@ -76,21 +78,24 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     
     if not (@$el.find('li.active').length > 0)
       # only show cvr_dropped_item_comparison on certain url specificaly 
-      if @router.root_path_contains(/#adhoc_query\/mode\/query_comparison/)
-        tab = @$el.find('li.cvr-dropped-item-comparison-tab').first()
+      if @router.path? and @router.path.search?
+        segment = @router.path.search
+
+      if segment and segment.match(/drop_con_1/)
+        tab = @$el.find('li.cvr-dropped-item-comparison-tab')
         tab.show()
         tab.addClass('active')
-      else if @router.root_path_contains(/#adhoc_query\/mode\/search/)
+      else if segment and segment.match(/poor_amzn/)
         @$el.find('li.cvr-dropped-item-comparison-tab').hide()
-        tab = @$el.find('li.search-walmart-items-tab').first()
+        tab = @$el.find('li.search-amazon-items-tab').first()
         tab.addClass('active')
-      else if @router.root_path_contains(/#search_rel/)
+      else if segment and segment.match(/(trend_\d+)|(poor_perform)/)
         @$el.find('li.cvr-dropped-item-comparison-tab').hide()
         tab = @$el.find('li.search-walmart-items-tab').first()
         tab.addClass('active')
       else
         @$el.find('li.cvr-dropped-item-comparison-tab').hide()
-        tab = @$el.find('li.search-stats-tab').first()
+        tab = @$el.find('li.search-stats-tab')
         tab.addClass('active')
 
     @$el.find('li.active a').first().click()

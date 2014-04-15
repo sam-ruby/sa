@@ -104,29 +104,21 @@ class SearchController < BaseController
   end
 
   def get_cvr_dropped_query_item_comparison
-    date = DateTime.strptime(
-      params[:query_date], "%m-%d-%Y") rescue DateTime.now
-    days_range = params[:weeks_apart] ? Integer(params[:weeks_apart]) * 7 : 7
+    weeks_apart = params[:weeks_apart] ? Integer(params[:weeks_apart]) : 1
     query = params[:query]
-    before_start_date = date-1.day-days_range+1.day
-    before_end_date = date-1.day
-    after_start_date = date
-    after_end_date = date + days_range-1.day
-
+    
     respond_to do |format|
       format.json do 
         results = 
           QueryDroppingConversion.get_cvr_dropped_query_item_comparisons(
-            query, before_start_date,before_end_date,
-            after_start_date,after_end_date)
+            query, weeks_apart, @date)
         render :json => results
       end
 
       format.csv do 
-        results = QueryDroppingConversion.get_cvr_dropped_query_item_comparisons(query, before_start_date,before_end_date,after_start_date,after_end_date)
+        results = QueryDroppingConversion.get_cvr_dropped_query_item_comparisons(
+          query, weeks_apart, date)
         results =  results.map do |record|
-          # see QueryDroppingConversion.get_cvr_dropped_query_item_comparisons when it is returned, it returned array of 
-          # hash instead of array of objects 
           {'Rank' => record["cvr_dropped_item_comparison_rank"],
            'Item Id Before' => record["item_id_before"],
            'Item Title Before' => record["item_title_before"],
