@@ -41,7 +41,7 @@
           .score.numerical-col
             if metric.score == 'N/A'
               = 'N/A'
-            else if metric.score
+            else if metric.score || metric.score == 0
               if ['traffic', 'revenue'].indexOf(metric.name)>-1
                 = intFormatter.fromRaw(metric.score)
               else if m_obj.id == 'queries_session'

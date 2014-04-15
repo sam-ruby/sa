@@ -214,14 +214,6 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     label: I18n.t('dashboard2.item'),
     editable: false,
     cell: ItemCell},
-    {name: 'curr_item_price',
-    label: 'Current Item Price',
-    editable: false,
-    cell: 'number',
-    formatter: Utils.CurrencyFormatter,
-    headerCell:'helper'
-    helpInfo:helpInfo.curr_item_price
-    },
     {name: 'shown_count',
     label: 'Impressions',
     editable: false,
@@ -238,6 +230,13 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     label: 'Out Of Stock Rate',
     editable: false,
     headerCell: @NumericHeaderCell,
-    cell: @OosCell}]
-    
+    cell: @OosCell},
+    {name: 'curr_item_price',
+    label: 'Current Item Price',
+    editable: false,
+    cell: 'number',
+    formatter: Utils.CurrencyFormatter,
+    headerCell:'helper'
+    helpInfo:helpInfo.curr_item_price}]
+
     columns

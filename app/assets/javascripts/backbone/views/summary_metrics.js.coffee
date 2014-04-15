@@ -74,6 +74,10 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       name: 'Queries per Session'
       id: 'queries_session'
       disabled: true
+    OOS:
+      name: 'Out of Stock'
+      id: 'oos'
+      disabled: true
     
   events: =>
     events = {}
@@ -126,21 +130,9 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
         (e) =>
           e.preventDefault()
           return if disabled
-          selected_row = $(e.target).parents('.overview').find(
-            '.mrow.selected')
-          if selected_row?
-            selected_row.removeClass('selected')
-            for col in selected_row.children()
-              $(col).height('auto')
-
-          max_height = 0
-          for col in $(e.target).parents('.mrow').children()
-            $(col).height() > max_height and (
-              max_height = $(col).height())
-          for col in $(e.target).parents('.mrow').children()
-            $(col).height(max_height)
+          $(e.target).parents('.overview').find(
+            '.mrow.selected').removeClass('selected')
           $(e.target).parents('.mrow').addClass('selected')
-          e.preventDefault()
           that.navigate(metric_id)
           
       events["click div.#{metric_id} .metric-queries"] = do (
@@ -201,7 +193,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       segment: segment) )
 
     metrics = @collection.toJSON()[0]
-    general_metrics = ['traffic', 'conversion', 'pvr', 'atc', 'revenue' ]
+    general_metrics = ['traffic', 'conversion', 'OOS', 'pvr', 'atc', 'revenue' ]
     correl_metrics = ['relevance conversion correlation']
     user_engage_metrics = ['CAF', 'AR', 'count per session', 'QDT', 'FCT',
       'LCT', 'CPQ']

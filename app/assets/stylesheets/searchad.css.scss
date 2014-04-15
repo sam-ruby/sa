@@ -603,6 +603,11 @@ sup.beta-tag {
     // Prevent floats from breaking the navbar
     @include clearfix();
     padding-left: 0px;
+
+    span.brand.title {
+      color: #1894c6;
+      font-weight: 400;
+    }
   }
 
   .nav {
@@ -831,10 +836,8 @@ div.overview {
       border-bottom: 1px solid #dddddd;
     }
     
-    .selected {
-      .name, .score, .change, .significant, .top {
-        background-color: #dff0d8;
-      }
+    .mrow.selected {
+      background-color: #dff0d8;
     }
   }
 }

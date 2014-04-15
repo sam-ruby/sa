@@ -69,7 +69,8 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
 
   render: (data) =>
     @data = data
-    @$el.prepend(@template()) unless @active
+    @$el.children().not('.ajax-loader').remove()
+    @$el.append(@template(title: data.query))
     @delegateEvents()
     @active = true
     
@@ -95,7 +96,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     @$el.find('li.active a').first().click()
   
   show_spin: =>
-    @$el.find('.ajax-loader').css('display', 'block')
+    @$el.find('.ajax-loader').css('display', 'inline-block')
 
   hide_spin: =>
     @$el.find('.ajax-loader').hide()

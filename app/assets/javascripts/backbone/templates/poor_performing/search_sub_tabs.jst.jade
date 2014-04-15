@@ -1,5 +1,10 @@
 .second-navbar
   .navbar-inner
+    if title
+      if title.length > 12
+        - title = title.slice(0,10) + '...'
+      span.brand.title
+        = title
     ul.nav
       li.search-stats-tab
         a(href="#")
