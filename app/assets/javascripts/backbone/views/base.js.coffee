@@ -44,7 +44,10 @@ class Searchad.Views.Base extends Backbone.View
       render: =>
         @$el.empty()
         val = parseFloat(@model.get(@column.get('name')))
-        val = 0 unless val?
+        if !val? or isNaN(val)
+          @$el.html('--')
+          return this
+        
         if val < 25
           class_name = 'badge-info'
         else if val < 50

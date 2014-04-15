@@ -41,12 +41,15 @@
           .score.numerical-col
             if metric.score == 'N/A'
               = 'N/A'
-            else if ['traffic', 'revenue'].indexOf(metric.name)>-1
-              = intFormatter.fromRaw(metric.score)
-            else if m_obj.id == 'queries_session'
-              = numForm3Decimals.fromRaw(metric.score)
+            else if metric.score
+              if ['traffic', 'revenue'].indexOf(metric.name)>-1
+                = intFormatter.fromRaw(metric.score)
+              else if m_obj.id == 'queries_session'
+                = numForm3Decimals.fromRaw(metric.score)
+              else
+                = numFormatter.fromRaw(metric.score)
             else
-              = numFormatter.fromRaw(metric.score)
+              |&nbsp;
           if metric.change > 0
             - class_name = 'green-change'
           else

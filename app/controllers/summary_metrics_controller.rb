@@ -20,7 +20,12 @@ class SummaryMetricsController < BaseController
       significant = false
       if values.size == 2 
         if !values.last[:value].nil? and !values.first[:value].nil?
-          change = values.first[:value].to_f/values.last[:value]*100 - 100
+          raw_change = values.first[:value].to_f/values.last[:value]*100 
+          if raw_change.infinite?
+            change = 100
+          elsif !raw_change.nan?
+            change = raw_change - 100
+          end
         end
       
         if !values.first[:value].nil? and !values.last[:lcl].nil? and

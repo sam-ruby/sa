@@ -782,6 +782,7 @@ div.overview {
     vertical-align: top;
   }
   .name {
+    white-space:nowrap;
     width: 12%;
   }
   .score {
@@ -813,23 +814,23 @@ div.overview {
       }
       a {
         color: black;
+        &:hover, &:visited, &:active {
+          text-decoration: none;
+        }
       }
     }
   .metric {
-    div:first-child {
-      .name, .score, .change, .significant, .top {
-        border-top: 2px solid white;
-      }
+    div.mrow:first-child {
+      //border-top: 2px solid white;
+      margin-top: 3px; 
     }
-    div:last-child {
-      .name, .score, .change, .significant, .top {
-        margin-bottom: .75em;
-      }
+    div.mrow:last-child {
+      margin-bottom: .75em;
     }
-
-    .name, .score, .change, .significant, .top {
-      border-top: 1px solid #dddddd;
+    .mrow {
+      border-bottom: 1px solid #dddddd;
     }
+    
     .selected {
       .name, .score, .change, .significant, .top {
         background-color: #dff0d8;

@@ -78,6 +78,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
   events: =>
     events = {}
     events['click .info'] = (e)=>
+      e.preventDefault()
       if $(e.target).hasClass('info')
         metric = $(e.target).attr('class').replace(/(\s+)?info(\s+)?/, '')
         info = $(e.target)
