@@ -97,14 +97,16 @@ class SearchRelController < BaseController
 
       con_rank = items[1].to_i + 1
       top_item_con = items[3].to_f
-      oos_rate = walmart_item[:i_oos]
+      w_oos_rate = walmart_item[:i_oos]
+      c_oos_rate = con_item[:i_oos]
 
       if mode == :json
         result.push({:position => index,
                      :walmart_item => walmart_item,
                      :con_based_item => con_item,
                      :con => top_item_con,
-                     :oos => oos_rate, 
+                     :w_oos => w_oos_rate, 
+                     :c_oos => c_oos_rate, 
                      :con_rank => con_rank})
       else
         result.push({'Position' => index,

@@ -36,49 +36,91 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
       @export_csv($(e.target), fileName, data)
   
   gridColumns: =>
+    set_walmart_item = (view) ->
+      if view.column.get('walmart_detail')
+        view.$el.addClass('walmart-detail')
+      else
+        view.$el.addClass('best-seller-detail')
+
     class ItemCell extends Backgrid.Cell
       item_template:
         JST["backbone/templates/search_quality_query/query_items/item"]
       render: =>
+        set_walmart_item(this)
         item = @model.get(@column.get('name'))
         formatted_value = @item_template(item)
         $(@$el).html(formatted_value)
-        return this
+        unless @column.get('walmart_detail')
+          @$el.addClass('best-seller-detail-first')
+        this
+
+    class MyIntegerCell extends Backgrid.IntegerCell
+      render: =>
+        set_walmart_item(this)
+        super()
+        this
+
+    class MyItemCell extends ItemCell
+      render: =>
+        super()
+        @$el.addClass('best-seller-detail-first')
+        this
+    
+    class MyOosCell extends @OosCell
+      render: =>
+        set_walmart_item(this)
+        super()
+        if @column.get('walmart_detail')
+          @$el.addClass('walmart-detail-last')
+        else
+          @$el.addClass('best-seller-detail-last')
+
+        this
+
     columns = [{
     name: 'position',
     label: 'Position',
     headerCell: @NumericHeaderCell,
     editable: false,
     sortable: false,
-    cell: 'integer'},
+    walmart_detail: true,
+    cell: MyIntegerCell},
     {name: 'walmart_item',
     label: 'Relevance Order',
     editable: false,
     sortable: false,
+    walmart_detail: true,
     cell: ItemCell},
     {name: 'con_rank',
-    label: 'ConversionRank',
+    label: 'Conv Rank',
     editable: false,
     sortable: false,
     headerCell: @NumericHeaderCell,
-    cell: 'integer'},
+    walmart_detail: true,
+    cell: MyIntegerCell},
+    {name: 'w_oos',
+    label: 'Out of Stock Rate',
+    headerCell: @NumericHeaderCell,
+    editable: false,
+    walmart_detail: true,
+    cell: MyOosCell},
     {name: 'con_based_item',
     label: 'Best Seller Order',
     editable: false,
     sortable: false,
-    cell: ItemCell},
+    cell: MyItemCell},
     {name: 'con',
     label: 'Order Count',
     headerCell: @NumericHeaderCell,
     editable: false,
     sortable: false,
     formatter: Utils.CustomNumberFormatterNoDecimals,
-    cell: 'integer'},
-    {name: 'oos',
+    cell: MyIntegerCell},
+    {name: 'c_oos',
     label: 'Out of Stock Rate',
     headerCell: @NumericHeaderCell,
     editable: false,
-    cell: @OosCell}
+    cell: MyOosCell}
     ]
 
     columns
@@ -87,6 +129,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
       collection: @collection
+      className: 'winners-grid'
     )
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection)

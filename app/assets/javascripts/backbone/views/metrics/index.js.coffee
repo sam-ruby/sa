@@ -82,7 +82,7 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       columns: @grid_cols()
       collection: @collection
       emptyText: 'No Data'
-      className: 'winners-grid'
+      #className: 'winners-grid'
     )
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection
@@ -133,7 +133,7 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       div = @tableCaption(tab: 'winners')
     else
       div = @tableCaption(tab: 'loosers')
-    @$el.find('table.winners-grid').append(
+    @$el.find('table.backgrid').append(
       "<caption class='win-loose-head'>#{ div }</caption>" )
 
     @$el.append( @export_csv_button() ) unless @$el.find(

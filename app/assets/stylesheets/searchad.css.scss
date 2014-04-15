@@ -700,24 +700,57 @@ tr.metrics-col-head {
 tr.selected {
   background-color: #dff0d8;
 }
+
 .winners-grid {
   @extend .backgrid;
+  border-collapse: separate;
   border: 0;
+  
   thead {
     //border: 1px solid #ddd;
-    th { 
+    th {
+      border: 0;
       background-color: #fff;
+      padding: 3px 5px;
     }
   }
+
   tbody {
     tr.selected {
       font-weight: bold;
     }
-  }
-  th, td {
-    border: 0;
-    border-bottom: 1px solid #ddd;
-    padding: 3px 5px;
+  
+    tr:first-child {
+      td.walmart-detail {
+        border-top: 2px solid #f89406;
+      }
+      td.best-seller-detail {
+        border-top: 2px solid #468847;
+      }
+    }
+    td {
+      border: 0;
+      border-bottom: 1px solid #ddd;
+      &:first-child {
+        border-left: 2px solid #f89406;
+      }
+      &:last-child {
+        border-right: 2px solid #468847;
+      }
+    }
+    tr:last-child {
+      td.walmart-detail {
+        border-bottom: 2px solid #f89406;
+      }
+      td.best-seller-detail {
+        border-bottom: 2px solid #468847;
+      }
+    }
+    td.walmart-detail-last {
+      border-right: 2px dashed #ddd;
+    }
+    td.best-seller-detail-first {
+    }
   }
   tr {
     display: table-row;
@@ -811,4 +844,7 @@ div.overview {
   i {
     padding-left:15px;
   }
+}
+.walmart-details {
+  background-color: #d9edf7;
 }
