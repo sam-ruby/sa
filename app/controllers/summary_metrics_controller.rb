@@ -6,7 +6,13 @@ class SummaryMetricsController < BaseController
     cat_id = params[:cat_id] || 0
 
     results = {}
-    SummaryMetrics.get_metrics(query_segment, cat_id, @date).each do 
+    if query_segment =~ /trend/i
+      last_day = @date - 1.day
+    else
+      last_day = @date - 7.days
+    end
+    SummaryMetrics.get_metrics(
+      query_segment, cat_id, @date, last_day).each do 
       |record|
       results[record.metrics_name] = [] if (
         results[record.metrics_name].nil?)
