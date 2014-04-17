@@ -144,6 +144,8 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
       collection: @collection
+      emptyText: 'No Data'
+      className: 'walmart-results'
     )
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection)
@@ -205,20 +207,21 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
         $(@$el).html(formatted_value)
         return this
 
-    helpInfo = {
-      curr_item_price: "We only provide the price available for the most recent available day"
-    }
-
     columns = [{
     name: 'item_id',
     label: I18n.t('dashboard2.item'),
     editable: false,
     cell: ItemCell},
+    {name: 'curr_item_price',
+    label: 'Latest Item Price',
+    editable: false,
+    cell: 'number',
+    headerCell: @NumericHeaderCell,
+    formatter: Utils.CurrencyFormatter},
     {name: 'shown_count',
     label: 'Impressions',
     editable: false,
     headerCell: @NumericHeaderCell,
-    # formatter: Utils.CustomNumberFormatter,
     cell: 'integer'},
     {name: 'i_con',
     label: 'Conversion',
@@ -226,17 +229,22 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     cell: 'number',
     headerCell: @NumericHeaderCell,
     formatter: Utils.PercentFormatter},
-    {name: 'i_oos',
-    label: 'Out Of Stock Rate',
-    editable: false,
-    headerCell: @NumericHeaderCell,
-    cell: @OosCell},
-    {name: 'curr_item_price',
-    label: 'Current Item Price',
+    {name: 'i_atc',
+    label: 'Add to Cart',
     editable: false,
     cell: 'number',
-    formatter: Utils.CurrencyFormatter,
-    headerCell:'helper'
-    helpInfo:helpInfo.curr_item_price}]
-
+    headerCell: @NumericHeaderCell,
+    formatter: Utils.PercentFormatter},
+    {name: 'i_pvr',
+    label: 'Product View',
+    editable: false,
+    cell: 'number',
+    headerCell: @NumericHeaderCell,
+    formatter: Utils.PercentFormatter},
+    {name: 'i_oos',
+    label: 'Out Of Stock',
+    editable: false,
+    headerCell: @NumericHeaderCell,
+    cell: @OosCell}]
+    
     columns

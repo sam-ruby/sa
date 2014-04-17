@@ -49,7 +49,7 @@ class Searchad.Views.Base extends Backbone.View
           return this
         
         if val < 25
-          class_name = 'badge-info'
+          class_name = 'badge-success'
         else if val < 50
           class_name = 'badge-warning'
         else

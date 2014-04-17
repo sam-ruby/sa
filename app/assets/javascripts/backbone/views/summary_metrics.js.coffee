@@ -13,9 +13,8 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @listenTo(@router, 'route:search', (path, filter) =>
       if @router.date_changed or @router.cat_changed or !@active or @router.query_segment_changed
         @get_items()
-      
-      path? and (@segment = path.search)
 
+      path? and (@segment = path.search)
       if path? and path.page? and path.page == 'overview'
         @carousel.carousel(0)
         @carousel.carousel('pause')
@@ -77,6 +76,10 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     OOS:
       name: 'Out of Stock'
       id: 'oos'
+      disabled: true
+    MRR:
+      name: 'Total Reciprocal Rank'
+      id: 'mrr'
       disabled: true
     
   events: =>
@@ -200,7 +203,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     general_metrics = ['traffic', 'conversion', 'OOS', 'pvr', 'atc', 'revenue' ]
     correl_metrics = ['relevance conversion correlation']
     user_engage_metrics = ['CAF', 'AR', 'count per session', 'QDT', 'FCT',
-      'LCT', 'CPQ']
+      'LCT', 'CPQ', 'MRR']
 
     overall_metrics =
       general:
@@ -226,6 +229,5 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
 
   navigate: (metric) =>
     query_segment = @router.path.search
-    @router.path.page = metric
     @router.update_path(
       "search/#{query_segment}/page/#{metric}", trigger: true)

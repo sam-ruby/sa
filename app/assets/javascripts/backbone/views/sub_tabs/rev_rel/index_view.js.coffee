@@ -129,7 +129,8 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
       collection: @collection
-      className: 'winners-grid'
+      className: 'rel-best-seller'
+      emptyText: 'No Data'
     )
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection)

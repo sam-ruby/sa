@@ -706,68 +706,6 @@ tr.selected {
   background-color: #dff0d8;
 }
 
-.winners-grid {
-  @extend .backgrid;
-  border-collapse: separate;
-  border: 0;
-  
-  thead {
-    //border: 1px solid #ddd;
-    th {
-      border: 0;
-      background-color: #fff;
-      padding: 3px 5px;
-    }
-  }
-
-  tbody {
-    tr.selected {
-      font-weight: bold;
-    }
-  
-    tr:first-child {
-      td.walmart-detail {
-        border-top: 2px solid #f89406;
-      }
-      td.best-seller-detail {
-        border-top: 2px solid #468847;
-      }
-    }
-    td {
-      border: 0;
-      border-bottom: 1px solid #ddd;
-      &:first-child {
-        border-left: 2px solid #f89406;
-      }
-      &:last-child {
-        border-right: 2px solid #468847;
-      }
-    }
-    tr:last-child {
-      td.walmart-detail {
-        border-bottom: 2px solid #f89406;
-      }
-      td.best-seller-detail {
-        border-bottom: 2px solid #468847;
-      }
-    }
-    td.walmart-detail-last {
-      border-right: 2px dashed #ddd;
-    }
-    td.best-seller-detail-first {
-    }
-  }
-  tr {
-    display: table-row;
-    transition: all 1s linear;
-  }
-  tr.hidden {
-    display: none;
-  }
-  tr.visually-hidden {
-    opacity: 0.94;
-  }
-}
 
 .show-others {
   text-align: center;
@@ -849,6 +787,121 @@ div.overview {
     padding-left:15px;
   }
 }
-.walmart-details {
-  background-color: #d9edf7;
+
+.winners-grid {
+  @extend .backgrid;
+  
+  tbody {
+    tr.selected {
+      font-weight: bold;
+    }
+    tr {
+      display: table-row;
+      transition: all 1s linear;
+    }
+    tr.hidden {
+      display: none;
+    }
+    tr.visually-hidden {
+      opacity: 0.94;
+    }
+  }
+  th, td {
+    border: 0;
+    border-bottom: 1px solid #ddd;
+  }
+}
+
+.rel-best-seller {
+  @extend .backgrid;
+  border-collapse: separate;
+  border: 0;
+  
+  thead {
+    //border: 1px solid #ddd;
+    th {
+      border: 0;
+      background-color: #fff;
+      padding: 3px 5px;
+    }
+  }
+
+  tbody {
+    tr.selected {
+      font-weight: bold;
+    }
+  
+    tr:first-child {
+      td.walmart-detail {
+        border-top: 2px solid #f89406;
+        padding-top: 5px;
+      }
+      td.best-seller-detail {
+        border-top: 2px solid #3a87ad; ///#468847;
+        padding-top: 5px;
+      }
+    }
+    td {
+      border: 0;
+      padding: 0;
+      height: 40px;
+      border-bottom: 1px solid #ddd;
+      &:first-child {
+        border-left: 2px solid #f89406;
+        padding-left: 5px;
+      }
+      &:last-child {
+        border-right: 2px solid #3a87ad;  //#468847;
+        padding-right: 5px;
+      }
+    }
+    tr:last-child {
+      td.walmart-detail {
+        border-bottom: 2px solid #f89406;
+        padding-bottom: 5px;
+      }
+      td.best-seller-detail {
+        border-bottom: 2px solid #3a87ad; //#468847;
+        padding-bottom: 5px;
+      }
+    }
+    td.walmart-detail-last {
+      border-right: 2px dashed #ddd;
+      padding-right: 5px;
+    }
+    td.best-seller-detail-first {
+      padding-left: 5px;
+    }
+  }
+  tr {
+    display: table-row;
+    transition: all 1s linear;
+  }
+  tr.hidden {
+    display: none;
+  }
+  tr.visually-hidden {
+    opacity: 0.94;
+  }
+}
+
+
+.walmart-results {
+  @extend .backgrid;
+  td {
+    padding: 0;
+    height: 40px;
+    border: 0;
+    border-bottom: 1px solid #ddd;
+    &:first-child {
+      padding-left: 5px;
+    }
+    &:last-child {
+      padding-right: 5px;
+    }
+  }
+  th {
+    border: 0;
+    border-bottom: 1px solid #ddd;
+  }
 }

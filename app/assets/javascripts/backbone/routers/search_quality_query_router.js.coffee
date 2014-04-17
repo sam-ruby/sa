@@ -54,7 +54,10 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       for part, i in parts
         continue unless i%2 == 0
         continue if !part? or part == ''
-        results[part] = decodeURIComponent(parts[i+1])
+        if parts[i+1]?
+          results[part] = decodeURIComponent(parts[i+1])
+        else
+          results[part] = null
       results
     path_parts = if path_parts? then get_parts(path_parts) else {}
     filter_parts = if filter_parts? then get_parts(filter_parts) else {}
@@ -72,6 +75,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @set_date_info(filter)
     @path = path
     @filter = filter
+    console.log @path
 
   browse:(@task, @sub_task, @task_args) =>
     @set_date_info()

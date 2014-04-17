@@ -14,7 +14,17 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
         query = path.query
         if path.search? and (match = path.search.match(/drop_con_(\d+)/))
           weeks_apart = match[1]
-        @render(query: query, weeks_apart: weeks_apart)
+        feature = path.page
+        
+        show_series = ['query_count', 'query_con']
+        if feature == 'pvr'
+          show_series.push('query_pvr')
+        else if feature == 'atc'
+          show_series.push('query_atc')
+        @render(
+          query: query
+          weeks_apart: weeks_apart
+          show_only_series: show_series)
     )
      
     @active = false

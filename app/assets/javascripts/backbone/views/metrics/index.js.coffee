@@ -17,8 +17,10 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     
     @listenTo(@router, 'route:search', (path, filter) =>
       if path.page == feature
-        @get_items()
+        if @router.date_changed or @router.cat_changed or !@active or @router.query_segment_changed
+          @get_items()
       else
+        @cleanup() if @active
         @active = false
     )
     
@@ -61,20 +63,20 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
 
     'click div.show-others a': 'show_other_queries'
 
-    'click caption.win-loose-head li.winners a': (e) =>
+    'click .opp-win li.winners a': (e) =>
       e.preventDefault()
       return unless @active
       @toggle_tab(e)
       @winning = true
-      @collection.winning = true
+      @collection.winning = @winning
       @collection.get_items()
 
-    'click caption.win-loose-head li.loosers a': (e) =>
+    'click .opp-win li.loosers a': (e) =>
       e.preventDefault()
       return unless @active
       @toggle_tab(e)
       @winning = false
-      @collection.winning = false
+      @collection.winning = @winning
       @collection.get_items()
  
   init_table: () =>
@@ -82,27 +84,37 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       columns: @grid_cols()
       collection: @collection
       emptyText: 'No Data'
-      #className: 'winners-grid'
+      className: 'winners-grid'
     )
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection
     )
-
+  
+  cleanup: =>
+    if @$el.attr('id') == 'metric'
+      @$el.find('.tab-holder').children().not('.ajax-loader').remove()
+      @$el.find('.distribution.item').highcharts().destroy() if @$el.find('.distribution.item').highcharts()
+    else
+      @$el.children().not('.ajax-loader').remove()
+      @winning = false
+      @collection.winning = @winning
+    
   get_items: (data) =>
     @active = true
-    @$el.find('.tab-holder').children().not('.ajax-loader').remove()
+    @$el.find('.tab-holder').empty()
     @$el.find('.tab-holder').append(@navBar)
     @collection.get_items(data)
 
   toggle_tab: (e) =>
-    $(e.target).parents('caption').find('li.active').removeClass('active')
+    $(e.target).parents('ul').find('li.active').removeClass('active')
     $(e.target).parents('li').addClass('active')
 
   prepare_for_render: =>
     @$el.find('.ajax-loader').css('display', 'inline-block')
 
   prepare_for_table: =>
-    @$el.children().not('.ajax-loader').remove()
+    #@$el.children().not(
+    #  '.ajax-loader,.opp-win,.export-csv,.backgrid-paginator').remove()
     @$el.find('.ajax-loader').css('display', 'inline-block')
   
   show_query: =>
@@ -120,24 +132,26 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
   renderTable: =>
     return unless @active
     @$el.find('.ajax-loader').hide()
-    @$el.children().not('.ajax-loader').remove()
+
+    if @$el.find('.opp-win').length == 0
+      if @winning
+        div = @tableCaption(tab: 'winners')
+      else
+        div = @tableCaption(tab: 'loosers')
+      @$el.append(div)
 
     if @collection.size() == 0
-      @$el.prepend( @grid.render() )
+      @$el.find('.opp-win').after( @grid.render() )
       return
     else
-      @$el.prepend( @paginator.render().$el )
-      @$el.prepend( @grid.render().$el )
-  
-    if @winning
-      div = @tableCaption(tab: 'winners')
-    else
-      div = @tableCaption(tab: 'loosers')
-    @$el.find('table.backgrid').append(
-      "<caption class='win-loose-head'>#{ div }</caption>" )
+      @$el.find('.opp-win').after( @grid.render().$el )
+      
+    @$el.find(@grid.$el).after(@paginator.render().$el) unless @$el.find(
+      @paginator.$el).length > 0
 
-    @$el.append( @export_csv_button() ) unless @$el.find(
+    @$el.find(@paginator.$el).after(@export_csv_button()) unless @$el.find(
       '.export-csv').length > 0
+    
     @delegateEvents()
     this
   
@@ -265,7 +279,6 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     @$el.find('.ajax-loader').hide()
     @$el.find('.carousel').show()
     @$el.find('.carousel').carousel(0)
-    @$el.find('.distribution.hcharts').addClass('active')
     @$el.find('.carousel').carousel('pause')
     @navBarDiv = @$el.find('.second-navbar')
     @delegateEvents()
