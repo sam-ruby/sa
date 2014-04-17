@@ -91,7 +91,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
       if @router.path? and @router.path.search?
         segment = @router.path.search
 
-      if segment and segment.match(/drop_con_1/)
+      if segment and segment.match(/drop_con/i)
         tab = @$el.find('li.cvr-dropped-item-comparison-tab')
         tab.show()
         tab.addClass('active')
