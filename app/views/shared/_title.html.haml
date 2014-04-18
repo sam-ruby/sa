@@ -1,10 +1,10 @@
-.top-navbar{style: 'margin-bottom:0'}
+#top-bar.top-navbar{style: 'margin-bottom:0'}
   .navbar-inner
     %a.brand.home-page{:href=>'#'}
       = image_tag 'walmart-transparent.png', {:class=>'walmart_logo'}
       CAD
 
-    %ul#top-bar.nav
+    %ul.nav.top-nav
       %li.active.search-tab
         %a{:href=>'#search'}
           %span
@@ -19,31 +19,32 @@
           Category
 
     %ul#cat-container.nav.pull-right
-      %li
-        %i.icon-chevron-left{style: 'padding-top:1em;color:white;'}
-
       %li#cat-selector.dropdown
         %a.dropdown-toggle{'data-toggle'=>'dropdown', :href=>"#"}
           %span.cat-selected
             All Departments
           %b.caret
         %ul.dropdown-menu.cat-list 
-      %li
-        %i.icon-chevron-right{style: 'padding:1em 1.5em 0 0;color:white;'}
 
       %li.date-week-holder
-      %li{:style=>'margin-right: 1em'}
+      %li
         %i#dp3.icon-th{:style=>'line-height:2em; font-size:1.5em; color: white;', 'data-date-format'=>'mm-dd-yyyy'}
          
-      %li.dropdown   
+      %li.dropdown.login   
         %a.dropdown-toggle{'data-toggle'=>'dropdown', :href=>"#"}
-          %span{:style=>'color:burlywood;'}
-            svargh1
-            %b.caret
+          .logged-in-user
+            Eval user
+          %b.caret
         %ul.dropdown-menu 
+          %li.nav-header
+            Login As
+          %li.divider
           %li
-            %a{:href=>'/logout'}
-              Logout
+            %a.eval{:href=>'#'}
+              Eval User
+          %li
+            %a.rel{:href=>'#'}
+              Relevance User
       %li.dropdown   
         %a.dropdown-toggle{'data-toggle'=>'dropdown', :href=>"#"}
           %span{:style=>'font-size:1.5em;font-weight:500;color:burlywood;'}

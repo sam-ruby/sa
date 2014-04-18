@@ -1,6 +1,8 @@
 class BaseController < ApplicationController
 
   layout 'cad'
+  # before_action :authenticate_user!
+  
   def login_user
     user = User.get_item_with_name(session[:user_id].to_s)
     session[:user_id] = nil if user.to_s.empty?

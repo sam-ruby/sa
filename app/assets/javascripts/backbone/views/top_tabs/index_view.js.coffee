@@ -14,7 +14,17 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
       else if route == 'category'
         @toggleTab(@$el.find('.category-tab a'))
     )
+
+  events:
+    'click .login > .dropdown-menu > li > a': 'replace_login'
+
+  replace_login: (e) =>
+    e.preventDefault()
+    user = $(e.target).text()
+    if user?
+      $(e.target).parents('.login').find(
+        'div.logged-in-user').text(user)
    
   toggleTab: (el) =>
-    @$el.find('li.active').removeClass('active')
+    @$el.find('.top-nav li.active').removeClass('active')
     $(el).parents('li').addClass('active')

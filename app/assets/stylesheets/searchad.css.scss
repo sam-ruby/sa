@@ -885,7 +885,6 @@ div.overview {
   }
 }
 
-
 .walmart-results {
   @extend .backgrid;
   td {
@@ -903,5 +902,14 @@ div.overview {
   th {
     border: 0;
     border-bottom: 1px solid #ddd;
+  }
+}
+.login {
+  .logged-in-user {
+    color: burlywood;
+    display: inline-block;
+    width: 100px;
+    text-align: right;
+    padding-right: 2px;
   }
 }
