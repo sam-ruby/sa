@@ -30,6 +30,8 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
       revenue: 'Revenue'
       conversion: 'Conversion'
       conv_cor: 'Conversion Relevance'
+      oos: 'Out of Stock'
+
     path_name_routes = (key for key, value of feature_names)
     
     @listenTo(@router, 'route:search', (path, filter) =>

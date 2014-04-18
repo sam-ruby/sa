@@ -76,7 +76,6 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     OOS:
       name: 'Out of Stock'
       id: 'oos'
-      disabled: true
     MRR:
       name: 'Total Reciprocal Rank'
       id: 'mrr'

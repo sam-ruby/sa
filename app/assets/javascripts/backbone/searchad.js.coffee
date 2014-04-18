@@ -16,6 +16,10 @@ window.SearchQualityApp = do ->
   controller.get_view = => @view
   controller.set_date = (@date) =>
   controller.set_cat_id = (@cat_id) =>
+  controller.set_metrics_name = (metric_name) =>
+    metrics = Searchad.Views.SummaryMetrics.prototype.metrics_name
+    for key, value of metrics when value.id == metric_name
+      @metrics_name = key
   controller.set_query_segment = (@query_segment) =>
 
   controller.get_filter_params = =>
@@ -24,6 +28,7 @@ window.SearchQualityApp = do ->
     year: @year
     cat_id: @cat_id
     query_segment: @query_segment
+    metrics_name: @metrics_name
 
   Controller: controller
   

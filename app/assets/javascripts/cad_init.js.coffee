@@ -104,6 +104,16 @@ $ ->
    
     revenueStatsView = new Searchad.Views.Revenue.Stats(
       el: '#metric .timeline')
+      
+    oosDistributionView = new Searchad.Views.Oos.Distribution(
+      el: '#metric')
+
+    oosWinnerView = new Searchad.Views.Oos.Winners(
+      el: '#winners')
+   
+    oosStatsView = new Searchad.Views.Oos.Stats(
+      el: '#metric .timeline')
+
 
     ndcgLoosersView = new Searchad.Views.NDCG.Loosers(
       el: '#ndcg .loosers')

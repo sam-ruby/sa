@@ -66,16 +66,20 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   search:(path, filter) =>
     path.search ||= 'top'
     @query_segment_changed = false
-    if path.search
-      if !@path? or (@path? and @path.search != path.search)
-        @query_segment_changed = true
+    if !@path? or (@path? and @path.search != path.search)
+      @query_segment_changed = true
 
     path.page ||= 'overview'
+    @metrics_changed = false
+    if path.page != 'overview'
+      if !@path? or (@path? and @path.page != path.page)
+        @metrics_changed = true
+        @controller.set_metrics_name(path.page)
+
     filter.date ||= '3-19-2014'
     @set_date_info(filter)
     @path = path
     @filter = filter
-    console.log @path
 
   browse:(@task, @sub_task, @task_args) =>
     @set_date_info()
