@@ -58,7 +58,7 @@ class Searchad.Views.Oos.Distribution extends Searchad.Views.Oos
   
   render: =>
     @renderBarChart(@collection.toJSON(),
-      'Count',
+      'Out of Stock Rate',
       'Number of Queries',
       'Query Distribution over Oos Rate')
    

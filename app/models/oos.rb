@@ -37,14 +37,22 @@ class Oos < BaseModel
   end
 
   def self.get_distribution(query_segment, cat_id, data_date)
-    find_by_sql([%q{select cat, count(*) vol from 
-      (select query, if(query_count<200,200,if(query_count<400,400,if(query_count<600,600,if(query_count<800,800,if(query_count<1000,1000,if(query_count<1200,1200,if(query_count<1400,1400,if(query_count<1600,1600,if(query_count<1800,1800,2000))))))))) cat 
-      from (select s.query query, sum(s.uniq_count) query_count FROM 
-      query_cat_metrics_daily as s JOIN query_segmentation_daily qs ON 
-      ( s.query=qs.query and s.data_date=qs.data_date )
-      where s.cat_id= ? and s.page_type='SEARCH' and s.channel in 
-      ('ORGANIC_USER','ORGANIC_AUTO_COMPLETE') and 
-      s.data_date = ? and qs.cat_id=0 and qs.segmentation= ? group by 
-      s.query)a)b group by cat},cat_id, data_date, query_segment])
+    find_by_sql([%q{select c.bin cat, if (b.bin is null, c.count, b.count) vol
+    from (select bin, count(*) as count from (select query, 
+    if(oos=0, 10, CEILING(oos/10)*10) as bin from 
+    cat_seg_query_oos_list where data_date=? and cat_id=? and 
+    segmentation=?)a group by bin order by bin)b 
+    right outer join 
+    (select 10 as bin, 0 as count
+    union all select 20 as bin, 0 as count 
+    union all select 30 as bin, 0 as count
+    union all select 40 as bin, 0 as count
+    union all select 50 as bin, 0 as count
+    union all select 60 as bin, 0 as count
+    union all select 70 as bin, 0 as count 
+    union all select 80 as bin, 0 as count
+    union all select 90 as bin, 0 as count
+    union all select 100 as bin, 0 as count)c on 
+    b.bin=c.bin order by c.bin}, data_date, cat_id, query_segment])
   end
 end

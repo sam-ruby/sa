@@ -5,7 +5,7 @@ class OosController < BaseController
     query_segment = params[:query_segment] || 'TOP QUERIES'  
     cat_id = params[:cat_id] || 0
     respond_to do |format|
-      format.json { render :json => Traffic.get_distribution(
+      format.json { render :json => Oos.get_distribution(
         query_segment, cat_id, @date) }
     end		        
   end
