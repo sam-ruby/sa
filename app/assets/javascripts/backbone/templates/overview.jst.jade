@@ -76,16 +76,16 @@
             - out_class_names = ['green-change']
             - in_class_name = ''
             - arrow_classes = ['icon-arrow-down', 'green-change']
-          - out_class_names.push('text-col', 'change')
-          div(class=out_class_names)
+          - out_class_names.push('change')
+          div(class=out_class_names, style='text-align: right;')
             span.metric-change(class=in_class_name)
               if metric.change == 'N/A'
-                span.na-change
+                span.na-change(style='padding-right: 30%;')
                   |N/A
               else
                 = numFormatter.fromRaw(metric.change)
                 |%
-                span
+                span(style='padding-right: 20%;')
                   i(class=arrow_classes)
           .significant
             if metric.confidence == true
