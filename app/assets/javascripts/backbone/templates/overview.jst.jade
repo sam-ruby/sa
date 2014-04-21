@@ -5,7 +5,8 @@
   .col-head
     .name Metric
     .score.numerical-col Score
-    .change.numerical-col
+    .unit
+    .change.text-col
       |Change
       if segment && segment.match(/trend_\d+/)
         span(style='font-size:14px')
@@ -40,7 +41,8 @@
                 | Name not known
           .score.numerical-col
             if metric.score == 'N/A'
-              = 'N/A'
+              span.na-query
+                = 'N/A'
             else if metric.score || metric.score == 0
               if ['traffic', 'revenue'].indexOf(metric.name)>-1
                 = intFormatter.fromRaw(metric.score)
@@ -50,23 +52,41 @@
                 = numFormatter.fromRaw(metric.score)
             else
               |&nbsp;
-          if metric.change > 0
-            - class_name = 'green-change'
-          else
-            - class_name = 'red-change'
-          div(class=[class_name, 'numerical-col', 'change'])
-            span.pull-right
-              if metric.change>0 
-                i.icon-arrow-up.green-change
-              else if metric.change<=0
-                i.icon-arrow-down.red-change
-            span.pull-right.metric-change
+          .unit
+            if metric.score && metric.score != 'N/A'
+              if ['pvr', 'atc', 'conversion', 'OOS'].indexOf(metric.name) > -1
+                |%
+              else if ['FCT', 'LCT', 'QDT', 'CPQ', 'CAF'].indexOf(metric.name) > -1
+                |sec
+              else if ['revenue'].indexOf(metric.name) > -1
+                |$
+          if metric.change > 0 && ['AR', 'OOS'].indexOf(metric.name) == -1
+            - out_class_names = ['green-change']
+            - in_class_name = 'pad-score'
+            - arrow_classes = ['icon-arrow-up', 'green-change']
+          else if metric.change > 0 && ['AR', 'OOS'].indexOf(metric.name) > -1
+            - out_class_names = ['red-change']
+            - in_class_name = 'pad-score'
+            - arrow_classes = ['icon-arrow-up', 'red-change']
+          else if ['AR', 'OOS'].indexOf(metric.name) == -1
+            - out_class_names = ['red-change']
+            - in_class_name = ''
+            - arrow_classes = ['icon-arrow-down', 'red-change']
+          else 
+            - out_class_names = ['green-change']
+            - in_class_name = ''
+            - arrow_classes = ['icon-arrow-down', 'green-change']
+          - out_class_names.push('text-col', 'change')
+          div(class=out_class_names)
+            span.metric-change(class=in_class_name)
               if metric.change == 'N/A'
-                span(style='margin-right:18px')
+                span.na-change
                   |N/A
               else
                 = numFormatter.fromRaw(metric.change)
                 |%
+                span
+                  i(class=arrow_classes)
           .significant
             if metric.confidence == true
               i.icon-thumbs-up.green-change
@@ -75,7 +95,8 @@
 
           .top.metric-queries
             if !metric.queries || metric.queries.match(/N\/A/i)
-              |N/A
+              span.na-query
+                |N/A
             else if metric.queries && metric.queries.match(/\w+/)
               each query, index in metric.queries.split(',')
                 if index == 0

@@ -640,12 +640,23 @@ sup.beta-tag {
 td.metric-name1 {
   padding-right: 8em;
 }
+.pad-score {
+  padding-left: 6px;
+}
 .green-change {
   color: #093;
 }
 .red-change {
   color: #d14836;
 }
+.na-change, .na-query {
+  color: rgb(151, 149, 149);
+  padding-left: 7px;
+}
+.na-query {
+  padding-left: 0px;
+}
+
 .block-heading {
   padding: 5px;
   font-weight: bold;
@@ -691,10 +702,6 @@ tr.metrics-col-head {
   text-align: center;
 }
 
-.numerical-col, .text-col {
-  padding: 4px 15px !important;
-}
-
 .numerical-col {
   text-align: right !important;
 }
@@ -717,13 +724,21 @@ tr.selected {
   }
 }
 div.overview {
-  .name, .score, .change, .significant, .top, .info {
+  .name, .score, .change, .significant, .top, .info, .unit {
     display: inline-block;
     padding: 4px 8px !important;
     line-height: 20px;
     text-align: left;
     vertical-align: top;
   }
+  .score {
+    padding: 4px 0px 4px 8px !important;
+  }
+  .unit {
+    padding: 4px 8px 4px 3px !important;
+    color: rgb(151, 149, 149)
+  }
+
   .name {
     white-space:nowrap;
     width: 12%;
@@ -731,8 +746,11 @@ div.overview {
   .score {
     width: 10%;
   }
+  .unit{
+    width: 3%;
+  }
   .change {
-    width: 14%;
+    width: 11%;
   }
   .significant {
     width: 8%;
@@ -782,12 +800,6 @@ div.overview {
 .metric-change {
   padding-right: 5px;
 }
-.significant {
-  i {
-    padding-left:15px;
-  }
-}
-
 .winners-grid {
   @extend .backgrid;
   

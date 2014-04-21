@@ -31,13 +31,13 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       name: 'Traffic'
       id: 'traffic'
     pvr:
-      name: 'PVR'
+      name: 'Product View Rate'
       id: 'pvr'
     atc:
-      name: 'ATC'
+      name: 'Add To Cart Rate'
       id: 'atc'
     conversion:
-      name: 'Conversion'
+      name: 'Conversion Rate'
       id: 'conversion'
     'relevance conversion correlation':
       name: 'Rel Conv Correlation'
@@ -74,7 +74,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       id: 'queries_session'
       disabled: true
     OOS:
-      name: 'Out of Stock'
+      name: 'Out of Stock Rate'
       id: 'oos'
     MRR:
       name: 'Total Reciprocal Rank'
