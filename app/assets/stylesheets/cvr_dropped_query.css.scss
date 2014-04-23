@@ -15,6 +15,17 @@ $qm-border-style: #DDD 2px solid;
     } 
 }
 
+.cvr-dropped-query-form {
+  .control-group {
+    .controls {
+      input, button, span.label, span.advanced, select {
+        margin-right: 20px;
+      }
+    }
+  }
+}
+    
+
 .cvr-dropped-selected-result{
   margin-top:10px
 }
@@ -24,11 +35,10 @@ $qm-border-style: #DDD 2px solid;
 }
 
 .query_search_clear_icon{
-  display: inline; 
   position: relative; 
-  left: -20px; 
+  left: -37px; 
   cursor: pointer; 
-  display: none; 
+  visibility: hidden;
   color: grey;
 }
 
@@ -41,8 +51,8 @@ $qm-border-style: #DDD 2px solid;
 
 .white-label-btn {
   padding: .5em;
-  margin-top: -2.5em;
   cursor: pointer;
+  margin-left: .5em;
   a {
     color: white;
   }

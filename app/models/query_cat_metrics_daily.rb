@@ -56,7 +56,8 @@ class QueryCatMetricsDaily < BaseModel
     query, year, week, query_date, page=1, order_col=nil, 
     order='asc', limit=10)
     
-    order_str = order_col.nil? ? 'sum(query_daily.uniq_count) desc' : 
+    order_str = order_col.nil? ?
+      'query_daily.data_date desc, sum(query_daily.uniq_count) desc' : 
       order.nil? ?  order_col : order_col + ' ' + order  
     
     join_stmt = %q{as query_daily
@@ -64,43 +65,47 @@ class QueryCatMetricsDaily < BaseModel
     search_daily.data_date = query_daily.data_date and
     search_daily.query = query_daily.query} 
     
-    selects = %Q{query_daily.query,
-    search_daily.search_con_rank_correlation, 
+    selects = %Q{unix_timestamp(query_daily.data_date) * 1000 data_date,
+    query_daily.query,
+    search_daily.search_con_rank_correlation rel_conv_score, 
     sum(query_daily.uniq_count) query_count,
-    sum(query_daily.uniq_pvr)/sum(query_daily.uniq_count) query_pvr,
-    sum(query_daily.uniq_atc)/sum(query_daily.uniq_count) query_atc,
-    sum(query_daily.uniq_con)/sum(query_daily.uniq_count) query_con,
+    sum(query_daily.uniq_pvr)/sum(query_daily.uniq_count) * 100 query_pvr,
+    sum(query_daily.uniq_atc)/sum(query_daily.uniq_count) * 100 query_atc,
+    sum(query_daily.uniq_con)/sum(query_daily.uniq_count) * 100 query_con,
     sum(query_daily.revenue) query_revenue,
-    (select assort_overlap * 100 from query_performance_week where year = #{year}
-      and week = #{week} and query = query_daily.query
-      limit 1) as cat_rate, 
-    (select shown_overlap * 100 from query_performance_week where year = #{year}
-      and week = #{week} and query = query_daily.query 
-      limit 1) as show_rate, 
+    (select assort_overlap * 100 from query_performance_week 
+    where year = #{year} and week = #{week} and 
+    query = query_daily.query limit 1) as cat_rate, 
+    (select shown_overlap * 100 from query_performance_week where 
+    year = #{year} and week = #{week} and query = query_daily.query 
+    limit 1) as show_rate, 
     (select rel_score from query_performance_week where year = #{year}
-      and week = #{week} and query = query_daily.query
-      limit 1) as rel_score}
-
+    and week = #{week} and query = query_daily.query
+    limit 1) as rel_score}
     
     where_conditions = []
     if !query.nil? and query.include?('*')
       query = query.gsub('*', '%')
       where_conditions = sanitize_sql_array([
         %q{query_daily.page_type = 'SEARCH' and 
-        query_daily.data_date = '%s' and query_daily.query like '%s' 
-        and query_daily.channel = "ORGANIC_USER" and 
-        query_daily.cat_id = 0}, query_date, query])
+        query_daily.query like '%s' 
+        and query_daily.channel in 
+        ("ORGANIC_USER", "ORGANIC_AUTO_COMPLETE") and 
+        query_daily.cat_id = 0}, query])
     elsif !query.nil? and !query.empty?
       where_conditions = sanitize_sql_array([
         %q{query_daily.page_type = 'SEARCH' and 
-        query_daily.data_date = '%s' and query_daily.query = '%s' 
-        and query_daily.channel = "ORGANIC_USER" and 
-        query_daily.cat_id = 0}, query_date, query])
+        query_daily.query = '%s' 
+        and query_daily.channel in 
+        ("ORGANIC_USER", "ORGANIC_AUTO_COMPLETE") and 
+        query_daily.cat_id = 0}, query])
+        limit = 1
     else
       where_conditions = sanitize_sql_array([
         %q{query_daily.page_type = 'SEARCH' and 
         query_daily.data_date = '%s' and  
-        query_daily.channel = "ORGANIC_USER" and 
+        and query_daily.channel in 
+        ("ORGANIC_USER", "ORGANIC_AUTO_COMPLETE") and 
         query_daily.cat_id = 0}, query_date])
     end
 

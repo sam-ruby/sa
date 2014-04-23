@@ -62,6 +62,7 @@ class BaseController < ApplicationController
     @order = params[:order]
   end 
 
+
   # output: {year=>, week =>} for multiple year handling
   def get_week_from_date(date)
     # Need to get the Merchant week for the current date

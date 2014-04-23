@@ -34,6 +34,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
   events:
     'click #switch-mode-btn': 'click_toggle_search_mode'
     'click button.search': 'handle_search'
+    'click button.show-low': 'show_low_conversion'
     'change .datepicker': 'change_date_picked'
     #reset the div alert for selected dates when date range changed
     'change select.weeks-apart-select' : 'change_select'
@@ -64,7 +65,6 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     @controller.trigger('search:sub-tab-cleanup')
     @controller.trigger('sub-content-cleanup')
     @query_comparison_on = query_comparison_on
-
     if query_comparison_on
       @query_form.find('.advanced').show()
       $('#search-results').hide()
@@ -107,6 +107,19 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     available_end_date = new Date(
       new Date(@available_end_date) - weeks_apart*7*24*60*60*1000)
     @init_date_picker(query_date, available_end_date)
+
+  show_low_conversion: (e)=>
+    e.preventDefault()
+    data = {}
+    weeks_apart = @query_form.find('select').val()
+    data.weeks_apart = parseInt(weeks_apart) if weeks_apart?
+    data.query_date = decodeURI(@query_form.find(
+      'input.datepicker').datepicker('getDate').toString('M-d-yyyy'))
+    
+    @controller.trigger('adhoc:cvr_dropped_query', data)
+    new_path = 'adhoc_query/mode/query_comparison'+ '/wks_apart/' +
+      @data.weeks_apart + '/query_date/' + @data.query_date
+    @router.update_path(new_path)
 
   handle_search: (e) =>
     e.preventDefault()
@@ -168,6 +181,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
  
   render_form: (data)=>
     #if there is data, it should come from router
+    console.log 'Yes I am here'
     data = @process_query_data(data)
     @query_form.html(@form_template(data))
     @query_form.find('input.query').val(data.query)
@@ -178,6 +192,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
     end_date = new Date(
       new Date(@available_end_date) - data.weeks_apart*7*24*60*60*1000)
     @init_date_picker(data.query_date, end_date)
+    @toggle_search_mode(false)
     @active = true
 
   search_results_cleanup: =>
@@ -194,7 +209,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
   clearSearchBox: =>
     #clear search box
     @query_form.find("input.query").val("")
-    @query_form.find(".query_search_clear_icon").hide()
+    @query_form.find(".query_search_clear_icon").css('visibility', 'hidden')
     # @search()
 
   click_search_clear_icon: =>
@@ -209,7 +224,7 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
   toggleRemoveIcon: =>
     query = @query_form.find("input.query").val()
     if query.length > 0
-      @query_form.find(".query_search_clear_icon").show()
+      @query_form.find(".query_search_clear_icon").css('visibility', 'visible')
     else
       #if user press delete button and the box is empty
       @clearSearchBox()
