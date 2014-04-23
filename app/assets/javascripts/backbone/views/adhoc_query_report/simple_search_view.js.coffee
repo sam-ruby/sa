@@ -95,6 +95,7 @@ class Searchad.Views.AdhocQuery.SimpleSearchView extends Backbone.View
     this
 
   grid_columns: =>
+    that = this
     class SearchQueryCell extends Backgrid.CADQueryCell
       handleQueryClick: (e) =>
         Backgrid.CADQueryCell.prototype.handleQueryClick.call(this, e)
@@ -102,11 +103,23 @@ class Searchad.Views.AdhocQuery.SimpleSearchView extends Backbone.View
         @controller.trigger('search:sub-content',
           query: query
           view: 'daily')
-        new_path = 'adhoc_query/mode/search/query/' + encodeURIComponent(query)
-        @router.update_path(new_path)
+        new_path = 'adhoc_query/mode/search/query/' +
+          encodeURIComponent(query)
+        that.router.update_path(new_path)
+
+    class DateFormatter
+      fromRaw: (rawValue) ->
+        return 0 unless rawValue
+        date_obj = new Date(rawValue)
+        date_obj.toString('MMM dd, yyyy')
       
-    columns = [{
-      name: 'query',
+    columns = [
+      {name: 'data_date',
+      label: 'Date',
+      editable: false,
+      formatter: DateFormatter,
+      cell: 'date'},
+      {name: 'query',
       label: I18n.t('search_analytics.query_string'),
       editable: false,
       cell: SearchQueryCell},
@@ -124,7 +137,7 @@ class Searchad.Views.AdhocQuery.SimpleSearchView extends Backbone.View
       label: I18n.t('dashboard.overall_relevance_score'),
       editable: false,
       cell: 'number'},
-      {name: 'search_rev_rank_correlation',
+      {name: 'rel_conv_score',
       label: I18n.t('search_analytics.rev_rank_correlation'),
       editable: false,
       cell: 'number'},

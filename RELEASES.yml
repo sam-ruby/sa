@@ -1,4 +1,9 @@
 --- # This is a text file to mark the features/bug fixes that went in a Release
+1.8.4:
+    Date: May 22, 2014
+    Fixes:
+      PERSSERANA-573: Indexing the full query log 
+
 1.8.3:
     Date: Apr 14, 2014
     Fixes:
