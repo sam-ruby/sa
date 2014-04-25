@@ -60,24 +60,28 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       cat: 'rel_eval'
       disabled: true
       unit: 'score'
+      mark_worst: 'max'
     orders_mpr_5:
       name: 'Orders MPR@5'
       id: 'o_mpr_5'
       cat: 'rel_eval'
       disabled: true
       unit: 'score'
+      mark_worst: 'max'
     orders_prc_5:
       name: 'Orders Precision@5'
       id: 'o_prec_5'
       cat: 'rel_eval'
       disabled: true
       unit: 'score'
+      mark_worst: 'max'
     orders_rec_5:
       name: 'Orders Recall@5'
       id: 'o_recall_5'
       cat: 'rel_eval'
       disabled: true
       unit: 'score'
+      mark_worst: 'max'
     'relevance conversion correlation':
       name: 'Rel Conv Correlation'
       id: 'conv_cor'
