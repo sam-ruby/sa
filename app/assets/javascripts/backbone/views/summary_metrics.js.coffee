@@ -9,6 +9,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @summary_template = JST["backbone/templates/overview"]
     @navBar = JST["backbone/templates/summary_metrics"]
     @carousel = @$el.parents('.carousel.slide')
+    @segment_lookup = Searchad.Views.SearchTabs.IndexView.prototype.segment_lookup
     
     @listenTo(@router, 'route:search', (path, filter) =>
       if path? and path.page? and path.page.match(/overview/i)
@@ -20,56 +21,100 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     traffic:
       name: 'Traffic'
       id: 'traffic'
-    pvr:
-      name: 'Product View Rate'
-      id: 'pvr'
-    atc:
-      name: 'Add To Cart Rate'
-      id: 'atc'
+      cat: 'general'
     conversion:
       name: 'Conversion Rate'
       id: 'conversion'
+      cat: 'general'
+    OOS:
+      name: 'Out of Stock Rate'
+      id: 'oos'
+      cat: 'general'
+    P1_OOS:
+      name: 'Page 1 OOS Rate'
+      id: 'p1_oos'
+      cat: 'general'
+    pvr:
+      name: 'Product View Rate'
+      id: 'pvr'
+      cat: 'general'
+    atc:
+      name: 'Add To Cart Rate'
+      id: 'atc'
+      cat: 'general'
+    orders_ndcg_5:
+      name: 'Orders NDCG@5'
+      id: 'o_ndcg_5'
+      cat: 'rel_eval'
+      disabled: true
+    orders_mpr_5:
+      name: 'Orders MPR@5'
+      id: 'o_mpr_5'
+      cat: 'rel_eval'
+      disabled: true
+    orders_precision_5:
+      name: 'Orders Precision@5'
+      id: 'o_prec_5'
+      cat: 'rel_eval'
+      disabled: true
+    orders_recall_5:
+      name: 'Orders Recall@5'
+      id: 'o_recall_5'
+      cat: 'rel_eval'
+      disabled: true
     'relevance conversion correlation':
       name: 'Rel Conv Correlation'
       id: 'conv_cor'
+      cat: 'rel_eval'
     revenue:
       name: 'Revenue'
       id: 'revenue'
-    FCT:
-      name: 'Earliest Item Click'
-      id: 'first_click'
-      disabled: true
-    LCT:
-      name: 'Latest Item Click'
-      id: 'latest_click'
-      disabled: true
-    QDT:
-      name: 'Query Dwell Time'
-      id: 'dwell_time'
-      disabled: true
-    CPQ:
-      name: 'Clicks Per Query'
-      id: 'clicks_query'
-      disabled: true
+      cat: 'general'
     CAF:
       name: 'Clicks on First Item'
       id: 'clicks_f_item'
       disabled: true
+      cat: 'user_eng'
     AR:
       name: 'Abandon Rate'
       id: 'aband_rate'
       disabled: true
+      cat: 'user_eng'
     'count per session':
       name: 'Queries per Session'
       id: 'queries_session'
       disabled: true
-    OOS:
-      name: 'Out of Stock Rate'
-      id: 'oos'
+      cat: 'user_eng'
+    QDT:
+      name: 'Query Dwell Time'
+      id: 'dwell_time'
+      disabled: true
+      cat: 'user_eng'
+    FCT:
+      name: 'Earliest Item Click'
+      id: 'first_click'
+      disabled: true
+      cat: 'user_eng'
+    LCT:
+      name: 'Latest Item Click'
+      id: 'latest_click'
+      disabled: true
+      cat: 'user_eng'
+    CPQ:
+      name: 'Clicks Per Query'
+      id: 'clicks_query'
+      disabled: true
+      cat: 'user_eng'
     MRR:
       name: 'Total Reciprocal Rank'
       id: 'mrr'
       disabled: true
+      cat: 'user_eng'
+    QRR:
+      name: 'Query Reformulation Rate'
+      id: 'qrr'
+      disabled: true
+      cat: 'user_eng'
     
   events: =>
     events = {}
@@ -165,6 +210,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     periods = []
     segment_cat = ''
     segment = @router.path.search
+    segment_name = @segment_lookup[segment].name if segment?
 
     if segment? and (match = segment.match(/trend_(\d+)/))
       days = parseInt(match[1])
@@ -188,27 +234,26 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
 
     @$el.append( @navBar(
       periods: periods
+      segment_name: segment_name
       segment: segment_cat) )
 
     metrics = @collection.toJSON()[0]
-    general_metrics = ['traffic', 'conversion', 'OOS', 'pvr', 'atc', 'revenue' ]
-    correl_metrics = ['relevance conversion correlation']
-    user_engage_metrics = ['CAF', 'AR', 'count per session', 'QDT', 'FCT',
-      'LCT', 'CPQ', 'MRR']
-
     overall_metrics =
       general:
         name: 'General'
         class: 'general'
-        metrics: (metrics[m] for m in general_metrics when metrics[m]?)
+        metrics: (metrics[m_db_id] for m_db_id, metric of @metrics_name \
+          when metric.cat == 'general' and metrics[m_db_id]?)
       user_engage_metrics:
         name: 'User Engagement Metrics'
         class: 'user_eng'
-        metrics: (metrics[m] for m in user_engage_metrics when metrics[m]?)
+        metrics: (metrics[m_db_id] for m_db_id, metric of @metrics_name \
+          when metric.cat == 'user_eng' and metrics[m_db_id]?)
       correl_metrics:
         name: 'Relevance Evaluation Metrics'
         class: 'rel_eval'
-        metrics: (metrics[m] for m in correl_metrics when metrics[m]?)
+        metrics: (metrics[m_db_id] for m_db_id, metric of @metrics_name \
+          when metric.cat == 'rel_eval' and metrics[m_db_id]?)
           
     @$el.append(@summary_template(
       metrics: overall_metrics

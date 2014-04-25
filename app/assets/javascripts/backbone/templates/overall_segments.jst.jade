@@ -47,8 +47,11 @@
                   - score = numForm3Decimals.fromRaw(score)
                 else
                   - score = numFormatter.fromRaw(score)
-                a(href=slink)
+                if m_obj && m_obj.disabled == true
                   = score
+                else
+                  a(href=slink)
+                    = score
               else
                 |&nbsp;
             .unit

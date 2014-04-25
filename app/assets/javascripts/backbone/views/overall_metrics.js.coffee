@@ -34,6 +34,7 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
  
   events: ->
     'click .score.o-content.a': 'navigate'
+    'click .segment-name a': 'navigate'
 
   get_items: (data) =>
     @active = true
@@ -56,9 +57,7 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
       'LCT', 'CPQ', 'MRR']
     
     metrics = @collection.toJSON()
-    general_metrics = {}
-    user_eng_metrics = {}
-    correl_metrics = {}
+    metric_segment = {}
     segments = {}
     segment_lookup = Searchad.Views.SearchTabs.IndexView.prototype.segment_lookup
     
@@ -72,24 +71,24 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
         name: segment.name
         path: segment_path
 
-      for  metric in metrics
-        if general_metric_names.indexOf(metric.metrics_name) != -1
-          if !general_metrics[metric.metrics_name]?
-            general_metrics[metric.metrics_name] = {}
-          if segment.id == metric.segmentation
-            general_metrics[metric.metrics_name][segment.id] = metric
-          
-        else if correl_metric_names.indexOf(metric.metrics_name) != -1
-          if !correl_metrics[metric.metrics_name]?
-            correl_metrics[metric.metrics_name] = {}
-          if segment.id == metric.segmentation
-            correl_metrics[metric.metrics_name][segment.id] = metric
-        
-        else if user_engage_metric_names.indexOf(metric.metrics_name) != -1
-          if !user_eng_metrics[metric.metrics_name]?
-            user_eng_metrics[metric.metrics_name] = {}
-          if segment.id == metric.segmentation
-            user_eng_metrics[metric.metrics_name][segment.id] = metric
+      for  metric in metrics when metric.segmentation == segment.id
+        metric_segment[metric.metrics_name] = {} unless metric_segment[metric.metrics_name]?
+        metric_segment[metric.metrics_name][segment.id] = metric
+
+    general_metrics = {}
+    user_eng_metrics = {}
+    correl_metrics = {}
+    
+    metric_table = Searchad.Views.SummaryMetrics.prototype.metrics_name
+    for metric_db_id, metric of metric_table when metric.cat == 'general'
+      general_metrics[metric_db_id] = metric_segment[metric_db_id]
+    
+    for metric_db_id, metric of metric_table when metric.cat == 'user_eng'
+      user_eng_metrics[metric_db_id] = metric_segment[metric_db_id]
+    
+    for metric_db_id, metric of metric_table when metric.cat == 'rel_eval'
+      correl_metrics[metric_db_id] = metric_segment[metric_db_id]
+
     
     overall_metrics =
       general:

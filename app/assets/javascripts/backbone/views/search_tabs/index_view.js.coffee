@@ -66,10 +66,10 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
   segment_lookup:
       top:
         id: 'TOP QUERIES'
-        name: 'Top'
+        name: 'Top Queries'
       trend_2:
         id: 'TREND_2'
-        name: 'Trending'
+        name: 'Trending Queries'
       trend_7:
         id: 'TREND_7'
         name: 'Trending in 7 days'
@@ -99,10 +99,10 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
         name: 'Opportunities in 4 Weeks'
       poor_amzn:
         id: 'POOR_QUERIES_AMAZON'
-        name: 'Comptetive'
+        name: 'Comptetive Opportunities'
       typical_query:
         id: 'TYPICAL_QUERY'
-        name: 'Random'
+        name: 'Random Queries'
 
 
   events:
