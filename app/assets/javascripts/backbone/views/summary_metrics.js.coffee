@@ -66,13 +66,13 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       cat: 'rel_eval'
       disabled: true
       unit: 'score'
-    orders_precision_5:
+    orders_prc_5:
       name: 'Orders Precision@5'
       id: 'o_prec_5'
       cat: 'rel_eval'
       disabled: true
       unit: 'score'
-    orders_recall_5:
+    orders_rec_5:
       name: 'Orders Recall@5'
       id: 'o_recall_5'
       cat: 'rel_eval'
