@@ -1,6 +1,5 @@
-- intFormatter = new Backgrid.NumberFormatter({decimals: 0})
-- numFormatter = new Backgrid.NumberFormatter()
-- numForm3Decimals = new Backgrid.NumberFormatter({decimals: 4})
+- s_formatter = JST['backbone/templates/metric_formatter']
+- u_formatter = JST['backbone/templates/metric_unit_formatter']
 .overview
   .col-head
     .name Metric
@@ -39,26 +38,16 @@
               else
                 | Name not known
           .score.numerical-col
-            if metric.score == 'N/A'
+            if metric.value == 'N/A'
               span.na-query
                 = 'N/A'
-            else if metric.score || metric.score == 0
-              if ['traffic', 'revenue'].indexOf(metric.name)>-1
-                = intFormatter.fromRaw(metric.score)
-              else if m_obj.id == 'queries_session'
-                = numForm3Decimals.fromRaw(metric.score)
-              else
-                = numFormatter.fromRaw(metric.score)
+            else if metric.value || metric.value == 0
+              != s_formatter({m_obj:m_obj, metric_details:metric, slink: null})
             else
               |&nbsp;
           .unit
-            if metric.score && metric.score != 'N/A'
-              if ['pvr', 'atc', 'conversion', 'OOS'].indexOf(metric.name) > -1
-                |%
-              else if ['FCT', 'LCT', 'QDT', 'CPQ', 'CAF'].indexOf(metric.name) > -1
-                |sec
-              else if ['revenue'].indexOf(metric.name) > -1
-                |$
+            if metric.value && metric.value != 'N/A'
+              != u_formatter({m_obj:m_obj, metric_details: metric})
           if metric.change > 0 && ['AR', 'OOS'].indexOf(metric.name) == -1
             - out_class_names = ['green-change']
             - in_class_name = 'pad-score'

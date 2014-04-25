@@ -33,7 +33,7 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
     )
  
   events: ->
-    'click .score.o-content.a': 'navigate'
+    'click .score a': 'navigate'
     'click .segment-name a': 'navigate'
 
   get_items: (data) =>
@@ -50,11 +50,6 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
     @$el.children().not('.ajax-loader').hide()
     
     @$el.append( @navBar() )
-    
-    general_metric_names = ['traffic', 'conversion', 'OOS', 'pvr', 'atc', 'revenue' ]
-    correl_metric_names = ['relevance conversion correlation']
-    user_engage_metric_names = ['CAF', 'AR', 'count per session', 'QDT', 'FCT',
-      'LCT', 'CPQ', 'MRR']
     
     metrics = @collection.toJSON()
     metric_segment = {}
@@ -75,19 +70,42 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
         metric_segment[metric.metrics_name] = {} unless metric_segment[metric.metrics_name]?
         metric_segment[metric.metrics_name][segment.id] = metric
 
+
+    mark_score = (metric, comp) ->
+      score = null
+      for segment_id, metric_details of metric
+        score = metric_details.value unless score?
+        if comp == 'min'
+          if metric_details.value < score
+            score = metric_details.value
+        else if comp == 'max'
+          if metric_details.value > score
+            score = metric_details.value
+
+      if score
+        for segment_id, metric_details of metric when metric_details.value == score
+          metric_details.worst = true
+          break
+
+    metric_table = Searchad.Views.SummaryMetrics.prototype.metrics_name
+    for metric_db_id, m_details of metric_segment
+      m_obj = metric_table[metric_db_id]
+      mark_score(metric_segment[metric_db_id], m_obj.mark_worst) if \
+        m_obj and m_obj.mark_worst?
+    
     general_metrics = {}
     user_eng_metrics = {}
     correl_metrics = {}
     
-    metric_table = Searchad.Views.SummaryMetrics.prototype.metrics_name
     for metric_db_id, metric of metric_table when metric.cat == 'general'
       general_metrics[metric_db_id] = metric_segment[metric_db_id]
-    
+
     for metric_db_id, metric of metric_table when metric.cat == 'user_eng'
       user_eng_metrics[metric_db_id] = metric_segment[metric_db_id]
     
     for metric_db_id, metric of metric_table when metric.cat == 'rel_eval'
       correl_metrics[metric_db_id] = metric_segment[metric_db_id]
+    
 
     
     overall_metrics =

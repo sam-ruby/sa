@@ -1,10 +1,11 @@
-- intFormatter = new Backgrid.NumberFormatter({decimals: 0})
-- numFormatter = new Backgrid.NumberFormatter()
-- numForm3Decimals = new Backgrid.NumberFormatter({decimals: 4})
+- s_formatter = JST['backbone/templates/metric_formatter']
+- u_formatter = JST['backbone/templates/metric_unit_formatter']
 .overview-all
   .col-head
     .name.metric-name Metric
     each segment, segment_id in segments
+      if segment.path == 'all_queries'
+        - continue
       .segment-name
         - seg_link = '#search/' + segment.path + '/page/overview'
         a(href=seg_link)
@@ -28,41 +29,27 @@
               = m_obj.name
             else
               | Name not known
-
           each segment, segment_id in segments
+            if segment.path == 'all_queries'
+              - continue
             if metric[segment_id]
-              -score = metric[segment_id].value
+              - score = metric[segment_id].value
+            else if metric['ALL QUERIES']
+              - score = metric['ALL QUERIES'].value
+              - segment_id = 'ALL QUERIES'
             else
               - score = 'N/A'
-
             .score.numerical-col
               if score == 'N/A'
                 span.na-query
                   = 'N/A'
               else if score || score == 0
                 - slink = '#search/' + segment.path + '/page/' + m_obj.id
-                if ['traffic', 'revenue'].indexOf(metric_id)>-1
-                  - score = intFormatter.fromRaw(score)
-                else if m_obj.id == 'queries_session'
-                  - score = numForm3Decimals.fromRaw(score)
-                else
-                  - score = numFormatter.fromRaw(score)
-                if m_obj && m_obj.disabled == true
-                  = score
-                else
-                  a(href=slink)
-                    = score
+                != s_formatter({m_obj:m_obj, metric_details:metric[segment_id], slink:slink})
               else
                 |&nbsp;
             .unit
               if score && score != 'N/A'
-                if ['pvr', 'atc', 'conversion', 'OOS'].indexOf(metric_id) > -1
-                  |%
-                else if ['FCT', 'LCT', 'QDT', 'CPQ', 'CAF'].indexOf(metric_id) > -1
-                  |sec
-                else if ['revenue'].indexOf(metric_id) > -1
-                  |$
-                else
-                  |&nbsp;
+                != u_formatter({m_obj: m_obj, metric_details:metric[segment_id]})
               else
                 |&nbsp;

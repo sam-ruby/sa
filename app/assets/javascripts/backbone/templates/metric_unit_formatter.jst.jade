@@ -1,0 +1,19 @@
+if metric_details.worst == true
+  - style = 'color: red; font-weight: 400;'
+else
+  - style = ''
+span(style=style)
+  if m_obj.unit == 'percentage'
+    |%
+  else if m_obj.unit == 'seconds'
+    |sec
+  else if m_obj.unit == 'minutes'
+    |min
+  else if m_obj.unit == 'dollar'
+    |$
+  else if m_obj.unit == 'query'
+    |qry
+  else if m_obj.unit == 'click'
+    |clk
+  else
+    |&nbsp;

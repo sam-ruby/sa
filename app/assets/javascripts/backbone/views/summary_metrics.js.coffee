@@ -22,99 +22,135 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       name: 'Traffic'
       id: 'traffic'
       cat: 'general'
+      unit: 'query'
     conversion:
       name: 'Conversion Rate'
       id: 'conversion'
       cat: 'general'
+      unit: 'percentage'
+      mark_worst: 'min'
     OOS:
       name: 'Out of Stock Rate'
       id: 'oos'
       cat: 'general'
+      unit: 'percentage'
+      mark_worst: 'max'
     P1_OOS:
       name: 'Page 1 OOS Rate'
       id: 'p1_oos'
       cat: 'general'
+      disabled: true
+      unit: 'percentage'
+      mark_worst: 'max'
     pvr:
       name: 'Product View Rate'
       id: 'pvr'
       cat: 'general'
+      unit: 'percentage'
+      mark_worst: 'min'
     atc:
       name: 'Add To Cart Rate'
       id: 'atc'
       cat: 'general'
+      unit: 'percentage'
+      mark_worst: 'min'
     orders_ndcg_5:
       name: 'Orders NDCG@5'
       id: 'o_ndcg_5'
       cat: 'rel_eval'
       disabled: true
+      unit: 'score'
     orders_mpr_5:
       name: 'Orders MPR@5'
       id: 'o_mpr_5'
       cat: 'rel_eval'
       disabled: true
+      unit: 'score'
     orders_precision_5:
       name: 'Orders Precision@5'
       id: 'o_prec_5'
       cat: 'rel_eval'
       disabled: true
+      unit: 'score'
     orders_recall_5:
       name: 'Orders Recall@5'
       id: 'o_recall_5'
       cat: 'rel_eval'
       disabled: true
+      unit: 'score'
     'relevance conversion correlation':
       name: 'Rel Conv Correlation'
       id: 'conv_cor'
       cat: 'rel_eval'
+      unit: 'score'
     revenue:
       name: 'Revenue'
       id: 'revenue'
       cat: 'general'
+      unit: 'dollar'
     CAF:
       name: 'Clicks on First Item'
       id: 'clicks_f_item'
       disabled: true
       cat: 'user_eng'
+      unit: 'percentage'
+      mark_worst: 'min'
     AR:
       name: 'Abandon Rate'
       id: 'aband_rate'
       disabled: true
       cat: 'user_eng'
+      unit: 'percentage'
+      mark_worst: 'max'
     'count per session':
       name: 'Queries per Session'
       id: 'queries_session'
       disabled: true
       cat: 'user_eng'
+      unit: 'query'
+      decimals: 4
     QDT:
       name: 'Query Dwell Time'
       id: 'dwell_time'
       disabled: true
       cat: 'user_eng'
+      unit: 'seconds'
+      mark_worst: 'min'
     FCT:
       name: 'Earliest Item Click'
       id: 'first_click'
       disabled: true
       cat: 'user_eng'
+      unit: 'seconds'
+      mark_worst: 'max'
     LCT:
       name: 'Latest Item Click'
       id: 'latest_click'
       disabled: true
       cat: 'user_eng'
+      unit: 'seconds'
+      mark_worst: 'max'
     CPQ:
       name: 'Clicks Per Query'
       id: 'clicks_query'
       disabled: true
       cat: 'user_eng'
+      unit: 'click'
+      mark_worst: 'min'
     MRR:
       name: 'Total Reciprocal Rank'
       id: 'mrr'
       disabled: true
       cat: 'user_eng'
+      unit: 'score'
+      mark_worst: 'min'
     QRR:
       name: 'Query Reformulation Rate'
       id: 'qrr'
       disabled: true
       cat: 'user_eng'
+      unit: 'percentage'
+      mark_worst: 'max'
     
   events: =>
     events = {}

@@ -57,7 +57,7 @@ class SummaryMetricsController < BaseController
         change: change,
         confidence: significant,
         queries: queries,
-        score: score}
+        value: score}
     end
     respond_to do |format|
       format.json do render :json => metrics end

@@ -103,7 +103,9 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
       typical_query:
         id: 'TYPICAL_QUERY'
         name: 'Random Queries'
-
+      all_queries:
+        id: 'ALL QUERIES'
+        name: 'ALL QUERIES'
 
   events:
     'click ul.nav li a': 'update_query_segment'
