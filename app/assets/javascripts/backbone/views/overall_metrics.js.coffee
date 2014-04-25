@@ -12,12 +12,11 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
     @navBar = JST["backbone/templates/overall_segments_navbar"]
     @carousel = @$el.parents('.carousel.slide')
     feature_paths = (
-      metric.id for metric in Searchad.Views.SummaryMetrics.prototype.metrics_name)
+      metric.id for metric_id, metric of Searchad.Views.SummaryMetrics.prototype.metrics_name)
     
     @listenTo(@router, 'route:search', (path, filter) =>
       if @router.date_changed or @router.cat_changed or !@active
         @get_items()
-
       path? and (@segment = path.search)
       if @segment == 'overview'
         @carousel.carousel(0)

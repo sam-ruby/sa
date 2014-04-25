@@ -6,7 +6,7 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
     @router = SearchQualityApp.Router
     $(document).find('#cad-breadcrumb').delegate(
       'ul.search li a', 'click', (e)=>
-        @update_feature(e))
+        @page_nav(e))
     
     @listenTo(@router, 'route:search', (path, filter) =>
       @$el.css('display', 'block')
@@ -29,30 +29,35 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
       else
         @toggleTab(@$el.find("li.overview a"))
 
-      for metric of Searchad.Views.SummaryMetrics.prototype.metrics_name
+      for metric_db_id, metric of Searchad.Views.SummaryMetrics.prototype.metrics_name
         if metric.id == path.page
           metric_name = metric.name
           metric_id = metric.id
           break
 
+      $(document).find('#cad-breadcrumb').empty()
       if segment_name? and segment_path?
         bc_paths = []
 
+        overview_link = "search/overview"
+        segment_overview_link = "search/#{segment_path}/page/overview"
+        metric_link = "search/#{segment_path}/page/#{metric_id}"
+        
         if metric_id? and path.details? and path.query?
           query = decodeURIComponent(path.query)
-          bc_paths.push(name: 'Overview of Metrics', class: 'overview')
-          bc_paths.push(name: segment_name, class: segment_path)
-          bc_paths.push(name: metric_name,  class: metric_id)
+          bc_paths.push(name: 'Overview of Metrics', href: overview_link)
+          bc_paths.push(name: segment_name, href: segment_overview_link)
+          bc_paths.push(name: metric_name,  href: metric_link)
           bc_paths.push(name: query, active: true)
         else if metric_id?
-          bc_paths.push(name: 'Overview of Metrics', class: 'overview')
-          bc_paths.push(name: segment_name, class: segment_path)
+          bc_paths.push(name: 'Overview of Metrics', href: overview_link)
+          bc_paths.push(name: segment_name, href: segment_overview_link)
           bc_paths.push(name: metric_name,  active: true)
         else if segment_name != 'Segment Overview'
-          bc_paths.push(name: 'Overview of Metrics', class: 'overview')
+          bc_paths.push(name: 'Overview of Metrics', href: overview_link)
           bc_paths.push(name: segment_name, active: true)
-
-        $(document).find('#cad-breadcrumb').empty()
+    
+        console.log 'Each bc paths ', bc_paths
         if bc_paths.length > 0
           $(document).find('#cad-breadcrumb').append(
             JST['backbone/templates/search_bc'](bc_paths: bc_paths) )
@@ -82,12 +87,16 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
         name: '30 day Oppor.'
       drop_con_1:
         id: 'DROP_CON_1_WK'
+        name: 'Opportunities in 1 Week'
       drop_con_2:
         id: 'DROP_CON_2_WK'
+        name: 'Opportunities in 2 Weeks'
       drop_con_3:
         id: 'DROP_CON_3_WK'
+        name: 'Opportunities in 3 Weeks'
       drop_con_4:
         id: 'DROP_CON_4_WK'
+        name: 'Opportunities in 4 Weeks'
       poor_amzn:
         id: 'POOR_QUERIES_AMAZON'
         name: 'Comptetive'
@@ -106,25 +115,10 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
   unrender: =>
     @$el.hide()
   
-  update_feature: (e) =>
+  page_nav: (e) =>
     e.preventDefault()
-    feature  = $(e.target).attr('class')
-    segment_paths = (segment_id for segment_id, segment  of @segment_lookup)
-    curr_path = window.location.hash
-    if ((filter_index = curr_path.indexOf('/filters')) != -1)
-      filters = curr_path.substring(filter_index)
-    
-    if feature.match(/overview/i)
-      new_path = "search/overview#{filters}"
-    else if segment_paths.indexOf(feature) != -1
-      new_path = "search/#{feature}/page/overview#{filters}"
-    else
-      for metric of Searchad.Views.SummaryMetrics.prototype.metrics_name
-        if metric.id == feature
-          segment = @router.path.search
-          new_path = "search/#{segment}/page/#{feature}#{filters}"
-          break
-    @router.navigate(new_path, trigger: true) if new_path?
+    path  = $(e.target).attr('href')
+    @router.update_path(path, trigger: true) if path?
 
   update_query_segment: (e) =>
     e.preventDefault()

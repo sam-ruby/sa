@@ -99,7 +99,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     events['click .conv-drop-periods button'] = (e) =>
       e.preventDefault()
       weeks = $(e.target).text()
-      new_path = "search/drop_con_#{weeks}"
+      new_path = "search/drop_con_#{weeks}/page/overview"
       $(e.target).parents('.btn-group').find('.btn.btn.primary').removeClass(
         'btn-primary')
       $(e.target).addClass('btn-primary')
@@ -107,7 +107,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
 
     events['click .trending-periods button'] = (e) =>
       days = $(e.target).text()
-      new_path = "search/trend_#{days}"
+      new_path = "search/trend_#{days}/page/overview"
       $(e.target).parents('.btn-group').find('.btn.btn.primary').removeClass(
         'btn-primary')
       $(e.target).addClass('btn-primary')
@@ -214,6 +214,18 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       metrics: overall_metrics
       segment: segment
       view: this))
+
+    $.each(@$el.find('.metric .mrow'), (i, div) ->
+      max_height = 0
+      $.each($(div).children(), (i, child) ->
+        if $(child).height() > max_height
+          max_height = $(child).height()
+      )
+      $.each($(div).children(), (i, child) ->
+        $(child).height(max_height)
+      )
+    )
+
 
   unrender: =>
     @active = false
