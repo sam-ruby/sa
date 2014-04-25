@@ -11,19 +11,9 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @carousel = @$el.parents('.carousel.slide')
     
     @listenTo(@router, 'route:search', (path, filter) =>
-      if @router.date_changed or @router.cat_changed or !@active or @router.query_segment_changed
-        @get_items()
-
-      path? and (@segment = path.search)
-      if path? and path.page? and path.page == 'overview'
-        @carousel.carousel(0)
-        @carousel.carousel('pause')
-      else if path? and path.details? and path.details == '1'
-        @carousel.carousel(2)
-        @carousel.carousel('pause')
-      else if path? and path.page? and path.page != 'overview'
-        @carousel.carousel(1)
-        @carousel.carousel('pause')
+      if path? and path.page? and path.page.match(/overview/i)
+        if @router.date_changed or @router.cat_changed or !@active or @router.query_segment_changed
+          @get_items()
     )
   
   metrics_name:
@@ -147,7 +137,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
           $(e.target).parents('.mrow').addClass('selected')
           
           query = encodeURIComponent($(e.target).text())
-          segment = that.segment
+          segment = that.router.path.search
           feature = metric_id
           if query.match(/[\.]{3}/)
             that.router.update_path(
@@ -173,8 +163,10 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @$el.children().not('.ajax-loader').hide()
     
     periods = []
-    segment = ''
-    if @segment? and (match = @segment.match(/trend_(\d+)/))
+    segment_cat = ''
+    segment = @router.path.search
+
+    if segment? and (match = segment.match(/trend_(\d+)/))
       days = parseInt(match[1])
       periods =
         2: (days == 2 ? true: false)
@@ -182,21 +174,21 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
         14: (days == 14 ? true: false)
         21: (days == 21 ? true: false)
         28: (days == 28 ? true: false)
-      segment = 'trending'
-    else if @segment? and (
-      (match = @segment.match(/poor_perform/)) or
-      (match = @segment.match(/drop_con_(\d+)/)))
+      segment_cat = 'trending'
+    else if segment? and (
+      (match = segment.match(/poor_perform/)) or
+      (match = segment.match(/drop_con_(\d+)/)))
       weeks = parseInt(match[1])
       periods =
         1: (weeks == 1 ? true: false)
         2: (weeks == 2 ? true: false)
         3: (weeks == 3 ? true: false)
         4: (weeks == 4 ? true: false)
-      segment = 'poor_performing'
+      segment_cat = 'poor_performing'
 
     @$el.append( @navBar(
       periods: periods
-      segment: segment) )
+      segment: segment_cat) )
 
     metrics = @collection.toJSON()[0]
     general_metrics = ['traffic', 'conversion', 'OOS', 'pvr', 'atc', 'revenue' ]
@@ -220,7 +212,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
           
     @$el.append(@summary_template(
       metrics: overall_metrics
-      segment: @segment
+      segment: segment
       view: this))
 
   unrender: =>

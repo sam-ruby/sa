@@ -1,0 +1,65 @@
+- intFormatter = new Backgrid.NumberFormatter({decimals: 0})
+- numFormatter = new Backgrid.NumberFormatter()
+- numForm3Decimals = new Backgrid.NumberFormatter({decimals: 4})
+.overview-all
+  .col-head
+    .name.metric-name
+    each segment, segment_id in segments
+      .segment-name
+        - seg_link = '#search/' + segment.path + '/page/overview'
+        a(href=seg_link)
+          = segment.name
+
+  each metric_cat in metrics
+    if !metric_cat.metrics
+      - continue
+    .info(class=metric_cat.class)
+      = metric_cat.name
+    .metric(class=metric_cat.class)
+      each metric, metric_id in metric_cat.metrics
+        if !metric
+          - continue
+        - m_obj = metrics_name[metric_id]
+        if !m_obj
+          - continue
+        div(class=[m_obj.id, 'mrow'])
+          .name.metric-name
+            if m_obj && m_obj.name
+              = m_obj.name
+            else
+              | Name not known
+
+          each segment, segment_id in segments
+            if metric[segment_id]
+              -score = metric[segment_id].value
+            else
+              - score = 'N/A'
+
+            .score.numerical-col
+              if score == 'N/A'
+                span.na-query
+                  = 'N/A'
+              else if score || score == 0
+                - slink = '#search/' + segment.path + '/page/' + m_obj.id
+                if ['traffic', 'revenue'].indexOf(metric_id)>-1
+                  - score = intFormatter.fromRaw(score)
+                else if m_obj.id == 'queries_session'
+                  - score = numForm3Decimals.fromRaw(score)
+                else
+                  - score = numFormatter.fromRaw(score)
+                a(href=slink)
+                  = score
+              else
+                |&nbsp;
+            .unit
+              if score && score != 'N/A'
+                if ['pvr', 'atc', 'conversion', 'OOS'].indexOf(metric_id) > -1
+                  |%
+                else if ['FCT', 'LCT', 'QDT', 'CPQ', 'CAF'].indexOf(metric_id) > -1
+                  |sec
+                else if ['revenue'].indexOf(metric_id) > -1
+                  |$
+                else
+                  |&nbsp;
+              else
+                |&nbsp;

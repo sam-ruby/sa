@@ -11,6 +11,14 @@ class SummaryMetrics < BaseModel
       [where_str, cat_id, date, last_date, segment, 'ALL QUERIES']).order(
       'metrics_name, data_date desc') 
   end
+  
+  def self.get_overall_metrics(cat_id, date)
+    cols = %q{segmentation, metrics_name, value, losers, ucl, lcl, data_date}
+    where_str = %q{cat_id in (-1, ?) and data_date = ?}
+    select(cols).where(
+      [where_str, cat_id, date]).order(
+      'metrics_name, segmentation, data_date desc') 
+  end
 
   def self.get_stats(metrics_name, query_segment, cat_id)
     select(%q{unix_timestamp(data_date) * 1000 data_date,

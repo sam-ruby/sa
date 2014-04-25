@@ -63,4 +63,14 @@ class SummaryMetricsController < BaseController
       format.json do render :json => metrics end
     end
   end
+  
+  def get_overall_change
+    cat_id = params[:cat_id] || 0
+    respond_to do |format|
+      format.json do
+        render :json => SummaryMetrics.get_overall_metrics(
+          cat_id, @date)
+      end
+    end
+  end
 end

@@ -4,7 +4,7 @@ a.subcat {
 a.subcat:hover {
   color: #F7B800;
 }
-#search-quality-queries, #trending, #qm-filter, #qm-count-sub-tabs, #cvr-dropped-query-results, #search-results, #search-sub-tabs, #query-monitoring, #search-kpi, #summary-metrics, #metric {
+#search-quality-queries, #trending, #qm-filter, #qm-count-sub-tabs, #cvr-dropped-query-results, #search-results, #search-sub-tabs, #query-monitoring, #search-kpi, #summary-metrics, #metric, #overall-metrics {
   position: relative;
 }
 .ajax-loader {
@@ -12,6 +12,8 @@ a.subcat:hover {
   top: 5em;
   z-index: 1;
   display: none;
+  margin-right: 50%;
+  margin-left: 50%;
 }
 #summary-metrics, .tab-holder, .winners {
   .ajax-loader {
@@ -723,25 +725,21 @@ tr.selected {
     display: inline-block;
   }
 }
+
 div.overview {
   .name, .score, .change, .significant, .top, .info, .unit {
     display: inline-block;
-    padding: 4px 8px !important;
     line-height: 20px;
-    text-align: left;
     vertical-align: top;
+    box-sizing: border-box;
   }
-  .score {
-    padding: 4px 0px 4px 8px !important;
-  }
-  .unit {
-    padding: 4px 8px 4px 3px !important;
-    color: rgb(151, 149, 149)
-  }
-
+  
   .name {
     white-space:nowrap;
-    width: 12%;
+    width: 15%;
+    padding-left: 5px !important;
+    @include gradient-horizontal(white, #f2f2f2);
+    text-transform: capitalize;
   }
   .score {
     width: 10%;
@@ -750,26 +748,39 @@ div.overview {
     width: 3%;
   }
   .change {
-    width: 10%;
+    width: 14%;
   }
   .significant {
     width: 8%;
   }
   .top {
-    width: 45%;
+    width: 50%;
   }
   .col-head {
-    font-weight: 300;
-    font-size: 17px;
-    color: #777777;
     border-top: 0;
-    text-align: center;
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    & .name {
+      background: transparent;
+    }
+    @include gradient-vertical(white, #f2f2f2);
+    
+    .name, .score, .change, .significant, .top {
+      border-left: 1px solid white;
+      padding: 6px 8px;
+    }
+    .score {
+      width: 13%;
+      padding-right: 5px;
+    }
   }
   .info {
       text-align:left;
       width: 100%;
       background-color: #d9edf7;
       cursor: pointer;
+      padding:4px 8px 4px 5px;
       span {
         font-size: 16px;
       }
@@ -781,22 +792,114 @@ div.overview {
       }
     }
   .metric {
-    div.mrow:first-child {
-      //border-top: 2px solid white;
-      margin-top: 3px; 
-    }
-    div.mrow:last-child {
-      margin-bottom: .75em;
+    .name, .score, .unit, .change, .significant, .top {
+      padding: 4px 8px;
     }
     .mrow {
       border-bottom: 1px solid #dddddd;
     }
-    
     .mrow.selected {
       background-color: #dff0d8;
     }
+    .name {
+      border-bottom: 1px solid white;
+    }
+    .change, .significant, .top {
+      border-right: 1px solid #ddd;
+    }
+    .change {
+      border-left: 1px solid #ddd;
+    }
+    .score {
+      padding: 4px 2px 4px 8px !important;
+    }
+    .unit {
+      padding: 4px 0px 4px 0px !important;
+      color: rgb(151, 149, 149);
+    }
   }
 }
+
+div.overview-all {
+  .name, .score, .info, .unit, .segment-name {
+    display: inline-block;
+    line-height: 20px;
+    vertical-align: top;
+    display: inline-block;
+    width: 100%;
+    box-sizing:border-box;
+  }
+  
+  .unit{
+    width: 3%;
+  }
+  .segment-name {
+    width: 17%;
+  }
+  .name {
+    width: 15%;
+  }
+  .score {
+    width: 14%;
+  }
+  
+  .col-head {
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    @include gradient-vertical(white, #f2f2f2);
+    .name, .score, .info, .unit, .segment-name {
+      padding: 6px 8px 6px 8px;
+    }
+    .segment-name {
+      text-align: right;
+      border-left: 1px solid white;
+      text-transform: capitalize;
+    }
+  }
+  .info {
+    text-align:left;
+    background-color: #d9edf7;
+    width: 100%;
+    span {
+      font-size: 16px;
+    }
+    padding: 4px 6px 4px 6px;
+  }
+  .metric {
+    .mrow {
+      border-bottom: 1px solid #dddddd;
+    }
+    .mrow.selected {
+      background-color: #dff0d8;
+    }
+    .name, .score, .info, .unit, .segment-name {
+      padding: 4px 6px 4px 6px;
+    }
+    .score {
+      padding: 4px 2px 4px 6px;
+    }
+    .unit {
+      padding: 4px 0px 4px 0px;
+      color: #81a2b3;
+      border-right: 1px solid #ddd;
+    }
+    .name {
+      white-space:nowrap;
+      @include gradient-horizontal(white, #f2f2f2);
+      border-bottom:1px solid white;
+      color: #777777;
+      text-transform: capitalize;
+    }
+    .score {
+      text-align: right;
+      a {
+        color: #007796;
+      }
+    }
+  }
+}
+
 .metric-change {
   padding-right: 5px;
 }

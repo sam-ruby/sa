@@ -5,8 +5,7 @@
   .col-head
     .name Metric
     .score.numerical-col Score
-    .unit
-    .change.text-col
+    .change.numerical-col
       |Change
       if segment && segment.match(/trend_\d+/)
         span(style='font-size:14px')
@@ -85,7 +84,7 @@
               else
                 = numFormatter.fromRaw(metric.change)
                 |%
-                span(style='padding-right: 20%;')
+                span
                   i(class=arrow_classes)
           .significant
             if metric.confidence == true

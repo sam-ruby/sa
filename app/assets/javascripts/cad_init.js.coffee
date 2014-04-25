@@ -42,6 +42,9 @@ $ ->
     upTrendingView = new Searchad.Views.UpTrending.IndexView(
       el: '#search-sub-tasks .search-content')
     
+    overallMetricsView = new Searchad.Views.OverallMetrics(
+      el: '#overall-metrics')
+    
     summaryMetricsView = new Searchad.Views.SummaryMetrics(
       el: '#summary-metrics')
   

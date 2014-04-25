@@ -28,8 +28,10 @@
     = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
 
 #summary-metric-car.carousel.slide{'data-interval' => 'false'}
-  .carousel-inner
-    #summary-metrics.talign-center.active.item
+  .carousel-inner{style: 'height: 900px;'}
+    #overall-metrics.active.item
+      = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+    #summary-metrics.item
       = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
     .item{style: 'height: 900px'}
       #metric
