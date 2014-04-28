@@ -48,7 +48,7 @@ $ ->
     summaryMetricsView = new Searchad.Views.SummaryMetrics(
       el: '#summary-metrics')
   
-    oNdcgWinnersView = new Searchad.Views.ONdcg5(
+    oNdcg_5_WinnersView = new Searchad.Views.ONdcg5(
       el: '#winners')
     
     oMpr_5_WinnersView = new Searchad.Views.OMpr5(
@@ -60,8 +60,32 @@ $ ->
     oRecall_5_WinnersView = new Searchad.Views.ORec5(
       el: '#winners')
     
-    convCorWinnersView = new Searchad.Views.ConvCorrelation.Winners(
+    oNdcg_1_WinnersView = new Searchad.Views.ONdcg1(
       el: '#winners')
+    
+    oMpr_1_WinnersView = new Searchad.Views.OMpr1(
+      el: '#winners')
+ 
+    oPrec_1_WinnersView = new Searchad.Views.OPrec1(
+      el: '#winners')
+    
+    oRecall_1_WinnersView = new Searchad.Views.ORec1(
+      el: '#winners')
+
+    oNdcg_16_WinnersView = new Searchad.Views.ONdcg16(
+      el: '#winners')
+    
+    oMpr_16_WinnersView = new Searchad.Views.OMpr16(
+      el: '#winners')
+ 
+    oPrec_16_WinnersView = new Searchad.Views.OPrec16(
+      el: '#winners')
+    
+    oRecall_16_WinnersView = new Searchad.Views.ORec16(
+      el: '#winners')
+
+    #convCorWinnersView = new Searchad.Views.ConvCorrelation.Winners(
+    # el: '#winners')
    
     trafficWinnersView = new Searchad.Views.Traffic.Winners(
       el: '#winners')

@@ -83,11 +83,54 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
-    'relevance conversion correlation':
-      name: 'Rel Conv Correlation'
-      id: 'conv_cor'
+    orders_ndcg_1:
+      name: 'Orders NDCG@1'
+      id: 'o_ndcg_1'
       cat: 'rel_eval'
       unit: 'score'
+      mark_worst: 'min'
+    orders_mpr_1:
+      name: 'Orders MPR@1'
+      id: 'o_mpr_1'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+    orders_precision_1:
+      name: 'Orders Precision@1'
+      id: 'o_prec_1'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+    orders_recall_1:
+      name: 'Orders Recall@1'
+      id: 'o_recall_1'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+    orders_ndcg_16:
+      name: 'Orders NDCG@16'
+      id: 'o_ndcg_16'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+    orders_mpr_16:
+      name: 'Orders MPR@16'
+      id: 'o_mpr_16'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+    orders_precision_16:
+      name: 'Orders Precision@16'
+      id: 'o_prec_16'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+    orders_recall_16:
+      name: 'Orders Recall@16'
+      id: 'o_recall_16'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
     CAF:
       name: 'Clicks on First Item'
       id: 'clicks_f_item'

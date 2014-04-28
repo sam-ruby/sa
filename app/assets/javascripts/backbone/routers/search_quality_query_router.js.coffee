@@ -74,7 +74,6 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       @metrics_changed = true
       @controller.set_metrics_name(path.page)
 
-    filter.date ||= '3-19-2014'
     @set_date_info(filter)
     @path = path
     @filter = filter

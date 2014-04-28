@@ -26,4 +26,8 @@ class SummaryMetrics < BaseModel
       metrics_name: metrics_name,
       segmentation: query_segment, cat_id: cat_id).order(:data_date)
   end
+  
+  def self.get_max_min_dates
+    select(%q{max(data_date) as max_date, min(data_date) as min_date})
+  end
 end
