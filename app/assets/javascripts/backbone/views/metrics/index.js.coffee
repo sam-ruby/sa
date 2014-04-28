@@ -108,6 +108,10 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
   toggle_tab: (e) =>
     $(e.target).parents('ul').find('li.active').removeClass('active')
     $(e.target).parents('li').addClass('active')
+    if @$el.find('thead th.descending').length > 0
+      @$el.find('thead th.descending').removeClass('descending').addClass('ascending')
+    else
+      @$el.find('thead th.ascending').removeClass('ascending').addClass('descending')
 
   prepare_for_render: =>
     @$el.find('.ajax-loader').css('display', 'inline-block')

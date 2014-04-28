@@ -113,14 +113,14 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
         name: 'General'
         class: 'general'
         metrics: general_metrics
-      user_engage_metrics:
-        name: 'User Engagement Metrics'
-        class: 'user_eng'
-        metrics: user_eng_metrics
       correl_metrics:
         name: 'Relevance Evaluation Metrics'
         class: 'rel_eval'
         metrics: correl_metrics
+      user_engage_metrics:
+        name: 'User Engagement Metrics'
+        class: 'user_eng'
+        metrics: user_eng_metrics
 
     @$el.append(@overall_template(
       metrics: overall_metrics

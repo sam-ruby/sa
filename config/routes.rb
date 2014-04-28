@@ -70,6 +70,7 @@ Searchad::Application.routes.draw do
     :to => 'poor_performing', :via => [:get, :post]  
   
   get 'ndcg(/:action(.:format))', :to=>'ndcg'
+  get 'o_ndcg(/:action(.:format))', :to=>'o_ndcg'
   get 'conv_cor(/:action(.:format))', :to=>'conv_cor'
   get 'traffic(/:action(.:format))', :to=>'traffic'
   get 'pvr(/:action(.:format))', :to=>'pvr'

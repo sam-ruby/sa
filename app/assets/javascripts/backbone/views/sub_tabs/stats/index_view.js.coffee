@@ -23,6 +23,8 @@ class Searchad.Views.SubTabs.Stats.IndexView extends Backbone.View
     name: 'revenue'}]
 
   initChart: (query, series) ->
+    if query.length > 15
+      query = query.substring(0, 13) + ' ...'
     @$el.highcharts('StockChart',
       chart:
         alignTicks: false

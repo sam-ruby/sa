@@ -48,79 +48,39 @@ $ ->
     summaryMetricsView = new Searchad.Views.SummaryMetrics(
       el: '#summary-metrics')
   
-    ndcgDistributionView = new Searchad.Views.NDCG.Distribution(
-      el: '#ndcg-distribution')
-
-    ndcgWinnersView = new Searchad.Views.NDCG.Winners(
-      el: '#ndcg .winners')
+    oNdcgWinnersView = new Searchad.Views.ONdcg5(
+      el: '#winners')
+    
+    oMpr_5_WinnersView = new Searchad.Views.OMpr5(
+      el: '#winners')
  
-    convCorDistributionView = new Searchad.Views.ConvCorrelation.Distribution(
-      el: '#metric')
-
+    oPrec_5_WinnersView = new Searchad.Views.OPrec5(
+      el: '#winners')
+    
+    oRecall_5_WinnersView = new Searchad.Views.ORec5(
+      el: '#winners')
+    
     convCorWinnersView = new Searchad.Views.ConvCorrelation.Winners(
       el: '#winners')
    
-    convCorStatsView = new Searchad.Views.ConvCorrelation.Stats(
-      el: '#metric .timeline')
-  
-    trafficDistributionView = new Searchad.Views.Traffic.Distribution(
-      el: '#metric')
-
     trafficWinnersView = new Searchad.Views.Traffic.Winners(
       el: '#winners')
    
-    trafficStatsView = new Searchad.Views.Traffic.Stats(
-      el: '#metric .timeline')
- 
-    pvrDistributionView = new Searchad.Views.Pvr.Distribution(
-      el: '#metric')
-
     pvrWinnerView = new Searchad.Views.Pvr.Winners(
       el: '#winners')
    
-    pvrStatsView = new Searchad.Views.Pvr.Stats(
-      el: '#metric .timeline')
- 
-    atcDistributionView = new Searchad.Views.Atc.Distribution(
-      el: '#metric')
-
     atcWinnerView = new Searchad.Views.Atc.Winners(
       el: '#winners')
    
-    atcStatsView = new Searchad.Views.Atc.Stats(
-      el: '#metric .timeline')
-
-    conversionDistributionView = new Searchad.Views.Conversion.Distribution(
-      el: '#metric')
-
     conversionWinnerView = new Searchad.Views.Conversion.Winners(
       el: '#winners')
    
-    conversionStatsView = new Searchad.Views.Conversion.Stats(
-      el: '#metric .timeline')
-
-    revenueDistributionView = new Searchad.Views.Revenue.Distribution(
-      el: '#metric')
-
     revenueWinnerView = new Searchad.Views.Revenue.Winners(
       el: '#winners')
    
-    revenueStatsView = new Searchad.Views.Revenue.Stats(
-      el: '#metric .timeline')
-      
-    oosDistributionView = new Searchad.Views.Oos.Distribution(
-      el: '#metric')
-
     oosWinnerView = new Searchad.Views.Oos.Winners(
       el: '#winners')
    
-    oosStatsView = new Searchad.Views.Oos.Stats(
-      el: '#metric .timeline')
-
-
-    ndcgLoosersView = new Searchad.Views.NDCG.Loosers(
-      el: '#ndcg .loosers')
-    
     searchKPI = new Searchad.Views.SearchKPI.IndexView(
       el: '#search-kpi'
       paid_dom_selector: '.hcharts-paid'

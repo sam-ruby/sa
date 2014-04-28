@@ -8,7 +8,7 @@ class Searchad.Collections.ConvCorrelation extends Backbone.PageableCollection
     super(options)
 
   state:
-    pageSize: 10
+    pageSize:20
 
   queryParams:
     currentPage: 'page'

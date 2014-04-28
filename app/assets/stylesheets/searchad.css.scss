@@ -684,10 +684,6 @@ div.highcharts-container {
   margin-right: auto;
   margin-left: auto;
 }
-div.winners, div.loosers, div.timeline, div.hcharts {
-  position: relative;
-  text-align: center;
-}
 tr.metrics-col-head {
   font-size: 90%;
   td {
@@ -897,9 +893,7 @@ div.overview-all {
     }
     .score {
       text-align: right;
-      a {
-        color: #007796;
-      }
+      color: #007796;
     }
   }
 }

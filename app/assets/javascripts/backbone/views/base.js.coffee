@@ -11,6 +11,13 @@ class Searchad.Views.Base extends Backbone.View
         @direction('descending')
         @$el.css('text-align', 'right')
 
+    class @AscHeaderCell extends Backgrid.HeaderCell
+      initialize: (options) ->
+        super(options)
+        @direction('ascending')
+        @$el.css('text-align', 'right')
+
+
     class @NumericHeaderCell extends Backgrid.HeaderCell
       initialize: (options) ->
         super(options)

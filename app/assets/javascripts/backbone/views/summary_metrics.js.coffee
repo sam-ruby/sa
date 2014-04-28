@@ -29,6 +29,18 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       cat: 'general'
       unit: 'percentage'
       mark_worst: 'min'
+    pvr:
+      name: 'Product View Rate'
+      id: 'pvr'
+      cat: 'general'
+      unit: 'percentage'
+      mark_worst: 'min'
+    atc:
+      name: 'Add To Cart Rate'
+      id: 'atc'
+      cat: 'general'
+      unit: 'percentage'
+      mark_worst: 'min'
     OOS:
       name: 'Out of Stock Rate'
       id: 'oos'
@@ -42,56 +54,40 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       disabled: true
       unit: 'percentage'
       mark_worst: 'max'
-    pvr:
-      name: 'Product View Rate'
-      id: 'pvr'
-      cat: 'general'
-      unit: 'percentage'
-      mark_worst: 'min'
-    atc:
-      name: 'Add To Cart Rate'
-      id: 'atc'
-      cat: 'general'
-      unit: 'percentage'
-      mark_worst: 'min'
-    orders_ndcg_5:
-      name: 'Orders NDCG@5'
-      id: 'o_ndcg_5'
-      cat: 'rel_eval'
-      disabled: true
-      unit: 'score'
-      mark_worst: 'max'
-    orders_mpr_5:
-      name: 'Orders MPR@5'
-      id: 'o_mpr_5'
-      cat: 'rel_eval'
-      disabled: true
-      unit: 'score'
-      mark_worst: 'max'
-    orders_prc_5:
-      name: 'Orders Precision@5'
-      id: 'o_prec_5'
-      cat: 'rel_eval'
-      disabled: true
-      unit: 'score'
-      mark_worst: 'max'
-    orders_rec_5:
-      name: 'Orders Recall@5'
-      id: 'o_recall_5'
-      cat: 'rel_eval'
-      disabled: true
-      unit: 'score'
-      mark_worst: 'max'
-    'relevance conversion correlation':
-      name: 'Rel Conv Correlation'
-      id: 'conv_cor'
-      cat: 'rel_eval'
-      unit: 'score'
     revenue:
       name: 'Revenue'
       id: 'revenue'
       cat: 'general'
       unit: 'dollar'
+    orders_ndcg_5:
+      name: 'Orders NDCG@5'
+      id: 'o_ndcg_5'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+    orders_mpr_5:
+      name: 'Orders MPR@5'
+      id: 'o_mpr_5'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+    orders_precision_5:
+      name: 'Orders Precision@5'
+      id: 'o_prec_5'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+    orders_recall_5:
+      name: 'Orders Recall@5'
+      id: 'o_recall_5'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+    'relevance conversion correlation':
+      name: 'Rel Conv Correlation'
+      id: 'conv_cor'
+      cat: 'rel_eval'
+      unit: 'score'
     CAF:
       name: 'Clicks on First Item'
       id: 'clicks_f_item'
@@ -284,16 +280,16 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
         class: 'general'
         metrics: (metrics[m_db_id] for m_db_id, metric of @metrics_name \
           when metric.cat == 'general' and metrics[m_db_id]?)
-      user_engage_metrics:
-        name: 'User Engagement Metrics'
-        class: 'user_eng'
-        metrics: (metrics[m_db_id] for m_db_id, metric of @metrics_name \
-          when metric.cat == 'user_eng' and metrics[m_db_id]?)
       correl_metrics:
         name: 'Relevance Evaluation Metrics'
         class: 'rel_eval'
         metrics: (metrics[m_db_id] for m_db_id, metric of @metrics_name \
           when metric.cat == 'rel_eval' and metrics[m_db_id]?)
+      user_engage_metrics:
+        name: 'User Engagement Metrics'
+        class: 'user_eng'
+        metrics: (metrics[m_db_id] for m_db_id, metric of @metrics_name \
+          when metric.cat == 'user_eng' and metrics[m_db_id]?)
           
     @$el.append(@summary_template(
       metrics: overall_metrics

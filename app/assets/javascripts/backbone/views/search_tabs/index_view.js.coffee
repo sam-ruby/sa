@@ -57,7 +57,6 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
           bc_paths.push(name: 'Overview of Metrics', href: overview_link)
           bc_paths.push(name: segment_name, active: true)
     
-        console.log 'Each bc paths ', bc_paths
         if bc_paths.length > 0
           $(document).find('#cad-breadcrumb').append(
             JST['backbone/templates/search_bc'](bc_paths: bc_paths) )
