@@ -5,15 +5,15 @@
     .name Metric
     .score.numerical-col Score
     .change.numerical-col
-      |Change
       if segment && segment.match(/trend_\d+/)
         span(style='font-size:14px')
-          |in 1 day
+          |1 day
       else
         span(style='font-size:14px')
-          |in 7 days
+          |7 day
+      |&nbsp;Chg
 
-    .significant Significant 
+    .significant Sign.
     .top Top Opportunities
   each metric_cat in metrics
     if metric_cat.metrics.length == 0
@@ -86,12 +86,17 @@
               span.na-query
                 |N/A
             else if metric.queries && metric.queries.match(/\w+/)
+              if metric.orig_queries
+                - orig_queries = metric.orig_queries.split(',')
+              else
+                - orig_queries = metric.queries.split(',')
               each query, index in metric.queries.split(',')
+                - orig_query = orig_queries[index]
                 if index == 0
-                  a(href='#')= query
+                  a(href=orig_query)= query
                 else
                   |,&nbsp;
-                  a(href='#')
+                  a(href=orig_query)
                     = query
-              a(href="#")
+              a(href="more...")
                 |&nbsp;...

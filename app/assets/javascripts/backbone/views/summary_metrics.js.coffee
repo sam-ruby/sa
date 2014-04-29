@@ -51,7 +51,6 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       name: 'Page 1 OOS Rate'
       id: 'p1_oos'
       cat: 'general'
-      disabled: true
       unit: 'percentage'
       mark_worst: 'max'
     revenue:
@@ -251,7 +250,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
           $(e.target).parents('.mrow').addClass('selected')
           that.navigate(metric_id)
           
-      events["click div.#{metric_id} .metric-queries"] = do (
+      events["click div.#{metric_id} .metric-queries a"] = do (
         metric_id, disabled, that) ->
         (e) =>
           e.preventDefault()
@@ -260,10 +259,10 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
             '.mrow.selected').removeClass('selected')
           $(e.target).parents('.mrow').addClass('selected')
           
-          query = encodeURIComponent($(e.target).text())
+          query = encodeURIComponent($(e.target).attr('href'))
           segment = that.router.path.search
           feature = metric_id
-          if query.match(/[\.]{3}/)
+          if query.match(/more[\.]{3}/)
             that.router.update_path(
               "search/#{segment}/page/#{feature}", trigger: true)
           else
@@ -317,6 +316,13 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       segment: segment_cat) )
 
     metrics = @collection.toJSON()[0]
+    for m_db_id, metric of metrics when metric.queries? and metric.queries.length > 105
+      metric.orig_queries = metric.queries
+      while metric.queries.length > 105
+        for query in metric.queries.split(',')
+          if query.length > 21
+            metric.queries = metric.queries.replace(query, query.substr(0,19) + '..')
+
     overall_metrics =
       general:
         name: 'General'

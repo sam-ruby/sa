@@ -742,19 +742,19 @@ div.overview {
     text-transform: capitalize;
   }
   .score {
-    width: 10%;
+    width: 7%;
   }
   .unit{
-    width: 3%;
+    width: 2%;
   }
   .change {
-    width: 14%;
+    width: 9%;
   }
   .significant {
-    width: 8%;
+    width: 4%;
   }
   .top {
-    width: 50%;
+    width: 63%;
   }
   .col-head {
     border-top: 0;
@@ -771,8 +771,11 @@ div.overview {
       padding: 6px 8px;
     }
     .score {
-      width: 13%;
-      padding-right: 5px;
+      width: 9%;
+      padding-right: 2px;
+    }
+    .change {
+      padding-right: 2px;
     }
   }
   .info {
@@ -809,12 +812,13 @@ div.overview {
     }
     .change {
       border-left: 1px solid #ddd;
+      padding: 4px 4px 4px 0;
     }
     .score {
-      padding: 4px 2px 4px 8px !important;
+      padding: 4px 2px 4px 0;
     }
     .unit {
-      padding: 4px 0px 4px 0px !important;
+      padding: 4px 0px 4px 0px;
       color: rgb(151, 149, 149);
     }
   }
@@ -898,9 +902,6 @@ div.overview-all {
   }
 }
 
-.metric-change {
-  padding-right: 5px;
-}
 .winners-grid {
   @extend .backgrid;
   

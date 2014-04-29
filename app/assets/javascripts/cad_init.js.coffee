@@ -105,6 +105,8 @@ $ ->
     oosWinnerView = new Searchad.Views.Oos.Winners(
       el: '#winners')
    
+    p1oosWinnerView = new Searchad.Views.P1Oos.Winners(
+      el: '#winners')
     searchKPI = new Searchad.Views.SearchKPI.IndexView(
       el: '#search-kpi'
       paid_dom_selector: '.hcharts-paid'

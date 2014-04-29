@@ -1,26 +1,5 @@
 class OosController < BaseController
   before_filter :set_common_data
-
-  def get_distribution
-    query_segment = params[:query_segment] || 'TOP QUERIES'  
-    cat_id = params[:cat_id] || 0
-    respond_to do |format|
-      format.json { render :json => Oos.get_distribution(
-        query_segment, cat_id, @date) }
-    end		        
-  end
-  
-  def get_stats
-    cat_id = params[:cat_id] || 0
-    query_segment = params[:query_segment]
-    metrics_name = params[:metrics_name]
-    
-    respond_to do |format|
-      format.json { render :json => SummaryMetrics.get_stats(
-        metrics_name, query_segment, cat_id) }
-    end		        
-  end
-
   def get_trending
     query = params[:query]
     winning = (params[:winning].nil? or params[:winning].empty?) ? true :

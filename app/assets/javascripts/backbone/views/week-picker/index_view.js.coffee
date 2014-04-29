@@ -32,6 +32,7 @@ class Searchad.Views.WeekPicker.IndexView extends Backbone.View
       @$el.datepicker('setStartDate', Min_date)
       @$el.datepicker('setEndDate', Max_date)
       @setDate(@daily_date)
+      @showDateInfo()
   
     @week = filter_params.week if filter_params.week
     @year = filter_params.year if filter_params.year
