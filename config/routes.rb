@@ -84,6 +84,7 @@ Searchad::Application.routes.draw do
   get 'category(/:action(.:format))', :to=>'categories'
   get 'get_daily_change', :to=>'summary_metrics#get_daily_change'
   get 'get_overall_change', :to=>'summary_metrics#get_overall_change'
+  get 'signal_comparison(/:action)', :to =>'signal_comparison'
 
   match 'search_kpi(/:action(.:format))',
     :to => 'search_k_p_i', :via => [:get, :post]  

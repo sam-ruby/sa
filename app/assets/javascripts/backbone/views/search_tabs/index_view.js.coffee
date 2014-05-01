@@ -43,7 +43,16 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
         segment_overview_link = "search/#{segment_path}/page/overview"
         metric_link = "search/#{segment_path}/page/#{metric_id}"
         
-        if metric_id? and path.details? and path.query?
+        if metric_id? and path.details == 'sig_comp' and path.query? and path.items?
+          query = decodeURIComponent(path.query)
+          query_link = "search/#{segment_path}/page/#{metric_id}/" +
+            "details/1/query/#{path.query}"
+          bc_paths.push(name: 'Overview of Metrics', href: overview_link)
+          bc_paths.push(name: segment_name, href: segment_overview_link)
+          bc_paths.push(name: metric_name,  href: metric_link)
+          bc_paths.push(name: query, href: query_link)
+          bc_paths.push(name: 'Signal Comparison', active: true)
+        else if metric_id? and parseInt(path.details) == 1 and path.query?
           query = decodeURIComponent(path.query)
           bc_paths.push(name: 'Overview of Metrics', href: overview_link)
           bc_paths.push(name: segment_name, href: segment_overview_link)

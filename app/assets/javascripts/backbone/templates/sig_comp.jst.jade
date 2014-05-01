@@ -1,0 +1,47 @@
+- intFormatter = new Backgrid.NumberFormatter({decimals: 4})
+case items.length
+  when 1
+    - item_name_size = 55
+  when 2
+    - item_name_size = 45
+  when 3
+    - item_name_size = 35
+  when 4
+    - item_name_size = 25
+
+- item_width = '' + 80.0/items.length + '%'
+.sig-comp-table
+  .col-head
+    .srow
+      .name &nbsp;
+      each item in items
+        .item(style='width:' + item_width)
+          if !item.image_url
+            .missing-img &nbsp;
+            = item.item_id
+          else
+            a(href='http://www.walmart.com/ip/' + item.item_id, target='_blank')
+              img.item-image(src=item.image_url)
+    .srow.details
+      .name Signal Name
+      each item in items
+        .item(style='width:' + item_width)
+          if item.title && item.title.length > item_name_size
+            - title = item.title.substr(0, item_name_size) + '...'
+          else
+            - title = item.title
+          if title
+            a(href='http://www.walmart.com/ip/' + item.item_id, target='_blank')
+              = title
+
+  .signal-section
+    each signal, signal_id in signals
+      .srow
+        .name= signal.name
+        each item in items
+          .score(style='width:' + item_width)
+            if item.signals_json && item.signals_json[signal_id] && item.signals_json[signal_id].length > 0
+              - score = intFormatter.fromRaw(item.signals_json[signal_id][0])
+            else
+              - score = ''
+            = score

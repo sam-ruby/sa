@@ -725,6 +725,59 @@ tr.selected {
   }
 }
 
+div.sig-comp-table {
+  .name, .item, .score {
+    display: inline-block;
+    line-height: 20px;
+    vertical-align: top;
+    height: 100%;
+    box-sizing: border-box;
+  }
+  .name {
+    width: 20%;
+    text-transform: capitalize;
+  }
+
+  
+  .col-head {
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    & .name {
+      background: transparent;
+      vertical-align: bottom;
+      color: #777777;
+    }
+    
+    .srow.details {
+      @include gradient-vertical(white, #f2f2f2);
+    }
+    .name, .item {
+      padding: 4px 8px;
+    }
+    .item {
+      border-left: 1px solid #ddd;
+    }
+  }
+
+  .signal-section {
+    .srow {
+      border-bottom: 1px solid #dddddd;
+    }
+    .name {
+      @include gradient-horizontal(white, #f2f2f2);
+    }
+    .score {
+      border-right: 1px solid #ddd;
+    }
+    .name, .item, .score {
+      padding: 4px 8px;
+    }
+    .name {
+      border-left: 1px solid #ddd;
+    }
+  }
+}
 div.overview {
   .name, .score, .change, .significant, .top, .info, .unit {
     display: inline-block;
@@ -902,6 +955,16 @@ div.overview-all {
   }
 }
 
+form.walmart-items-form {
+  margin-bottom: 0px;
+  div.control-group {
+    margin-bottom: 5px;
+  }
+  div.items-sig-com {
+    padding-left: 20px;
+  }
+}
+
 .winners-grid {
   @extend .backgrid;
   
@@ -1026,4 +1089,11 @@ div.overview-all {
     text-align: right;
     padding-right: 2px;
   }
+}
+.signal-comp {
+  padding-left: 40px;
+  display: inline-block;
+}
+.sig-comp-msg {
+  display: none;
 }

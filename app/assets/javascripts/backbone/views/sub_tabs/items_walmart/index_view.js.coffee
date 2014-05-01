@@ -26,6 +26,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     @undelegateEvents()
     @active = false
     @data = {}
+    @items = []
 
   form_template: JST['backbone/templates/walmart_item/form']
 
@@ -41,9 +42,17 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
 
      'click #label-popular-items-over-time ':'popular_items_over_time'
      'click #label-top-32-daily':'top_32_daily'
-
+     'click button.do-sig-comp': =>
+       if @items.length == 0
+         @$el.find('span.sig-comp-msg').fadeIn()
+         @$el.find('span.sig-comp-msg').fadeOut(8000)
+       else
+         path = @router.path
+         new_path = "search/#{path.search}/page/#{path.page}/details/sig_comp/query/" + "#{encodeURIComponent(path.query)}/items/#{@items.join(',')}"
+         @router.update_path(new_path, trigger: true)
 
   render:(data)=>
+    @items = []
     @$el.prepend(@form_template())
     walmart = Searchad.UserLatest.SubTab.walmart
     @init_all_date_pickers(walmart.start_date,walmart.end_date )
@@ -194,9 +203,26 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
 
 
   gridColumns: =>
+    view = this
     class ItemCell extends Backgrid.Cell
       item_template:
         JST["backbone/templates/poor_performing/walmart_items/item"]
+      
+      events: =>
+        'click input:checkbox': (e) =>
+          if $(e.target).is(':checked')
+            view.items.push(@model.get('item_id'))
+            if view.items.length == 4
+              view.$el.find('table input:checkbox').not(':checked').attr(
+                'disabled', true)
+          
+          else
+            item_id = @model.get('item_id')
+            if (index = view.items.indexOf(item_id)) > -1
+              view.items.splice(index, 1)
+              
+              if view.items.length < 4
+                view.$el.find('table input:disabled').removeAttr('disabled')
       
       render: =>
         item =
@@ -204,11 +230,39 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
           item_id: @model.get('item_id')
           title: @model.get('title')
         formatted_value = @item_template(item)
-        $(@$el).html(formatted_value)
+        input_box = '<label class="checkbox signal-comp"><input type="checkbox"/></label>'
+        @$el.append(input_box, formatted_value)
+        @delegateEvents()
+        return this
+     
+    class SignalComparisonHeaderCell extends Backgrid.HeaderCell
+      render: =>
+        @$el.html('<button class="btn do-signal-comp" type="button">Compare Signals</button>')
+        @delegateEvents()
         return this
 
-    columns = [{
-    name: 'item_id',
+    class SignalComparisonCell extends Backgrid.Cell
+      events: =>
+        'click input:checkbox': (e) =>
+          if $(e.target).is(':checked')
+            view.items.push(@model.get('item_id'))
+            if view.items.length == 4
+              view.$el.find('table input:checkbox').not(':checked').attr('disabled', true)
+          
+          else
+            item_id = @model.get('item_id')
+            if (index = view.items.indexOf(item_id)) > -1
+              view.items.splice(index, 1)
+              
+              if view.items.length < 4
+                view.$el.find('table input:disabled').removeAttr('disabled')
+      
+      render: =>
+        @$el.html('<label class="checkbox signal-comp"><input type="checkbox"/></label>')
+        @delegateEvents()
+        return this
+
+    columns = [{name: 'item_id',
     label: I18n.t('dashboard2.item'),
     editable: false,
     cell: ItemCell},

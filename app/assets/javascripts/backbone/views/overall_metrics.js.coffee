@@ -9,7 +9,7 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
     super(options)
     
     @overall_template = JST["backbone/templates/overall_segments"]
-    @navBar = JST["backbone/templates/overall_segments_navbar"]
+    @navBar = JST["backbone/templates/mini_navbar"]
     @carousel = @$el.parents('.carousel.slide')
     feature_paths = (
       metric.id for metric_id, metric of Searchad.Views.SummaryMetrics.prototype.metrics_name)
@@ -21,13 +21,16 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
       if @segment == 'overview'
         @carousel.carousel(0)
         @carousel.carousel('pause')
-      else if path? and path.page? and path.page == 'overview'
+      else if path.page? and path.page == 'overview'
         @carousel.carousel(1)
         @carousel.carousel('pause')
-      else if path? and path.details? and path.details == '1'
+      else if path.details? and path.details == '1'
         @carousel.carousel(3)
         @carousel.carousel('pause')
-      else if path? and path.page? and feature_paths.indexOf(path.page) != -1
+      else if path.items? and path.details? and path.details == 'sig_comp'
+        @carousel.carousel(4)
+        @carousel.carousel('pause')
+      else if path.page? and feature_paths.indexOf(path.page) != -1
         @carousel.carousel(2)
         @carousel.carousel('pause')
     )
@@ -49,7 +52,7 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
     @$el.find('.ajax-loader').hide()
     @$el.children().not('.ajax-loader').hide()
     
-    @$el.append( @navBar() )
+    @$el.append( @navBar(title: 'Metrics Overview') )
     
     metrics = @collection.toJSON()
     metric_segment = {}

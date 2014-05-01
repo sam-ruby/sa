@@ -10,21 +10,22 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     @controller.bind('search:sub-content:hide-spin', @hide_spin)
     
     @listenTo(@router, 'route:search', (path, filter) =>
-      if path? and path.details? and path.query?
-        query = path.query
-        if path.search? and (match = path.search.match(/drop_con_(\d+)/))
-          weeks_apart = match[1]
-        feature = path.page
-        
-        show_series = ['query_count', 'query_con']
-        if feature == 'pvr'
-          show_series.push('query_pvr')
-        else if feature == 'atc'
-          show_series.push('query_atc')
-        @render(
-          query: query
-          weeks_apart: weeks_apart
-          show_only_series: show_series)
+      if parseInt(path.details) == 1 and path.query?
+        if @router.date_changed or @router.cat_changed or !@active or @router.query_segment_changed or path.query != @query
+          @query = path.query
+          if path.search? and (match = path.search.match(/drop_con_(\d+)/))
+            weeks_apart = match[1]
+          feature = path.page
+          
+          show_series = ['query_count', 'query_con']
+          if feature == 'pvr'
+            show_series.push('query_pvr')
+          else if feature == 'atc'
+            show_series.push('query_atc')
+          @render(
+            query: @query
+            weeks_apart: weeks_apart
+            show_only_series: show_series)
     )
      
     @active = false

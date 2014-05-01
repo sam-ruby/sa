@@ -107,6 +107,10 @@ $ ->
    
     p1oosWinnerView = new Searchad.Views.P1Oos.Winners(
       el: '#winners')
+
+    sigCompView = new Searchad.Views.SignalComparison(
+      el: '#sig-comp')
+
     searchKPI = new Searchad.Views.SearchKPI.IndexView(
       el: '#search-kpi'
       paid_dom_selector: '.hcharts-paid'
