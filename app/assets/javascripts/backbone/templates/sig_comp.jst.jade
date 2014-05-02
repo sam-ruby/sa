@@ -1,11 +1,11 @@
 - intFormatter = new Backgrid.NumberFormatter({decimals: 4})
 case items.length
   when 1
-    - item_name_size = 55
+    - item_name_size = 40
   when 2
-    - item_name_size = 45
-  when 3
     - item_name_size = 35
+  when 3
+    - item_name_size = 30
   when 4
     - item_name_size = 25
 
@@ -15,7 +15,7 @@ case items.length
     .srow
       .name &nbsp;
       each item in items
-        .item(style='width:' + item_width)
+        .item.numerical-col(style='width:' + item_width)
           if !item.image_url
             .missing-img &nbsp;
             = item.item_id
@@ -25,7 +25,7 @@ case items.length
     .srow.details
       .name Signal Name
       each item in items
-        .item(style='width:' + item_width)
+        .item.numerical-col(style='width:' + item_width)
           if item.title && item.title.length > item_name_size
             - title = item.title.substr(0, item_name_size) + '...'
           else
@@ -35,13 +35,22 @@ case items.length
               = title
 
   .signal-section
-    each signal, signal_id in signals
+    each signal in signals
       .srow
         .name= signal.name
         each item in items
-          .score(style='width:' + item_width)
-            if item.signals_json && item.signals_json[signal_id] && item.signals_json[signal_id].length > 0
-              - score = intFormatter.fromRaw(item.signals_json[signal_id][0])
+          - good_score = false
+          .score.numerical-col(style='width:' + item_width)
+            if item.signals_json && item.signals_json[signal.id] && item.signals_json[signal.id].length > 0
+              if item.signals_json[signal.id].indexOf(true) != -1
+                good_score = true
+              - score = intFormatter.fromRaw(item.signals_json[signal.id][0])
             else
               - score = ''
-            = score
+            if good_score
+              i.icon-star &nbsp;
+              span.green-change(style='font-weight: bold')
+                = score
+            else
+              span
+                = score

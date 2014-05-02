@@ -52,30 +52,31 @@ class SearchRelController < BaseController
   def get_items(mode=:json)
     query_str = params[:query]
     view = params[:view]
-    result = []
-    return result unless query_str
     date = @date
-    # query_dates = (date-28.days..date-1.days).to_a.map {|d|
-    #  "'#{d.strftime('%Y-%m-%d')}'"}
 
     query_dates = (date-28.days..date-1.days).to_a
-    results = SearchQualityDaily.get_search_relevance_data_by_word(
+    results = SearchQualityDailyV2.get_search_relevance_data_by_word(
       query_str, date)
     return result if results.empty?
     
-    query_items = results.first['32_query_items'].split(',')[0..15] rescue nil
-    con_ranks = results.first['con_ranks'].split(',') rescue nil
-    top_con_items = results.first['top_con_items'].split(',') rescue nil
-    top_items_con = results.first['top_16_con'].split(',') rescue nil
-    top_items_site_rev = results.first[
-      'top_16_site_revenue'].split(',') rescue nil
-    
-    return result if query_items.nil? or top_con_items.nil?
-   
+    query_items = JSON.parse(results.first['rel_item_rank_json']) rescue nil
+    missed_items = JSON.parse(results.first['ideal_items_not_in_top16_json']) rescue nil
     item_details = {}
-    AllItemAttrs.get_item_details(query_str,
-      (query_items + top_con_items).uniq, query_dates).each do 
-      |item| item_details[item.item_id] = item 
+    
+    query_items.each do |position, details|
+      items_details[details['item_id']] = details
+    end
+
+    missed_items.each do |ideal_rank, details|
+      item_details[details['item_id']] = details
+    end
+
+    AllItemAttrs.get_item_details(
+      query_str, item_ids.uniq, query_dates).each do |item|
+        item_details[item.item_id][:title] = item.title 
+        item_details[item.item_id][:title] = item.title 
+        item_details[item.item_id][:title] = item.title 
+        item_details[item.item_id][:title] = item.title 
     end
 
     index = 1

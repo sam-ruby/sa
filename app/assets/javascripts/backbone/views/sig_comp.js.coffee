@@ -18,15 +18,15 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
     )
   signal_lookup:
     base:
-      name: 'Base'
+      name: 'Text Match'
     ce:
-      name: 'CE'
+      name: 'Click Engagement'
     color_boost:
       name: 'Color Boost'
     di:
       name: 'DI'
     dp:
-      name: 'DP'
+      name: 'Dynamic Popularity'
     hero_item:
       name: 'Hero Item'
     imageless_demotion:
@@ -52,9 +52,55 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
         for signal_id, values of signals_json when !signals[signal_id]?
           signals[signal_id] = @signal_lookup[signal_id]
     , this)
-    console.log 'Singal ', signals
+    
+    signals_sorted = []
+    for signal_id, details of signals
+      max_signal_items = []
+      max_signal_value = 0
+      t_score = 0
+      values = []
+      @collection.each( (e)->
+        if e.get('signals_json')? and e.get('signals_json')[signal_id]?
+          t_score = e.get('signals_json')[signal_id][0]
+          values.push(t_score)
+          signals[signal_id].values = [] unless signals[signal_id].values?
+          signals[signal_id].values.push(t_score)
+          if t_score > max_signal_value
+            max_signal_value = t_score
+            max_signal_items = []
+            max_signal_items.push(e)
+          else if t_score == max_signal_value
+            max_signal_items = []
+
+      )
+      if max_signal_items.length == 1
+        max_signal_items[0].get('signals_json')[signal_id].push(true)
+      avg_value = 0
+      for value in values
+        avg_value = avg_value + value
+      avg_value = avg_value/values.length
+
+      sq_diff = 0
+      for value in values
+        sq_diff = sq_diff + Math.pow(value - avg_value, 2)
+      sq_diff = sq_diff/values.length
+      t_obj =
+        name: details.name
+        id: signal_id
+        value: sq_diff
+      signals_sorted.push(t_obj)
+
+    signals_sorted.sort((a,b) ->
+      if a.value < b.value
+        1
+      else if a.value > b.value
+        -1
+      else
+        0
+    )
     @$el.append( @navBar(title: 'Signal Comparison') )
-    @$el.append(@template(signals: signals, items: @collection.toJSON()))
+    @$el.append(@template(
+      signals: signals_sorted, items: @collection.toJSON()))
 
   renderBarChart: (data, x_title, y_title, chart_title) ->
     return unless @active
