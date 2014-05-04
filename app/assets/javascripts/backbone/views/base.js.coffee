@@ -55,9 +55,12 @@ class Searchad.Views.Base extends Backbone.View
           @$el.html('--')
           return this
         
-        if val > 50
+        if val > 90
           class_name = 'badge-important'
-        el = $("<span class='badge #{class_name}'>#{val.toFixed(2)}%</span>")
+          el = $(
+            "<span class='badge #{class_name}'>#{val.toFixed(2)}%</span>")
+        else
+          el = $("<span>#{val.toFixed(2)}%</span>")
         @$el.append(el)
         this
 

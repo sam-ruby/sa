@@ -57,72 +57,36 @@ class SearchRelController < BaseController
     query_dates = (date-28.days..date-1.days).to_a
     results = SearchQualityDailyV2.get_search_relevance_data_by_word(
       query_str, date)
-    return result if results.empty?
+    return results if results.empty?
+   
+    query_items = results.first['rel_item_rank_json']
+    query_items = JSON.parse(query_items.gsub(/([\w\.]+)/, '"\1"')) rescue nil
+
+    missed_items = results.first['ideal_items_not_in_top16_json']
+    missed_items = JSON.parse(missed_items.gsub(/([\w\.]+)/, '"\1"')) rescue nil
+    return results if query_items.nil? or missed_items.nil?
     
-    query_items = JSON.parse(results.first['rel_item_rank_json']) rescue nil
-    missed_items = JSON.parse(results.first['ideal_items_not_in_top16_json']) rescue nil
     item_details = {}
-    
     query_items.each do |position, details|
-      items_details[details['item_id']] = details
+      details[:position] = position
+      details[:in_top_16] = 1
+      item_details[details['item_id']] = details
     end
 
     missed_items.each do |ideal_rank, details|
+      details[:position] = ideal_rank
+      details[:in_top_16] = 0 
       item_details[details['item_id']] = details
     end
 
     AllItemAttrs.get_item_details(
-      query_str, item_ids.uniq, query_dates).each do |item|
+      query_str, item_details.keys, query_dates).each do |item|
         item_details[item.item_id][:title] = item.title 
-        item_details[item.item_id][:title] = item.title 
-        item_details[item.item_id][:title] = item.title 
-        item_details[item.item_id][:title] = item.title 
-    end
-
-    index = 1
-    query_items.zip(
-      con_ranks, top_con_items, top_items_con, top_items_site_rev) do |items|
-      if item_details[items[0]].nil? 
-        walmart_item = {:item_id => items[0],
-                        :image_url => nil}
-      else
-        walmart_item = item_details[items[0]]
+        item_details[item.item_id][:image_url] = item.image_url
+        item_details[item.item_id][:curr_item_price] = item.curr_item_price
+        item_details[item.item_id][:oos] = item.i_oos
       end
-
-      if item_details[items[2]].nil? 
-        con_item = {:item_id => items[2],
-                    :image_url => nil}
-      else
-        con_item = item_details[items[2]]
-      end
-
-      con_rank = items[1].to_i + 1
-      top_item_con = items[3].to_f
-      w_oos_rate = walmart_item[:i_oos]
-      c_oos_rate = con_item[:i_oos]
-
-      if mode == :json
-        result.push({:position => index,
-                     :walmart_item => walmart_item,
-                     :con_based_item => con_item,
-                     :con => top_item_con,
-                     :w_oos => w_oos_rate, 
-                     :c_oos => c_oos_rate, 
-                     :con_rank => con_rank})
-      else
-        result.push({'Position' => index,
-                     'Walmart Item Id' => walmart_item[:item_id],
-                     'Walmart Item Title' => walmart_item[:title],
-                     'Con Rank' => con_rank,
-                     'Walmart Item Image URL' => walmart_item[:image_url],
-                     'Con Based Item Id' => con_item[:item_id],
-                     'Con Based Item Title' => con_item[:title],
-                     'Item Image URL' => con_item[:image_url],
-                     'Out of Stock Rate' => walmart_item[:i_oos]})
-      end
-      index += 1
-    end
-    result
+    item_details.keys.map {|key| item_details[key]}
   end
 
   def get_comp_analysis

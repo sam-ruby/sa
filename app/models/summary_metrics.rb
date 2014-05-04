@@ -13,7 +13,8 @@ class SummaryMetrics < BaseModel
   end
   
   def self.get_overall_metrics(cat_id, date)
-    cols = %q{segmentation, metrics_name, value, losers, ucl, lcl, data_date}
+    cols = %q{segmentation, metrics_name, value, losers, ucl, lcl, 
+    significance, data_date}
     where_str = %q{cat_id in (-1, ?) and data_date = ?}
     select(cols).where(
       [where_str, cat_id, date]).order(

@@ -92,7 +92,7 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
         name: 'Trending in 28 days'
       poor_perform:
         id: 'POOR QUERIES IN 30 DAYS'
-        name: '30 day Oppor.'
+        name: '30 day Oppor'
       drop_con_1:
         id: 'DROP_CON_1_WK'
         name: 'Opportunities in 1 Week'
@@ -107,7 +107,7 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
         name: 'Opportunities in 4 Weeks'
       poor_amzn:
         id: 'POOR_QUERIES_AMAZON'
-        name: 'Comptetive Opportunities'
+        name: 'Compt Oppor'
       typical_query:
         id: 'TYPICAL_QUERY'
         name: 'Random Queries'

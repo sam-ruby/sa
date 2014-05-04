@@ -82,7 +82,7 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
 
       sq_diff = 0
       for value in values
-        sq_diff = sq_diff + Math.pow(value - avg_value, 2)
+        sq_diff = sq_diff + Math.pow(value/(avg_value + 0.0001), 2)
       sq_diff = sq_diff/values.length
       t_obj =
         name: details.name

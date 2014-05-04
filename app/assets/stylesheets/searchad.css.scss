@@ -965,6 +965,20 @@ form.walmart-items-form {
   }
 }
 
+.rel-rev-grid {
+  @extend .backgrid;
+  th {
+    border-bottom: 0;
+  }
+  tr.recommended-item {
+    td {
+      border: 0;
+      border: 1px solid #468847;
+      @include gradient-vertical(white, #f2f2f2);
+    }
+  }
+}
+
 .winners-grid {
   @extend .backgrid;
   
@@ -1096,4 +1110,17 @@ form.walmart-items-form {
 }
 .sig-comp-msg {
   display: none;
+}
+
+#search-sub-content {
+  .green-order, .red-order {
+    padding-right: 22px;
+    padding-left: 22px;
+    font-size: inherit;
+  }
+}
+.significance {
+  font-size: 10px;
+  color: #777777;
+  padding-right: 3px;
 }

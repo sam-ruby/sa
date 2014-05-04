@@ -7,6 +7,8 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
   initialize: (options) =>
     _.bindAll(this, 'render', 'initTable')
     @collection = new Searchad.Collections.QueryItemsCollection()
+    @shadowCollection = @collection.clone()
+
     super(options)
     @initTable()
     
@@ -14,17 +16,17 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
       @get_items() if @active)
     @controller.bind('sub-content-cleanup', @unrender)
     @controller.bind('content-cleanup', @unrender)
-    @collection.bind('reset', @render)
+    @collection.bind('reset', @pre_process)
     @collection.bind('request', =>
-      @$el.children().not('.ajax-loader').remove()
       @controller.trigger('search:sub-content:show-spin')
-      @undelegateEvents()
     )
     Utils.InitExportCsv(this, '/search_rel/get_query_items.csv')
     @undelegateEvents()
+    @items = []
     @active = false
 
   events: =>
+    'click input.missed-items': 'p_missed_items'
     'click .export-csv a': (e) ->
       date = @controller.get_filter_params().date
       query = @query.replace(/\s+/g, '_')
@@ -34,47 +36,70 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
         date: date
         query: @query
       @export_csv($(e.target), fileName, data)
+    'click button.do-sig-comp': =>
+       if @items.length == 0
+         @$el.find('span.sig-comp-msg').fadeIn()
+         @$el.find('span.sig-comp-msg').fadeOut(8000)
+       else
+         path = @router.path
+         new_path = "search/#{path.search}/page/#{path.page}/details/sig_comp/query/" + "#{encodeURIComponent(path.query)}/items/#{@items.join(',')}"
+         @router.update_path(new_path, trigger: true)
+
+
+
+  p_missed_items: (e)->
+    if $(e.target).is(':checked')
+      @shadowCollection.reset(@collection.fullCollection.models)
+      @render()
+    else
+      @shadowCollection.reset(@collection.fullCollection.where(in_top_16: 1))
+      @render()
   
   gridColumns: =>
-    set_walmart_item = (view) ->
-      if view.column.get('walmart_detail')
-        view.$el.addClass('walmart-detail')
-      else
-        view.$el.addClass('best-seller-detail')
-
+    view = this
     class ItemCell extends Backgrid.Cell
       item_template:
         JST["backbone/templates/search_quality_query/query_items/item"]
+      events: =>
+        'click input:checkbox': (e) =>
+          if $(e.target).is(':checked')
+            view.items.push(@model.get('item_id'))
+            if view.items.length == 4
+              view.$el.find('table input:checkbox').not(':checked').attr(
+                'disabled', true)
+          else
+            item_id = @model.get('item_id')
+            if (index = view.items.indexOf(item_id)) > -1
+              view.items.splice(index, 1)
+              if view.items.length < 4
+                view.$el.find('table input:disabled').removeAttr('disabled')
       render: =>
-        set_walmart_item(this)
-        item = @model.get(@column.get('name'))
-        formatted_value = @item_template(item)
-        $(@$el).html(formatted_value)
-        unless @column.get('walmart_detail')
-          @$el.addClass('best-seller-detail-first')
+        @$el.empty()
+        formatted_value = @item_template(
+          image_url: @model.get('image_url')
+          item_id: @model.get('item_id')
+          title: @model.get('title'))
+
+        input_box = '<label class="checkbox signal-comp">' +
+          '<input type="checkbox"/></label>'
+        @$el.append(input_box)
+        @$el.append(formatted_value)
+        @delegateEvents()
         this
 
     class MyIntegerCell extends Backgrid.IntegerCell
+      formatter: Utils.CustomNumberFormatterNoDecimals
       render: =>
-        set_walmart_item(this)
-        super()
-        this
-
-    class MyItemCell extends ItemCell
-      render: =>
-        super()
-        @$el.addClass('best-seller-detail-first')
-        this
-    
-    class MyOosCell extends @OosCell
-      render: =>
-        set_walmart_item(this)
-        super()
-        if @column.get('walmart_detail')
-          @$el.addClass('walmart-detail-last')
+        if parseInt(@model.get('in_top_16')) == 1
+          val = @model.get(@column.get('name'))
+          if val > 0
+            @$el.html('<span class="badge badge-success green-order">' +
+              val + '</span>')
+          else
+            @$el.html('<span class="badge badge-warning red-order">' +
+              val + '</span>')
         else
-          @$el.addClass('best-seller-detail-last')
-
+          super()
         this
 
     columns = [{
@@ -83,58 +108,43 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     headerCell: @NumericHeaderCell,
     editable: false,
     sortable: false,
-    walmart_detail: true,
-    cell: MyIntegerCell},
-    {name: 'walmart_item',
-    label: 'Relevance Order',
+    formatter: Utils.CustomNumberFormatterNoDecimals,
+    cell: 'number'},
+    {name: 'item',
+    label: 'Item',
     editable: false,
     sortable: false,
-    walmart_detail: true,
     cell: ItemCell},
-    {name: 'con_rank',
-    label: 'Conv Rank',
-    editable: false,
-    sortable: false,
-    headerCell: @NumericHeaderCell,
-    walmart_detail: true,
-    cell: MyIntegerCell},
-    {name: 'w_oos',
+    {name: 'oos',
     label: 'Out of Stock Rate',
     headerCell: @NumericHeaderCell,
     editable: false,
     walmart_detail: true,
-    cell: MyOosCell},
-    {name: 'con_based_item',
-    label: 'Best Seller Order',
-    editable: false,
-    sortable: false,
-    cell: MyItemCell},
-    {name: 'con',
+    cell: @OosCell},
+    {name: 'orders',
     label: 'Order Count',
     headerCell: @NumericHeaderCell,
     editable: false,
     sortable: false,
     formatter: Utils.CustomNumberFormatterNoDecimals,
-    cell: MyIntegerCell},
-    {name: 'c_oos',
-    label: 'Out of Stock Rate',
-    headerCell: @NumericHeaderCell,
-    editable: false,
-    cell: MyOosCell}
-    ]
-
+    cell: MyIntegerCell}]
     columns
 
   initTable: =>
+    class RecommendedRow extends Backgrid.Row
+      render: =>
+        if @model.get('in_top_16') == 0
+          @$el.addClass('recommended-item')
+        super()
+        this
+    
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
-      collection: @collection
-      className: 'rel-best-seller'
+      collection: @shadowCollection
       emptyText: 'No Data'
+      className: 'rel-rev-grid'
+      row: RecommendedRow
     )
-    @paginator = new Backgrid.Extension.Paginator(
-      collection: @collection)
-  
   get_items: (data) =>
     @active = true
     data || = { }
@@ -151,22 +161,48 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     @controller.trigger('search:sub-content:hide-spin')
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
+
+  pre_process: =>
+    @shadowCollection.reset(@collection.fullCollection.where(in_top_16: 1))
+    @render()
   
   render: =>
     return unless @active
-    return @render_error(@query) if @collection.size() == 0
-    
-    @$el.children().not('.ajax-loader').remove()
+    return @render_error(@query) if @shadowCollection.size() == 0
     @controller.trigger('search:sub-content:hide-spin')
+   
+    item_selection = $('<form class="form-inline item-selection">' +
+      'Select upto 4 items &nbsp;' +
+      '<i class="icon-hand-down">&nbsp;</i> &nbsp;' +
+      '<button class="btn btn-smal do-sig-comp" type="button"> Compare ' +
+      '</button> &nbsp;' +
+      '<span class="label sig-comp-msg label-warning">' +
+      'Select atleast 1 Item to compare</span>')
+
+    filter = $('<label class="show-rec-items checkbox pull-right">' +
+      '<input type="checkbox" class="missed-items"> ' +
+      'Show Recommeded Items</label></form>')
     
-    @$el.append( @grid.render().$el)
-    @$el.append( @paginator.render().$el)
-    @$el.append( @export_csv_button() )
+    if @collection.length == 0
+      @$el.append( @grid.render().$el )
+    else
+      if @$el.find('form.item-selection').length == 0
+        if @collection.fullCollection.where(in_top_16: 0).length > 0
+          item_selection.append(filter)
+        else
+          item_selection.append('</form>')
+        @$el.append(item_selection)
+      
+      @grid.render().$el.insertAfter(item_selection)
+      @$el.append( @export_csv_button() ) if @$el.find(
+        'span.export-csv').length == 0
+
     @delegateEvents()
     this
   
   unrender: =>
     @active = false
     @$el.children().not('.ajax-loader').remove()
+    @items = []
     @controller.trigger('search:sub-content:hide-spin')
     @undelegateEvents()

@@ -45,6 +45,12 @@
                   = 'N/A'
               else if score || score == 0
                 - slink = '#search/' + segment.path + '/page/' + m_obj.id
+                - significance = metric[segment_id].significance
+                if significance
+                  if significance >= 0.99
+                    i.icon-star.significance
+                  else if significance >= .90
+                    i.icon-star-empty.significance
                 != s_formatter({m_obj:m_obj, metric_details:metric[segment_id], slink:slink})
               else
                 |&nbsp;

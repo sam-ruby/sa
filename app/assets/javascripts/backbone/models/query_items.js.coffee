@@ -1,22 +1,4 @@
 class Searchad.Models.QueryItem extends Backbone.Model
-  paramRoot: 'query'
-
-  defaults:
-    position: null
-    walmart_item:
-      item_id: null
-      title: null
-      image_url: null
-      curr_item_price: null
-    con_based_item:
-      item_id: null
-      title: null
-      image_url: null
-      curr_item_price: null
-    revenue: null
-    site_revenue: null
-    con: null
-    con_rank: null
 
 class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollection
   initialize: (options) ->
@@ -40,4 +22,7 @@ class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollect
     @fetch(
       reset: true
       data: data)
-
+  
+  comparator: (a) ->
+    score = parseInt(a.get('in_top_16')) * 100 + parseInt(a.get('position'))
+    score
