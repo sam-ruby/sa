@@ -20,11 +20,17 @@ class ONdcg < BaseModel
       order_limit_str = %Q{ #{order_str} limit #{limit} offset #{offset}}
     end
    
-    cols ||= %q{a.query, SUM(b.uniq_count) c_o_u_n_t,
+    cols ||= %q{a.query, 
+      SUM(b.uniq_count) c_o_u_n_t,
       SUM(b.uniq_con)/SUM(b.uniq_count)*100 c_o_n, 
       SUM(b.uniq_pvr)/SUM(b.uniq_count)*100 p_v_r, 
-      SUM(b.uniq_atc)/SUM(b.uniq_count)*100 a_t_c, 
-      a.metric_value, (SUM(b.uniq_count)+0.001)/(a.metric_value+0.001) score}
+      SUM(b.uniq_atc)/SUM(b.uniq_count)*100 a_t_c,
+      if(a.metric_value<0.1 and sum(b.uniq_count)>1000,
+      sum(b.uniq_count)/(a.metric_value+0.01),
+      if(sum(b.uniq_count)<500,
+      sum(b.uniq_count)*(1-a.metric_value)*0.1,
+      sum(b.uniq_count)*(1-a.metric_value))) score,
+      a.metric_value}
 
     join_str = %q{as a INNER JOIN query_cat_metrics_daily b ON
       (a.data_date = b.data_date and a.query = b.query) 
