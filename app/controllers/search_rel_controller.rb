@@ -59,11 +59,9 @@ class SearchRelController < BaseController
       query_str, date)
     return results if results.empty?
    
-    query_items = results.first['rel_item_rank_json']
-    query_items = JSON.parse(query_items.gsub(/([\w\.]+)/, '"\1"')) rescue nil
-
-    missed_items = results.first['ideal_items_not_in_top16_json']
-    missed_items = JSON.parse(missed_items.gsub(/([\w\.]+)/, '"\1"')) rescue nil
+    query_items = JSON.parse(results.first['rel_item_rank_json']) rescue nil
+    missed_items = JSON.parse(
+      results.first['ideal_items_not_in_top16_json']) rescue nil
     return results if query_items.nil? or missed_items.nil?
     
     item_details = {}
@@ -73,18 +71,21 @@ class SearchRelController < BaseController
       item_details[details['item_id']] = details
     end
 
+    top_5_missed_index = 0
     missed_items.each do |ideal_rank, details|
+      break if top_5_missed_index > 4
       details[:position] = ideal_rank
       details[:in_top_16] = 0 
       item_details[details['item_id']] = details
+      top_5_missed_index += 1
     end
 
     AllItemAttrs.get_item_details(
       query_str, item_details.keys, query_dates).each do |item|
-        item_details[item.item_id][:title] = item.title 
-        item_details[item.item_id][:image_url] = item.image_url
-        item_details[item.item_id][:curr_item_price] = item.curr_item_price
-        item_details[item.item_id][:oos] = item.i_oos
+        item_details[item.item_id.to_i][:title] = item.title 
+        item_details[item.item_id.to_i][:image_url] = item.image_url
+        item_details[item.item_id.to_i][:curr_item_price] = item.curr_item_price
+        item_details[item.item_id.to_i][:oos] = item.i_oos
       end
     item_details.keys.map {|key| item_details[key]}
   end

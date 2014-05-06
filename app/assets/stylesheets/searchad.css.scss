@@ -738,43 +738,53 @@ div.sig-comp-table {
     text-transform: capitalize;
   }
 
-  
   .col-head {
     border-top: 1px solid #ddd;
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
+    .name, .item {
+      padding: 4px 8px;
+      height: 207px
+    }
     & .name {
       background: transparent;
       vertical-align: bottom;
       color: #777777;
+      padding-top: 110px;
     }
-    
-    .srow.details {
-      @include gradient-vertical(white, #f2f2f2);
-    }
-    .name, .item {
-      padding: 4px 8px;
+    .title {
+      height: 40px;
+      overflow: hidden;
     }
     .item {
       border-left: 1px solid #ddd;
+    }
+    .srow {
+      border-left: 1px solid #ddd;
+      border-right: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+    }
+    table {
+      margin-top: 10px;
+      @include gradient-vertical(white, #f2f2f2);
+      td {
+        width: 50%;
+      }
     }
   }
 
   .signal-section {
     .srow {
       border-bottom: 1px solid #dddddd;
+      border-left: 1px solid #ddd;
+      border-right: 1px solid #ddd;
     }
     .name {
       @include gradient-horizontal(white, #f2f2f2);
     }
     .score {
-      border-right: 1px solid #ddd;
+      border-left: 1px solid #ddd;
     }
     .name, .item, .score {
       padding: 4px 8px;
-    }
-    .name {
-      border-left: 1px solid #ddd;
     }
   }
 }
@@ -976,6 +986,9 @@ form.walmart-items-form {
       border: 1px solid #468847;
       @include gradient-vertical(white, #f2f2f2);
     }
+  }
+  td.recom-item-position {
+    width: 13%;
   }
 }
 

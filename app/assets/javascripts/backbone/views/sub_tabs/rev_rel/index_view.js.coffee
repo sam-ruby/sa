@@ -48,10 +48,16 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
 
 
   p_missed_items: (e)->
+    view = this
     if $(e.target).is(':checked')
       @shadowCollection.reset(@collection.fullCollection.models)
       @render()
     else
+      @collection.fullCollection.where(in_top_16: 0).forEach((model) ->
+        item_id = model.get('item_id')
+        if (index = view.items.indexOf(item_id)) > -1
+          view.items.splice(index, 1)
+      )
       @shadowCollection.reset(@collection.fullCollection.where(in_top_16: 1))
       @render()
   
@@ -64,7 +70,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
         'click input:checkbox': (e) =>
           if $(e.target).is(':checked')
             view.items.push(@model.get('item_id'))
-            if view.items.length == 4
+            if view.items.length >= 4
               view.$el.find('table input:checkbox').not(':checked').attr(
                 'disabled', true)
           else
@@ -80,8 +86,13 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
           item_id: @model.get('item_id')
           title: @model.get('title'))
 
-        input_box = '<label class="checkbox signal-comp">' +
-          '<input type="checkbox"/></label>'
+        input_box = $('<label class="checkbox signal-comp">' +
+          '<input type="checkbox"/></label>')
+        if @model.get('item_id') in view.items
+          input_box.find('input').attr('checked', true)
+        else if view.items.length >= 4
+          input_box.find('input').attr('disabled', true)
+        
         @$el.append(input_box)
         @$el.append(formatted_value)
         @delegateEvents()
@@ -102,14 +113,23 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
           super()
         this
 
+    class MyPosition extends Backgrid.NumberCell
+      render: =>
+        @$el.addClass('recom-item-position')
+        if @model.get('in_top_16') == 1
+          super()
+          this
+        else
+          @$el.html('<span class="label label-info">Recommended Item</span>')
+          this
+    
     columns = [{
     name: 'position',
     label: 'Position',
     headerCell: @NumericHeaderCell,
     editable: false,
-    sortable: false,
     formatter: Utils.CustomNumberFormatterNoDecimals,
-    cell: 'number'},
+    cell: MyPosition},
     {name: 'item',
     label: 'Item',
     editable: false,
@@ -125,7 +145,6 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     label: 'Order Count',
     headerCell: @NumericHeaderCell,
     editable: false,
-    sortable: false,
     formatter: Utils.CustomNumberFormatterNoDecimals,
     cell: MyIntegerCell}]
     columns

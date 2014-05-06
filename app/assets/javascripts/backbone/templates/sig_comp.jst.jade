@@ -1,38 +1,36 @@
 - intFormatter = new Backgrid.NumberFormatter({decimals: 4})
-case items.length
-  when 1
-    - item_name_size = 40
-  when 2
-    - item_name_size = 35
-  when 3
-    - item_name_size = 30
-  when 4
-    - item_name_size = 25
-
 - item_width = '' + 80.0/items.length + '%'
 .sig-comp-table
   .col-head
     .srow
-      .name &nbsp;
+      .name Signal Name
       each item in items
-        .item.numerical-col(style='width:' + item_width)
+        .item(style='width:' + item_width)
           if !item.image_url
             .missing-img &nbsp;
             = item.item_id
           else
             a(href='http://www.walmart.com/ip/' + item.item_id, target='_blank')
               img.item-image(src=item.image_url)
-    .srow.details
-      .name Signal Name
-      each item in items
-        .item.numerical-col(style='width:' + item_width)
-          if item.title && item.title.length > item_name_size
-            - title = item.title.substr(0, item_name_size) + '...'
-          else
-            - title = item.title
-          if title
-            a(href='http://www.walmart.com/ip/' + item.item_id, target='_blank')
-              = title
+              br
+              .title= item.title
+          table.table.table-condensed
+            tr
+              td Position
+              td
+                if item.in_top_16 == 0 && item.position
+                  span.label.label-info Recommended
+                else if item.position
+                  = item.position 
+                else
+                 | N/A
+            tr
+              td Orders
+              td
+                if item.order
+                  = item.orders
+                else
+                  | N/A
 
   .signal-section
     each signal in signals
