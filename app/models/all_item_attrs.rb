@@ -31,7 +31,7 @@ class AllItemAttrs < BaseModel
      select 
      a.item_id, a.image_url, a.curr_item_price, a.title,
      b.uniq_count shown_count, b.i_con, b.i_oos, b.i_atc, b.i_pvr
-     from (
+     from 
      (select item_id, image_url, curr_item_price, title from `all_item_attrs` 
      where item_id in (?))a
      LEFT OUTER JOIN 
@@ -44,10 +44,9 @@ class AllItemAttrs < BaseModel
      query = ? and data_date = ?  AND channel in 
      ("ORGANIC_USER", 'ORGANIC_AUTO_COMPLETE')  AND 
      page_type = 'SEARCH' group by item_id) b
-     on a.item_id = b.item_id
-     )}
+     on a.item_id = b.item_id order by Field(a.item_id, ?)}
 
      find_by_sql(
-       [sql_statement, items, items, query, query_date])
+       [sql_statement, items, items, query, query_date, items])
   end
 end

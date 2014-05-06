@@ -1,25 +1,25 @@
-form.form-horizontal.walmart-items-form
-  .control-group
-    .pull-left.items-sig-com
-      span
-        i.icon-hand-down
-        |i&nbsp; Select upto 4 items &nbsp;
-        button.btn.btn-small.do-sig-comp(type='button') Compare
-        |&nbsp;
-      span.label.sig-comp-msg.label-warning Select atleast 1 Item to compare
-    .pull-right
-      input.input-small.start-date.datepicker(type='text', 'data-date-format'='M d, yyyy',
-        'data-date-autoclose'='true')
-      | &nbsp;
-      | to
-      | &nbsp;
-      input.input-small.end-date.datepicker(type='text', 'data-date-format'='M d, yyyy',
-        'data-date-autoclose'='true')
-      | &nbsp;
-      | &nbsp;
-      span.label.label-info.white-label-btn#label-popular-items-over-time 
-        a Update
-      | &nbsp;
-      | &nbsp;
-      span.label.label-info.white-label-btn#label-top-32-daily 
-       a Reset to Daily
+form.form-inline.walmart-items-form
+  i.icon-hand-down
+  |i&nbsp; Select upto 4 items &nbsp;
+  button.btn.btn-small.do-sig-comp(type='button') Compare Signals
+  |&nbsp;
+  a.item-uncheck(href="Uncheck All") Uncheck All
+  |&nbsp;
+  span.label.sig-comp-msg.label-warning Select atleast 1 Item to compare
+
+  .pull-right
+    input.input-small.start-date.datepicker(type='text', 'data-date-format'='M d, yyyy',
+      'data-date-autoclose'='true')
+    | &nbsp;
+    | to
+    | &nbsp;
+    input.input-small.end-date.datepicker(type='text', 'data-date-format'='M d, yyyy',
+      'data-date-autoclose'='true')
+    | &nbsp;
+    | &nbsp;
+    span.label.label-info.white-label-btn#label-popular-items-over-time 
+      a Update
+    | &nbsp;
+    | &nbsp;
+    span.label.label-info.white-label-btn#label-top-32-daily 
+     a Reset to Daily

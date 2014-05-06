@@ -66,7 +66,7 @@ a.subcat:hover {
 }
 .export-csv {
   padding: .5em;
-  margin-top: -2.5em;
+  margin-top: 10px;
   cursor: pointer;
   a {
     color: white;
@@ -965,16 +965,6 @@ div.overview-all {
   }
 }
 
-form.walmart-items-form {
-  margin-bottom: 0px;
-  div.control-group {
-    margin-bottom: 5px;
-  }
-  div.items-sig-com {
-    padding-left: 20px;
-  }
-}
-
 .rel-rev-grid {
   @extend .backgrid;
   th {
@@ -983,7 +973,7 @@ form.walmart-items-form {
   tr.recommended-item {
     td {
       border: 0;
-      border: 1px solid #468847;
+      border: 1px solid #ddd;
       @include gradient-vertical(white, #f2f2f2);
     }
   }
@@ -1136,4 +1126,8 @@ form.walmart-items-form {
   font-size: 10px;
   color: #777777;
   padding-right: 3px;
+}
+
+.backgrid-paginator {
+  margin-bottom: -2em;
 }

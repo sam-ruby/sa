@@ -112,7 +112,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     @$el.find('li.active a').first().click()
   
   show_spin: =>
-    @$el.find('.ajax-loader').css('display', 'inline-block')
+    @$el.find('.ajax-loader').css('display', 'block')
 
   hide_spin: =>
     @$el.find('.ajax-loader').hide()

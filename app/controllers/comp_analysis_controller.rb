@@ -28,7 +28,7 @@ class CompAnalysisController < BaseController
         walmart_items = ItemQueryMetricsDaily.get_walmart_items_over_time(
           query, start_date, end_date)
       else
-        walmart_items = SearchQualityDaily.get_walmart_items_daily(query, @date)
+        walmart_items = SearchQualityDailyV2.get_walmart_items_daily(query, @date)
       end
       format.json do 
         render :json => walmart_items

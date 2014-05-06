@@ -10,8 +10,6 @@ class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollect
   filters:
     date: null
 
-  state:
-    pageSize: 8
   mode: 'client'
 
   get_items: (data) =>
@@ -22,7 +20,3 @@ class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollect
     @fetch(
       reset: true
       data: data)
-  
-  comparator: (a) ->
-    score = parseInt(a.get('in_top_16')) * 100 + parseInt(a.get('position'))
-    score

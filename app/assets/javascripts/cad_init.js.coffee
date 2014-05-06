@@ -169,6 +169,7 @@ $ ->
       controller, 'search:rel-rev', (data) ->
         queryItemsView.get_items(data)
     )
+    SearchQualityApp.qv = queryItemsView
 
     #cvr dropped view
     cvrDroppedQueryView = new Searchad.Views.AdhocQuery.cvrDroppedQueryView (

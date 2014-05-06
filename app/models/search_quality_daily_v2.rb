@@ -28,12 +28,14 @@ class SearchQualityDailyV2 < BaseModel
   def self.get_walmart_items_daily(query, query_date)
     results = get_search_relevance_data_by_word(query, query_date)
     return results if results.empty?
-    query_items = results.first['32_query_items'].split(',')
-    results = AllItemAttrs.get_items(query, query_items, query_date)
-    query_items.map {|item_id| results.select do|item|
-      item.item_id == item_id
-    end.first
-    }
+    rel_items = JSON.parse(results.first.rel_item_rank_json) rescue nil
+    if rel_items
+      item_ids = []
+      rel_items.each {|position, obj| item_ids.push obj['item_id'].to_i } 
+      AllItemAttrs.get_items(query, item_ids, query_date)
+    else
+      []
+    end
   end
 
   def self.get_max_min_dates

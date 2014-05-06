@@ -8,7 +8,9 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     _.bindAll(this, 'render', 'initTable')
     @collection = new Searchad.Collections.QueryItemsCollection()
     @shadowCollection = @collection.clone()
-
+    @shadowCollection.bind('reset', @render)
+    @collection.bind('reset', @p_missed_items)
+    
     super(options)
     @initTable()
     
@@ -16,7 +18,6 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
       @get_items() if @active)
     @controller.bind('sub-content-cleanup', @unrender)
     @controller.bind('content-cleanup', @unrender)
-    @collection.bind('reset', @pre_process)
     @collection.bind('request', =>
       @controller.trigger('search:sub-content:show-spin')
     )
@@ -27,6 +28,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
 
   events: =>
     'click input.missed-items': 'p_missed_items'
+    'click a.item-uncheck': 'uncheck_items'
     'click .export-csv a': (e) ->
       date = @controller.get_filter_params().date
       query = @query.replace(/\s+/g, '_')
@@ -46,10 +48,22 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
          @router.update_path(new_path, trigger: true)
 
 
+  uncheck_items: (e)=>
+    e.preventDefault()
+    @$el.find('table td input:checked').attr('checked', false)
+    @items = []
 
-  p_missed_items: (e)->
+  p_missed_items: (e)=>
     view = this
-    if $(e.target).is(':checked')
+    if e?
+      target = $(e.target)
+    else
+      target = @$el.find('input:checkbox.missed-items')
+
+    @$el.find('table thead th.descending').removeClass('descending')
+    @$el.find('table thead th.ascending').removeClass('ascending')
+
+    if target.is(':checked')
       @shadowCollection.reset(@collection.fullCollection.models)
       @render()
     else
@@ -120,8 +134,41 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
           super()
           this
         else
-          @$el.html('<span class="label label-info">Recommended Item</span>')
+          @$el.html('<span class="label label-important">Recommended Item</span>')
           this
+
+    class OrdersHeaderCell extends @NumericHeaderCell
+      events:
+        'click a': 'onClick'
+      
+      onClick: (e)=>
+        e.preventDefault()
+        columnName = this.column.get("name")
+        if (this.column.get("sortable"))
+          if this.direction() == "descending"
+            this.sort(columnName, "ascending", (left, right) ->
+              leftVal = left.get(columnName)
+              rightVal = right.get(columnName)
+              if (leftVal == rightVal)
+                0
+              else if (leftVal > rightVal)
+                -1
+              else
+                1
+            )
+          else if this.direction() == "ascending"
+            @sort(columnName, null)
+          else
+            @sort(columnName, "descending", (left, right)->
+              leftVal = left.get(columnName)
+              rightVal = right.get(columnName)
+              if (leftVal == rightVal)
+                0
+              else if (leftVal < rightVal)
+                -1
+              else
+                1
+            )
     
     columns = [{
     name: 'position',
@@ -135,15 +182,9 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     editable: false,
     sortable: false,
     cell: ItemCell},
-    {name: 'oos',
-    label: 'Out of Stock Rate',
-    headerCell: @NumericHeaderCell,
-    editable: false,
-    walmart_detail: true,
-    cell: @OosCell},
     {name: 'orders',
     label: 'Order Count',
-    headerCell: @NumericHeaderCell,
+    headerCell: OrdersHeaderCell,
     editable: false,
     formatter: Utils.CustomNumberFormatterNoDecimals,
     cell: MyIntegerCell}]
@@ -181,20 +222,17 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
 
-  pre_process: =>
-    @shadowCollection.reset(@collection.fullCollection.where(in_top_16: 1))
-    @render()
-  
   render: =>
     return unless @active
     return @render_error(@query) if @shadowCollection.size() == 0
     @controller.trigger('search:sub-content:hide-spin')
-   
+  
     item_selection = $('<form class="form-inline item-selection">' +
       'Select upto 4 items &nbsp;' +
       '<i class="icon-hand-down">&nbsp;</i> &nbsp;' +
-      '<button class="btn btn-smal do-sig-comp" type="button"> Compare ' +
-      '</button> &nbsp;' +
+      '<button class="btn btn-smal do-sig-comp" type="button"> ' +
+      'Compare Signals</button> &nbsp;' +
+      '<a class="item-uncheck" href="uncheck_items">Uncheck All</a>&nbsp;' +
       '<span class="label sig-comp-msg label-warning">' +
       'Select atleast 1 Item to compare</span>')
 

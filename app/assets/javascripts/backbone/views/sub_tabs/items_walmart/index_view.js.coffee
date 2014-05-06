@@ -39,18 +39,23 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
       else
         fileName = "walmart_search_results_#{query}_#{@data.date}.csv"
       @export_csv($(e.target), fileName, @data)
+    'click a.item-uncheck': 'uncheck_items'
+    'click #label-popular-items-over-time ':'popular_items_over_time'
+    'click #label-top-32-daily':'top_32_daily'
+    'click button.do-sig-comp': =>
+      if @items.length == 0
+        @$el.find('span.sig-comp-msg').fadeIn()
+        @$el.find('span.sig-comp-msg').fadeOut(8000)
+      else
+        path = @router.path
+        new_path = "search/#{path.search}/page/#{path.page}/details/sig_comp/query/" + "#{encodeURIComponent(path.query)}/items/#{@items.join(',')}"
+        @router.update_path(new_path, trigger: true)
 
-     'click #label-popular-items-over-time ':'popular_items_over_time'
-     'click #label-top-32-daily':'top_32_daily'
-     'click button.do-sig-comp': =>
-       if @items.length == 0
-         @$el.find('span.sig-comp-msg').fadeIn()
-         @$el.find('span.sig-comp-msg').fadeOut(8000)
-       else
-         path = @router.path
-         new_path = "search/#{path.search}/page/#{path.page}/details/sig_comp/query/" + "#{encodeURIComponent(path.query)}/items/#{@items.join(',')}"
-         @router.update_path(new_path, trigger: true)
-
+  uncheck_items: (e)=>
+    e.preventDefault()
+    @$el.find('table td input:checked').attr('checked', false)
+    @items = []
+  
   render:(data)=>
     @items = []
     @$el.prepend(@form_template())
@@ -69,7 +74,6 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     $('.walmart-items-form').show()
     return @render_error(@query) if @collection.size() == 0
     @$el.append( @grid.render().$el)
-    @$el.append( @paginator.render().$el)
     @$el.append( @export_csv_button() )
     @delegateEvents()
     return this
@@ -156,9 +160,6 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
       emptyText: 'No Data'
       className: 'walmart-results'
     )
-    @paginator = new Backgrid.Extension.Paginator(
-      collection: @collection)
-    
 
   init_all_date_pickers:(start_date, end_date)  =>
     # available_end_date = available_end_date || @available_end_date
@@ -225,6 +226,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
                 view.$el.find('table input:disabled').removeAttr('disabled')
       
       render: =>
+        @$el.empty()
         item =
           image_url: @model.get('image_url')
           item_id: @model.get('item_id')

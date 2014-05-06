@@ -59,18 +59,12 @@ class SearchRelController < BaseController
       query_str, date)
     return results if results.empty?
    
-    query_items = JSON.parse(results.first['rel_item_rank_json']) rescue nil
     missed_items = JSON.parse(
       results.first['ideal_items_not_in_top16_json']) rescue nil
+    query_items = JSON.parse(results.first['rel_item_rank_json']) rescue nil
     return results if query_items.nil? or missed_items.nil?
     
     item_details = {}
-    query_items.each do |position, details|
-      details[:position] = position
-      details[:in_top_16] = 1
-      item_details[details['item_id']] = details
-    end
-
     top_5_missed_index = 0
     missed_items.each do |ideal_rank, details|
       break if top_5_missed_index > 4
@@ -78,6 +72,11 @@ class SearchRelController < BaseController
       details[:in_top_16] = 0 
       item_details[details['item_id']] = details
       top_5_missed_index += 1
+    end
+    query_items.each do |position, details|
+      details[:position] = position
+      details[:in_top_16] = 1
+      item_details[details['item_id']] = details
     end
 
     AllItemAttrs.get_item_details(
