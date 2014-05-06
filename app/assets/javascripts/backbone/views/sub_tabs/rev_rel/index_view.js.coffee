@@ -240,6 +240,9 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
       '<input type="checkbox" class="missed-items"> ' +
       'Show Recommeded Items</label></form>')
     
+    no_filter = $('<span class="pull-right" style="padding-top:10px;">' +
+      'No Recommeded Items Available!</span></form>')
+    
     if @collection.length == 0
       @$el.append( @grid.render().$el )
     else
@@ -247,7 +250,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
         if @collection.fullCollection.where(in_top_16: 0).length > 0
           item_selection.append(filter)
         else
-          item_selection.append('</form>')
+          item_selection.append(no_filter)
         @$el.append(item_selection)
       
       @grid.render().$el.insertAfter(item_selection)

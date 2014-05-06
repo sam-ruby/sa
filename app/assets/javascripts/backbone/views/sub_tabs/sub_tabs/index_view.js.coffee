@@ -89,23 +89,26 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     
     if not (@$el.find('li.active').length > 0)
       # only show cvr_dropped_item_comparison on certain url specificaly 
+      @$el.find('li.cvr-dropped-item-comparison-tab').hide()
       if @router.path? and @router.path.search?
         segment = @router.path.search
+      if @router.path? and @router.path.page?
+        feature = @router.path.page
 
-      if segment and segment.match(/drop_con/i)
+      if feature and feature.match(/^o_/)
+          tab = @$el.find('li.rev-rel-tab').first()
+          tab.addClass('active')
+      else if segment and segment.match(/drop_con/i)
         tab = @$el.find('li.cvr-dropped-item-comparison-tab')
         tab.show()
         tab.addClass('active')
       else if segment and segment.match(/poor_amzn/)
-        @$el.find('li.cvr-dropped-item-comparison-tab').hide()
         tab = @$el.find('li.search-amazon-items-tab').first()
         tab.addClass('active')
       else if segment and segment.match(/(trend_\d+)|(poor_perform)/)
-        @$el.find('li.cvr-dropped-item-comparison-tab').hide()
         tab = @$el.find('li.search-walmart-items-tab').first()
         tab.addClass('active')
       else
-        @$el.find('li.cvr-dropped-item-comparison-tab').hide()
         tab = @$el.find('li.search-stats-tab')
         tab.addClass('active')
 

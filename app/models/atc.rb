@@ -26,7 +26,7 @@ class Atc < BaseModel
     end
     order_str = order_col.nil? ? default_order : 
       order.nil? ? order_col : %Q{#{order_col} #{order}}
-    offset = (page - 1) * 10
+    offset = (page - 1) * limit
     
     if page == 0
       order_limit_str = ''
