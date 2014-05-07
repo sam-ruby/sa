@@ -54,6 +54,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
   uncheck_items: (e)=>
     e.preventDefault()
     @$el.find('table td input:checked').attr('checked', false)
+    @$el.find('table td input:disabled').removeAttr('disabled')
     @items = []
   
   render:(data)=>

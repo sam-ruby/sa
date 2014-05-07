@@ -24,6 +24,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     Utils.InitExportCsv(this, '/search_rel/get_query_items.csv')
     @undelegateEvents()
     @items = []
+    @rel_item_template = JST["backbone/templates/rel_items_rec"]
     @active = false
 
   events: =>
@@ -51,6 +52,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
   uncheck_items: (e)=>
     e.preventDefault()
     @$el.find('table td input:checked').attr('checked', false)
+    @$el.find('table td input:disabled').removeAttr('disabled')
     @items = []
 
   p_missed_items: (e)=>
@@ -227,33 +229,14 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     return @render_error(@query) if @shadowCollection.size() == 0
     @controller.trigger('search:sub-content:hide-spin')
   
-    item_selection = $('<form class="form-inline item-selection">' +
-      'Select upto 4 items &nbsp;' +
-      '<i class="icon-hand-down">&nbsp;</i> &nbsp;' +
-      '<button class="btn btn-smal do-sig-comp" type="button"> ' +
-      'Compare Signals</button> &nbsp;' +
-      '<a class="item-uncheck" href="uncheck_items">Uncheck All</a>&nbsp;' +
-      '<span class="label sig-comp-msg label-warning">' +
-      'Select atleast 1 Item to compare</span>')
-
-    filter = $('<label class="show-rec-items checkbox pull-right">' +
-      '<input type="checkbox" class="missed-items"> ' +
-      'Show Recommeded Items</label></form>')
-    
-    no_filter = $('<span class="pull-right" style="padding-top:10px;">' +
-      'No Recommeded Items Available!</span></form>')
-    
     if @collection.length == 0
       @$el.append( @grid.render().$el )
     else
       if @$el.find('form.item-selection').length == 0
-        if @collection.fullCollection.where(in_top_16: 0).length > 0
-          item_selection.append(filter)
-        else
-          item_selection.append(no_filter)
-        @$el.append(item_selection)
+        rec_flag = (@collection.fullCollection.where(in_top_16: 0).length > 0)
+        @$el.append(@rel_item_template(show_recommended_items: rec_flag))
       
-      @grid.render().$el.insertAfter(item_selection)
+      @grid.render().$el.insertAfter('form.item-selection')
       @$el.append( @export_csv_button() ) if @$el.find(
         'span.export-csv').length == 0
 

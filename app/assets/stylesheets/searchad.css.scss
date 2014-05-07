@@ -1189,3 +1189,9 @@ div.overview-all {
 .backgrid-paginator {
   margin-bottom: -2em;
 }
+form.item-selection, form.walmart-items-form {
+  margin-bottom: 10px;
+  a.item-uncheck {
+    margin-top: 10px;
+  }
+}
