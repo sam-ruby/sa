@@ -38,6 +38,31 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
   events: ->
     'click .score a': 'navigate'
     'click .segment-name a': 'navigate'
+    'click .support-info': 'toggle_support_info'
+    'click input.show-details': 'toggle_all_metric_info'
+
+  toggle_all_metric_info: (e) ->
+    if $(e.target).is(':checked')
+      @$el.find('.overview-all .metric .mrow span.support-info').not(
+        '.make-tiny').click()
+    else
+      @$el.find('.overview-all .metric .mrow span.support-info.make-tiny').click()
+
+
+  toggle_support_info: (e) ->
+    e.preventDefault()
+    klasses = $(e.target).parents('div.mrow').attr('class').split(/\s+/)
+    metric_class = (klass for klass in klasses when klass != 'mrow')
+    if metric_class? and metric_class.length > 0
+      metric_id = metric_class[0]
+      support_rows = $(e.target).parents('div.metric').find(
+        "div.mrow-support-info.#{metric_id}")
+      if support_rows.length > 0
+        if $(e.target).hasClass('make-tiny')
+          support_rows.hide()
+        else
+          support_rows.show()
+    $(e.target).toggleClass('make-tiny')
 
   get_items: (data) =>
     @active = true

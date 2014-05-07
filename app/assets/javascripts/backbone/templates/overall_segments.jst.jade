@@ -1,5 +1,13 @@
 - s_formatter = JST['backbone/templates/metric_formatter']
 - u_formatter = JST['backbone/templates/metric_unit_formatter']
+- intFormatter = new Backgrid.NumberFormatter({decimals: 0})
+- numFormatter = new Backgrid.NumberFormatter()
+- numForm4D = new Backgrid.NumberFormatter({decimals: 4})
+- seg_index = 0
+form.form-inline.overview-all
+  label.checkbox.pull-right
+    input.show-details(type="checkbox")
+    |Show Supporting Information of All Metrics
 .overview-all
   .col-head
     .name.metric-name Metric
@@ -10,6 +18,20 @@
         - seg_link = '#search/' + segment.path + '/page/overview'
         a(href=seg_link)
           = segment.name
+        table.table.table-condensed
+          if seg_index == 0
+            tr
+              td.meta-name Traffic
+              td.meta-value  100%
+            tr
+              td.meta-name Revenue
+              td.meta-value 2,200,100$
+          else
+            tr
+              td.meta-value  100%
+            tr
+              td.meta-value 2,200,100$
+      - seg_index = seg_index + 1
 
   each metric_cat in metrics
     if !metric_cat.metrics
@@ -29,6 +51,7 @@
               = m_obj.name
             else
               | Name not known
+            span.support-info.pull-right
           each segment, segment_id in segments
             if segment.path == 'all_queries'
               - continue
@@ -57,5 +80,35 @@
             .unit
               if score && score != 'N/A'
                 != u_formatter({m_obj: m_obj, metric_details:metric[segment_id]})
+              else
+                |&nbsp;
+
+        div(class=[m_obj.id, 'mrow-support-info'])
+          .name.support-cat Confidence Interval
+          each segment, segment_id in segments
+            - ms = metric[segment_id]
+            if segment.path == 'all_queries'
+              - continue
+            else if !ms && metric['ALL QUERIES']
+              - ms = metric['ALL QUERIES']
+              - segment_id = 'ALL QUERIES'
+            else if !ms
+              - continue
+            .support-info-value
+              if ms && ms.ucl && ms.lcl
+                if m_obj.unit == 'dollar'
+                  - ucl = intFormatter.fromRaw(ms.ucl)
+                  - lcl = intFormatter.fromRaw(ms.lcl)
+                else if m_obj.unit == 'query'
+                  if m_obj.decimals == 4
+                    - ucl = numForm4D.fromRaw(ms.ucl)
+                    - lcl = numForm4D.fromRaw(ms.lcl)
+                  else
+                    - ucl = intFormatter.fromRaw(ms.ucl)
+                    - lcl = intFormatter.fromRaw(ms.lcl)
+                else
+                  - ucl = numFormatter.fromRaw(ms.ucl)
+                  - lcl = numFormatter.fromRaw(ms.lcl)
+                span= lcl + ' - ' + ucl
               else
                 |&nbsp;

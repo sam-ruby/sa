@@ -187,7 +187,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       unit: 'score'
       mark_worst: 'min'
     QRR:
-      name: 'Query Reformulation Rate'
+      name: 'Query Reformulation'
       id: 'qrr'
       disabled: true
       cat: 'user_eng'

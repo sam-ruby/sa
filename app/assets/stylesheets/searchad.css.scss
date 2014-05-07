@@ -886,21 +886,21 @@ div.overview {
     }
   }
 }
-
+form.overview-all {
+  padding-bottom: 10px;
+}
 div.overview-all {
-  .name, .score, .info, .unit, .segment-name {
+  .name, .score, .info, .unit, .segment-name, .support-info, .support-info-value {
     display: inline-block;
     line-height: 20px;
     vertical-align: top;
     display: inline-block;
-    width: 100%;
     box-sizing:border-box;
   }
-  
   .unit{
     width: 3%;
   }
-  .segment-name {
+  .segment-name, .support-info-value {
     width: 17%;
   }
   .name {
@@ -909,19 +909,52 @@ div.overview-all {
   .score {
     width: 14%;
   }
-  
   .col-head {
     border-top: 1px solid #ddd;
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
     @include gradient-vertical(white, #f2f2f2);
     .name, .score, .info, .unit, .segment-name {
-      padding: 6px 8px 6px 8px;
+      padding: 6px 0px 6px 0px;
+    }
+    .name {
+      padding-left: 8px;
+      .show-details {
+        padding-top: 36px;
+        text-align: right;
+      }
     }
     .segment-name {
       text-align: right;
-      border-left: 1px solid white;
+      border-left: 1px solid #ddd;
       text-transform: capitalize;
+      padding-bottom: 0px;
+      a {
+        padding-right: 8px;
+      }
+      table {
+        margin-top: 10px;
+        margin-bottom: 0px;
+        td.meta-name, td.meta-value {
+          text-align: right;
+          padding: 2px 5px;
+          font-size:12px;
+        }
+        td.meta-name {
+          border-right: 1px solid #ddd;
+        }
+        tr:first-child {
+          td.meta-name, td.meta-value {
+            background-color: #dff0d8;
+          }
+        }
+        tr:last-child {
+          td.meta-name, td.meta-value {
+            background-color: #f2dede;
+          }
+        }
+
+      }
     }
   }
   .info {
@@ -934,13 +967,13 @@ div.overview-all {
     padding: 4px 6px 4px 6px;
   }
   .metric {
-    .mrow {
+    .mrow, .mrow-support-info {
       border-bottom: 1px solid #dddddd;
     }
     .mrow.selected {
       background-color: #dff0d8;
     }
-    .name, .score, .info, .unit, .segment-name {
+    .name, .score, .info, .unit, .segment-name, .support-info-value {
       padding: 4px 6px 4px 6px;
     }
     .score {
@@ -951,16 +984,41 @@ div.overview-all {
       color: #81a2b3;
       border-right: 1px solid #ddd;
     }
+    .support-info-value {
+      color: #81a2b3;
+      border-right: 1px solid #ddd;
+      font-size: 12px;
+      text-align: right;
+      padding-right: 3%;
+    }
     .name {
       white-space:nowrap;
       @include gradient-horizontal(white, #f2f2f2);
-      border-bottom:1px solid white;
+      border-left: 1px solid #ddd;
       color: #777777;
       text-transform: capitalize;
+      span.support-info {
+        font-size: 16px;
+        cursor: pointer;
+        padding: 0px 8px;
+      }
+      span.support-info:before {
+        content: "+";
+      }
+      span.support-info.make-tiny:before {
+        content: "-";
+      }
     }
     .score {
       text-align: right;
       color: #007796;
+    }
+    .mrow-support-info {
+      display:none;
+      .support-cat {
+        font-size: 12px;
+        padding-left: 20px;
+      }
     }
   }
 }
