@@ -51,7 +51,6 @@ form.form-inline.overview-all
               = m_obj.name
             else
               | Name not known
-            span.support-info.pull-right
           each segment, segment_id in segments
             if segment.path == 'all_queries'
               - continue
@@ -84,7 +83,7 @@ form.form-inline.overview-all
                 |&nbsp;
 
         div(class=[m_obj.id, 'mrow-support-info'])
-          .name.support-cat Confidence Interval
+          .support-cat Confidence Interval
           each segment, segment_id in segments
             - ms = metric[segment_id]
             if segment.path == 'all_queries'

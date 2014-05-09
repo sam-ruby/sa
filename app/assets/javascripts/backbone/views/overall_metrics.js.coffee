@@ -38,19 +38,18 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
   events: ->
     'click .score a': 'navigate'
     'click .segment-name a': 'navigate'
-    'click .support-info': 'toggle_support_info'
+    'click div.name': 'toggle_support_info'
     'click input.show-details': 'toggle_all_metric_info'
 
   toggle_all_metric_info: (e) ->
     if $(e.target).is(':checked')
-      @$el.find('.overview-all .metric .mrow span.support-info').not(
+      @$el.find('.overview-all .metric .mrow .name').not(
         '.make-tiny').click()
     else
-      @$el.find('.overview-all .metric .mrow span.support-info.make-tiny').click()
+      @$el.find('.overview-all .metric .mrow .name.make-tiny').click()
 
 
   toggle_support_info: (e) ->
-    e.preventDefault()
     klasses = $(e.target).parents('div.mrow').attr('class').split(/\s+/)
     metric_class = (klass for klass in klasses when klass != 'mrow')
     if metric_class? and metric_class.length > 0
@@ -70,7 +69,7 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
     @collection.get_items()
 
   prepare_for_render: =>
-    @$el.find('.ajax-loader').css('display', 'inline-block')
+    @$el.find('.ajax-loader').css('display', 'block')
    
   render: =>
     return unless @active

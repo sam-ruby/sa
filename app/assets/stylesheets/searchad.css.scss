@@ -9,6 +9,7 @@ a.subcat:hover {
 }
 #search-quality-queries, #trending, #qm-filter, #qm-count-sub-tabs, #cvr-dropped-query-results, #search-results, #search-sub-tabs, #query-monitoring, #search-kpi, #summary-metrics, #metric, #overall-metrics {
   position: relative;
+  min-height: 200px;
 }
 .ajax-loader {
   position: absolute;
@@ -805,19 +806,19 @@ div.overview {
     text-transform: capitalize;
   }
   .score {
-    width: 7%;
+    width: 13.5%;
   }
   .unit{
-    width: 2%;
+    width: 3%;
   }
   .change {
-    width: 9%;
+    width: 13%;
   }
   .significant {
-    width: 4%;
+    width: 5%;
   }
   .top {
-    width: 63%;
+    width: 50.5%;
   }
   .col-head {
     border-top: 0;
@@ -834,7 +835,7 @@ div.overview {
       padding: 6px 8px;
     }
     .score {
-      width: 9%;
+      width: 16.5%;
       padding-right: 2px;
     }
     .change {
@@ -876,6 +877,7 @@ div.overview {
     .change {
       border-left: 1px solid #ddd;
       padding: 4px 4px 4px 0;
+      text-align:right;
     }
     .score {
       padding: 4px 2px 4px 0;
@@ -890,7 +892,7 @@ form.overview-all {
   padding-bottom: 10px;
 }
 div.overview-all {
-  .name, .score, .info, .unit, .segment-name, .support-info, .support-info-value {
+  .name, .score, .info, .unit, .segment-name, .support-cat, .support-info, .support-info-value {
     display: inline-block;
     line-height: 20px;
     vertical-align: top;
@@ -901,13 +903,13 @@ div.overview-all {
     width: 3%;
   }
   .segment-name, .support-info-value {
-    width: 17%;
+    width: 16.5%;
   }
-  .name {
-    width: 15%;
+  .name, .support-cat {
+    width: 17.5%;
   }
   .score {
-    width: 14%;
+    width: 13.5%;
   }
   .col-head {
     border-top: 1px solid #ddd;
@@ -973,7 +975,7 @@ div.overview-all {
     .mrow.selected {
       background-color: #dff0d8;
     }
-    .name, .score, .info, .unit, .segment-name, .support-info-value {
+    .name, .score, .info, .unit, .segment-name, .support-info-value, .support-cat {
       padding: 4px 6px 4px 6px;
     }
     .score {
@@ -997,15 +999,13 @@ div.overview-all {
       border-left: 1px solid #ddd;
       color: #777777;
       text-transform: capitalize;
-      span.support-info {
-        font-size: 16px;
-        cursor: pointer;
-        padding: 0px 8px;
-      }
-      span.support-info:before {
+      cursor: pointer;
+      &:after, &.make-tiny:after {
         content: "+";
+        float: right;
+        font-size: 16px;
       }
-      span.support-info.make-tiny:before {
+      &.make-tiny:after {
         content: "-";
       }
     }
@@ -1018,6 +1018,11 @@ div.overview-all {
       .support-cat {
         font-size: 12px;
         padding-left: 20px;
+        white-space:nowrap;
+        @include gradient-horizontal(white, #f2f2f2);
+        border-left: 1px solid #ddd;
+        color: #777777;
+        text-transform: capitalize;
       }
     }
   }

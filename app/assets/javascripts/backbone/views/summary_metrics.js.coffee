@@ -64,45 +64,9 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
-    orders_mpr_5:
-      name: 'Orders MPR@5'
-      id: 'o_mpr_5'
-      cat: 'rel_eval'
-      unit: 'score'
-      mark_worst: 'min'
-    orders_precision_5:
-      name: 'Orders Precision@5'
-      id: 'o_prec_5'
-      cat: 'rel_eval'
-      unit: 'score'
-      mark_worst: 'min'
-    orders_recall_5:
-      name: 'Orders Recall@5'
-      id: 'o_recall_5'
-      cat: 'rel_eval'
-      unit: 'score'
-      mark_worst: 'min'
     orders_ndcg_1:
       name: 'Orders NDCG@1'
       id: 'o_ndcg_1'
-      cat: 'rel_eval'
-      unit: 'score'
-      mark_worst: 'min'
-    orders_mpr_1:
-      name: 'Orders MPR@1'
-      id: 'o_mpr_1'
-      cat: 'rel_eval'
-      unit: 'score'
-      mark_worst: 'min'
-    orders_precision_1:
-      name: 'Orders Precision@1'
-      id: 'o_prec_1'
-      cat: 'rel_eval'
-      unit: 'score'
-      mark_worst: 'min'
-    orders_recall_1:
-      name: 'Orders Recall@1'
-      id: 'o_recall_1'
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
@@ -112,15 +76,51 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
+    orders_mpr_5:
+      name: 'Orders MPR@5'
+      id: 'o_mpr_5'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+    orders_mpr_1:
+      name: 'Orders MPR@1'
+      id: 'o_mpr_1'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
     orders_mpr_16:
       name: 'Orders MPR@16'
       id: 'o_mpr_16'
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
+    orders_precision_5:
+      name: 'Orders Prec@5'
+      id: 'o_prec_5'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+    orders_precision_1:
+      name: 'Orders Prec@1'
+      id: 'o_prec_1'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
     orders_precision_16:
-      name: 'Orders Precision@16'
+      name: 'Orders Prec@16'
       id: 'o_prec_16'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+    orders_recall_5:
+      name: 'Orders Recall@5'
+      id: 'o_recall_5'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+    orders_recall_1:
+      name: 'Orders Recall@1'
+      id: 'o_recall_1'
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
@@ -131,7 +131,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       unit: 'score'
       mark_worst: 'min'
     CAF:
-      name: 'Clicks on First Item'
+      name: 'First Item Clicks'
       id: 'clicks_f_item'
       disabled: true
       cat: 'user_eng'
@@ -145,7 +145,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       unit: 'percentage'
       mark_worst: 'max'
     'count per session':
-      name: 'Queries per Session'
+      name: 'Queries per Sess'
       id: 'queries_session'
       disabled: true
       cat: 'user_eng'
@@ -180,7 +180,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       unit: 'click'
       mark_worst: 'min'
     MRR:
-      name: 'Total Reciprocal Rank'
+      name: 'Tot Reciprocal Rank'
       id: 'mrr'
       disabled: true
       cat: 'user_eng'
@@ -278,13 +278,12 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @collection.get_items()
 
   prepare_for_render: =>
-    @$el.find('.ajax-loader').css('display', 'inline-block')
+    @$el.find('.ajax-loader').css('display', 'block')
    
   render: =>
     return unless @active
     @$el.find('.ajax-loader').hide()
     @$el.children().not('.ajax-loader').hide()
-    
     periods = []
     segment_cat = ''
     segment = @router.path.search
@@ -316,12 +315,14 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       segment: segment_cat) )
 
     metrics = @collection.toJSON()[0]
-    for m_db_id, metric of metrics when metric.queries? and metric.queries.length > 105
+    for m_db_id, metric of metrics when metric.queries? and metric.queries.length > 76
       metric.orig_queries = metric.queries
-      while metric.queries.length > 105
-        for query in metric.queries.split(',')
-          if query.length > 21
-            metric.queries = metric.queries.replace(query, query.substr(0,19) + '..')
+      while metric.queries.length > 76
+        qs = metric.queries.split(',')
+        if qs.length == 1
+          metric.queries = metric.queries.substr(0, 75)
+        else
+          metric.queries = qs.splice(0, qs.length-1).join(',')
 
     overall_metrics =
       general:
