@@ -1,10 +1,12 @@
+#= require backbone/views/base
+
 Searchad.Views.SubTabs ||= {}
 Searchad.Views.SubTabs.AmazonItems ||= {}
 
-class Searchad.Views.SubTabs.AmazonItems.IndexView extends Backbone.View
+class Searchad.Views.SubTabs.AmazonItems.IndexView extends Searchad.Views.Base
   initialize: (options) =>
-    @controller = SearchQualityApp.Controller
     @collection = new Searchad.Collections.CAAmazonItemsCollection()
+    super()
     @collection.bind('reset', @render_all_items)
     @collection.bind('reset', (collection) =>
       that = this
@@ -101,6 +103,7 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Backbone.View
     name: 'position',
     label: 'Amazon Position'
     editable: false,
+    formatter: @CadIntFormatter,
     cell: 'integer'},
     {name: 'name',
     label: I18n.t('dashboard.item'),
@@ -109,6 +112,7 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Backbone.View
     {name: 'walmart_position',
     label: 'Walmart Position'
     editable: false,
+    formatter: @CadIntFormatter,
     cell: 'integer'},
     {name: 'brand',
     label: I18n.t('dashboard2.brand'),

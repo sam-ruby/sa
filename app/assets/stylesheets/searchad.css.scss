@@ -790,14 +790,17 @@ div.sig-comp-table {
   }
 }
 div.overview {
-  .name, .score, .change, .significant, .top, .info, .unit {
+  .name, .score, .change, .significant, .top, .info, .unit, .no-data {
     display: inline-block;
     line-height: 20px;
     vertical-align: top;
     height: 100%;
     box-sizing: border-box;
   }
-  
+  .no-data {
+    width: 100%;
+    text-align: center;
+  }
   .name {
     white-space:nowrap;
     width: 15%;
@@ -859,7 +862,7 @@ div.overview {
       }
     }
   .metric {
-    .name, .score, .unit, .change, .significant, .top {
+    .name, .score, .unit, .change, .significant, .top, .no-data {
       padding: 4px 8px;
     }
     .mrow {
@@ -892,7 +895,7 @@ form.overview-all {
   padding-bottom: 10px;
 }
 div.overview-all {
-  .name, .score, .info, .unit, .segment-name, .support-cat, .support-info, .support-info-value {
+  .name, .score, .info, .unit, .segment-name, .support-cat, .support-info, .support-info-value, .no-data {
     display: inline-block;
     line-height: 20px;
     vertical-align: top;
@@ -910,6 +913,10 @@ div.overview-all {
   }
   .score {
     width: 13.5%;
+  }
+  .no-data {
+    width: 100%;
+    text-align: center;
   }
   .col-head {
     border-top: 1px solid #ddd;
@@ -969,13 +976,13 @@ div.overview-all {
     padding: 4px 6px 4px 6px;
   }
   .metric {
-    .mrow, .mrow-support-info {
+    .mrow, .mrow-support-info, .no-data-row {
       border-bottom: 1px solid #dddddd;
     }
     .mrow.selected {
       background-color: #dff0d8;
     }
-    .name, .score, .info, .unit, .segment-name, .support-info-value, .support-cat {
+    .name, .score, .info, .unit, .segment-name, .support-info-value, .support-cat, .no-data {
       padding: 4px 6px 4px 6px;
     }
     .score {

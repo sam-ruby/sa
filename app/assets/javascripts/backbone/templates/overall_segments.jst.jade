@@ -44,10 +44,19 @@ form.form-inline.overview-all
       - seg_index = seg_index + 1
 
   each metric_cat in metrics
-    if !metric_cat.metrics
-      - continue
     .info(class=metric_cat.class)
       = metric_cat.name
+    - var no_data = 1;
+    each metric, key in metric_cat.metrics
+      if metric
+        - no_data = false
+        - break
+    if no_data  
+      .metric
+        .no-data-row
+          span.no-data
+            i No Data Available
+      - continue
     .metric(class=metric_cat.class)
       each metric, metric_id in metric_cat.metrics
         if !metric
@@ -118,6 +127,11 @@ form.form-inline.overview-all
                 else
                   - ucl = numFormatter.fromRaw(ms.ucl)
                   - lcl = numFormatter.fromRaw(ms.lcl)
-                span= lcl + ' - ' + ucl
+              
+                if ms && ms.metadata && ms.metadata.sup
+                  query_count = ms.metadata.sup 
+                  span= lcl + ' - ' + ucl + '&nbsp;(' + intFormatter.fromRaw(query_count) + ')'
+                else
+                  span= lcl + ' - ' + ucl
               else
                 |&nbsp;

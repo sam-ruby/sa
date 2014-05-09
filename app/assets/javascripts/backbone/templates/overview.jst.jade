@@ -16,13 +16,17 @@
     .significant Sign.
     .top Top Opportunities
   each metric_cat in metrics
-    if metric_cat.metrics.length == 0
-      - continue
     .info(class=metric_cat.class)
       a(href='#')
         i.icon-resize-horizontal
         |&nbsp;
         = metric_cat.name
+    if metric_cat.metrics.length == 0
+      .metric
+        .no-data-row
+          span.no-data
+            i No Data Available
+      - continue
     .metric(class=metric_cat.class)
       each metric in metric_cat.metrics
         if !metric

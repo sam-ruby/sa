@@ -108,7 +108,6 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
         metric_segment[metric.metrics_name] = {} unless metric_segment[metric.metrics_name]?
         metric_segment[metric.metrics_name][segment.id] = metric
 
-
     mark_score = (metric, comp) ->
       score = null
       for segment_id, metric_details of metric

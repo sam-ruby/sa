@@ -64,3 +64,12 @@ class Searchad.Views.Base extends Backbone.View
         @$el.append(el)
         this
 
+    class CadIntFormatter extends Backgrid.NumberFormatter
+      fromRaw: (rawValue)->
+        if !rawValue?
+          '-'
+        else
+          super(parseInt(rawValue))
+
+
+

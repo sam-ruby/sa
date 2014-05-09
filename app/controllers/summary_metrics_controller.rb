@@ -82,8 +82,14 @@ class SummaryMetricsController < BaseController
                revenue_percent: record.seg_revenue/totals.revenue.to_f*100}.merge(
                  record.attributes))
           end
+        summary_metrics = SummaryMetrics.get_overall_metrics(
+          cat_id, @date).each do |record|
+            record.metadata = JSON.parse(record.metadata) unless (
+              record.metadata.nil?) 
+            record.attributes
+          end
         render :json => {
-          metrics: SummaryMetrics.get_overall_metrics(cat_id, @date),
+          metrics: summary_metrics,
           segment_metadata: segment_results}
       end
     end
