@@ -1,6 +1,7 @@
 - s_formatter = JST['backbone/templates/metric_formatter']
 - u_formatter = JST['backbone/templates/metric_unit_formatter']
 - intFormatter = new Backgrid.NumberFormatter({decimals: 0})
+- intFormatterDefault = new Backgrid.NumberFormatter()
 - numFormatter = new Backgrid.NumberFormatter()
 - numForm4D = new Backgrid.NumberFormatter({decimals: 4})
 - seg_index = 0
@@ -14,6 +15,14 @@ form.form-inline.overview-all
     each segment, segment_id in segments
       if segment.path == 'all_queries'
         - continue
+      if segment.traffic
+        - traffic = intFormatterDefault.fromRaw(segment.traffic) + '%'
+      else
+        - traffic = 'N/A'
+      if segment.revenue
+        - revenue = intFormatterDefault.fromRaw(segment.revenue) + '%'
+      else
+        - revenue = 'N/A'
       .segment-name
         - seg_link = '#search/' + segment.path + '/page/overview'
         a(href=seg_link)
@@ -22,15 +31,16 @@ form.form-inline.overview-all
           if seg_index == 0
             tr
               td.meta-name Traffic
-              td.meta-value  100%
+              td.meta-value= traffic 
             tr
               td.meta-name Revenue
-              td.meta-value 2,200,100$
+              td.meta-value= revenue
           else
             tr
-              td.meta-value  100%
+              td.meta-value= traffic
             tr
-              td.meta-value 2,200,100$
+              td.meta-value= revenue
+
       - seg_index = seg_index + 1
 
   each metric_cat in metrics

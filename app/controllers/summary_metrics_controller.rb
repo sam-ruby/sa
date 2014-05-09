@@ -68,8 +68,23 @@ class SummaryMetricsController < BaseController
     cat_id = params[:cat_id] || 0
     respond_to do |format|
       format.json do
-        render :json => SummaryMetrics.get_overall_metrics(
+        segment_results = []
+        segment_meta_data = QuerySegmentationDaily.get_segment_metadata(
           cat_id, @date)
+        totals = QueryCatMetricsDaily.where(
+          [%q{page_type = "SEARCH" and channel in 
+          ("ORGANIC_USER", "ORGANIC_AUTO_COMPLETE") and cat_id = ? and 
+          data_date = ?}, cat_id, @date]).select(
+            'sum(uniq_count) total_count, sum(revenue) revenue').first
+          segment_meta_data.each do|record|
+            segment_results.push(
+              {traffic_percent: record.seg_query_count/totals.total_count.to_f*100,
+               revenue_percent: record.seg_revenue/totals.revenue.to_f*100}.merge(
+                 record.attributes))
+          end
+        render :json => {
+          metrics: SummaryMetrics.get_overall_metrics(cat_id, @date),
+          segment_metadata: segment_results}
       end
     end
   end

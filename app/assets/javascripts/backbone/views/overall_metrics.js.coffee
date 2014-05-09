@@ -77,8 +77,14 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
     @$el.children().not('.ajax-loader').hide()
     
     @$el.append( @navBar(title: 'Metrics Overview') )
-    
-    metrics = @collection.toJSON()
+  
+    if @collection.toJSON().length > 0
+      metrics = @collection.toJSON()[0].metrics
+      segment_metadata = @collection.toJSON()[0].segment_metadata
+    else
+      metrics = []
+      segment_metadata = []
+
     metric_segment = {}
     segments = {}
     segment_lookup = Searchad.Views.SearchTabs.IndexView.prototype.segment_lookup
@@ -88,10 +94,15 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
         continue
       else if segment.id.match(/drop_con/i)
         continue
+      per_seg_meta_data = (seg_data for seg_data in segment_metadata when seg_data.segmentation == segment.id)
 
       segments[segment.id] =
         name: segment.name
         path: segment_path
+
+      if per_seg_meta_data.length > 0
+        segments[segment.id].traffic = per_seg_meta_data[0].traffic_percent
+        segments[segment.id].revenue = per_seg_meta_data[0].revenue_percent
 
       for  metric in metrics when metric.segmentation == segment.id
         metric_segment[metric.metrics_name] = {} unless metric_segment[metric.metrics_name]?
