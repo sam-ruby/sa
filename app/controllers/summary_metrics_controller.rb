@@ -78,7 +78,7 @@ class SummaryMetricsController < BaseController
             'sum(uniq_count) total_count, sum(revenue) revenue').first
           segment_meta_data.each do|record|
             segment_results.push(
-              {traffic_percent: record.seg_query_count/totals.total_count.to_f*100,
+              {traffic_percent: record.uniq_count/totals.total_count.to_f*100,
                revenue_percent: record.seg_revenue/totals.revenue.to_f*100}.merge(
                  record.attributes))
           end

@@ -13,7 +13,7 @@ class QuerySegmentationDaily < BaseModel
       a.query = b.query and 
       b.cat_id = 0 and 
       b.page_type = 'SEARCH' and
-      b.channel in ('ORGANIC_USER', 'ORANIC_AUTO_COMPLETE') and 
+      b.channel in ('ORGANIC_USER', 'ORGANIC_AUTO_COMPLETE') and 
       a.cat_id = ? and a.data_date = ?}
     select(cols).joins(join_str).where(
       [where_str, cat_id, date]).group(
