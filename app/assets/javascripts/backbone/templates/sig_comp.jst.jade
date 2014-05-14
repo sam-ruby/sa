@@ -39,12 +39,13 @@
         each item in items
           - good_score = false
           .score.numerical-col(style='width:' + item_width)
-            if item.signals_json && item.signals_json[signal.id] && item.signals_json[signal.id].length > 0
-              if item.signals_json[signal.id].indexOf(true) != -1
+            if item.signals_json && item.signals_json[signal.id] && item.signals_json[signal.id].v
+              if item.signals_json[signal.id].max
                 good_score = true
-              - score = intFormatter.fromRaw(item.signals_json[signal.id][0])
+              - value = parseFloat(item.signals_json[signal.id].v)
+              - score = intFormatter.fromRaw(value)
             else
-              - score = ''
+              - score = '&nbsp;'
             if good_score
               i.icon-star &nbsp;
               span.green-change(style='font-weight: bold')

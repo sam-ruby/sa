@@ -1,4 +1,4 @@
-.navbar{style: 'margin-bottom:1em'}
+.navbar.search-navbar{style: 'margin-bottom:1em'}
   .navbar-inner
     %ul#top-nav.nav
       %li.active.overview
@@ -16,7 +16,7 @@
       %li.poor_perform
         %a{:href=>'#'}
           %span
-            Poor Performing
+            30 Day Opportunities
       %li.poor_amzn
         %a{:href=>'#'}
           %span
@@ -24,4 +24,9 @@
       %li.typical_query
         %a{:href=>'#'}
           %span
-            Random
+            Representative Sample
+    %form.form-search.pull-right
+      .input-append
+        %input.span2.search-query{type: :text}
+        %button.btn.search{type: :submit}
+          Search

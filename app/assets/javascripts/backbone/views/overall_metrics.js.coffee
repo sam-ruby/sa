@@ -27,8 +27,11 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
       else if path.details? and path.details == '1'
         @carousel.carousel(3)
         @carousel.carousel('pause')
-      else if path.items? and path.details? and path.details == 'sig_comp'
+      else if path.details? and path.details == 'sig_comp'
         @carousel.carousel(4)
+        @carousel.carousel('pause')
+      else if @segment == 'adhoc' and path.query?
+        @carousel.carousel(3)
         @carousel.carousel('pause')
       else if path.page? and feature_paths.indexOf(path.page) != -1
         @carousel.carousel(2)
@@ -103,6 +106,7 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
       if per_seg_meta_data.length > 0
         segments[segment.id].traffic = per_seg_meta_data[0].traffic_percent
         segments[segment.id].revenue = per_seg_meta_data[0].revenue_percent
+        segments[segment.id].queries = per_seg_meta_data[0].seg_query_count
 
       for  metric in metrics when metric.segmentation == segment.id
         metric_segment[metric.metrics_name] = {} unless metric_segment[metric.metrics_name]?
@@ -132,7 +136,8 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
     
     general_metrics = {}
     user_eng_metrics = {}
-    correl_metrics = {}
+    rel_orders = {}
+    rel_eval = {}
     
     for metric_db_id, metric of metric_table when metric.cat == 'general'
       general_metrics[metric_db_id] = metric_segment[metric_db_id]
@@ -140,20 +145,25 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
     for metric_db_id, metric of metric_table when metric.cat == 'user_eng'
       user_eng_metrics[metric_db_id] = metric_segment[metric_db_id]
     
-    for metric_db_id, metric of metric_table when metric.cat == 'rel_eval'
-      correl_metrics[metric_db_id] = metric_segment[metric_db_id]
+    for metric_db_id, metric of metric_table when metric.cat == 'rel_orders'
+      rel_orders[metric_db_id] = metric_segment[metric_db_id]
     
-
+    for metric_db_id, metric of metric_table when metric.cat == 'rel_eval'
+      rel_eval[metric_db_id] = metric_segment[metric_db_id]
     
     overall_metrics =
       general:
-        name: 'General'
+        name: 'General Metrics'
         class: 'general'
         metrics: general_metrics
-      correl_metrics:
-        name: 'Relevance Evaluation Metrics'
+      rel_orders:
+        name: 'Relevance Metrics based on Orders'
+        class: 'rel_orders'
+        metrics: rel_orders
+      rel_eval:
+        name: 'Relevance Metrics based on Evaluation'
         class: 'rel_eval'
-        metrics: correl_metrics
+        metrics: rel_eval
       user_engage_metrics:
         name: 'User Engagement Metrics'
         class: 'user_eng'

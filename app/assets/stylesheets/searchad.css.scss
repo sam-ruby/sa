@@ -617,6 +617,11 @@ sup.beta-tag {
   }
 
   .nav {
+    li:first-child {
+      a {
+        padding-left: 0px;
+      }
+    }
     li.active {
       a {
         @include box-shadow(inset 0 0 0 rgba(0,0,0,.125));
@@ -957,11 +962,17 @@ div.overview-all {
             background-color: #dff0d8;
           }
         }
-        tr:last-child {
+        tr.revenue {
           td.meta-name, td.meta-value {
             background-color: #f2dede;
           }
         }
+        tr:last-child {
+          td.meta-name, td.meta-value {
+            background-color: #fcf8e3;
+          }
+        }
+
 
       }
     }
@@ -1207,3 +1218,20 @@ form.item-selection, form.walmart-items-form {
     margin-top: 10px;
   }
 }
+#search-bar .search-navbar {
+  .form-search {
+    margin: 5px 0 0 0;
+  }
+}
+.query-info {
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+  span.query-value {
+    color: #1894c6;
+    font-weight: 400;
+    font-size: 18px;
+  }
+}
+
+

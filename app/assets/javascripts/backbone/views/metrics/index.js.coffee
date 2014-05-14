@@ -145,7 +145,7 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       @$el.append(div)
 
     if @collection.size() == 0
-      @$el.find('.opp-win').after( @grid.render() )
+      @$el.find('.opp-win').after( @grid.render().$el )
       return
     else
       @$el.find('.opp-win').after( @grid.render().$el )

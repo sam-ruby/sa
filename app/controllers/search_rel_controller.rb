@@ -58,7 +58,7 @@ class SearchRelController < BaseController
     results = SearchQualityDailyV2.get_search_relevance_data_by_word(
       query_str, date)
     return results if results.empty?
-   
+  
     missed_items = JSON.parse(
       results.first['ideal_items_not_in_top16_json']) rescue nil
     query_items = JSON.parse(results.first['rel_item_rank_json']) rescue nil

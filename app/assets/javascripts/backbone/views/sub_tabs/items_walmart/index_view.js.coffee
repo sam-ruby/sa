@@ -13,7 +13,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     @controller.bind('date-changed', @date_changed )
     @collection.bind('reset', @render_result)
     @collection.bind('request', =>
-      @$el.children().not('.ajax-loader').not('.walmart-items-form').remove()
+      @$el.children().not('.walmart-items-form').remove()
       @controller.trigger('search:sub-content:show-spin')
       $('.walmart-items-form').hide()
       @undelegateEvents()
@@ -48,7 +48,13 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
         @$el.find('span.sig-comp-msg').fadeOut(8000)
       else
         path = @router.path
-        new_path = "search/#{path.search}/page/#{path.page}/details/sig_comp/query/" + "#{encodeURIComponent(path.query)}/items/#{@items.join(',')}"
+        if path.search == 'adhoc'
+          new_path = "search/adhoc/details/sig_comp/query/" +
+            "#{encodeURIComponent(path.query)}/items/#{@items.join(',')}"
+        else
+          new_path = "search/#{path.search}/page/#{path.page}/details/" +
+            "sig_comp/query/#{encodeURIComponent(path.query)}/items/" +
+            "#{@items.join(',')}"
         @router.update_path(new_path, trigger: true)
 
   uncheck_items: (e)=>
@@ -70,9 +76,9 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     # pagination,
     # there is not request available to trigger clean up when swiching pages. 
     # Clear here. 
-    @$el.children().not('.ajax-loader').not('.walmart-items-form').remove()
-    @controller.trigger('search:sub-content:hide-spin')
+    @$el.children().not('.walmart-items-form').remove()
     $('.walmart-items-form').show()
+    @controller.trigger('search:sub-content:hide-spin')
     return @render_error(@query) if @collection.size() == 0
     @$el.append( @grid.render().$el)
     @$el.append( @export_csv_button() )

@@ -70,6 +70,3 @@ class Searchad.Views.Base extends Backbone.View
           '-'
         else
           super(parseInt(rawValue))
-
-
-

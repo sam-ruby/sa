@@ -11,6 +11,8 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
     @listenTo(@router, 'route:search', (path, filter) =>
       @$el.css('display', 'block')
       query_segment = @segment_lookup[path.search]
+      bc_paths = []
+      
       if query_segment?
         segment_name = query_segment.name
         segment_db_id = query_segment.id
@@ -37,8 +39,6 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
 
       $(document).find('#cad-breadcrumb').empty()
       if segment_name? and segment_path?
-        bc_paths = []
-
         overview_link = "search/overview"
         segment_overview_link = "search/#{segment_path}/page/overview"
         metric_link = "search/#{segment_path}/page/#{metric_id}"
@@ -66,9 +66,15 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
           bc_paths.push(name: 'Overview of Metrics', href: overview_link)
           bc_paths.push(name: segment_name, active: true)
     
-        if bc_paths.length > 0
-          $(document).find('#cad-breadcrumb').append(
-            JST['backbone/templates/search_bc'](bc_paths: bc_paths) )
+      else if path.search == 'adhoc' and path.query? and path.details == 'sig_comp' and path.items?
+        query = decodeURIComponent(path.query)
+        search_link = "search/adhoc/query/#{query}"
+        bc_paths.push(name: 'Search Results', href: search_link)
+        bc_paths.push(name: 'Signal Comparison', active: true)
+        
+      if bc_paths.length > 0
+        $(document).find('#cad-breadcrumb').append(
+          JST['backbone/templates/search_bc'](bc_paths: bc_paths) )
     )
 
   segment_lookup:
@@ -107,7 +113,7 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
         name: 'Opportunities in 4 Weeks'
       poor_amzn:
         id: 'POOR_QUERIES_AMAZON'
-        name: 'Compt Oppor'
+        name: 'Compet Oppor'
       typical_query:
         id: 'TYPICAL_QUERY'
         name: 'Random Queries'

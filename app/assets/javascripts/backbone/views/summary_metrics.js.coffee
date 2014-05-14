@@ -58,78 +58,164 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       id: 'revenue'
       cat: 'general'
       unit: 'dollar'
+    # Order based
     orders_ndcg_5:
       name: 'Orders NDCG@5'
       id: 'o_ndcg_5'
-      cat: 'rel_eval'
+      cat: 'rel_orders'
       unit: 'score'
       mark_worst: 'min'
     orders_ndcg_1:
       name: 'Orders NDCG@1'
       id: 'o_ndcg_1'
-      cat: 'rel_eval'
+      cat: 'rel_orders'
       unit: 'score'
       mark_worst: 'min'
     orders_ndcg_16:
       name: 'Orders NDCG@16'
       id: 'o_ndcg_16'
-      cat: 'rel_eval'
+      cat: 'rel_orders'
       unit: 'score'
       mark_worst: 'min'
     orders_mpr_5:
       name: 'Orders MPR@5'
       id: 'o_mpr_5'
-      cat: 'rel_eval'
+      cat: 'rel_orders'
       unit: 'score'
       mark_worst: 'min'
     orders_mpr_1:
       name: 'Orders MPR@1'
       id: 'o_mpr_1'
-      cat: 'rel_eval'
+      cat: 'rel_orders'
       unit: 'score'
       mark_worst: 'min'
     orders_mpr_16:
       name: 'Orders MPR@16'
       id: 'o_mpr_16'
-      cat: 'rel_eval'
+      cat: 'rel_orders'
       unit: 'score'
       mark_worst: 'min'
     orders_precision_5:
       name: 'Orders Prec@5'
       id: 'o_prec_5'
-      cat: 'rel_eval'
+      cat: 'rel_orders'
       unit: 'score'
       mark_worst: 'min'
     orders_precision_1:
       name: 'Orders Prec@1'
       id: 'o_prec_1'
-      cat: 'rel_eval'
+      cat: 'rel_orders'
       unit: 'score'
       mark_worst: 'min'
     orders_precision_16:
       name: 'Orders Prec@16'
       id: 'o_prec_16'
-      cat: 'rel_eval'
+      cat: 'rel_orders'
       unit: 'score'
       mark_worst: 'min'
     orders_recall_5:
       name: 'Orders Recall@5'
       id: 'o_recall_5'
-      cat: 'rel_eval'
+      cat: 'rel_orders'
       unit: 'score'
       mark_worst: 'min'
     orders_recall_1:
       name: 'Orders Recall@1'
       id: 'o_recall_1'
-      cat: 'rel_eval'
+      cat: 'rel_orders'
       unit: 'score'
       mark_worst: 'min'
     orders_recall_16:
       name: 'Orders Recall@16'
       id: 'o_recall_16'
+      cat: 'rel_orders'
+      unit: 'score'
+      mark_worst: 'min'
+    # Eval based
+    eval_ndcg_5:
+      name: 'Evals NDCG@5'
+      id: 'e_ndcg_5'
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
+      disabled: true
+    eval_ndcg_1:
+      name: 'Eval NDCG@1'
+      id: 'e_ndcg_1'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+      disabled: true
+    eval_ndcg_16:
+      name: 'Eval NDCG@16'
+      id: 'e_ndcg_16'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+      disabled: true
+    eval_mpr_5:
+      name: 'Eval MPR@5'
+      id: 'e_mpr_5'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+      disabled: true
+    eval_mpr_1:
+      name: 'Eval MPR@1'
+      id: 'e_mpr_1'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+      disabled: true
+    eval_mpr_16:
+      name: 'Eval MPR@16'
+      id: 'e_mpr_16'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+      disabled: true
+    eval_precision_5:
+      name: 'Eval Prec@5'
+      id: 'e_prec_5'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+      disabled: true
+    eval_precision_1:
+      name: 'Eval Prec@1'
+      id: 'e_prec_1'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+      disabled: true
+    eval_precision_16:
+      name: 'Eval Prec@16'
+      id: 'e_prec_16'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+      disabled: true
+    eval_recall_5:
+      name: 'Eval Recall@5'
+      id: 'e_recall_5'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+      disabled: true
+    eval_recall_1:
+      name: 'Eval Recall@1'
+      id: 'e_recall_1'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+      disabled: true
+    eval_recall_16:
+      name: 'Eval Recall@16'
+      id: 'e_recall_16'
+      cat: 'rel_eval'
+      unit: 'score'
+      mark_worst: 'min'
+      disabled: true
     CAF:
       name: 'First Item Clicks'
       id: 'clicks_f_item'
@@ -326,12 +412,17 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
 
     overall_metrics =
       general:
-        name: 'General'
+        name: 'General Metrics'
         class: 'general'
         metrics: (metrics[m_db_id] for m_db_id, metric of @metrics_name \
           when metric.cat == 'general' and metrics[m_db_id]?)
-      correl_metrics:
-        name: 'Relevance Evaluation Metrics'
+      rel_orders:
+        name: 'Relevance Metrics based on Orders'
+        class: 'rel_orders'
+        metrics: (metrics[m_db_id] for m_db_id, metric of @metrics_name \
+          when metric.cat == 'rel_orders' and metrics[m_db_id]?)
+      rel_eval:
+        name: 'Relevance Metrics based on Evaluation'
         class: 'rel_eval'
         metrics: (metrics[m_db_id] for m_db_id, metric of @metrics_name \
           when metric.cat == 'rel_eval' and metrics[m_db_id]?)

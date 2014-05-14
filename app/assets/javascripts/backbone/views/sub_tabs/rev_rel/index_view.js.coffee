@@ -45,7 +45,13 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
          @$el.find('span.sig-comp-msg').fadeOut(8000)
        else
          path = @router.path
-         new_path = "search/#{path.search}/page/#{path.page}/details/sig_comp/query/" + "#{encodeURIComponent(path.query)}/items/#{@items.join(',')}"
+         if path.search == 'adhoc'
+           new_path = "search/adhoc/details/sig_comp/query/" +
+             "#{encodeURIComponent(path.query)}/items/#{@items.join(',')}"
+         else
+           new_path = "search/#{path.search}/page/#{path.page}/details/" +
+             "sig_comp/query/#{encodeURIComponent(path.query)}/items/" +
+             "#{@items.join(',')}"
          @router.update_path(new_path, trigger: true)
 
 

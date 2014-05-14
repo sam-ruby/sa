@@ -61,8 +61,9 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
       values = []
       @collection.each( (e)->
         if e.get('signals_json')? and e.get('signals_json')[signal_id]?
-          t_score = e.get('signals_json')[signal_id][0]
+          t_score = parseFloat(e.get('signals_json')[signal_id]['v'])
           values.push(t_score)
+          signals[signal_id] = {} unless signals[signal_id]?
           signals[signal_id].values = [] unless signals[signal_id].values?
           signals[signal_id].values.push(t_score)
           if t_score > max_signal_value
@@ -71,10 +72,10 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
             max_signal_items.push(e)
           else if t_score == max_signal_value
             max_signal_items = []
-
       )
       if max_signal_items.length == 1
-        max_signal_items[0].get('signals_json')[signal_id].push(true)
+        max_signal_items[0].get('signals_json')[signal_id].max = true
+      
       avg_value = 0
       for value in values
         avg_value = avg_value + value
@@ -84,8 +85,14 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
       for value in values
         sq_diff = sq_diff + Math.pow(value/(avg_value + 0.0001), 2)
       sq_diff = sq_diff/values.length
+
+      if details?
+        signal_name = details.name
+      else
+        signal_name = signal_id
+
       t_obj =
-        name: details.name
+        name: signal_name
         id: signal_id
         value: sq_diff
       signals_sorted.push(t_obj)

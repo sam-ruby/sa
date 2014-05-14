@@ -1,10 +1,5 @@
-.second-navbar
+.second-navbar(style="position:relative;")
   .navbar-inner
-    if title
-      if title.length > 12
-        - title = title.slice(0,10) + '...'
-      span.brand.title
-        = title
     ul.nav
       li.search-stats-tab
         a(href="#")
@@ -21,3 +16,4 @@
       li.cvr-dropped-item-comparison-tab
         a(href="#")
           span Relevance Comparison
+  img.ajax-loader(src='/assets/ajax_loader.gif', style="display:block;")
