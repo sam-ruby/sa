@@ -71,10 +71,12 @@ window.Utils = do ->
     decimals: 2
     decimalSeparator: '.'
     orderSeparator: ','
-
     fromRaw: (rawValue) ->
       return '-' if !rawValue?
-      "#{super(parseFloat(rawValue))}%"
+      if !isNaN(parseFloat(rawValue))
+        "#{super(parseFloat(rawValue))}%"
+      else
+        '-'
  
   class CustomNumberFormatterNoDecimals extends Backgrid.NumberFormatter
     decimals: 0
@@ -82,9 +84,12 @@ window.Utils = do ->
     orderSeparator: ','
 
     fromRaw: (rawValue) ->
-      return '-' unless rawValue
-      super(parseFloat(rawValue))
-
+      return '-' unless rawValue?
+      if !isNaN(parseFloat(rawValue))
+        super(parseFloat(rawValue))
+      else
+        '-'
+  
   class CustomNumberFormatter extends Backgrid.NumberFormatter
     decimals: 2
     decimalSeparator: '.'
@@ -92,7 +97,10 @@ window.Utils = do ->
 
     fromRaw: (rawValue) ->
       return '-' unless rawValue
-      super(parseFloat(rawValue))
+      if !isNaN(parseFloat(rawValue))
+        super(parseFloat(rawValue))
+      else
+        '-'
 
   class CurrencyFormatter extends Backgrid.NumberFormatter
     decimals: 2

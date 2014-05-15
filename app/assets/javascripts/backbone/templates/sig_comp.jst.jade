@@ -7,13 +7,18 @@
       each item in items
         .item(style='width:' + item_width)
           if !item.image_url
-            .missing-img &nbsp;
-            = item.item_id
+            .encloser
+              a(href='http://www.walmart.com/ip/' + item.item_id, target='_blank')
+                if item.title
+                  = item.item_title
+                else
+                  = item.item_id
           else
-            a(href='http://www.walmart.com/ip/' + item.item_id, target='_blank')
-              img.item-image(src=item.image_url)
-              br
-              .title= item.title
+            .encloser
+              a(href='http://www.walmart.com/ip/' + item.item_id, target='_blank')
+                img.item-image(src=item.image_url)
+                br
+                .title= item.title
           table.table.table-condensed
             tr
               td Position
@@ -45,7 +50,7 @@
               - value = parseFloat(item.signals_json[signal.id].v)
               - score = intFormatter.fromRaw(value)
             else
-              - score = '&nbsp;'
+              - score = '-'
             if good_score
               i.icon-star &nbsp;
               span.green-change(style='font-weight: bold')

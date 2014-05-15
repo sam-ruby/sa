@@ -2,6 +2,9 @@
 class Searchad.Views.SignalComparison extends Searchad.Views.Base
   initialize: (feature) ->
     @collection = new Searchad.Collections.SignalComparison()
+    @signalCollection = new Searchad.Collections.SignalMapping()
+    @signalCollection.fetch()
+    
     @template = JST["backbone/templates/sig_comp"]
     @navBar = JST["backbone/templates/mini_navbar"]
     super()
@@ -16,21 +19,6 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
         @cleanup() if @active
         @active = false
     )
-  signal_lookup:
-    base:
-      name: 'Text Match'
-    ce:
-      name: 'Click Engagement'
-    color_boost:
-      name: 'Color Boost'
-    di:
-      name: 'DI'
-    dp:
-      name: 'Dynamic Popularity'
-    hero_item:
-      name: 'Hero Item'
-    imageless_demotion:
-      name: 'Imageless Demotion'
   
   events: =>
     'click a.go-back-sm': (e) =>
@@ -50,9 +38,11 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
       signals_json =  e.get('signals_json')
       if signals_json?
         for signal_id, values of signals_json when !signals[signal_id]?
-          signals[signal_id] = @signal_lookup[signal_id]
+          signal_mapping = @signalCollection.where(signal_id: signal_id)
+          if signal_mapping.length > 0
+            signals[signal_id] = signal_mapping[0].attributes
     , this)
-    
+
     signals_sorted = []
     for signal_id, details of signals
       max_signal_items = []
@@ -86,13 +76,8 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
         sq_diff = sq_diff + Math.pow(value/(avg_value + 0.0001), 2)
       sq_diff = sq_diff/values.length
 
-      if details?
-        signal_name = details.name
-      else
-        signal_name = signal_id
-
       t_obj =
-        name: signal_name
+        name: details.signal_name
         id: signal_id
         value: sq_diff
       signals_sorted.push(t_obj)

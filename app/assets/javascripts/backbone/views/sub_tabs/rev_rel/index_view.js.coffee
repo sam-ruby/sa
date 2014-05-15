@@ -73,7 +73,6 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
 
     if target.is(':checked')
       @shadowCollection.reset(@collection.fullCollection.models)
-      @render()
     else
       @collection.fullCollection.where(in_top_16: 0).forEach((model) ->
         item_id = model.get('item_id')
@@ -81,7 +80,6 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
           view.items.splice(index, 1)
       )
       @shadowCollection.reset(@collection.fullCollection.where(in_top_16: 1))
-      @render()
   
   gridColumns: =>
     view = this
@@ -232,10 +230,8 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
 
   render: =>
     return unless @active
-    return @render_error(@query) if @shadowCollection.size() == 0
     @controller.trigger('search:sub-content:hide-spin')
-  
-    if @collection.length == 0
+    if @shadowCollection.length == 0
       @$el.append( @grid.render().$el )
     else
       if @$el.find('form.item-selection').length == 0

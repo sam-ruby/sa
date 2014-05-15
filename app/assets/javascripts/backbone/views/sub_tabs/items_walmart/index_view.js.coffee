@@ -79,9 +79,12 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     @$el.children().not('.walmart-items-form').remove()
     $('.walmart-items-form').show()
     @controller.trigger('search:sub-content:hide-spin')
-    return @render_error(@query) if @collection.size() == 0
-    @$el.append( @grid.render().$el)
-    @$el.append( @export_csv_button() )
+    if @collection.size() == 0
+      @$el.append( @grid.render().$el)
+    else
+      @$el.append( @grid.render().$el)
+      @$el.append( @export_csv_button() )
+    
     @delegateEvents()
     return this
 

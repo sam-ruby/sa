@@ -738,6 +738,7 @@ div.sig-comp-table {
     vertical-align: top;
     height: 100%;
     box-sizing: border-box;
+    -moz-box-sizing: border-box;
   }
   .name {
     width: 20%;
@@ -748,7 +749,7 @@ div.sig-comp-table {
     border-top: 1px solid #ddd;
     .name, .item {
       padding: 4px 8px;
-      height: 207px
+      height: 207px;
     }
     & .name {
       background: transparent;
@@ -762,6 +763,9 @@ div.sig-comp-table {
     }
     .item {
       border-left: 1px solid #ddd;
+      .encloser {
+        height: 120px;
+      }
     }
     .srow {
       border-left: 1px solid #ddd;
@@ -769,7 +773,7 @@ div.sig-comp-table {
       border-bottom: 1px solid #ddd;
     }
     table {
-      margin-top: 10px;
+      margin: 10px 0 10px 0;
       @include gradient-vertical(white, #f2f2f2);
       td {
         width: 50%;
@@ -801,6 +805,7 @@ div.overview {
     vertical-align: top;
     height: 100%;
     box-sizing: border-box;
+    -moz-box-sizing: border-box;
   }
   .no-data {
     width: 100%;
@@ -901,11 +906,11 @@ form.overview-all {
 }
 div.overview-all {
   .name, .score, .info, .unit, .segment-name, .support-cat, .support-info, .support-info-value, .no-data {
-    display: inline-block;
-    line-height: 20px;
-    vertical-align: top;
-    display: inline-block;
+    -moz-box-sizing: border-box;
     box-sizing:border-box;
+    line-height: 20px;
+    display: inline-block;
+    vertical-align: top;
   }
   .unit{
     width: 3%;

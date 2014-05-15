@@ -2,7 +2,7 @@ class SignalComparisonController < BaseController
   before_filter :set_common_data
   def get_signals
     query = params[:query]
-    items = params[:items]
+    items = params[:items].split(/,/) rescue []
     rel_items = nil
     ideal_items = nil
    
@@ -17,8 +17,16 @@ class SignalComparisonController < BaseController
         end
           
         results = SignalComparison.get_signals(
-          query, items.split(/,/), @date)
-        
+          query, items, @date).to_a
+
+        if results.size != items.size
+          items.select {|item|
+            results.select {|result| result.item_id.to_i == item.to_i }.size == 0
+          }.map do |item_missing_signal|
+            results.push SignalComparison.new(item_id: item_missing_signal.to_i)
+          end
+        end
+
         results = results.map do |record|
           t_results = nil
           record.signals_json = JSON.parse(record.signals_json) rescue nil
@@ -49,5 +57,13 @@ class SignalComparisonController < BaseController
         render :json => results
       }
     end	
+  end
+
+  def get_signal_mapping
+    respond_to do |format|
+      format.json do 
+        render :json => SignalMapping.get_signals()
+      end
+    end
   end
 end

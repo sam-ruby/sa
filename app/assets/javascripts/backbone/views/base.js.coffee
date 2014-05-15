@@ -41,26 +41,29 @@ class Searchad.Views.Base extends Backbone.View
         that.router.update_path(new_path, trigger: true)
         
     class @PercentCell extends Backgrid.NumberCell
+      formatter: Utils.CustomNumberFormatter
       render: =>
         @$el.empty()
-        val = super(@model.get(@column.get('name'))).$el.text()
+        val = this.formatter.fromRaw(@model.get(@column.get('name')))
         @$el.html( val + '%' )
         this
     
     class @OosCell extends Backgrid.NumberCell
+      formatter: Utils.CustomNumberFormatter
       render: =>
         @$el.empty()
         val = parseFloat(@model.get(@column.get('name')))
         if !val? or isNaN(val)
           @$el.html('--')
           return this
-        
+       
+        val_formatted = this.formatter.fromRaw(val)
         if val > 90
           class_name = 'badge-important'
           el = $(
-            "<span class='badge #{class_name}'>#{val.toFixed(2)}%</span>")
+            "<span class='badge #{class_name}'>#{val_formatted}%</span>")
         else
-          el = $("<span>#{val.toFixed(2)}%</span>")
+          el = $("<span>#{val_formatted}%</span>")
         @$el.append(el)
         this
 
@@ -68,5 +71,7 @@ class Searchad.Views.Base extends Backbone.View
       fromRaw: (rawValue)->
         if !rawValue?
           '-'
-        else
+        else if !isNaN(parseInt(rawValue))
           super(parseInt(rawValue))
+        else
+          '-'
