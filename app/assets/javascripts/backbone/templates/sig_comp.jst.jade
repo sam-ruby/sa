@@ -38,23 +38,28 @@
                   | N/A
 
   .signal-section
-    each signal in signals
+    if signals.length > 0
+      each signal in signals
+        .srow
+          .name= signal.name
+          each item in items
+            - good_score = false
+            .score.numerical-col(style='width:' + item_width)
+              if item.signals_json && item.signals_json[signal.id] && item.signals_json[signal.id].v
+                if item.signals_json[signal.id].max
+                  good_score = true
+                - value = parseFloat(item.signals_json[signal.id].v)
+                - score = intFormatter.fromRaw(value)
+              else
+                - score = '-'
+              if good_score
+                i.icon-star &nbsp;
+                span.green-change(style='font-weight: bold')
+                  = score
+              else
+                span
+                  = score
+    else
       .srow
-        .name= signal.name
-        each item in items
-          - good_score = false
-          .score.numerical-col(style='width:' + item_width)
-            if item.signals_json && item.signals_json[signal.id] && item.signals_json[signal.id].v
-              if item.signals_json[signal.id].max
-                good_score = true
-              - value = parseFloat(item.signals_json[signal.id].v)
-              - score = intFormatter.fromRaw(value)
-            else
-              - score = '-'
-            if good_score
-              i.icon-star &nbsp;
-              span.green-change(style='font-weight: bold')
-                = score
-            else
-              span
-                = score
+        .no-data No Data Available
+        

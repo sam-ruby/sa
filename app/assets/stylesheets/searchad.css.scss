@@ -732,7 +732,7 @@ tr.selected {
 }
 
 div.sig-comp-table {
-  .name, .item, .score {
+  .name, .item, .score, .no-data {
     display: inline-block;
     line-height: 20px;
     vertical-align: top;
@@ -744,7 +744,11 @@ div.sig-comp-table {
     width: 20%;
     text-transform: capitalize;
   }
-
+  .no-data {
+    width: 100%;
+    font-style: italic;
+    text-align: center;
+  }
   .col-head {
     border-top: 1px solid #ddd;
     .name, .item {

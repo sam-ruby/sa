@@ -7,20 +7,20 @@ div.query-info
 table.table.table-bordered
   thead
     tr
-      th Traffic
-      th Conversion
-      th PVR
-      th ATC
-      th Revenue
+      th.numerical-col Traffic
+      th.numerical-col Conversion
+      th.numerical-col PVR
+      th.numerical-col ATC
+      th.numerical-col Revenue
   tbody
     if metric
       tr.success
-        td= intFormatter.fromRaw(metric.query_count)
-        td= intFormatterDefault.fromRaw(metric.query_con * 100) + '%'
-        td= intFormatterDefault.fromRaw(metric.query_pvr * 100) + '%'
-        td= intFormatterDefault.fromRaw(metric.query_atc * 100) + '%'
-        td= intFormatter.fromRaw(metric.query_revenue) + '$'
+        td.numerical-col= intFormatter.fromRaw(metric.query_count)
+        td.numerical-col= intFormatterDefault.fromRaw(metric.query_con * 100) + '%'
+        td.numerical-col= intFormatterDefault.fromRaw(metric.query_pvr * 100) + '%'
+        td.numerical-col= intFormatterDefault.fromRaw(metric.query_atc * 100) + '%'
+        td.numerical-col= intFormatter.fromRaw(metric.query_revenue) + '$'
     else
       tr
-        td 
+        td(colspan=5, style='text-align:center;')
           i No Data Available

@@ -116,7 +116,7 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
         name: 'Compet Oppor'
       typical_query:
         id: 'TYPICAL_QUERY'
-        name: 'Random Queries'
+        name: 'Repr Sample'
       all_queries:
         id: 'ALL QUERIES'
         name: 'ALL QUERIES'
