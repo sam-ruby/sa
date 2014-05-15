@@ -25,14 +25,14 @@
               td
                 if item.in_top_16 == 0 && item.position
                   span.label.label-important Recommended
-                else if item.position
+                else if item.position || item.position == 0
                   = item.position 
                 else
                  | N/A
             tr
               td Orders
               td
-                if item.orders
+                if item.orders || item.orders == 0
                   = item.orders
                 else
                   | N/A

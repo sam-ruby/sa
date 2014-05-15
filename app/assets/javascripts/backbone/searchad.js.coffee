@@ -11,25 +11,26 @@ window.Searchad =
   Views: {}
   
 window.SearchQualityApp = do ->
-  controller = _.extend({}, Backbone.Events)
-  controller.set_view = (@view) =>
-  controller.get_view = => @view
-  controller.set_date = (@date) =>
-  controller.set_cat_id = (@cat_id) =>
-  controller.set_metrics_name = (metric_name) =>
-    metrics = Searchad.Views.SummaryMetrics.prototype.metrics_name
-    for key, value of metrics when value.id == metric_name
-      @metrics_name = key
-  controller.set_query_segment = (@query_segment) =>
-
-  controller.get_filter_params = =>
-    date: @date
-    week: @week
-    year: @year
-    cat_id: @cat_id
-    query_segment: @query_segment
-    metrics_name: @metrics_name
-
+  class Controller
+    set_view: (@view) =>
+    get_view: => @view
+    set_date: (@date) =>
+    set_cat_id: (@cat_id) =>
+    set_metrics_name: (metric_name) =>
+      metrics = Searchad.Views.SummaryMetrics.prototype.metrics_name
+      for key, value of metrics when value.id == metric_name
+        @metrics_name = key
+    set_query_segment: (@query_segment) =>
+    get_filter_params: =>
+      date: @date
+      week: @week
+      year: @year
+      cat_id: @cat_id
+      query_segment: @query_segment
+      metrics_name: @metrics_name
+  controller = new Controller()
+  _.extend(controller, Backbone.Events)
+  
   Controller: controller
   
 window.Utils = do ->

@@ -7,7 +7,7 @@ class Searchad.Views.WeekPicker.IndexView extends Backbone.View
   initialize: (options) =>
     @weekly = false
     @controller = SearchQualityApp.Controller
-    @initCalendar()
+    @initCalendar(@controller.date)
     @listenTo(@controller, "set_latest_week_day", @setLatestWeekDay)
     @listenTo(@controller, "update_date", (date) =>
       @setDate(date)
@@ -104,7 +104,7 @@ class Searchad.Views.WeekPicker.IndexView extends Backbone.View
         SearchQualityApp.Controller.trigger('year-week-changed')
     , this)
 
-  initCalendar: =>
+  initCalendar: (date) =>
     @$el.datepicker(
       autoclose: false
       weekStart: 6

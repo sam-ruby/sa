@@ -9,15 +9,16 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
     @navBar = JST["backbone/templates/mini_navbar"]
     super()
     @listenTo(@collection, 'reset', @render)
-    @active = false
+    @listenTo(@collection, 'request', @prepare_for_render)
     
     @listenTo(@router, 'route:search', (path, filter) =>
+      if @router.date_changed or @router.cat_changed or @router.query_segment_changed or (path.query? and path.query != @query) or (path.items? and path.items != @items)
+        @query = path.query
+        @items = path.items
+        @dirty = true
+
       if path.details == 'sig_comp' and path.query? and path.items?
-        if @router.date_changed or @router.cat_changed or !@active or @router.query_segment_changed
-          @get_items(query: path.query, items: path.items)
-      else
-        @cleanup() if @active
-        @active = false
+        @get_items(query: @query, items: @items) if @dirty
     )
   
   events: =>
@@ -29,9 +30,14 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
   get_items: (data) ->
     @collection.get_items(data)
 
-  render: =>
-    return if @collection.length == 0
+  prepare_for_render: =>
     @$el.children().not('.ajax-loader').remove()
+    @$el.find('.ajax-loader').css('display', 'block')
+  
+  render: =>
+    @dirty = false
+    @$el.find('.ajax-loader').hide()
+    return if @collection.length == 0
     signals = {}
 
     @collection.each( (e)->
@@ -95,7 +101,6 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
       signals: signals_sorted, items: @collection.toJSON()))
 
   renderBarChart: (data, x_title, y_title, chart_title) ->
-    return unless @active
     process_data = (data) ->
       cat_data = []
       series_data = []

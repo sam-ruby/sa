@@ -39,11 +39,14 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
   set_date_info: (filter) =>
     # @get_cat_id()
     @date_changed = false
-    if filter and filter.date?
-      if !@filter or (@filter? and filter.date != @filter.date)
-        @controller.trigger('update_date', filter.date)
-        @controller.set_date(filter.date)
-        @date_changed = true
+    if (filter and filter.date? and filter.date != @date)
+      @controller.trigger('update_date', filter.date)
+      @controller.set_date(filter.date)
+      @date_changed = true
+      @date = filter.date
+    else if @controller.date != @date
+      @date_changed = true
+      @date = @controller.date
       
   _extractParameters: (route, fragment) =>
     return if !fragment?

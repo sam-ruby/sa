@@ -7,7 +7,7 @@ a.subcat {
 a.subcat:hover {
   color: #F7B800;
 }
-#search-quality-queries, #trending, #qm-filter, #qm-count-sub-tabs, #cvr-dropped-query-results, #search-results, #query-monitoring, #search-kpi, #summary-metrics, #metric, #overall-metrics {
+#search-quality-queries, #trending, #qm-filter, #qm-count-sub-tabs, #cvr-dropped-query-results, #search-results, #query-monitoring, #search-kpi, #summary-metrics, #metric, #overall-metrics, #sig-comp {
   position: relative;
   min-height: 150px;
 }
@@ -1229,14 +1229,10 @@ form.item-selection, form.walmart-items-form {
   }
 }
 .query-info {
-  margin-bottom: 25px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
   span.query-value {
     color: #1894c6;
     font-weight: 400;
     font-size: 18px;
   }
 }
-
-

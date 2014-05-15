@@ -88,19 +88,22 @@ class QueryCatMetricsDaily < BaseModel
       where_conditions = sanitize_sql_array([
         %q{query_daily.page_type = 'SEARCH' and 
         query_daily.data_date = '%s' and query_daily.query like '%s' 
-        and query_daily.channel = "ORGANIC_USER" and 
+        and query_daily.channel in (
+        "ORGANIC_USER", "ORGANIC_AUTO_COMPLETE") and 
         query_daily.cat_id = 0}, query_date, query])
     elsif !query.nil? and !query.empty?
       where_conditions = sanitize_sql_array([
         %q{query_daily.page_type = 'SEARCH' and 
         query_daily.data_date = '%s' and query_daily.query = '%s' 
-        and query_daily.channel = "ORGANIC_USER" and 
+        and query_daily.channel in ("ORGANIC_USER",
+        "ORGANIC_AUTO_COMPLETE") and 
         query_daily.cat_id = 0}, query_date, query])
     else
       where_conditions = sanitize_sql_array([
         %q{query_daily.page_type = 'SEARCH' and 
         query_daily.data_date = '%s' and  
-        query_daily.channel = "ORGANIC_USER" and 
+        query_daily.channel in ("ORGANIC_USER",
+        "ORGANIC_AUTO_COMPLETE") and 
         query_daily.cat_id = 0}, query_date])
     end
 

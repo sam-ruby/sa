@@ -15,10 +15,11 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
       metric.id for metric_id, metric of Searchad.Views.SummaryMetrics.prototype.metrics_name)
     
     @listenTo(@router, 'route:search', (path, filter) =>
-      if @router.date_changed or @router.cat_changed or !@active
-        @get_items()
+      if @router.date_changed or @router.cat_changed
+        @dirty = true
       path? and (@segment = path.search)
       if @segment == 'overview'
+        @get_items() if @dirty
         @carousel.carousel(0)
         @carousel.carousel('pause')
       else if path.page? and path.page == 'overview'
@@ -67,7 +68,6 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
     $(e.target).toggleClass('make-tiny')
 
   get_items: (data) =>
-    @active = true
     @$el.find('.ajax-loader').css('display', 'inline-block')
     @collection.get_items()
 
@@ -75,7 +75,6 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
     @$el.find('.ajax-loader').css('display', 'block')
    
   render: =>
-    return unless @active
     @$el.find('.ajax-loader').hide()
     @$el.children().not('.ajax-loader').hide()
     
@@ -174,10 +173,9 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
       metrics_name: Searchad.Views.SummaryMetrics.prototype.metrics_name
       segments: segments
       view: this))
+    @dirty = false
+    this
       
-  unrender: =>
-    @active = false
-
   navigate: (e) =>
     e.preventDefault()
     link = $(e.target).attr('href')

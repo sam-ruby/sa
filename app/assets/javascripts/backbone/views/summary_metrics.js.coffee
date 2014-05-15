@@ -12,9 +12,10 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @segment_lookup = Searchad.Views.SearchTabs.IndexView.prototype.segment_lookup
     
     @listenTo(@router, 'route:search', (path, filter) =>
+      if @router.date_changed or @router.cat_changed or @router.query_segment_changed
+        @dirty = true
       if path? and path.page? and path.page.match(/overview/i)
-        if @router.date_changed or @router.cat_changed or !@active or @router.query_segment_changed
-          @get_items()
+        @get_items()if @dirty
     )
   
   metrics_name:
@@ -359,7 +360,6 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     events
 
   get_items: (data) =>
-    @active = true
     @$el.find('ul.metrics').css('display', 'block')
     @collection.get_items()
 
@@ -367,7 +367,6 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @$el.find('.ajax-loader').css('display', 'block')
    
   render: =>
-    return unless @active
     @$el.find('.ajax-loader').hide()
     @$el.children().not('.ajax-loader').hide()
     periods = []
@@ -447,10 +446,8 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
         $(child).height(max_height)
       )
     )
-
-
-  unrender: =>
-    @active = false
+    @dirty = false
+    this
 
   navigate: (metric) =>
     query_segment = @router.path.search

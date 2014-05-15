@@ -25,33 +25,37 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     )
 
     @listenTo(@router, 'route:search', (path, filter) =>
-      if @router.date_changed or @router.cat_changed or @router.query_segment_changed or path.query != @query
+      if @router.date_changed or @router.cat_changed or @router.query_segment_changed or (path.query? and path.query != @query)
         @query = path.query
-        if parseInt(path.details) == 1 and path.query?
-          if path.search? and (match = path.search.match(/drop_con_(\d+)/))
-            weeks_apart = match[1]
-          feature = path.page
-          
-          show_series = ['query_count', 'query_con']
-          if feature == 'pvr'
-            show_series.push('query_pvr')
-          else if feature == 'atc'
-            show_series.push('query_atc')
+        @dirty = true
 
-          @data =
-            weeks_apart: weeks_apart
-            query: @query
-            show_only_series: show_series
-          @queryStatsCollection.query = @query
-          @queryStatsCollection.get_items()
+      if parseInt(path.details) == 1 and path.query?
+        return if !@dirty
+        if path.search? and (match = path.search.match(/drop_con_(\d+)/))
+          weeks_apart = match[1]
+        feature = path.page
+        
+        show_series = ['query_count', 'query_con']
+        if feature == 'pvr'
+          show_series.push('query_pvr')
+        else if feature == 'atc'
+          show_series.push('query_atc')
 
-        else if path.search == 'adhoc' and path.query?
-          @data =
-            search: true
-            query: @query
-          @queryStatsCollection.query = @query
-          @queryStatsCollection.get_items()
-          $('form.form-search input:text').val(@query)
+        @data =
+          weeks_apart: weeks_apart
+          query: @query
+          show_only_series: show_series
+        @queryStatsCollection.query = @query
+        @queryStatsCollection.get_items()
+
+      else if path.search == 'adhoc' and path.query?
+        return if !@dirty
+        @data =
+          search: true
+          query: @query
+        @queryStatsCollection.query = @query
+        @queryStatsCollection.get_items()
+        $('form.form-search input:text').val(@query)
     )
     
     $('form.form-search button.search').on('click', (e)=>
@@ -69,6 +73,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     @$el.append(@query_stats_template(
       metric: metric
       query: @query))
+    @dirty = false
     @render() if metric?
 
   events:

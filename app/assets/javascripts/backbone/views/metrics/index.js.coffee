@@ -12,16 +12,14 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     else if @collection? and !@grid_cols?
       @listenTo(@collection, 'reset', @render)
 
-    @active = false
     @show_query_mode = false
     
     @listenTo(@router, 'route:search', (path, filter) =>
-      if path.page == feature
-        if @router.date_changed or @router.cat_changed or !@active or @router.query_segment_changed
-          @get_items()
-      else
-        @cleanup() if @active
-        @active = false
+      if @router.date_changed or @router.cat_changed or @router.query_segment_changed
+        @dirty = true
+
+      if path.page == feature and !path.details?
+        @get_items() if @dirty
     )
     
     @$el.find('.carousel').on('slid', =>
@@ -65,7 +63,6 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
 
     'click .opp-win li.winners a': (e) =>
       e.preventDefault()
-      return unless @active
       @toggle_tab(e)
       @winning = true
       @collection.winning = @winning
@@ -73,7 +70,6 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
 
     'click .opp-win li.loosers a': (e) =>
       e.preventDefault()
-      return unless @active
       @toggle_tab(e)
       @winning = false
       @collection.winning = @winning
@@ -89,7 +85,7 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     @paginator = new Backgrid.Extension.Paginator(
       collection: @collection
     )
-  
+
   cleanup: =>
     if @$el.attr('id') == 'metric'
       @$el.find('.tab-holder').children().not('.ajax-loader').remove()
@@ -100,7 +96,6 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       @collection.winning = @winning
     
   get_items: (data) =>
-    @active = true
     @$el.find('.tab-holder').empty()
     @$el.find('.tab-holder').append(@navBar)
     @collection.get_items(data)
@@ -134,7 +129,8 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       'visually-hidden')
 
   renderTable: =>
-    return unless @active
+    @dirty = false
+    @cleanup()
     @$el.find('.ajax-loader').hide()
 
     if @$el.find('.opp-win').length == 0
@@ -160,13 +156,11 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     this
   
   unrender: =>
-    @active = false
     @$el.highcharts().destroy() if @$el and @$el.highcharts()
     @$el.find('.carousel').hide()
     
-  renderLineChart: (data, y_title, chart_title) ->
-    return unless @active
-    
+  renderLineChart: (data, y_title, chart_title) =>
+    @dirty = false
     seriesTypes = [{
       column: 'score'
       name: y_title}]
@@ -226,8 +220,8 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
         enabled: false
       series: series)
      
-  renderBarChart: (data, x_title, y_title, chart_title) ->
-    return unless @active
+  renderBarChart: (data, x_title, y_title, chart_title) =>
+    @dirty = false
     process_data = (data) ->
       cat_data = []
       series_data = []
@@ -288,7 +282,6 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     @delegateEvents()
     
   render_error: (query) ->
-    return unless @active
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available") )
 
