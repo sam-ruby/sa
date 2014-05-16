@@ -1091,8 +1091,8 @@ div.overview-all {
     }
   }
   th, td {
-    border: 0;
-    border-bottom: 1px solid #ddd;
+    // border: 0;
+    // border-bottom: 1px solid #ddd;
   }
 }
 
@@ -1239,4 +1239,8 @@ form.item-selection, form.walmart-items-form {
     font-weight: 400;
     font-size: 18px;
   }
+}
+.walmart-icon {
+  width: 26px;
+  height: 26px;
 }
