@@ -8,9 +8,8 @@ class Searchad.Views.ConvCorrelation.Winners extends Searchad.Views.ConvCorrelat
   initialize: (options) =>
     @collection = new Searchad.Collections.ConvCorWinners()
     @tableCaption = JST["backbone/templates/win_lose"]
-    super(options)
-    @init_table()
     Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
+    super(options)
         
   grid_cols: =>
     [{name: 'query',

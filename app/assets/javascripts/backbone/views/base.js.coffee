@@ -41,15 +41,15 @@ class Searchad.Views.Base extends Backbone.View
         that.router.update_path(new_path, trigger: true)
         
     class @PercentCell extends Backgrid.NumberCell
-      initialize: (options) ->
-        super(options)
       formatter: Utils.CustomNumberFormatter
       render: =>
         @$el.empty()
         try
-          val = this.formatter.fromRaw(@model.get(@column.get('name')))
+          m_val = @model.get(@column.get('name'))
+          console.log 'Rendering ', m_val
+          val = this.formatter.fromRaw(m_val)
         catch error
-          console.log 'Error in formatting ', error, ' with ', @model.get(@column.get('name'))
+          console.log 'Error in formatting ', error, ' with ', m_val
         @$el.html( val + '%' )
         this
     

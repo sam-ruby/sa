@@ -8,7 +8,6 @@ class Searchad.Views.ONdcg extends Searchad.Views.Metrics.Index
       @metric_label = metric_details.name
     Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
     super(feature_path)
-    @init_table()
 
   grid_cols: =>
     if @metric_label?

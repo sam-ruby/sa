@@ -9,9 +9,8 @@ class Searchad.Views.Traffic.Winners extends Searchad.Views.Traffic
   initialize: (options) =>
     @collection = new Searchad.Collections.TrafficWinner()
     @tableCaption = JST["backbone/templates/win_lose"]
-    super(options)
-    @init_table()
     Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
+    super(options)
  
   grid_cols: =>
     [{name: 'query',

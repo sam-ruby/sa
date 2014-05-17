@@ -5,10 +5,11 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
   initialize: (feature) ->
     super()
     if @collection? and @grid_cols?
-      @listenTo(@collection, 'backgrid:refresh', @render)
+      @listenTo(@collection, 'backgrid:refresh', @post_refresh)
       @listenTo(@collection, 'request', @prepare_for_table)
       @collection.winning = false
       @winning = false
+      @init_table()
     else if @collection? and !@grid_cols?
       @listenTo(@collection, 'reset', @render)
 
@@ -17,7 +18,6 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     @listenTo(@router, 'route:search', (path, filter) =>
       if @router.date_changed or @router.cat_changed or @router.query_segment_changed
         @dirty = true
-
       if path.page == feature and !path.details?
         @get_items() if @dirty
     )
@@ -61,20 +61,6 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
 
     'click div.show-others a': 'show_other_queries'
 
-    'click .opp-win li.winners a': (e) =>
-      e.preventDefault()
-      @toggle_tab(e)
-      @winning = true
-      @collection.winning = @winning
-      @collection.get_items()
-
-    'click .opp-win li.loosers a': (e) =>
-      e.preventDefault()
-      @toggle_tab(e)
-      @winning = false
-      @collection.winning = @winning
-      @collection.get_items()
- 
   init_table: () =>
     @grid = new Backgrid.Grid(
       columns: @grid_cols()
@@ -96,6 +82,9 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       @collection.winning = @winning
     
   get_items: (data) =>
+    @dirty = false
+    @cleanup()
+    @renderTable()
     @$el.find('.tab-holder').empty()
     @$el.find('.tab-holder').append(@navBar)
     @collection.get_items(data)
@@ -112,10 +101,8 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     @$el.find('.ajax-loader').css('display', 'inline-block')
 
   prepare_for_table: =>
-    #@$el.children().not(
-    #  '.ajax-loader,.opp-win,.export-csv,.backgrid-paginator').remove()
     @$el.find('.ajax-loader').css('display', 'inline-block')
-  
+
   show_query: =>
     return if @show_query_mode
     that = this
@@ -128,37 +115,21 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     @$el.find('table.backgrid tbody tr.visually-hidden').removeClass(
       'visually-hidden')
 
-  renderTable: =>
-    @dirty = false
-    @cleanup()
+  post_refresh: ->
     @$el.find('.ajax-loader').hide()
-
-    if @$el.find('.opp-win').length == 0
-      if @winning
-        div = @tableCaption(tab: 'winners')
-      else
-        div = @tableCaption(tab: 'loosers')
-      @$el.append(div)
-
-    if @collection.size() == 0
-      @$el.find('.opp-win').after( @grid.render().$el )
-      return
+  
+  renderTable: =>
+    if @winning
+      div = @tableCaption(tab: 'winners')
     else
-      @$el.find('.opp-win').after( @grid.render().$el )
-      
-    @$el.find(@grid.$el).after(@paginator.render().$el) unless @$el.find(
-      @paginator.$el).length > 0
-
-    @$el.find(@paginator.$el).after(@export_csv_button()) unless @$el.find(
-      '.export-csv').length > 0
-    
+      div = @tableCaption(tab: 'loosers')
+    @$el.append(div)
+    @$el.append( @grid.render().$el )
+    @$el.append( @paginator.render().$el )
+    @$el.append( @export_csv_button() )
     @delegateEvents()
     this
   
-  unrender: =>
-    @$el.highcharts().destroy() if @$el and @$el.highcharts()
-    @$el.find('.carousel').hide()
-    
   renderLineChart: (data, y_title, chart_title) =>
     @dirty = false
     seriesTypes = [{
