@@ -17,7 +17,6 @@ class Searchad.Views.Base extends Backbone.View
         @direction('ascending')
         @$el.css('text-align', 'right')
 
-
     class @NumericHeaderCell extends Backgrid.HeaderCell
       initialize: (options) ->
         super(options)
@@ -39,19 +38,17 @@ class Searchad.Views.Base extends Backbone.View
         new_path = "search/#{segment}/page/#{feature}/details/1/query/" +
           encodeURIComponent(query)
         that.router.update_path(new_path, trigger: true)
-        
-    class @PercentCell extends Backgrid.NumberCell
-      formatter: Utils.CustomNumberFormatter
-      render: =>
-        @$el.empty()
-        try
-          m_val = @model.get(@column.get('name'))
-          console.log 'Rendering ', m_val
-          val = this.formatter.fromRaw(m_val)
-        catch error
-          console.log 'Error in formatting ', error, ' with ', m_val
-        @$el.html( val + '%' )
-        this
+ 
+    class @PercentFormatter extends Backgrid.NumberFormatter
+      fromRaw: (rawValue) ->
+        return '-' unless rawValue?
+        if !isNaN(parseFloat(rawValue))
+          try
+            "#{super(parseFloat(rawValue).toFixed(2))}%"
+          catch error
+            "#{parseFloat(rawValue).toFixed(2)}%"
+        else
+          '-'
     
     class @OosCell extends Backgrid.NumberCell
       formatter: Utils.CustomNumberFormatter
@@ -72,11 +69,16 @@ class Searchad.Views.Base extends Backbone.View
         @$el.append(el)
         this
 
-    class CadIntFormatter extends Backgrid.NumberFormatter
+    class @CadIntFormatter extends Backgrid.NumberFormatter
       fromRaw: (rawValue)->
         if !rawValue?
           '-'
         else if !isNaN(parseInt(rawValue))
-          super(parseInt(rawValue))
+          try
+            super(parseInt(rawValue))
+          catch error
+            parseInt(rawValue)
         else
           '-'
+          
+      

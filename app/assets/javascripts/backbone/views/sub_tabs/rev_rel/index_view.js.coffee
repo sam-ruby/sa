@@ -119,7 +119,6 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
         this
 
     class MyIntegerCell extends Backgrid.IntegerCell
-      formatter: Utils.CustomNumberFormatterNoDecimals
       render: =>
         if parseInt(@model.get('in_top_16')) == 1
           val = @model.get(@column.get('name'))

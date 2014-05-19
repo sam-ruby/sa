@@ -1,10 +1,10 @@
-- s_formatter = JST['backbone/templates/metric_formatter']
-- u_formatter = JST['backbone/templates/metric_unit_formatter']
-- intFormatter = new Backgrid.NumberFormatter({decimals: 0})
-- intFormatterDefault = new Backgrid.NumberFormatter()
-- numFormatter = new Backgrid.NumberFormatter()
-- numForm4D = new Backgrid.NumberFormatter({decimals: 4})
-- seg_index = 0
+- var s_formatter = JST['backbone/templates/metric_formatter']
+- var u_formatter = JST['backbone/templates/metric_unit_formatter']
+- var intFormatter = new Backgrid.NumberFormatter({decimals: 0})
+- var intFormatterDefault = new Backgrid.NumberFormatter()
+- var numFormatter = new Backgrid.NumberFormatter()
+- var numForm4D = new Backgrid.NumberFormatter({decimals: 4})
+- var seg_index = 0
 form.form-inline.overview-all
   label.checkbox.pull-right
     input.show-details(type="checkbox")
@@ -15,6 +15,7 @@ form.form-inline.overview-all
     each segment, segment_id in segments
       if segment.path == 'all_queries'
         - continue
+      - var traffic, revenue, queries
       if segment.traffic
         - traffic = intFormatterDefault.fromRaw(segment.traffic) + '%'
       else
@@ -30,6 +31,7 @@ form.form-inline.overview-all
       else
         - queries = 'N/A'
 
+      - var seg_link
       .segment-name
         - seg_link = '#search/' + segment.path + '/page/overview'
         a(href=seg_link)
@@ -54,11 +56,11 @@ form.form-inline.overview-all
               td.meta-value= queries
 
       - seg_index = seg_index + 1
-
+  
   each metric_cat in metrics
     .info(class=metric_cat.class)
       = metric_cat.name
-    - var no_data = 1;
+    - var no_data = true;
     each metric, key in metric_cat.metrics
       if metric
         - no_data = false
@@ -73,7 +75,7 @@ form.form-inline.overview-all
       each metric, metric_id in metric_cat.metrics
         if !metric
           - continue
-        - m_obj = metrics_name[metric_id]
+        - var m_obj = metrics_name[metric_id]
         if !m_obj
           - continue
         div(class=[m_obj.id, 'mrow'])
@@ -83,6 +85,7 @@ form.form-inline.overview-all
             else
               | Name not known
           each segment, segment_id in segments
+            - var score, segment_id, slink, significance
             if segment.path == 'all_queries'
               - continue
             if metric[segment_id]
@@ -115,6 +118,7 @@ form.form-inline.overview-all
 
         div(class=[m_obj.id, 'mrow-support-info'])
           .support-cat Confidence Interval
+          - var ms, ucl, lcl, query_count
           each segment, segment_id in segments
             - ms = metric[segment_id]
             if segment.path == 'all_queries'

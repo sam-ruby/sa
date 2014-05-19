@@ -27,23 +27,26 @@ class Searchad.Views.Conversion.Winners extends Searchad.Views.Conversion
     label: 'Conversion Rate',
     editable: false,
     headerCell: @NumericHeaderCell,
-    cell: @PercentCell},
+    formatter: @PercentFormatter,
+    cell: 'number'},
     {name: 'p_v_r',
     label: 'Product View Rate',
     editable: false,
     headerCell: @NumericHeaderCell,
-    cell: @PercentCell},
+    formatter: @PercentFormatter,
+    cell: 'number'},
     {name: 'a_t_c',
     label: 'Add To Cart Rate',
     editable: false,
     headerCell: @NumericHeaderCell,
-    cell: @PercentCell},
+    formatter: @PercentFormatter,
+    cell: 'number'},
     {name: 'score',
     label: "Score",
     editable: false,
     sortType: 'toggle',
     headerCell: @SortedHeaderCell,
-    cell: 'integer'}]
+    cell: 'number'}]
 
   render: =>
     @renderTable()

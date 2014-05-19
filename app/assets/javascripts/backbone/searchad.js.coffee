@@ -75,7 +75,10 @@ window.Utils = do ->
     fromRaw: (rawValue) ->
       return '-' if !rawValue?
       if !isNaN(parseFloat(rawValue))
-        "#{super(parseFloat(rawValue))}%"
+        try
+          "#{super(parseFloat(rawValue))}%"
+        catch error
+          "#{parseFloat(rawValue)}%"
       else
         '-'
  
@@ -87,9 +90,30 @@ window.Utils = do ->
     fromRaw: (rawValue) ->
       return '-' unless rawValue?
       if !isNaN(parseFloat(rawValue))
-        super(parseFloat(rawValue))
+        try
+          super(parseFloat(rawValue))
+        catch error
+          parseFloat(rawValue)
       else
         '-'
+  
+  class CurrencyFormatter extends Backgrid.NumberFormatter
+    decimals: 2
+    orderSeparator: ','
+
+    fromRaw: (rawValue) ->
+      rawValue = parseFloat(rawValue)
+      try
+        if rawValue == 0
+          '$' + rawValue.toFixed(0)
+        else if rawValue < 0
+          '- $' + super(Math.abs(rawValue))
+        else if rawValue > 0
+          '$' + super(rawValue)
+        else
+          '-'
+      catch error
+        rawValue
   
   class CustomNumberFormatter extends Backgrid.NumberFormatter
     decimals: 2
@@ -97,24 +121,12 @@ window.Utils = do ->
     orderSeparator: ','
 
     fromRaw: (rawValue) ->
-      return '-' unless rawValue
+      return '-' if !rawValue?
       if !isNaN(parseFloat(rawValue))
-        super(parseFloat(rawValue))
-      else
-        '-'
-
-  class CurrencyFormatter extends Backgrid.NumberFormatter
-    decimals: 2
-    orderSeparator: ','
-
-    fromRaw: (rawValue) ->
-      rawValue = parseFloat(rawValue)
-      if rawValue == 0
-        '$' + rawValue.toFixed(0)
-      else if rawValue < 0
-        '- $' + super(Math.abs(rawValue))
-      else if rawValue > 0
-        '$' + super(rawValue)
+        try
+          super(parseFloat(rawValue))
+        catch error
+          parseFloat(rawValue)
       else
         '-'
 
@@ -124,5 +136,3 @@ window.Utils = do ->
   CustomNumberFormatter: CustomNumberFormatter
   CustomNumberFormatterNoDecimals: CustomNumberFormatterNoDecimals
   InitExportCsv: init_csv_export_feature
-  
-
