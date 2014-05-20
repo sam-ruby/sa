@@ -42,7 +42,7 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
   events: ->
     'click .score a': 'navigate'
     'click .segment-name a': 'navigate'
-    'click div.name': 'toggle_support_info'
+    'click .metric div.name': 'toggle_support_info'
     'click input.show-details': 'toggle_all_metric_info'
 
   toggle_all_metric_info: (e) ->

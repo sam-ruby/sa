@@ -4,14 +4,22 @@
 - var intFormatterDefault = new Backgrid.NumberFormatter()
 - var numFormatter = new Backgrid.NumberFormatter()
 - var numForm4D = new Backgrid.NumberFormatter({decimals: 4})
-- var seg_index = 0
 form.form-inline.overview-all
   label.checkbox.pull-right
     input.show-details(type="checkbox")
     |Show Metric Details
 .overview-all
   .col-head
-    .name.metric-name Metric
+    .name.metric-name
+      |Metric
+      .table-holder
+        table.table.table-condensed
+          tr
+            td.meta-name Traffic Percent.
+          tr.revenue
+            td.meta-name Revenue Percent.
+          tr
+            td.meta-name Query Count
     each segment, segment_id in segments
       if segment.path == 'all_queries'
         - continue
@@ -37,25 +45,13 @@ form.form-inline.overview-all
         a(href=seg_link)
           = segment.name
         table.table.table-condensed
-          if seg_index == 0
-            tr
-              td.meta-name Traffic
-              td.meta-value= traffic 
-            tr.revenue
-              td.meta-name Revenue
-              td.meta-value= revenue
-            tr
-              td.meta-name Queries 
-              td.meta-value= queries
-          else
-            tr
-              td.meta-value= traffic
-            tr.revenue
-              td.meta-value= revenue
-            tr
-              td.meta-value= queries
+          tr
+            td.meta-value= traffic
+          tr.revenue
+            td.meta-value= revenue
+          tr
+            td.meta-value= queries
 
-      - seg_index = seg_index + 1
   
   each metric_cat in metrics
     .info(class=metric_cat.class)

@@ -946,13 +946,6 @@ div.overview-all {
     .name, .score, .info, .unit, .segment-name {
       padding: 6px 0px 6px 0px;
     }
-    .name {
-      padding-left: 8px;
-      .show-details {
-        padding-top: 36px;
-        text-align: right;
-      }
-    }
     .segment-name {
       text-align: right;
       border-left: 1px solid #ddd;
@@ -972,23 +965,30 @@ div.overview-all {
         td.meta-name {
           border-right: 1px solid #ddd;
         }
-        tr:first-child {
+        tr {
           td.meta-name, td.meta-value {
-            background-color: #dff0d8;
+            background-color: transparent;
           }
         }
-        tr.revenue {
-          td.meta-name, td.meta-value {
-            background-color: #f2dede;
+      }
+    }
+    .name {
+      padding-left: 8px;
+      padding-bottom: 0;
+      text-align:left;
+      .table-holder {
+        vertical-align: bottom;
+        text-align: right;
+        table {
+          width: 100%;
+          margin-bottom: 0px;
+          float: right;
+          margin-top: 10px;
+          td {
+            padding: 2px 5px;
+            font-size:12px;
           }
         }
-        tr:last-child {
-          td.meta-name, td.meta-value {
-            background-color: #fcf8e3;
-          }
-        }
-
-
       }
     }
   }
