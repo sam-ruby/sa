@@ -132,7 +132,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
           super()
         this
 
-    class MyPosition extends Backgrid.NumberCell
+    class MyPosition extends Backgrid.IntegerCell
       render: =>
         @$el.addClass('recom-item-position')
         if @model.get('in_top_16') == 1
@@ -191,7 +191,6 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     label: 'Order Count',
     headerCell: OrdersHeaderCell,
     editable: false,
-    formatter: Utils.CustomNumberFormatterNoDecimals,
     cell: MyIntegerCell}]
     columns
 

@@ -15,7 +15,6 @@ gem "highcharts-rails"
 gem "rails-backbone"
 gem "i18n-js"
 gem "backbone-rails-pageable"
-gem "backgridjs-rails"
 gem "kaminari"
 gem "thin"
 

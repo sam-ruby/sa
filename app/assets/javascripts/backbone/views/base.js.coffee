@@ -8,13 +8,13 @@ class Searchad.Views.Base extends Backbone.View
     class @SortedHeaderCell extends Backgrid.HeaderCell
       initialize: (options) ->
         super(options)
-        @direction('descending')
+        @setCellDirection('descending')
         @$el.css('text-align', 'right')
 
     class @AscHeaderCell extends Backgrid.HeaderCell
       initialize: (options) ->
         super(options)
-        @direction('ascending')
+        @setCellDirection('ascending')
         @$el.css('text-align', 'right')
 
     class @NumericHeaderCell extends Backgrid.HeaderCell
@@ -44,8 +44,9 @@ class Searchad.Views.Base extends Backbone.View
         return '-' unless rawValue?
         if !isNaN(parseFloat(rawValue))
           try
-            "#{super(parseFloat(rawValue).toFixed(2))}%"
+            "#{super(parseFloat(rawValue))}%"
           catch error
+            console.log 'Here it is '
             "#{parseFloat(rawValue).toFixed(2)}%"
         else
           '-'

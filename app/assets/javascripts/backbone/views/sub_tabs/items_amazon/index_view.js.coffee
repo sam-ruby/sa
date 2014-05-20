@@ -103,7 +103,6 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Searchad.Views.Base
     name: 'position',
     label: 'Amazon Position'
     editable: false,
-    formatter: @CadIntFormatter,
     cell: 'integer'},
     {name: 'name',
     label: I18n.t('dashboard.item'),
@@ -112,7 +111,6 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Searchad.Views.Base
     {name: 'walmart_position',
     label: 'Walmart Position'
     editable: false,
-    formatter: @CadIntFormatter,
     cell: 'integer'},
     {name: 'brand',
     label: I18n.t('dashboard2.brand'),

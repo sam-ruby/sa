@@ -24,6 +24,12 @@ a.subcat:hover {
     top: 7em;
   }
 }
+.backgrid {
+  td, th {
+    border: 0;
+    border: 1px solid #ddd;
+  }
+}
 .adv-search-opener {
   position: absolute;
   top: 5px;
@@ -886,7 +892,7 @@ div.overview {
       background-color: #dff0d8;
     }
     .name {
-      border-bottom: 1px solid white;
+      border-left: 1px solid #ddd;
     }
     .change, .significant, .top {
       border-right: 1px solid #ddd;
@@ -1060,12 +1066,8 @@ div.overview-all {
 
 .rel-rev-grid {
   @extend .backgrid;
-  th {
-    border-bottom: 0;
-  }
   tr.recommended-item {
     td {
-      border: 0;
       border: 1px solid #ddd;
       @include gradient-vertical(white, #f2f2f2);
     }
@@ -1094,8 +1096,6 @@ div.overview-all {
     }
   }
   th, td {
-    // border: 0;
-    // border-bottom: 1px solid #ddd;
     padding: 6px 8px;
   }
 }
@@ -1176,10 +1176,9 @@ div.overview-all {
 .walmart-results {
   @extend .backgrid;
   td {
-    padding: 0;
+    padding: 4px 6px;
     height: 40px;
-    border: 0;
-    border-bottom: 1px solid #ddd;
+    border: 1px solid #ddd;
     &:first-child {
       padding-left: 5px;
     }
@@ -1188,8 +1187,8 @@ div.overview-all {
     }
   }
   th {
-    border: 0;
-    border-bottom: 1px solid #ddd;
+    border: 1px solid #ddd;
+    padding: 4px 6px;
   }
 }
 .login {
