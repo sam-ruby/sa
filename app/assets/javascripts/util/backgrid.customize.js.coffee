@@ -87,12 +87,11 @@ Backgrid.CADQueryCell = Backgrid.Cell.extend(
     # update path
   render: ->
     value = @model.get(@column.get('name'))
-    formatted_value = '<a class="query" href="#">' + value + '</a>' +
-      '<span class="pull-right">' +
+    formatted_value = '<span class="pull-right">' +
       '<a href="http://www.walmart.com/search/search-ng.do?search_query=' +
       encodeURIComponent(value) + '" target="_blank">' +
       '<img src="/assets/walmart-transparent.png" class="walmart-icon"></a>' +
-      '</span>'
+      '</span><a class="query" href="#">' + value + '</a>'
     @$el.html(formatted_value)
     @delegateEvents()
     return this

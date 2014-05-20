@@ -1,5 +1,5 @@
-- intFormatter = new Backgrid.NumberFormatter({decimals: 4})
-- item_width = '' + 80.0/items.length + '%'
+- var intFormatter = new Backgrid.NumberFormatter({decimals: 4})
+- var item_width = '' + 80.0/items.length + '%'
 .sig-comp-table
   .col-head
     .srow
@@ -43,7 +43,7 @@
         .srow
           .name= signal.name
           each item in items
-            - good_score = false
+            - var good_score = false, value, score
             .score.numerical-col(style='width:' + item_width)
               if item.signals_json && item.signals_json[signal.id] && item.signals_json[signal.id].v
                 if item.signals_json[signal.id].max

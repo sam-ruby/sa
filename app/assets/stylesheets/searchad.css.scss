@@ -1027,13 +1027,16 @@ div.overview-all {
       color: #777777;
       text-transform: capitalize;
       cursor: pointer;
-      &:after, &.make-tiny:after {
+      &:before, &.make-tiny:before {
         content: "+";
         float: right;
         font-size: 16px;
+        line-height: 20px;
+        display: inline-block;
       }
-      &.make-tiny:after {
+      &.make-tiny:before {
         content: "-";
+        line-height: 20px;
       }
     }
     .score {
@@ -1093,6 +1096,7 @@ div.overview-all {
   th, td {
     // border: 0;
     // border-bottom: 1px solid #ddd;
+    padding: 6px 8px;
   }
 }
 
@@ -1244,4 +1248,7 @@ form.item-selection, form.walmart-items-form {
   width: 21px;
   height: 21px;
   margin-top: -3px;
+}
+table.query-stats {
+  margin-bottom: 30px;
 }

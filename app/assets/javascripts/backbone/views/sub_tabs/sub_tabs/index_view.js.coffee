@@ -125,36 +125,19 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     @$el.append(@template)
     @delegateEvents()
     
+    # only show cvr_dropped_item_comparison on certain url specificaly 
+    @$el.find('li.cvr-dropped-item-comparison-tab').hide()
+    
     if not (@$el.find('li.active').length > 0)
-      # only show cvr_dropped_item_comparison on certain url specificaly 
-      @$el.find('li.cvr-dropped-item-comparison-tab').hide()
-
-      # If coming from search, show the Walmart Results
-      if @data.search
-        tab = @$el.find('li.search-walmart-items-tab').first()
+      if @router.path? and @router.path.search?
+        segment = @router.path.search
+      if segment and segment.match(/drop_con/i)
+        tab = @$el.find('li.cvr-dropped-item-comparison-tab')
+        tab.show()
         tab.addClass('active')
       else
-        if @router.path? and @router.path.search?
-          segment = @router.path.search
-        if @router.path? and @router.path.page?
-          feature = @router.path.page
-
-        if feature and feature.match(/^o_/)
-            tab = @$el.find('li.rev-rel-tab').first()
-            tab.addClass('active')
-        else if segment and segment.match(/drop_con/i)
-          tab = @$el.find('li.cvr-dropped-item-comparison-tab')
-          tab.show()
-          tab.addClass('active')
-        else if segment and segment.match(/poor_amzn/)
-          tab = @$el.find('li.search-amazon-items-tab').first()
-          tab.addClass('active')
-        else if segment and segment.match(/(trend_\d+)|(poor_perform)/)
-          tab = @$el.find('li.search-walmart-items-tab').first()
-          tab.addClass('active')
-        else
-          tab = @$el.find('li.search-stats-tab')
-          tab.addClass('active')
+        tab = @$el.find('li.rev-rel-tab').first()
+        tab.addClass('active')
 
     @$el.find('li.active a').first().click()
   
