@@ -28,6 +28,8 @@ class Searchad.Views.SubTabs.Stats.IndexView extends Backbone.View
     @$el.highcharts('StockChart',
       chart:
         alignTicks: false
+        width: 960
+        height: 400
       rangeSelector:
         selected: 0
       credits:
@@ -37,15 +39,14 @@ class Searchad.Views.SubTabs.Stats.IndexView extends Backbone.View
         labels:
           formatter: ->
             Highcharts.dateFormat('%b %e', @value)
-      yAxis: [{
-        title:
+      yAxis: [
+        {title:
           text: 'Percent'
         gridLineWidth: 0},
-          {title:
-            text: 'Count/Revenue'
-          opposite: true
-          type: 'linear'
-          gridLineWidth: 0}]
+        {title:
+          text: 'Count/Revenue'
+        opposite: false
+        gridLineWidth: 0}]
       title:
         text: ('Query Statistics for ' + query)
         useHTML: true
@@ -130,6 +131,7 @@ class Searchad.Views.SubTabs.Stats.IndexView extends Backbone.View
     
     series[0].fillOpacity = .1
     series[1].fillOpacity = .3
+    series[2].fillOpacity = .24
 
     series
 

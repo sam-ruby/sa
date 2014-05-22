@@ -49,7 +49,9 @@ class QueryCatMetricsDaily < BaseModel
     select(selects).where(
     [%q{query = ? AND cat_id = ? AND (channel = 'ORGANIC_USER' or
      channel = 'ORGANIC_AUTO_COMPLETE') and 
-     page_type = 'SEARCH'}, query, 0]).group('data_date').order('data_date')
+     page_type = 'SEARCH' and data_date > 
+     (current_date - interval 180 day)}, query, 0]).group(
+       'data_date').order('data_date')
   end
 
   def self.get_query_stats_date(

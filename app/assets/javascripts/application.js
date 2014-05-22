@@ -9,8 +9,7 @@
 //= require jquery.ui.draggable
 //= require date
 //= require highstocks/js/highstock
-//= require highcharts-more
-//= require highcharts/modules/funnel
+//= require highstocks/js/modules/exporting
 //= require i18n
 //= require i18n/translations
 //= require underscore/underscore
