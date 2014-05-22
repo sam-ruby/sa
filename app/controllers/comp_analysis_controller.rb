@@ -20,8 +20,6 @@ class CompAnalysisController < BaseController
   def get_walmart_items
     query = params['query']
     view = params['view']
-    debugger
-
     respond_to do |format|
       if view =='ranged'
         start_date = DateTime.strptime(params[:start_date], "%m-%d-%Y")  
