@@ -131,7 +131,7 @@ class Searchad.Views.SubTabs.Stats.IndexView extends Backbone.View
     
     series[0].fillOpacity = .1
     series[1].fillOpacity = .3
-    series[2].fillOpacity = .24
+    series[2].fillOpacity = .35
 
     series
 
