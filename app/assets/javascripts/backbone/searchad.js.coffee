@@ -12,6 +12,9 @@ window.Searchad =
   
 window.SearchQualityApp = do ->
   class Controller
+    set_flight_status: (@flight_status) =>
+    get_flight_status: =>
+      @flight_status
     set_view: (@view) =>
     get_view: => @view
     set_date: (@date) =>

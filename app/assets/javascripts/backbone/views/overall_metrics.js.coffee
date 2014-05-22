@@ -13,29 +13,41 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
     @carousel = @$el.parents('.carousel.slide')
     feature_paths = (
       metric.id for metric_id, metric of Searchad.Views.SummaryMetrics.prototype.metrics_name)
-    
     @listenTo(@router, 'route:search', (path, filter) =>
+      view = this
       if @router.date_changed or @router.cat_changed
         @dirty = true
       path? and (@segment = path.search)
       if @segment == 'overview'
         @get_items() if @dirty
-        @carousel.carousel(0)
+        @controller.set_flight_status(true)
+        @carousel.carousel(0).queue(->
+          view.controller.set_flight_status(false))
         @carousel.carousel('pause')
       else if path.page? and path.page == 'overview'
-        @carousel.carousel(1)
+        @controller.set_flight_status(true)
+        @carousel.carousel(1).queue(->
+          view.controller.set_flight_status(false))
         @carousel.carousel('pause')
       else if path.details? and path.details == '1'
-        @carousel.carousel(3)
+        @controller.set_flight_status(true)
+        @carousel.carousel(3).queue(->
+          view.controller.set_flight_status(false))
         @carousel.carousel('pause')
       else if path.details? and path.details == 'sig_comp'
-        @carousel.carousel(4)
+        @controller.set_flight_status(true)
+        @carousel.carousel(4).queue(->
+          view.controller.set_flight_status(false))
         @carousel.carousel('pause')
       else if @segment == 'adhoc' and path.query?
-        @carousel.carousel(3)
+        @controller.set_flight_status(true)
+        @carousel.carousel(3).queue(->
+          view.controller.set_flight_status(false))
         @carousel.carousel('pause')
       else if path.page? and feature_paths.indexOf(path.page) != -1
-        @carousel.carousel(2)
+        @controller.set_flight_status(true)
+        @carousel.carousel(2).queue(->
+          view.controller.set_flight_status(false))
         @carousel.carousel('pause')
     )
  
@@ -75,9 +87,7 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
     @$el.find('.ajax-loader').css('display', 'block')
    
   render: =>
-    @$el.find('.ajax-loader').hide()
-    @$el.children().not('.ajax-loader').hide()
-    
+    @$el.children().not('.ajax-loader').remove()
     @$el.append( @navBar(title: 'Metrics Overview') )
   
     if @collection.toJSON().length > 0
@@ -168,11 +178,22 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
         class: 'user_eng'
         metrics: user_eng_metrics
 
-    @$el.append(@overall_template(
+    div_container = @overall_template(
       metrics: overall_metrics
       metrics_name: Searchad.Views.SummaryMetrics.prototype.metrics_name
       segments: segments
-      view: this))
+      view: this)
+
+    if @controller.get_flight_status() == true
+      that = this
+      setTimeout(() ->
+        that.$el.find('.ajax-loader').hide()
+        that.$el.append(div_container)
+      ,500)
+    else
+      @$el.find('.ajax-loader').hide()
+      @$el.append(div_container)
+
     @dirty = false
     this
       

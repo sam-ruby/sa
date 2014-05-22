@@ -1094,6 +1094,7 @@ div.overview-all {
     tr.visually-hidden {
       opacity: 0.94;
     }
+
   }
   th, td {
     padding: 6px 8px;
@@ -1189,6 +1190,11 @@ div.overview-all {
   th {
     border: 1px solid #ddd;
     padding: 4px 6px;
+  }
+  tr.empty {
+    td {
+      display: table-cell !important;
+    }
   }
 }
 .login {

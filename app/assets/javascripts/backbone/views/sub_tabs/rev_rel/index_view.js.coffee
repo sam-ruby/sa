@@ -149,9 +149,9 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
       onClick: (e)=>
         e.preventDefault()
         columnName = this.column.get("name")
-        if (this.column.get("sortable"))
-          if this.direction() == "descending"
-            this.sort(columnName, "ascending", (left, right) ->
+        if (@column.get("sortable"))
+          if @column.get('direction') == "descending"
+            view.grid.sort(columnName, "ascending", (left, right) ->
               leftVal = left.get(columnName)
               rightVal = right.get(columnName)
               if (leftVal == rightVal)
@@ -161,10 +161,10 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
               else
                 1
             )
-          else if this.direction() == "ascending"
-            @sort(columnName, null)
+          else if @column.get('direction') == "ascending"
+            view.grid.sort(columnName, null)
           else
-            @sort(columnName, "descending", (left, right)->
+            view.grid.sort(columnName, "descending", (left, right)->
               leftVal = left.get(columnName)
               rightVal = right.get(columnName)
               if (leftVal == rightVal)

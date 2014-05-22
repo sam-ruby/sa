@@ -9,13 +9,10 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
       new Searchad.Collections.CAWalmartItemsCollection()
     super(options)
     
-    @init_table()
     @controller.bind('date-changed', @date_changed )
     @collection.bind('reset', @render_result)
     @collection.bind('request', =>
-      @$el.children().not('.walmart-items-form').remove()
       @controller.trigger('search:sub-content:show-spin')
-      $('.walmart-items-form').hide()
       @undelegateEvents()
     )
     @controller.bind('content-cleanup', @unrender)
@@ -23,6 +20,12 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     @start_date_already_changed = false
     @end_date_already_changed = false
     Utils.InitExportCsv(this, '/comp_analysis/get_walmart_items.csv')
+    
+    @div_container = $('<div>')
+    @div_container.hide()
+    @$el.append( @div_container )
+    
+    @init_table()
     @undelegateEvents()
     @active = false
     @data = {}
@@ -65,45 +68,23 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
   
   render:(data)=>
     @items = []
-    @$el.prepend(@form_template())
-    walmart = Searchad.UserLatest.SubTab.walmart
-    @init_all_date_pickers(walmart.start_date,walmart.end_date )
+    @div_container.show()
+    @grid.render()
+    if @div_container.parents().length == 0
+      @$el.append(@div_container)
     @get_items(data)
 
   render_result: =>
     return unless @active
-    # usually the clear is bind with request, since here is using client side 
-    # pagination,
-    # there is not request available to trigger clean up when swiching pages. 
-    # Clear here. 
-    @$el.children().not('.walmart-items-form').remove()
-    $('.walmart-items-form').show()
     @controller.trigger('search:sub-content:hide-spin')
-    if @collection.size() == 0
-      @$el.append( @grid.render().$el)
-    else
-      @$el.append( @grid.render().$el)
-      @$el.append( @export_csv_button() )
-    
     @delegateEvents()
     return this
 
-
-  render_error: (query) ->
-    return unless @active
-    @controller.trigger('search:sub-content:hide-spin')
-    @$el.html(JST['backbone/templates/shared/no_data']({query:query}))
-    # need to delegate events because the "show popular item over time" 
-    # and "top walmart 32" button needs it
-    @delegateEvents()
-
-  
   unrender: =>
     @active = false
-    @$el.children().not('.ajax-loader').remove()
+    @div_container.hide()
     @controller.trigger('search:sub-content:hide-spin')
     @undelegateEvents()
-
 
   top_32_daily:(e)=>
     e.preventDefault()
@@ -117,7 +98,6 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     @init_all_date_pickers(curr_date, curr_date)
     @get_items(data)
 
-
   popular_items_over_time:(e)=>
     e.preventDefault()
     # $('#label-popular-items-over-time').addClass('label-info')
@@ -125,7 +105,6 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     data = {}
     data.view || = "ranged"
     @get_items(data)
-
 
   get_items: (data) =>
     @active = true
@@ -143,10 +122,8 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     # if the data param is the exact same stored with collection 
     # data. then directly render
     if JSON.stringify(data) == JSON.stringify(@collection.data)
-      @render_result()
-      return
+      return @render_result()
     @collection.get_items(data)
-
 
   process_data:(data)=>
     data || = {}
@@ -162,7 +139,6 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
 
     return data
 
-
   init_table: =>
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
@@ -170,11 +146,16 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
       emptyText: 'No Data'
       className: 'walmart-results'
     )
+    @div_container.append( @form_template() )
+    walmart = Searchad.UserLatest.SubTab.walmart
+    @init_all_date_pickers(walmart.start_date,walmart.end_date )
+    @div_container.append( @grid.$el )
+    @div_container.append( @export_csv_button() )
 
   init_all_date_pickers:(start_date, end_date)  =>
     # available_end_date = available_end_date || @available_end_date
-    start_date_picker = @$el.find('input.start-date.datepicker')
-    end_date_picker =  @$el.find('input.end-date.datepicker')
+    start_date_picker = @div_container.find('input.start-date.datepicker')
+    end_date_picker =  @div_container.find('input.end-date.datepicker')
     current_date = @controller.get_filter_params().date
     start_date ||= current_date
     end_date ||= current_date
@@ -281,6 +262,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     {name: 'curr_item_price',
     label: 'Latest Item Price',
     editable: false,
+    sortable: true,
     cell: 'number',
     headerCell: @NumericHeaderCell,
     formatter: Utils.CurrencyFormatter},

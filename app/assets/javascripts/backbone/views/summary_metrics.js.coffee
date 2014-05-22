@@ -367,7 +367,6 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     @$el.find('.ajax-loader').css('display', 'block')
    
   render: =>
-    @$el.find('.ajax-loader').hide()
     @$el.children().not('.ajax-loader').hide()
     periods = []
     segment_cat = ''
@@ -430,13 +429,23 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
         class: 'user_eng'
         metrics: (metrics[m_db_id] for m_db_id, metric of @metrics_name \
           when metric.cat == 'user_eng' and metrics[m_db_id]?)
-          
-    @$el.append(@summary_template(
+    
+    div_container = @summary_template(
       metrics: overall_metrics
       segment: segment
-      view: this))
+      view: this)
 
-    $.each(@$el.find('.metric .mrow'), (i, div) ->
+    if @controller.get_flight_status() == true
+      that = this
+      setTimeout(() ->
+        that.$el.find('.ajax-loader').hide()
+        that.$el.append(div_container)
+      ,500)
+    else
+      @$el.find('.ajax-loader').hide()
+      @$el.append(div_container)
+
+    $.each($(div_container).find('.metric .mrow'), (i, div) ->
       max_height = 0
       $.each($(div).children(), (i, child) ->
         if $(child).height() > max_height
