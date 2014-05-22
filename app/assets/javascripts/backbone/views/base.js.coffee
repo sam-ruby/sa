@@ -8,7 +8,7 @@ class Searchad.Views.Base extends Backbone.View
     class @SortedHeaderCell extends Backgrid.HeaderCell
       initialize: (options) ->
         super(options)
-        @setCellDirection('descending')
+        @setCellDirection(@column, 'descending')
         @$el.css('text-align', 'right')
 
     class @AscHeaderCell extends Backgrid.HeaderCell

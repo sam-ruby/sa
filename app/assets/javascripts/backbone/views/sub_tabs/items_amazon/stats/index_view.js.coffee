@@ -15,6 +15,8 @@ class Searchad.Views.SubTabs.AmazonItems.Stats.IndexView extends Backbone.View
     @$el.highcharts(
       chart:
         alignTicks: false
+        height: 300
+        width: 760
         plotBackgroundColor: null
         plotBorderWidth: null
         plotShadow: false
