@@ -20,6 +20,7 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
       if path.details == 'sig_comp' and path.query? and path.items?
         @get_items(query: @query, items: @items) if @dirty
     )
+    @$el.tooltip(selector: 'a[data-toggle="tooltip"]')
   
   events: =>
     'click a.go-back-sm': (e) =>
@@ -35,31 +36,44 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
     @$el.find('.ajax-loader').css('display', 'block')
   
   render: =>
+    view = this
     @dirty = false
     @$el.find('.ajax-loader').hide()
     return if @collection.length == 0
     signals = {}
+    get_signal_names = (child_signal)->
+      for signal_id, details of child_signal when !signals[signal_id]?
+        signal_mapping = view.signalCollection.where(signal_id: signal_id)
+        if signal_mapping.length > 0
+          signals[signal_id] =
+            signal_name: signal_mapping[0].get('signal_name')
+            root: true
+        else
+          signals[signal_id] =
+            signal_name: signal_id
+            root: false
+        get_signal_names(details.c, false) if details.c?
 
     @collection.each( (e)->
       signals_json =  e.get('signals_json')
-      if signals_json?
-        for signal_id, values of signals_json when !signals[signal_id]?
-          signal_mapping = @signalCollection.where(signal_id: signal_id)
-          if signal_mapping.length > 0
-            signals[signal_id] = signal_mapping[0].attributes
+      get_signal_names(signals_json) if signals_json?
     , this)
 
     signals_sorted = []
-    for signal_id, details of signals
+    for signal_id, details of signals when details.root == true
       max_signal_items = []
       max_signal_value = 0
       t_score = 0
       values = []
       @collection.each( (e)->
         if e.get('signals_json')? and e.get('signals_json')[signal_id]?
-          t_score = parseFloat(e.get('signals_json')[signal_id]['v'])
+          signal_score = parseFloat(e.get('signals_json')[signal_id].v)
+          signal_weight = parseFloat(e.get('signals_json')[signal_id].w)
+          if signal_weight? and signal_score?
+            t_score = signal_score * signal_weight
+          else
+            t_score = 0
           values.push(t_score)
-          signals[signal_id] = {} unless signals[signal_id]?
           signals[signal_id].values = [] unless signals[signal_id].values?
           signals[signal_id].values.push(t_score)
           if t_score > max_signal_value
@@ -79,7 +93,8 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
 
       sq_diff = 0
       for value in values
-        sq_diff = sq_diff + Math.pow(value/(avg_value + 0.0001), 2)
+        # sq_diff = sq_diff + Math.pow(value/(avg_value + 0.00001), 2)
+        sq_diff = sq_diff + Math.pow(value - avg_value, 2)
       sq_diff = sq_diff/values.length
 
       t_obj =

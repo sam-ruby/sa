@@ -27,6 +27,7 @@
 //= require bootstrap-dropdown
 //= require bootstrap-carousel
 //= require bootstrap-collapse
+//= require jstree/dist/jstree
 //= require backbone/searchad
 //= require feedback-master/feedback.min
 //= require util/CADhelpInfo

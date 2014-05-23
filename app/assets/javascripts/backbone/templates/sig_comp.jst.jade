@@ -1,4 +1,4 @@
-- var intFormatter = new Backgrid.NumberFormatter({decimals: 4})
+- var intFormatter = new Backgrid.NumberFormatter({decimals: 5})
 - var item_width = '' + 80.0/items.length + '%'
 .sig-comp-table
   .col-head
@@ -36,6 +36,17 @@
                   = item.orders
                 else
                   | N/A
+            tr
+              td Final Score
+              td
+                - var fs = 'reranked.final.score'
+                - var fs_value = 0
+                if item.signals_json && item.signals_json[fs] && item.signals_json[fs].v 
+                  - fs_value = parseFloat(item.signals_json[fs].v)
+                    = intFormatter.fromRaw(fs_value)
+                else
+                  | N/A
+
 
   .signal-section
     if signals.length > 0
@@ -43,22 +54,22 @@
         .srow
           .name= signal.name
           each item in items
-            - var good_score = false, value, score
+            - var good_score = false, signal_value, signal_weight, score, classname
             .score.numerical-col(style='width:' + item_width)
-              if item.signals_json && item.signals_json[signal.id] && item.signals_json[signal.id].v
+              if item.signals_json && item.signals_json[signal.id] && item.signals_json[signal.id].v && item.signals_json[signal.id].w
+                - signal_value = parseFloat(item.signals_json[signal.id].v)
+                - signal_weight = parseFloat(item.signals_json[signal.id].w)
+                - score = intFormatter.fromRaw(signal_value * signal_weight)
                 if item.signals_json[signal.id].max
-                  good_score = true
-                - value = parseFloat(item.signals_json[signal.id].v)
-                - score = intFormatter.fromRaw(value)
+                  i.icon-star &nbsp;
+                  - classname = 'green-change-signal'
+                else
+                  - classname = ''
+                
+                span
+                  a(class=classname, data-toggle='tooltip', data-html=true, data-title='&nbsp;&nbsp;Score: ' + intFormatter.fromRaw(signal_value) + '<br/>Weight: ' + intFormatter.fromRaw(signal_weight), data-placement='left')= score
               else
                 - score = '-'
-              if good_score
-                i.icon-star &nbsp;
-                span.green-change(style='font-weight: bold')
-                  = score
-              else
-                span
-                  = score
     else
       .srow
         .no-data No Data Available
