@@ -41,26 +41,29 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
     @$el.find('.ajax-loader').hide()
     return if @collection.length == 0
     signals = {}
-    get_signal_names = (child_signal)->
-      for signal_id, details of child_signal when !signals[signal_id]?
-        signal_mapping = view.signalCollection.where(signal_id: signal_id)
-        if signal_mapping.length > 0
-          signals[signal_id] =
-            signal_name: signal_mapping[0].get('signal_name')
-            root: true
+    get_signal_names = (container, child_signal, root)->
+      for signal_id, details of child_signal
+        if root == true
+          signal_mapping = view.signalCollection.where(signal_id: signal_id)
+          if signal_mapping.length > 0
+            container[signal_id] =
+              signal_name: signal_mapping[0].get('signal_name')
         else
-          signals[signal_id] =
+          container[signal_id] =
             signal_name: signal_id
-            root: false
-        get_signal_names(details.c, false) if details.c?
+        if details.c?
+          container[signal_id].c = {} if !container[signal_id].c?
+          get_signal_names(container[signal_id].c, details.c, false)
 
     @collection.each( (e)->
       signals_json =  e.get('signals_json')
-      get_signal_names(signals_json) if signals_json?
+      get_signal_names(signals, signals_json, true) if signals_json?
     , this)
 
+    console.log 'Here is the signal collection ', signals
     signals_sorted = []
-    for signal_id, details of signals when details.root == true
+    
+    for signal_id, details of signals
       max_signal_items = []
       max_signal_value = 0
       t_score = 0
