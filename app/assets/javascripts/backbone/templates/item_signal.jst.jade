@@ -1,0 +1,34 @@
+- var intFormatter = new Backgrid.NumberFormatter({decimals: 5})
+- var item_signal = JST['backbone/templates/item_signal']
+li.srow
+  .node= signal.signal_name
+  .item-signals
+    each item_id in item_ids
+      - var good_score = false, signal_score, signal_weight, score
+      - var signal_item = signal[item_id], classname = '', value
+      .score.numerical-col(style='width:' + item_width)
+        if signal_item && (signal_item.score || signal_item.weight)
+          - signal_score = signal_item.score
+          - signal_weight = signal_item.weight
+          if signal_item.max
+            i.icon-star &nbsp;
+            - classname = 'green-change-signal'
+          if signal_item.value != null
+            - value = intFormatter.fromRaw(signal_item.value)
+            span
+              a(class=classname, data-toggle='tooltip', data-html=true, data-title='&nbsp;&nbsp;Score: ' + intFormatter.fromRaw(signal_score) + '<br/>Weight: ' + intFormatter.fromRaw(signal_weight), data-placement='left')= value
+          else
+            - value = intFormatter.fromRaw(signal_item.score)
+            span= value
+        else
+          span -
+
+  if signal.children
+    ul
+      each signal_details, signal_id in signal.children
+        - max_stack = max_stack - 1
+        if max_stack <= 0
+          - continue
+        - console.log('Gettng the children for ', signal, signal_details)
+        != item_signal({signal: signal_details, item_ids: item_ids, item_width: item_width, max_stack: max_stack})
+

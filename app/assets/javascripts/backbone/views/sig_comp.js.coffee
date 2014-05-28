@@ -41,53 +41,70 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
     @$el.find('.ajax-loader').hide()
     return if @collection.length == 0
     signals = {}
-    get_signal_names = (container, child_signal, root)->
+    item_ids = []
+    get_signal_names = (container, child_signal, root, item_id)->
       for signal_id, details of child_signal
-        if root == true
-          signal_mapping = view.signalCollection.where(signal_id: signal_id)
-          if signal_mapping.length > 0
+        if !container[signal_id]?
+          if root == true
+            signal_mapping = view.signalCollection.where(signal_id: signal_id)
+            if signal_mapping.length > 0
+              signal_name = signal_mapping[0].get('signal_name')
+              if details.c?
+                signal_name += " (#{details.o})"
+              container[signal_id] =
+                signal_name: signal_name
+          else
+            if details.c?
+              signal_name = "(#{details.o})"
+            else
+              signal_name = signal_id
             container[signal_id] =
-              signal_name: signal_mapping[0].get('signal_name')
-        else
-          container[signal_id] =
-            signal_name: signal_id
+              signal_name: signal_name
+        
+        if container[signal_id]
+          if details.v? and details.w?
+            signal_score = parseFloat(details.v)
+            signal_weight = parseFloat(details.w)
+            container[signal_id][item_id] =
+              score: signal_score
+              weight: signal_weight
+              value: signal_score * signal_weight
+          else if details.v?
+            signal_score = parseFloat(details.v)
+            container[signal_id][item_id] =
+              score: signal_score
+        
         if details.c?
-          container[signal_id].c = {} if !container[signal_id].c?
-          get_signal_names(container[signal_id].c, details.c, false)
+          container[signal_id].children = {} if !container[signal_id].children?
+          get_signal_names(container[signal_id].children, details.c, false, item_id)
 
     @collection.each( (e)->
       signals_json =  e.get('signals_json')
-      get_signal_names(signals, signals_json, true) if signals_json?
+      item_id = e.get('item_id')
+      item_ids.push(item_id)
+      get_signal_names(signals, signals_json, true, item_id) if signals_json?
     , this)
 
-    console.log 'Here is the signal collection ', signals
     signals_sorted = []
-    
     for signal_id, details of signals
       max_signal_items = []
       max_signal_value = 0
-      t_score = 0
+      value = 0
       values = []
-      @collection.each( (e)->
-        if e.get('signals_json')? and e.get('signals_json')[signal_id]?
-          signal_score = parseFloat(e.get('signals_json')[signal_id].v)
-          signal_weight = parseFloat(e.get('signals_json')[signal_id].w)
-          if signal_weight? and signal_score?
-            t_score = signal_score * signal_weight
-          else
-            t_score = 0
-          values.push(t_score)
-          signals[signal_id].values = [] unless signals[signal_id].values?
-          signals[signal_id].values.push(t_score)
-          if t_score > max_signal_value
-            max_signal_value = t_score
-            max_signal_items = []
-            max_signal_items.push(e)
-          else if t_score == max_signal_value
-            max_signal_items = []
-      )
-      if max_signal_items.length == 1
-        max_signal_items[0].get('signals_json')[signal_id].max = true
+      for item_id in item_ids
+        if details[item_id]?
+          value = details[item_id].value
+          values.push(value)
+          details.values = [] unless details.values?
+          details.values.push(value)
+          if value > max_signal_value
+            max_signal_value = value
+            max_signal_item = item_id
+          else if value == max_signal_value
+            max_signal_item = null
+      
+      if max_signal_item?
+        details[max_signal_item].max = true
       
       avg_value = 0
       for value in values
@@ -96,12 +113,10 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
 
       sq_diff = 0
       for value in values
-        # sq_diff = sq_diff + Math.pow(value/(avg_value + 0.00001), 2)
         sq_diff = sq_diff + Math.pow(value - avg_value, 2)
       sq_diff = sq_diff/values.length
 
       t_obj =
-        name: details.signal_name
         id: signal_id
         value: sq_diff
       signals_sorted.push(t_obj)
@@ -114,9 +129,15 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
       else
         0
     )
+    console.log 'Here is the signals sorted ', signals, signals_sorted, item_ids,
+      @collection.toJSON()
     @$el.append( @navBar(title: 'Signal Comparison') )
     @$el.append(@template(
-      signals: signals_sorted, items: @collection.toJSON()))
+      signals: signals
+      signals_sorted: signals_sorted
+      items: @collection.toJSON()
+      item_ids: item_ids))
+    @$el.find('.signal-section').jstree()
 
   renderBarChart: (data, x_title, y_title, chart_title) ->
     process_data = (data) ->

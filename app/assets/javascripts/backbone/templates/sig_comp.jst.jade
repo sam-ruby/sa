@@ -1,5 +1,7 @@
 - var intFormatter = new Backgrid.NumberFormatter({decimals: 5})
-- var item_width = '' + 80.0/items.length + '%'
+- var item_width = '' + 846.0/items.length + 'px'
+- var item_signal = JST['backbone/templates/item_signal']
+
 .sig-comp-table
   .col-head
     .srow
@@ -49,27 +51,11 @@
 
 
   .signal-section
-    if signals.length > 0
-      each signal in signals
-        .srow
-          .name= signal.name
-          each item in items
-            - var good_score = false, signal_value, signal_weight, score, classname
-            .score.numerical-col(style='width:' + item_width)
-              if item.signals_json && item.signals_json[signal.id] && item.signals_json[signal.id].v && item.signals_json[signal.id].w
-                - signal_value = parseFloat(item.signals_json[signal.id].v)
-                - signal_weight = parseFloat(item.signals_json[signal.id].w)
-                - score = intFormatter.fromRaw(signal_value * signal_weight)
-                if item.signals_json[signal.id].max
-                  i.icon-star &nbsp;
-                  - classname = 'green-change-signal'
-                else
-                  - classname = ''
-                
-                span
-                  a(class=classname, data-toggle='tooltip', data-html=true, data-title='&nbsp;&nbsp;Score: ' + intFormatter.fromRaw(signal_value) + '<br/>Weight: ' + intFormatter.fromRaw(signal_weight), data-placement='left')= score
-              else
-                - score = '-'
+    if signals_sorted.length > 0
+      ul
+        each signal in signals_sorted
+          - var max_stack = 100
+          != item_signal({signal: signals[signal.id], item_ids: item_ids, item_width: item_width, max_stack: max_stack})
     else
       .srow
         .no-data No Data Available

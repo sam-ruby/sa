@@ -742,7 +742,10 @@ tr.selected {
 }
 
 div.sig-comp-table {
-  .name, .item, .score, .no-data {
+  width: 1148px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  .name, .item, .score, .no-data, .node, .item-signals {
     display: inline-block;
     line-height: 20px;
     vertical-align: top;
@@ -751,7 +754,7 @@ div.sig-comp-table {
     -moz-box-sizing: border-box;
   }
   .name {
-    width: 20%;
+    width: 300px;
     text-transform: capitalize;
   }
   .no-data {
@@ -801,14 +804,30 @@ div.sig-comp-table {
       border-left: 1px solid #ddd;
       border-right: 1px solid #ddd;
     }
-    .name {
-      @include gradient-horizontal(white, #f2f2f2);
-    }
-    .score {
-      border-left: 1px solid #ddd;
-    }
     .name, .item, .score {
       padding: 4px 8px;
+    }
+    .item-signals {
+      text-align: right;
+    }
+  }
+  .srow {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    position: relative;
+    a.jstree-anchor {
+      div.item-signals {
+        position: absolute;
+        right: 0px;
+      }
+    }
+    .srow {
+      border: 0;
+      a.jstree-anchor {
+        &:hover div.item-signals, &:focus div.item-signals, &:active div.item-signals {
+          background-color: #f9f9f9;
+        }
+      }
     }
   }
 }
