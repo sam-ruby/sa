@@ -54,8 +54,10 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
               container[signal_id] =
                 signal_name: signal_name
           else
-            if details.c?
+            if details.c? and signal_id.match(/^\d$/)
               signal_name = "(#{details.o})"
+            else if details.c?
+              signal_name = "#{signal_id} (#{details.o})"
             else
               signal_name = signal_id
             container[signal_id] =
