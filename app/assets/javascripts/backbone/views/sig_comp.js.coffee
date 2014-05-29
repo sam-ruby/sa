@@ -131,15 +131,13 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
       else
         0
     )
-    console.log 'Here is the signals sorted ', signals, signals_sorted, item_ids,
-      @collection.toJSON()
     @$el.append( @navBar(title: 'Signal Comparison') )
     @$el.append(@template(
       signals: signals
       signals_sorted: signals_sorted
       items: @collection.toJSON()
       item_ids: item_ids))
-    @$el.find('.signal-section').jstree()
+    @$el.find('.signal-section').jstree() if signals_sorted.length > 0
 
   renderBarChart: (data, x_title, y_title, chart_title) ->
     process_data = (data) ->
