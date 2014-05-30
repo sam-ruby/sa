@@ -29,6 +29,5 @@ li.srow
         - max_stack = max_stack - 1
         if max_stack <= 0
           - continue
-        - console.log('Gettng the children for ', signal, signal_details)
         != item_signal({signal: signal_details, item_ids: item_ids, item_width: item_width, max_stack: max_stack})
 

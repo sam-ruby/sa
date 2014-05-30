@@ -181,7 +181,6 @@ class Searchad.Views.AdhocQuery.IndexView extends Backbone.View
  
   render_form: (data)=>
     #if there is data, it should come from router
-    console.log 'Yes I am here'
     data = @process_query_data(data)
     @query_form.html(@form_template(data))
     @query_form.find('input.query').val(data.query)

@@ -4,6 +4,10 @@ div.query-info
   span Daily Query Stats for :&nbsp;
   span.query-value
     = query
+    | &nbsp;
+    a(href='http://www.walmart.com/search/search-ng.do?search_query=' + encodeURIComponent(query), target='_blank')
+      img.walmart-icon(src='/assets/walmart-transparent.png')
+
 table.table.table-bordered.query-stats
   thead
     tr

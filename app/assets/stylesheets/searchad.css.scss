@@ -1210,6 +1210,11 @@ div.overview-all {
   }
 }
 
+tr.empty {
+  td {
+    display: table-cell !important;
+  }
+}
 .walmart-results {
   @extend .backgrid;
   td {
@@ -1226,11 +1231,6 @@ div.overview-all {
   th {
     border: 1px solid #ddd;
     padding: 4px 6px;
-  }
-  tr.empty {
-    td {
-      display: table-cell !important;
-    }
   }
 }
 .login {
