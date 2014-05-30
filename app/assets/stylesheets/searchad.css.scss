@@ -1043,11 +1043,18 @@ div.overview-all {
       border-right: 1px solid #ddd;
     }
     .support-info-value {
-      color: #81a2b3;
+      color: black;
       border-right: 1px solid #ddd;
       font-size: 12px;
       text-align: right;
-      padding-right: 3%;
+      table {
+        margin-bottom: 0;
+        tr:first-child {
+          td {
+            border: 0;
+          }
+        }
+      }
     }
     .name {
       white-space:nowrap;
@@ -1078,9 +1085,8 @@ div.overview-all {
         font-size: 12px;
         padding-left: 20px;
         white-space:nowrap;
-        @include gradient-horizontal(white, #f2f2f2);
         border-left: 1px solid #ddd;
-        color: #777777;
+        color: black;
         text-transform: capitalize;
       }
     }

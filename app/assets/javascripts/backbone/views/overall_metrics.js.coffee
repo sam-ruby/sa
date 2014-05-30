@@ -77,6 +77,10 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
           support_rows.hide()
         else
           support_rows.show()
+          height = $(support_rows[0]).height()
+          $.each($(support_rows[0]).children(), (i, child) ->
+            $(child).height(height)
+          )
     $(e.target).toggleClass('make-tiny')
 
   get_items: (data) =>
@@ -183,6 +187,7 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
       metrics_name: Searchad.Views.SummaryMetrics.prototype.metrics_name
       segments: segments
       view: this)
+
 
     if @controller.get_flight_status() == true
       that = this

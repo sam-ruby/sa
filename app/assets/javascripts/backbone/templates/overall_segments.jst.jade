@@ -99,7 +99,7 @@ form.form-inline.overview-all
                 - slink = '#search/' + segment.path + '/page/' + m_obj.id
                 - significance = metric[segment_id].significance
                 if significance
-                  if significance >= 0.99
+                  if significance >= 0.95
                     i.icon-star.significance
                   else if significance >= .90
                     i.icon-star-empty.significance
@@ -113,7 +113,7 @@ form.form-inline.overview-all
                 |&nbsp;
 
         div(class=[m_obj.id, 'mrow-support-info'])
-          .support-cat Confidence Interval
+          .support-cat Details
           - var ms, ucl, lcl, query_count
           each segment, segment_id in segments
             - ms = metric[segment_id]
@@ -125,25 +125,34 @@ form.form-inline.overview-all
             else if !ms
               - continue
             .support-info-value
-              if ms && ms.ucl && ms.lcl
-                if m_obj.unit == 'dollar'
-                  - ucl = intFormatter.fromRaw(ms.ucl)
-                  - lcl = intFormatter.fromRaw(ms.lcl)
-                else if m_obj.unit == 'query'
-                  if m_obj.decimals == 4
-                    - ucl = numForm4D.fromRaw(ms.ucl)
-                    - lcl = numForm4D.fromRaw(ms.lcl)
-                  else
-                    - ucl = intFormatter.fromRaw(ms.ucl)
-                    - lcl = intFormatter.fromRaw(ms.lcl)
-                else
-                  - ucl = numFormatter.fromRaw(ms.ucl)
-                  - lcl = numFormatter.fromRaw(ms.lcl)
-              
-                if ms && ms.metadata && ms.metadata.sup
-                  query_count = ms.metadata.sup 
-                  span= lcl + ' - ' + ucl + '&nbsp;(' + intFormatter.fromRaw(query_count) + ' qry)'
-                else
-                  span= lcl + ' - ' + ucl
-              else
-                |&nbsp;
+              table.table.table-condensed
+                tbody
+                  if ms && ms.ucl && ms.lcl
+                    if m_obj.unit == 'dollar'
+                      - ucl = intFormatter.fromRaw(ms.ucl)
+                      - lcl = intFormatter.fromRaw(ms.lcl)
+                    else if m_obj.unit == 'query'
+                      if m_obj.decimals == 4
+                        - ucl = numForm4D.fromRaw(ms.ucl)
+                        - lcl = numForm4D.fromRaw(ms.lcl)
+                      else
+                        - ucl = intFormatter.fromRaw(ms.ucl)
+                        - lcl = intFormatter.fromRaw(ms.lcl)
+                    else
+                      - ucl = numFormatter.fromRaw(ms.ucl)
+                      - lcl = numFormatter.fromRaw(ms.lcl)
+                    tr
+                      td Conf Inter
+                      td= lcl + '-' + ucl
+                    
+                  if ms && ms.metadata && ms.metadata.sup
+                    query_count = ms.metadata.sup 
+                    tr
+                      td Qry Proc
+                      td
+                        =intFormatter.fromRaw(query_count)
+
+                  if ms && ms.significance
+                    tr
+                      td Signific
+                      td= ms.significance + '%'
