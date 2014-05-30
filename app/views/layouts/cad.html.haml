@@ -35,12 +35,6 @@
       .close1 {
         padding-right: 0.5em !important;
       }
-      .ajax-loader {
-        display: none;
-        margin-right: 50%;
-        margin-left:  50%;
-        padding-top:2em;
-      }
       .side-title {
         font-size: 1.2em;
         color: #2f7ed8;
@@ -92,9 +86,6 @@
         top: 0em;
         margin-bottom: 1em;
       }
-      tr.selected {
-        background-color: rgba(47, 126, 216, .07);
-      }
       .date-week-holder {
         color: white;
         margin-right: 1em;
@@ -119,9 +110,8 @@
     = csrf_meta_tag 
   
   %body
-    #mdw-toolbar
     = yield :title
-    .container
+    .container{style:'margin-top:1.5em; margin-bottom: 5em;'}
       .row
         %ul.nav.nav-tabs.master-tab{:style=>'display:none'}
       .row

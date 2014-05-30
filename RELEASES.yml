@@ -1,4 +1,9 @@
 --- # This is a text file to mark the features/bug fixes that went in a Release
+2.0.0:
+  Date: May 30, 2014
+  Overview:
+    New Features: https://confluence.walmart.com/display/LABSPOLSEA/CAD+2.0+Release+Notes
+
 1.8.4:
     Date: May 22, 2014
     Fixes:
@@ -19,7 +24,7 @@
     Date: Mar 19, 2014
     Fixes:
       PERSSERANA-401: Fixing the bug with charts date rage for trending queries
- 
+
 1.8.0:
     Date: Mar 19, 2014
     Features:

@@ -16,12 +16,100 @@ $ ->
           controller.set_view('daily')
           controller.trigger('view-change', view: 'daily'))
     
-
+    categoriesView = new Searchad.Views.Categories.IndexView(
+      el: '#cat-container')
     weekView = new Searchad.Views.WeekPicker.IndexView(
       el: '#dp3')
 
     topTabsView = new Searchad.Views.TopTabs.IndexView(
-      el: '#top-nav')
+      el: '#top-bar')
+    
+    searchTabsView = new Searchad.Views.SearchTabs.IndexView(
+      el: '#search-bar')
+
+    browseTabsView = new Searchad.Views.BrowseTabs.IndexView(
+      el: '#browse-bar')
+    
+    categoryTabsView = new Searchad.Views.CategoryTabs.IndexView(
+      el: '#category-bar')
+
+    masterTabView = new Searchad.Views.MasterTab.IndexView(
+      el: '#search-sub-tasks .tabs')
+
+    poorPerformingView = new Searchad.Views.PoorPerforming.IndexView(
+      el: '#search-sub-tasks .search-content')
+
+    upTrendingView = new Searchad.Views.UpTrending.IndexView(
+      el: '#search-sub-tasks .search-content')
+    
+    overallMetricsView = new Searchad.Views.OverallMetrics(
+      el: '#overall-metrics')
+    
+    summaryMetricsView = new Searchad.Views.SummaryMetrics(
+      el: '#summary-metrics')
+  
+    oNdcg_5_WinnersView = new Searchad.Views.ONdcg5(
+      el: '#winners')
+    
+    oMpr_5_WinnersView = new Searchad.Views.OMpr5(
+      el: '#winners')
+ 
+    oPrec_5_WinnersView = new Searchad.Views.OPrec5(
+      el: '#winners')
+    
+    oRecall_5_WinnersView = new Searchad.Views.ORec5(
+      el: '#winners')
+    
+    oNdcg_1_WinnersView = new Searchad.Views.ONdcg1(
+      el: '#winners')
+    
+    oMpr_1_WinnersView = new Searchad.Views.OMpr1(
+      el: '#winners')
+ 
+    oPrec_1_WinnersView = new Searchad.Views.OPrec1(
+      el: '#winners')
+    
+    oRecall_1_WinnersView = new Searchad.Views.ORec1(
+      el: '#winners')
+
+    oNdcg_16_WinnersView = new Searchad.Views.ONdcg16(
+      el: '#winners')
+    
+    oMpr_16_WinnersView = new Searchad.Views.OMpr16(
+      el: '#winners')
+ 
+    oPrec_16_WinnersView = new Searchad.Views.OPrec16(
+      el: '#winners')
+    
+    oRecall_16_WinnersView = new Searchad.Views.ORec16(
+      el: '#winners')
+
+    #convCorWinnersView = new Searchad.Views.ConvCorrelation.Winners(
+    # el: '#winners')
+   
+    trafficWinnersView = new Searchad.Views.Traffic.Winners(
+      el: '#winners')
+   
+    pvrWinnerView = new Searchad.Views.Pvr.Winners(
+      el: '#winners')
+   
+    atcWinnerView = new Searchad.Views.Atc.Winners(
+      el: '#winners')
+   
+    conversionWinnerView = new Searchad.Views.Conversion.Winners(
+      el: '#winners')
+   
+    revenueWinnerView = new Searchad.Views.Revenue.Winners(
+      el: '#winners')
+   
+    oosWinnerView = new Searchad.Views.Oos.Winners(
+      el: '#winners')
+   
+    p1oosWinnerView = new Searchad.Views.P1Oos.Winners(
+      el: '#winners')
+
+    sigCompView = new Searchad.Views.SignalComparison(
+      el: '#sig-comp')
 
     searchKPI = new Searchad.Views.SearchKPI.IndexView(
       el: '#search-kpi'
@@ -30,18 +118,6 @@ $ ->
     )
     searchKPI.listenTo(controller, 'search-kpi:index',
       searchKPI.get_items)
-
-    poorPerformingView = new Searchad.Views.PoorPerforming.IndexView(
-      el: '#trending'
-      content_selector: '.pp-content')
-    poorPerformingView.listenTo(
-      controller, 'trending:index', poorPerformingView.get_items)
-
-    upTrendingView = new Searchad.Views.UpTrending.IndexView(
-      el: '#trending'
-      content_selector: '.up-content')
-    upTrendingView.listenTo(
-      controller, 'up-trending:index', upTrendingView.get_items)
 
     searchQualityQueryView = new Searchad.Views.SearchQualityQuery.IndexView(
       el: '#search-quality-queries'
@@ -63,7 +139,7 @@ $ ->
     subtabsView =
       new Searchad.Views.SubTabs.IndexView(el: '#search-sub-tabs')
     subtabsView.listenTo(
-      controller, 'search:sub-content', subtabsView.render)
+      controller, 'search:details', subtabsView.render)
    
     searchStatsView = new Searchad.Views.SubTabs.Stats.IndexView(
       el: '#search-sub-content')
@@ -93,6 +169,7 @@ $ ->
       controller, 'search:rel-rev', (data) ->
         queryItemsView.get_items(data)
     )
+    SearchQualityApp.qv = queryItemsView
 
     #cvr dropped view
     cvrDroppedQueryView = new Searchad.Views.AdhocQuery.cvrDroppedQueryView (
@@ -149,16 +226,16 @@ $ ->
         queryMonitoringMetricView.get_items(data)
     )
 
-    qmMetricStatsView = new Searchad.Views.QueryMonitoring.Metric.Stats.IndexView ( 
+    qmMetricStatsView = new Searchad.Views.QueryMonitoring.Metric.Stats.IndexView (
       el: '#qm-count-sub-content'
       con_el:'#con-stats'
       atc_el:'#atc-stats'
       pvr_el:'#pvr-stats'
     )
     qmCountStatsView.listenTo(
-      controller, 'qm-metrics:stats', 
+      controller, 'qm-metrics:stats',
       (data)-> qmMetricStatsView.get_items(data))
-   
+
   Backbone.history.start()
   
   $('div.content').css('height', ($(window).height() + 50) + 'px')
@@ -175,5 +252,5 @@ $ ->
     ajaxURL: '/feedback/send_feedback'
     html2canvasURL: 'assets/feedback-master/html2canvas.js')
   
-  MDW.init({appId: 429415118})
+  #MDW.init({appId: 429415118})
 

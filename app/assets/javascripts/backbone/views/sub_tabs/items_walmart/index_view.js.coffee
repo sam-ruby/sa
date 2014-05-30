@@ -1,19 +1,18 @@
+#= require backbone/views/base
+
 Searchad.Views.SubTabs ||= {}
 Searchad.Views.SubTabs.WalmartItems ||= {}
 
-class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
+class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
   initialize: (options) =>
-    @controller = SearchQualityApp.Controller
     @collection =
       new Searchad.Collections.CAWalmartItemsCollection()
-    @init_table()
+    super(options)
     
     @controller.bind('date-changed', @date_changed )
     @collection.bind('reset', @render_result)
     @collection.bind('request', =>
-      @$el.children().not('.ajax-loader').not('.walmart-items-form').remove()
       @controller.trigger('search:sub-content:show-spin')
-      $('.walmart-items-form').hide()
       @undelegateEvents()
     )
     @controller.bind('content-cleanup', @unrender)
@@ -21,9 +20,16 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     @start_date_already_changed = false
     @end_date_already_changed = false
     Utils.InitExportCsv(this, '/comp_analysis/get_walmart_items.csv')
+    
+    @div_container = $('<div>')
+    @div_container.hide()
+    @$el.append( @div_container )
+    
+    @init_table()
     @undelegateEvents()
     @active = false
     @data = {}
+    @items = []
 
   form_template: JST['backbone/templates/walmart_item/form']
 
@@ -36,50 +42,49 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
       else
         fileName = "walmart_search_results_#{query}_#{@data.date}.csv"
       @export_csv($(e.target), fileName, @data)
+    'click a.item-uncheck': 'uncheck_items'
+    'click #label-popular-items-over-time ':'popular_items_over_time'
+    'click #label-top-32-daily':'top_32_daily'
+    'click button.do-sig-comp': =>
+      if @items.length == 0
+        @$el.find('span.sig-comp-msg').fadeIn()
+        @$el.find('span.sig-comp-msg').fadeOut(8000)
+      else
+        path = @router.path
+        if path.search == 'adhoc'
+          new_path = "search/adhoc/details/sig_comp/query/" +
+            "#{encodeURIComponent(path.query)}/items/#{@items.join(',')}"
+        else
+          new_path = "search/#{path.search}/page/#{path.page}/details/" +
+            "sig_comp/query/#{encodeURIComponent(path.query)}/items/" +
+            "#{@items.join(',')}"
+        @router.update_path(new_path, trigger: true)
 
-     'click #label-popular-items-over-time ':'popular_items_over_time'
-     'click #label-top-32-daily':'top_32_daily'
-
-
+  uncheck_items: (e)=>
+    e.preventDefault()
+    @$el.find('table td input:checked').attr('checked', false)
+    @$el.find('table td input:disabled').removeAttr('disabled')
+    @items = []
+  
   render:(data)=>
-    @$el.prepend(@form_template())
-    walmart = Searchad.UserLatest.SubTab.walmart
-    @init_all_date_pickers(walmart.start_date,walmart.end_date )
+    @items = []
+    @div_container.show()
+    @grid.render()
+    if @div_container.parents().length == 0
+      @$el.append(@div_container)
     @get_items(data)
-
 
   render_result: =>
     return unless @active
-    # usually the clear is bind with request, since here is using client side 
-    # pagination,
-    # there is not request available to trigger clean up when swiching pages. 
-    # Clear here. 
-    @$el.children().not('.ajax-loader').not('.walmart-items-form').remove()
     @controller.trigger('search:sub-content:hide-spin')
-    $('.walmart-items-form').show()
-    return @render_error(@query) if @collection.size() == 0
-    @$el.append( @grid.render().$el)
-    @$el.append( @paginator.render().$el)
-    @$el.append( @export_csv_button() )
     @delegateEvents()
     return this
 
-
-  render_error: (query) ->
-    return unless @active
-    @controller.trigger('search:sub-content:hide-spin')
-    @$el.html(JST['backbone/templates/shared/no_data']({query:query}))
-    # need to delegate events because the "show popular item over time" 
-    # and "top walmart 32" button needs it
-    @delegateEvents()
-
-  
   unrender: =>
     @active = false
-    @$el.children().not('.ajax-loader').remove()
+    @div_container.hide()
     @controller.trigger('search:sub-content:hide-spin')
     @undelegateEvents()
-
 
   top_32_daily:(e)=>
     e.preventDefault()
@@ -93,7 +98,6 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     @init_all_date_pickers(curr_date, curr_date)
     @get_items(data)
 
-
   popular_items_over_time:(e)=>
     e.preventDefault()
     # $('#label-popular-items-over-time').addClass('label-info')
@@ -101,7 +105,6 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     data = {}
     data.view || = "ranged"
     @get_items(data)
-
 
   get_items: (data) =>
     @active = true
@@ -119,10 +122,8 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
     # if the data param is the exact same stored with collection 
     # data. then directly render
     if JSON.stringify(data) == JSON.stringify(@collection.data)
-      @render_result()
-      return
+      return @render_result()
     @collection.get_items(data)
-
 
   process_data:(data)=>
     data || = {}
@@ -138,20 +139,23 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
 
     return data
 
-
   init_table: =>
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
       collection: @collection
+      emptyText: 'No Data'
+      className: 'walmart-results'
     )
-    @paginator = new Backgrid.Extension.Paginator(
-      collection: @collection)
-    
+    @div_container.append( @form_template() )
+    walmart = Searchad.UserLatest.SubTab.walmart
+    @init_all_date_pickers(walmart.start_date,walmart.end_date )
+    @div_container.append( @grid.$el )
+    @div_container.append( @export_csv_button() )
 
   init_all_date_pickers:(start_date, end_date)  =>
     # available_end_date = available_end_date || @available_end_date
-    start_date_picker = @$el.find('input.start-date.datepicker')
-    end_date_picker =  @$el.find('input.end-date.datepicker')
+    start_date_picker = @div_container.find('input.start-date.datepicker')
+    end_date_picker =  @div_container.find('input.end-date.datepicker')
     current_date = @controller.get_filter_params().date
     start_date ||= current_date
     end_date ||= current_date
@@ -191,60 +195,105 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Backbone.View
 
 
   gridColumns: =>
+    view = this
     class ItemCell extends Backgrid.Cell
       item_template:
         JST["backbone/templates/poor_performing/walmart_items/item"]
       
+      events: =>
+        'click input:checkbox': (e) =>
+          if $(e.target).is(':checked')
+            view.items.push(@model.get('item_id'))
+            if view.items.length == 4
+              view.$el.find('table input:checkbox').not(':checked').attr(
+                'disabled', true)
+          
+          else
+            item_id = @model.get('item_id')
+            if (index = view.items.indexOf(item_id)) > -1
+              view.items.splice(index, 1)
+              
+              if view.items.length < 4
+                view.$el.find('table input:disabled').removeAttr('disabled')
+      
       render: =>
+        @$el.empty()
         item =
           image_url: @model.get('image_url')
           item_id: @model.get('item_id')
           title: @model.get('title')
         formatted_value = @item_template(item)
-        $(@$el).html(formatted_value)
+        input_box = '<label class="checkbox signal-comp"><input type="checkbox"/></label>'
+        @$el.append(input_box, formatted_value)
+        @delegateEvents()
+        return this
+     
+    class SignalComparisonHeaderCell extends Backgrid.HeaderCell
+      render: =>
+        @$el.html('<button class="btn do-signal-comp" type="button">Compare Signals</button>')
+        @delegateEvents()
         return this
 
-    helpInfo = {
-      curr_item_price: "We only provide the price available for the most recent available day"
-    }
+    class SignalComparisonCell extends Backgrid.Cell
+      events: =>
+        'click input:checkbox': (e) =>
+          if $(e.target).is(':checked')
+            view.items.push(@model.get('item_id'))
+            if view.items.length == 4
+              view.$el.find('table input:checkbox').not(':checked').attr('disabled', true)
+          
+          else
+            item_id = @model.get('item_id')
+            if (index = view.items.indexOf(item_id)) > -1
+              view.items.splice(index, 1)
+              
+              if view.items.length < 4
+                view.$el.find('table input:disabled').removeAttr('disabled')
+      
+      render: =>
+        @$el.html('<label class="checkbox signal-comp"><input type="checkbox"/></label>')
+        @delegateEvents()
+        return this
 
-    columns = [{
-    name: 'item_id',
+    columns = [{name: 'item_id',
     label: I18n.t('dashboard2.item'),
     editable: false,
     cell: ItemCell},
-    {name: 'revenue',
-    label: I18n.t('dashboard2.revenue'),
-    editable: false,
-    cell: 'number',
-    formatter: Utils.CurrencyFormatter},
     {name: 'curr_item_price',
-    label: 'Current Item Price',
+    label: 'Latest Item Price',
     editable: false,
+    sortable: true,
     cell: 'number',
-    formatter: Utils.CurrencyFormatter,
-    headerCell:'helper'
-    helpInfo:helpInfo.curr_item_price
-    },
+    headerCell: @NumericHeaderCell,
+    formatter: Utils.CurrencyFormatter},
     {name: 'shown_count',
     label: 'Impressions',
     editable: false,
-    # formatter: Utils.CustomNumberFormatter,
-    cell: 'integer'},
+    headerCell: @NumericHeaderCell,
+    cell: 'integer',
+    formatter: Utils.CustomNumberFormatterNoDecimals},
     {name: 'i_con',
     label: 'Conversion',
     editable: false,
     cell: 'number',
+    headerCell: @NumericHeaderCell,
     formatter: Utils.PercentFormatter},
     {name: 'i_atc',
-    label: I18n.t('perf_monitor2.add_to_cart_rate'),
+    label: 'Add to Cart',
     editable: false,
     cell: 'number',
+    headerCell: @NumericHeaderCell,
     formatter: Utils.PercentFormatter},
     {name: 'i_pvr',
-    label: I18n.t('perf_monitor.product_view_rate'),
+    label: 'Product View',
     editable: false,
     cell: 'number',
-    formatter: Utils.PercentFormatter}]
+    headerCell: @NumericHeaderCell,
+    formatter: Utils.PercentFormatter},
+    {name: 'i_oos',
+    label: 'Out Of Stock',
+    editable: false,
+    headerCell: @NumericHeaderCell,
+    cell: @OosCell}]
     
     columns

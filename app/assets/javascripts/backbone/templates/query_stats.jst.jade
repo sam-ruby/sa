@@ -1,0 +1,26 @@
+- intFormatter = new Backgrid.NumberFormatter({decimals: 0})
+- intFormatterDefault = new Backgrid.NumberFormatter()
+div.query-info
+  span Daily Query Stats for :&nbsp;
+  span.query-value
+    = query
+table.table.table-bordered.query-stats
+  thead
+    tr
+      th.numerical-col Traffic
+      th.numerical-col Conversion
+      th.numerical-col PVR
+      th.numerical-col ATC
+      th.numerical-col Revenue
+  tbody
+    if metric
+      tr.success
+        td.numerical-col= intFormatter.fromRaw(metric.query_count)
+        td.numerical-col= intFormatterDefault.fromRaw(metric.query_con * 100) + '%'
+        td.numerical-col= intFormatterDefault.fromRaw(metric.query_pvr * 100) + '%'
+        td.numerical-col= intFormatterDefault.fromRaw(metric.query_atc * 100) + '%'
+        td.numerical-col= intFormatter.fromRaw(metric.query_revenue) + '$'
+    else
+      tr
+        td(colspan=5, style='text-align:center;')
+          i No Data Available

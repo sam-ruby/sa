@@ -1,0 +1,22 @@
+if m_obj.unit == 'dollar'
+  - score = (new Backgrid.NumberFormatter({decimals: 0})).fromRaw(metric_details.value)
+else if m_obj.unit == 'query'
+  if m_obj.decimals == 4
+    - score = (new Backgrid.NumberFormatter({decimals: 4})).fromRaw(metric_details.value)
+  else
+    - score = (new Backgrid.NumberFormatter({decimals: 0})).fromRaw(metric_details.value)
+else
+  - score = (new Backgrid.NumberFormatter()).fromRaw(metric_details.value)
+if !slink || (m_obj && m_obj.disabled == true)
+  if metric_details.worst
+    span(style='color:red;font-weight: 400;')
+      = score
+  else
+    span= score
+else
+  if metric_details.worst
+    a(href=slink, style='color:red;font-weight: 400;')
+      = score
+  else
+    a(href=slink)
+      = score

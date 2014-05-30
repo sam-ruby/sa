@@ -1,0 +1,110 @@
+- var s_formatter = JST['backbone/templates/metric_formatter']
+- var u_formatter = JST['backbone/templates/metric_unit_formatter']
+- var numFormatter = new Backgrid.NumberFormatter()
+.overview
+  .col-head
+    .name Metric
+    .score.numerical-col Score
+    .change.numerical-col
+      if segment && segment.match(/trend_\d+/)
+        span(style='font-size:14px')
+          |1 day
+      else
+        span(style='font-size:14px')
+          |7 day
+      |&nbsp;Chg
+
+    .significant Sign.
+    .top Top Opportunities
+  each metric_cat in metrics
+    .info(class=metric_cat.class)
+      a(href='#')
+        i.icon-resize-horizontal
+        |&nbsp;
+        = metric_cat.name
+    if metric_cat.metrics.length == 0
+      .metric
+        .no-data-row
+          span.no-data
+            i No Data Available
+      - continue
+    .metric(class=metric_cat.class)
+      each metric in metric_cat.metrics
+        if !metric
+          - continue
+        - m_obj = view.metrics_name[metric.name]
+        if !m_obj
+          - continue
+        div(class=[m_obj.id, 'mrow'])
+          .name.metric-name
+            a(href='#', style='text-transform:capitalize;')
+              if m_obj && m_obj.name
+                = m_obj.name
+              else
+                | Name not known
+          .score.numerical-col
+            if metric.value == 'N/A'
+              span.na-query
+                = 'N/A'
+            else if metric.value || metric.value == 0
+              != s_formatter({m_obj:m_obj, metric_details:metric, slink: null})
+            else
+              |&nbsp;
+          .unit
+            if metric.value && metric.value != 'N/A'
+              != u_formatter({m_obj:m_obj, metric_details: metric})
+          
+          - var out_class_names, in_class_name, arrow_classes
+          if metric.change > 0 && ['AR', 'OOS'].indexOf(metric.name) == -1
+            - out_class_names = ['green-change']
+            - in_class_name = 'pad-score'
+            - arrow_classes = ['icon-arrow-up', 'green-change']
+          else if metric.change > 0 && ['AR', 'OOS'].indexOf(metric.name) > -1
+            - out_class_names = ['red-change']
+            - in_class_name = 'pad-score'
+            - arrow_classes = ['icon-arrow-up', 'red-change']
+          else if ['AR', 'OOS'].indexOf(metric.name) == -1
+            - out_class_names = ['red-change']
+            - in_class_name = ''
+            - arrow_classes = ['icon-arrow-down', 'red-change']
+          else 
+            - out_class_names = ['green-change']
+            - in_class_name = ''
+            - arrow_classes = ['icon-arrow-down', 'green-change']
+          - out_class_names.push('change')
+          div(class=out_class_names)
+            span.metric-change(class=in_class_name)
+              if metric.change == 'N/A'
+                span.na-change(style='padding-right: 30%;')
+                  |N/A
+              else
+                = numFormatter.fromRaw(metric.change)
+                |%
+                span
+                  i(class=arrow_classes)
+          .significant
+            if metric.confidence == true
+              i.icon-thumbs-up.green-change
+            else
+              | &nbsp;
+
+          .top.metric-queries
+            if !metric.queries || metric.queries.match(/N\/A/i)
+              span.na-query
+                |N/A
+            else if metric.queries && metric.queries.match(/\w+/)
+              - var orig_queries, orig_query
+              if metric.orig_queries
+                - orig_queries = metric.orig_queries.split(',')
+              else
+                - orig_queries = metric.queries.split(',')
+              each query, index in metric.queries.split(',')
+                - orig_query = orig_queries[index]
+                if index == 0
+                  a(href=orig_query)= query
+                else
+                  |,&nbsp;
+                  a(href=orig_query)
+                    = query
+              a(href="more...")
+                |&nbsp;...

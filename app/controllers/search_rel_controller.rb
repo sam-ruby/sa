@@ -52,81 +52,41 @@ class SearchRelController < BaseController
   def get_items(mode=:json)
     query_str = params[:query]
     view = params[:view]
-    result = []
-    return result unless query_str
     date = @date
-    # query_dates = (date-28.days..date-1.days).to_a.map {|d|
-    #  "'#{d.strftime('%Y-%m-%d')}'"}
 
     query_dates = (date-28.days..date-1.days).to_a
-    results = SearchQualityDaily.get_search_relevance_data_by_word(
+    results = SearchQualityDailyV2.get_search_relevance_data_by_word(
       query_str, date)
-    return result if results.empty?
+    return results if results.empty?
+  
+    missed_items = JSON.parse(
+      results.first['ideal_items_not_in_top16_json']) rescue nil
+    query_items = JSON.parse(results.first['rel_item_rank_json']) rescue nil
+    return results if query_items.nil? or missed_items.nil?
     
-    query_items = results.first['32_query_items'].split(',')[0..15] rescue nil
-    con_ranks = results.first['con_ranks'].split(',') rescue nil
-    top_con_items = results.first['top_con_items'].split(',') rescue nil
-    top_items_con = results.first['top_16_con'].split(',') rescue nil
-    top_items_site_rev = results.first[
-      'top_16_site_revenue'].split(',') rescue nil
-    
-    return result if query_items.nil? or top_con_items.nil?
-   
     item_details = {}
-    AllItemAttrs.get_item_details(query_str,
-      (query_items + top_con_items).uniq, query_dates).each do 
-      |item| item_details[item.item_id] = item 
+    top_5_missed_index = 0
+    missed_items.each do |ideal_rank, details|
+      break if top_5_missed_index > 4
+      details[:position] = ideal_rank
+      details[:in_top_16] = 0 
+      item_details[details['item_id']] = details
+      top_5_missed_index += 1
+    end
+    query_items.each do |position, details|
+      details[:position] = position
+      details[:in_top_16] = 1
+      item_details[details['item_id']] = details
     end
 
-    index = 1
-    query_items.zip(
-      con_ranks, top_con_items, top_items_con, top_items_site_rev) do |items|
-      if item_details[items[0]].nil? 
-        walmart_item = {:item_id => items[0],
-                        :image_url => nil}
-      else
-        walmart_item = item_details[items[0]]
+    AllItemAttrs.get_item_details(
+      query_str, item_details.keys, query_dates).each do |item|
+        item_details[item.item_id.to_i][:title] = item.title 
+        item_details[item.item_id.to_i][:image_url] = item.image_url
+        item_details[item.item_id.to_i][:curr_item_price] = item.curr_item_price
+        item_details[item.item_id.to_i][:oos] = item.i_oos
       end
-
-      if item_details[items[2]].nil? 
-        con_item = {:item_id => items[2],
-                    :image_url => nil}
-      else
-        con_item = item_details[items[2]]
-      end
-
-      revenue = con_item.item_revenue rescue 0
-      site_revenue = items[4]
-      con_rank = items[1].to_i + 1
-      top_item_con = items[3].to_f
-
-      if mode == :json
-        result.push({:position => index,
-                     :walmart_item => walmart_item,
-                     :con_based_item => con_item,
-                     :con => top_item_con,
-                     :revenue => revenue,
-                     :site_revenue => site_revenue,
-                     :con_rank => con_rank})
-      else
-        result.push({'Position' => index,
-                     'Walmart Item Id' => walmart_item[:item_id],
-                     'Walmart Item Title' => walmart_item[:title],
-                     'Con Rank' => con_rank,
-                     'Walmart Item Image URL' => walmart_item[:image_url],
-                     'Con Based Item Id' => con_item[:item_id],
-                     'Con Based Item Title' => con_item[:title],
-                     'Item Image URL' => con_item[:image_url],
-                     'Average Daily Item Conversion Rate Percentage' =>
-                        top_item_con.to_f.round(2),
-                     'Average Daily Item Revenue' =>
-                        revenue.to_f.round(2),
-                     'Average Daily Site Item Revenue' =>
-                        site_revenue.to_f.round(2)})
-      end
-      index += 1
-    end
-    result
+    item_details.keys.map {|key| item_details[key]}
   end
 
   def get_comp_analysis

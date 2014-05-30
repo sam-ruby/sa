@@ -1,17 +1,34 @@
+html, body {
+  height: 100%;
+}
 a.subcat {
   color: black;
 }
 a.subcat:hover {
   color: #F7B800;
 }
-#search-quality-queries, #trending, #qm-filter, #qm-count-sub-tabs, #cvr-dropped-query-results, #search-results, #search-sub-tabs, #query-monitoring, #search-kpi {
+#search-quality-queries, #trending, #qm-filter, #qm-count-sub-tabs, #cvr-dropped-query-results, #search-results, #query-monitoring, #search-kpi, #summary-metrics, #metric, #overall-metrics, #sig-comp, #search-sub-content {
   position: relative;
+  min-height: 150px;
 }
 .ajax-loader {
   position: absolute;
-  top: 4em;
-  right: 50%;
+  top: 5em;
   z-index: 1;
+  display: none;
+  margin-right: 50%;
+  margin-left: 50%;
+}
+#summary-metrics, .tab-holder, .winners {
+  .ajax-loader {
+    top: 7em;
+  }
+}
+.backgrid {
+  td, th {
+    border: 0;
+    border: 1px solid #ddd;
+  }
 }
 .adv-search-opener {
   position: absolute;
@@ -46,7 +63,6 @@ a.subcat:hover {
   font-family: Arial, sans-serif;
 }
 .content {
-  max-width: 110em;
   margin-left: auto;
   margin-right: auto;
 }
@@ -57,7 +73,7 @@ a.subcat:hover {
 }
 .export-csv {
   padding: .5em;
-  margin-top: -2.5em;
+  margin-top: 10px;
   cursor: pointer;
   a {
     color: white;
@@ -513,4 +529,767 @@ span.caret {
 sup.beta-tag {
   font-weight: bold;
   color: #c7a845;
+}
+.top-navbar {
+  $background: #007796;
+  $backgroundHighlight: #008dd4;
+  $barLinkColor: #FFF;
+  $barLinkColorHover: #B3B3B3;
+  $barLinkColorActive: #FFF;
+  @extend .navbar;
+
+  .brand {
+    color: $barLinkColor;
+  }
+
+  .navbar-inner {
+    // @include gradient-vertical(#ffffff, darken(#ffffff, 5%));
+    @include gradient-vertical($background, $backgroundHighlight);
+    border: 0;
+    @include border-radius(0);
+    // @include box-shadow(0 1px 4px rgba(0,0,0,.065)); 
+    // Prevent floats from breaking the navbar
+    @include clearfix();
+  }
+
+  .nav {
+    li, li.active {
+      a {
+        color: $barLinkColor;
+        text-shadow: none;
+        background-color: transparent;
+        &:hover, &:focus {
+          color: darken($barLinkColor, 5%);
+        }
+      }
+    }
+    li.dropdown.open, li.dropdown {
+      a.dropdown-toggle {
+        background-color: transparent;
+        text-shadow: none;
+        color: $barLinkColorActive;
+        .caret {
+          border-top-color: $barLinkColor;
+          border-bottom-color: $barLinkColor;
+        }
+      }
+    }
+    ul.dropdown-menu {
+      li {
+        a {
+          color: $gray;
+        }
+      }
+    }
+    
+    li.active {
+      a {
+        background-color: darken($background, 5%);
+        border: thin solid $background;
+        &:hover, &:focus {
+          color: darken($barLinkColor, 5%);
+          background-color: darken($background, 5%);
+        }
+      }
+    }
+  }
+}
+
+.second-navbar {
+  $tabBackground: #AAA;
+  // $background: #007796;
+  // $backgroundHighlight: #008dd4;
+  $background: #fff;
+  $backgroundHighlight: #fff;
+  @extend .navbar;
+  margin-bottom: 0;
+  padding-bottom: 1.5em;
+  
+  .navbar-inner {
+    // @include gradient-vertical(#ffffff, darken(#ffffff, 5%));
+    @include gradient-vertical($background, $backgroundHighlight);
+    border: 0;
+    border-bottom: 1px solid $navbarBorder;
+    @include border-radius(0);
+    @include box-shadow(0 0 0 rgba(0,0,0,.065)); 
+    // Prevent floats from breaking the navbar
+    @include clearfix();
+    padding-left: 0px;
+
+    span.brand.title {
+      color: #1894c6;
+      font-weight: 400;
+    }
+  }
+
+  .nav {
+    li:first-child {
+      a {
+        padding-left: 0px;
+      }
+    }
+    li.active {
+      a {
+        @include box-shadow(inset 0 0 0 rgba(0,0,0,.125));
+        background-color: transparent;
+        text-shadow: none;
+        &:hover, &:focus {
+          @include box-shadow(inset 0 0 0 rgba(0,0,0,.125));
+          background-color: transparent;
+        }
+
+        span {
+          background: $tabBackground;
+          border: 1px solid $tabBackground;
+          border-radius: 5px;
+          color: white;
+          margin: 6px 4px;
+          padding: 5px;
+        }
+      }
+    }
+  }
+}
+
+#ndcg-distribution, #conv-cor-distribution {
+}
+
+td.metric-name1 {
+  padding-right: 8em;
+}
+.pad-score {
+  padding-left: 6px;
+}
+.green-change {
+  color: #093;
+}
+.red-change {
+  color: #d14836;
+}
+.na-change, .na-query {
+  color: rgb(151, 149, 149);
+  padding-left: 7px;
+}
+.green-change-signal {
+  color: #093;
+  font-weight: bold;
+}
+.na-query {
+  padding-left: 0px;
+}
+
+.block-heading {
+  padding: 5px;
+  font-weight: bold;
+  line-height: 0.95em;
+  margin-bottom:1.2em;
+}
+.metrics-summary-head {
+  text-align:left;
+  font-weight: 700;
+  margin-bottom: .5em;
+  span.winners {
+    padding-right: 1.5em;
+    border-right: 1px solid black;
+  }
+  span.loosers {
+    padding-left: 1.5em;
+  }
+}
+div.highcharts-container {
+  margin-right: auto;
+  margin-left: auto;
+}
+tr.metrics-col-head {
+  font-size: 90%;
+  td {
+    border-top: 0;
+  }
+}
+.fixed-navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1003;
+  margin-right: 2em;
+}
+
+.tab-holder {
+  position: relative;
+  text-align: center;
+}
+
+.numerical-col {
+  text-align: right !important;
+}
+
+.text-col {
+  text-align: left!important;
+}
+tr.selected {
+  background-color: #dff0d8;
+}
+
+
+.show-others {
+  text-align: center;
+  @extend .backgrid-paginator;
+  a.btn {
+    padding: 0.2em 1em;
+    margin: 1em 0;
+    display: inline-block;
+  }
+}
+
+div.sig-comp-table {
+  width: 1148px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  .name, .item, .score, .no-data, .node, .item-signals {
+    display: inline-block;
+    line-height: 20px;
+    vertical-align: top;
+    height: 100%;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+  }
+  .name {
+    width: 300px;
+    text-transform: capitalize;
+  }
+  .no-data {
+    width: 100%;
+    font-style: italic;
+    text-align: center;
+  }
+  .col-head {
+    border-top: 1px solid #ddd;
+    .name, .item {
+      padding: 4px 8px;
+      height: 230px;
+    }
+    & .name {
+      background: transparent;
+      vertical-align: bottom;
+      color: #777777;
+      padding-top: 110px;
+    }
+    .title {
+      height: 40px;
+      overflow: hidden;
+    }
+    .item {
+      border-left: 1px solid #ddd;
+      .encloser {
+        height: 120px;
+      }
+    }
+    .srow {
+      border-left: 1px solid #ddd;
+      border-right: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+    }
+    table {
+      margin: 10px 0 10px 0;
+      @include gradient-vertical(white, #f2f2f2);
+      td {
+        width: 50%;
+      }
+    }
+  }
+
+  .signal-section {
+    .srow {
+      border-bottom: 1px solid #dddddd;
+      border-left: 1px solid #ddd;
+      border-right: 1px solid #ddd;
+    }
+    .name, .item, .score {
+      padding: 4px 8px;
+    }
+    .item-signals {
+      text-align: right;
+    }
+  }
+  .srow {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    position: relative;
+    a.jstree-anchor {
+      div.item-signals {
+        position: absolute;
+        right: 0px;
+      }
+    }
+    .srow {
+      border: 0;
+      a.jstree-anchor {
+        &:hover div.item-signals, &:focus div.item-signals, &:active div.item-signals {
+          background-color: #f9f9f9;
+        }
+      }
+    }
+  }
+}
+div.overview {
+  .name, .score, .change, .significant, .top, .info, .unit, .no-data {
+    display: inline-block;
+    line-height: 20px;
+    vertical-align: top;
+    height: 100%;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+  }
+  .no-data {
+    width: 100%;
+    text-align: center;
+  }
+  .name {
+    white-space:nowrap;
+    width: 15%;
+    padding-left: 5px !important;
+    @include gradient-horizontal(white, #f2f2f2);
+    text-transform: capitalize;
+  }
+  .score {
+    width: 13.5%;
+  }
+  .unit{
+    width: 3%;
+  }
+  .change {
+    width: 13%;
+  }
+  .significant {
+    width: 5%;
+  }
+  .top {
+    width: 50.5%;
+  }
+  .col-head {
+    border-top: 0;
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    & .name {
+      background: transparent;
+    }
+    @include gradient-vertical(white, #f2f2f2);
+    
+    .name, .score, .change, .significant, .top {
+      border-left: 1px solid white;
+      padding: 6px 8px;
+    }
+    .score {
+      width: 16.5%;
+      padding-right: 2px;
+    }
+    .change {
+      padding-right: 2px;
+    }
+  }
+  .info {
+      text-align:left;
+      width: 100%;
+      background-color: #d9edf7;
+      cursor: pointer;
+      padding:4px 8px 4px 5px;
+      span {
+        font-size: 16px;
+      }
+      a {
+        color: black;
+        &:hover, &:visited, &:active {
+          text-decoration: none;
+        }
+      }
+    }
+  .metric {
+    .name, .score, .unit, .change, .significant, .top, .no-data {
+      padding: 4px 8px;
+    }
+    .mrow {
+      border-bottom: 1px solid #dddddd;
+    }
+    .mrow.selected {
+      background-color: #dff0d8;
+    }
+    .name {
+      border-left: 1px solid #ddd;
+    }
+    .change, .significant, .top {
+      border-right: 1px solid #ddd;
+    }
+    .change {
+      border-left: 1px solid #ddd;
+      padding: 4px 4px 4px 0;
+      text-align:right;
+    }
+    .score {
+      padding: 4px 2px 4px 0;
+    }
+    .unit {
+      padding: 4px 0px 4px 0px;
+      color: rgb(151, 149, 149);
+    }
+  }
+}
+form.overview-all {
+  padding-bottom: 10px;
+}
+div.overview-all {
+  .name, .score, .info, .unit, .segment-name, .support-cat, .support-info, .support-info-value, .no-data {
+    -moz-box-sizing: border-box;
+    box-sizing:border-box;
+    line-height: 20px;
+    display: inline-block;
+    vertical-align: top;
+  }
+  .unit{
+    width: 3%;
+  }
+  .segment-name, .support-info-value {
+    width: 16.5%;
+  }
+  .name, .support-cat {
+    width: 17.5%;
+  }
+  .score {
+    width: 13.5%;
+  }
+  .no-data {
+    width: 100%;
+    text-align: center;
+  }
+  .col-head {
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    @include gradient-vertical(white, #f2f2f2);
+    .name, .score, .info, .unit, .segment-name {
+      padding: 6px 0px 6px 0px;
+    }
+    .segment-name {
+      text-align: right;
+      border-left: 1px solid #ddd;
+      text-transform: capitalize;
+      padding-bottom: 0px;
+      a {
+        padding-right: 8px;
+      }
+      table {
+        margin-top: 10px;
+        margin-bottom: 0px;
+        td.meta-name, td.meta-value {
+          text-align: right;
+          padding: 2px 5px;
+          font-size:12px;
+        }
+        td.meta-name {
+          border-right: 1px solid #ddd;
+        }
+        tr {
+          td.meta-name, td.meta-value {
+            background-color: transparent;
+          }
+        }
+      }
+    }
+    .name {
+      padding-left: 8px;
+      padding-bottom: 0;
+      text-align:left;
+      .table-holder {
+        vertical-align: bottom;
+        text-align: right;
+        table {
+          width: 100%;
+          margin-bottom: 0px;
+          float: right;
+          margin-top: 10px;
+          td {
+            padding: 2px 5px;
+            font-size:12px;
+          }
+        }
+      }
+    }
+  }
+  .info {
+    text-align:left;
+    background-color: #d9edf7;
+    width: 100%;
+    span {
+      font-size: 16px;
+    }
+    padding: 4px 6px 4px 6px;
+  }
+  .metric {
+    .mrow, .mrow-support-info, .no-data-row {
+      border-bottom: 1px solid #dddddd;
+    }
+    .mrow.selected {
+      background-color: #dff0d8;
+    }
+    .name, .score, .info, .unit, .segment-name, .support-info-value, .support-cat, .no-data {
+      padding: 4px 6px 4px 6px;
+    }
+    .score {
+      padding: 4px 2px 4px 6px;
+    }
+    .unit {
+      padding: 4px 0px 4px 0px;
+      color: #81a2b3;
+      border-right: 1px solid #ddd;
+    }
+    .support-info-value {
+      color: black;
+      border-right: 1px solid #ddd;
+      font-size: 12px;
+      text-align: right;
+    }
+    .name {
+      white-space:nowrap;
+      @include gradient-horizontal(white, #f2f2f2);
+      border-left: 1px solid #ddd;
+      color: #777777;
+      text-transform: capitalize;
+      cursor: pointer;
+      &:before, &.make-tiny:before {
+        content: "+";
+        float: right;
+        font-size: 16px;
+        line-height: 20px;
+        display: inline-block;
+      }
+      &.make-tiny:before {
+        content: "-";
+        line-height: 20px;
+      }
+    }
+    .score {
+      text-align: right;
+      color: #007796;
+    }
+    .mrow-support-info {
+      display:none;
+      .support-cat {
+        font-size: 12px;
+        padding-left: 20px;
+        white-space:nowrap;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        color: black;
+        text-transform: capitalize;
+      }
+    }
+    .support-info-value, .support-cat {
+      padding: 0;
+      table {
+        margin-bottom: 0;
+        tr:first-child {
+          td {
+            border: 0;
+          }
+        }
+        td {
+          text-align: right;
+        }
+      }
+    }
+  }
+}
+
+.rel-rev-grid {
+  @extend .backgrid;
+  tr.recommended-item {
+    td {
+      border: 1px solid #ddd;
+      @include gradient-vertical(white, #f2f2f2);
+    }
+  }
+  td.recom-item-position {
+    width: 13%;
+  }
+}
+
+.winners-grid {
+  @extend .backgrid;
+  
+  tbody {
+    tr.selected {
+      font-weight: bold;
+    }
+    tr {
+      display: table-row;
+      transition: all 1s linear;
+    }
+    tr.hidden {
+      display: none;
+    }
+    tr.visually-hidden {
+      opacity: 0.94;
+    }
+
+  }
+  th, td {
+    padding: 6px 8px;
+  }
+}
+
+.rel-best-seller {
+  @extend .backgrid;
+  border-collapse: separate;
+  border: 0;
+  
+  thead {
+    //border: 1px solid #ddd;
+    th {
+      border: 0;
+      background-color: #fff;
+      padding: 3px 5px;
+    }
+  }
+
+  tbody {
+    tr.selected {
+      font-weight: bold;
+    }
+  
+    tr:first-child {
+      td.walmart-detail {
+        border-top: 2px solid #f89406;
+        padding-top: 5px;
+      }
+      td.best-seller-detail {
+        border-top: 2px solid #3a87ad; ///#468847;
+        padding-top: 5px;
+      }
+    }
+    td {
+      border: 0;
+      padding: 0;
+      height: 40px;
+      border-bottom: 1px solid #ddd;
+      &:first-child {
+        border-left: 2px solid #f89406;
+        padding-left: 5px;
+      }
+      &:last-child {
+        border-right: 2px solid #3a87ad;  //#468847;
+        padding-right: 5px;
+      }
+    }
+    tr:last-child {
+      td.walmart-detail {
+        border-bottom: 2px solid #f89406;
+        padding-bottom: 5px;
+      }
+      td.best-seller-detail {
+        border-bottom: 2px solid #3a87ad; //#468847;
+        padding-bottom: 5px;
+      }
+    }
+    td.walmart-detail-last {
+      border-right: 2px dashed #ddd;
+      padding-right: 5px;
+    }
+    td.best-seller-detail-first {
+      padding-left: 5px;
+    }
+  }
+  tr {
+    display: table-row;
+    transition: all 1s linear;
+  }
+  tr.hidden {
+    display: none;
+  }
+  tr.visually-hidden {
+    opacity: 0.94;
+  }
+}
+
+.walmart-results {
+  @extend .backgrid;
+  td {
+    padding: 4px 6px;
+    height: 40px;
+    border: 1px solid #ddd;
+    &:first-child {
+      padding-left: 5px;
+    }
+    &:last-child {
+      padding-right: 5px;
+    }
+  }
+  th {
+    border: 1px solid #ddd;
+    padding: 4px 6px;
+  }
+  tr.empty {
+    td {
+      display: table-cell !important;
+    }
+  }
+}
+.login {
+  .logged-in-user {
+    color: burlywood;
+    display: inline-block;
+    width: 120px;
+    text-align: right;
+    padding-right: 2px;
+  }
+}
+.signal-comp {
+  padding-left: 40px;
+  display: inline-block;
+}
+.sig-comp-msg {
+  display: none;
+}
+
+#search-sub-content {
+  .green-order, .red-order {
+    padding-right: 22px;
+    padding-left: 22px;
+    font-size: inherit;
+  }
+}
+.significance {
+  font-size: 10px;
+  color: #777777;
+  padding-right: 3px;
+}
+
+.backgrid-paginator {
+  margin-bottom: -2em;
+}
+form.item-selection, form.walmart-items-form {
+  margin-bottom: 10px;
+  a.item-uncheck {
+    margin-top: 10px;
+  }
+}
+#search-bar .search-navbar {
+  .form-search {
+    margin: 5px 0 0 0;
+  }
+}
+.query-info {
+  padding-bottom: 8px;
+  span.query-value {
+    color: #1894c6;
+    font-weight: 400;
+    font-size: 18px;
+  }
+}
+.walmart-icon {
+  width: 21px;
+  height: 21px;
+  margin-top: -3px;
+}
+table.query-stats {
+  margin-bottom: 30px;
 }

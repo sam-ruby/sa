@@ -46,9 +46,8 @@ class ItemQueryMetricsDaily < BaseModel
     date_range = start_date..end_date
     
     select_cols = %q{item.item_id, sum(uniq_count) shown_count, 
-    sum(uniq_pvr)/sum(uniq_count)*100 i_pvr,
     sum(uniq_con)/sum(uniq_count)*100 i_con,
-    sum(uniq_atc)/sum(uniq_count)*100 i_atc, 
+    sum(uniq_oos)/sum(uniq_count)*100 i_oos,
     sum(revenue) as revenue,
     item.title, item.image_url, item.curr_item_price}
 
@@ -56,9 +55,10 @@ class ItemQueryMetricsDaily < BaseModel
     on item_daily.item_id = item.item_id}
 
     joins(join_stmt).select(select_cols).where(
-      %q{item_daily.data_date in (?) and query = ? and channel = 'ORGANIC_USER' 
-      and page_type = 'SEARCH'}, date_range, query).group(
+      %q{item_daily.data_date in (?) and query = ? and 
+      channel = 'ORGANIC_USER' and page_type = 'SEARCH'}, 
+      date_range, query).group(
         'item_daily.item_id').order(
-        'shown_count DESC, i_pvr DESC, i_atc DESC').limit(32)
+        'shown_count DESC, i_con DESC').limit(32)
   end
 end

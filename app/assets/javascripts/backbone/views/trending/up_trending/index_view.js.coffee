@@ -3,7 +3,8 @@ Searchad.Views.UpTrending ||= {}
 class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
   initialize: (options) =>
     @collection = new Searchad.Collections.UpTrendingCollection()
-    @content_area = @$el.find(options.content_selector).first()
+    @router = SearchQualityApp.Router
+    
     Utils.InitExportCsv(
       this, "/poor_performing/get_trending_words.csv")
     @gridCols = [{
@@ -25,15 +26,17 @@ class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
       editable: false,
       cell: 'number',
       formatter: Utils.CurrencyFormatter}]
-    
+ 
     super(options)
-    @listenTo(@controller, 'up-trending:index',=>
-      @$el.find('ul.trending').children('li').removeClass('active')
-      @$el.find('ul.trending a.up').parents('li').addClass('active')
+    @listenTo(@router, 'route', (route, params) =>
+      @$el.children().not('.ajax-loader').remove() if @active
+      if route == 'search' and @router.task == 'performance' and @router.sub_task == 'trending'
+        @$el.children().not('.ajax-loader').remove()
+        @get_items()
     )
-
+   
   events: =>
-    csv_event = "click #{@options.content_selector} .export-csv"
+    csv_event = "click .export-csv"
     events = {}
     events[csv_event] = (e)->
       date = @controller.get_filter_params().date
@@ -83,19 +86,13 @@ class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
 
   unrender: =>
     @clean_content()
-    @content_area.find('.ajax-loader').hide()
+    @$el.find('.ajax-loader').hide()
     super()
 
   prepare_for_render: =>
     super()
-    @$el.find('li.period-selector').css('display', 'block')
-    @content_area.find('.ajax-loader').css('display', 'block')
+    @$el.find('.ajax-loader').css('display', 'block')
    
-  render: =>
-    @$el.find('li.active').removeClass('active')
-    @$el.find('li a.up').parents('li').addClass('active')
-    super(@content_area)
-    
   queryCell:  ->
     that = this
     class QueryCell extends Backgrid.CADQueryCell
@@ -112,7 +109,8 @@ class Searchad.Views.UpTrending.IndexView extends Searchad.Views.Trending
             max_date: current_date.toString('yyyy-MM-dd')
             min_date: current_date.add(-min_days).days().toString('yyyy-MM-dd')
         )
-        new_path = 'trending/up/query/' + encodeURIComponent(query) + '/days/' +
+        new_path = 'search/performance/trending/query/' +
+          encodeURIComponent(query) + '/days/' +
           that.days
         that.router.update_path(new_path)
       false

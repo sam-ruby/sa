@@ -95,20 +95,16 @@ class QueryDroppingConversion < BaseModel
       weeks_apart, query_date).order(order_str).page(page).per(limit)
   end
 
-  # get item comparisons based on a query from cvr_dropped_query table, 
-  # small set, client side pagination
   def self.get_cvr_dropped_query_item_comparisons(
-    query, before_start_date,before_end_date,after_start_date,after_end_date)
-    
-    # reason for two separate resquest, need to merge two result into one row 
-    # Join(no join condition) and Union(will produce 15*15 results.) don'tork. 
-    # Plus, it is very small data set. total item count is 15
-    # after_start_date is used for the query_date midpoint for two week 
-    # before and  two week after
+    query, weeks_apart, date)
+   
+    days_range = weeks_apart * 7
+    data = date.to_date
+
     data_date_before, item_before_arr = get_top_items_between_date(
-      query, before_start_date, before_end_date, after_start_date) 
+      query, date - (days_range * 2 ).days, date - (days_range).days) 
     data_date_after, item_after_arr = get_top_items_between_date(
-      query, after_start_date, after_end_date, after_start_date) 
+      query, date - days_range.days, date) 
     
     #since this is a small list, it is ok to process the merge
     result_arr = Array.new(
@@ -139,25 +135,12 @@ class QueryDroppingConversion < BaseModel
      items: result_arr}
   end
 
-  #input query: query 
-  #input date_start: the starting date for one picked date range
-  #input date_end: the end date for one picke date range
-  #input query_date: specific date that is used to generate 
-  #two week before & two week after, this is used to determin the seller_name
-  # TODO: need to discuss with Hang, which date is best to get the seller name
-  #out put array of top 15 item from a query between date range
-  def self.get_top_items_between_date(query, date_start, date_end, query_date)
-    # result: query_items: 
-    # "21630182,19423472,4764723,14237607,4764726,10992861, there is 
-    # no related rank for that sequence.
+  def self.get_top_items_between_date(query, date_start, date_end)
     item_ids = find_by_sql(
     ['select query_items, data_date from search_quality_daily where query = ?
-      and data_date=(select max(data_date) from 
-      search_quality_daily where query = ? and 
-        data_date in (?))', query, query,date_start..date_end])
-    if item_ids.length == 0
-      return []
-    end
+      and data_date > ? and data_date <= ? order by data_date desc limit 1',
+      query, date_start, date_end])
+    return [] if item_ids.length == 0
     
     #process the result, split the string to array
     item_ids_arr = item_ids[0]['query_items'].split(",")

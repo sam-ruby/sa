@@ -1,10 +1,12 @@
+#= require backbone/views/base
+
 Searchad.Views.SubTabs ||= {}
 Searchad.Views.SubTabs.AmazonItems ||= {}
 
-class Searchad.Views.SubTabs.AmazonItems.IndexView extends Backbone.View
+class Searchad.Views.SubTabs.AmazonItems.IndexView extends Searchad.Views.Base
   initialize: (options) =>
-    @controller = SearchQualityApp.Controller
     @collection = new Searchad.Collections.CAAmazonItemsCollection()
+    super()
     @collection.bind('reset', @render_all_items)
     @collection.bind('reset', (collection) =>
       that = this

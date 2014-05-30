@@ -7,6 +7,7 @@ Conversion Rate Dropping Query Item Comparison View
 
 Item showed for a query comparison for before and after based on selected week range and time from adhoc_query_report. 
 ###
+
 Searchad.Views.SubTabs ||= {}
 Searchad.Views.SubTabs.ItemComparisonView ||= {}
 
@@ -129,8 +130,6 @@ class Searchad.Views.SubTabs.ItemComparisonView extends Backbone.View
       collection: @collection)
     
   unrender: =>
-    # @$el.children().not('.ajax-loader').remove()
-    # @$el.find('.ajax-loader').hide()
     @$el.children().remove()
     @active = false
     @undelegateEvents()
