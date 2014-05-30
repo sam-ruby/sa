@@ -37,7 +37,6 @@ class SearchQualityDaily < BaseModel
     }
   end
 
-
   def self.get_max_min_dates
     select(%q{max(data_date) as max_date, min(data_date) as min_date})
   end
@@ -133,5 +132,85 @@ class SearchQualityDaily < BaseModel
 
     return find_by_sql(
       [sql_stmt % like_str, query_date])
+  end
+
+  def self.get_daily_metrics(segment, cat_id, date)
+    cols = %q{s.data_date,
+    sum(s.uniq_count*(s.search_con_rank_correlation+1)/2)/sum(s.uniq_count)
+     score, sum(s.uniq_count) count}
+    
+    join_str = %q{as s JOIN query_segmentation_daily qs ON 
+      (s.query=qs.query and s.data_date=qs.data_date )} 
+
+    where_str = %q{s.data_date in (?, ?) and 
+      qs.segmentation = ? and qs.cat_id = ?}
+
+    select(cols).joins(join_str).where(
+      [where_str, date, date - 1.day, segment, cat_id]).group(
+        's.data_date').having('count > 500').order('s.data_date desc') 
+  end
+  
+  def self.get_queries(winning, query_segment, cat_id, data_date,
+                             page=1,  limit=10, order_col=nil, order='asc')
+    cols = nil
+    if winning
+      default_order = 'score desc'
+    else
+      default_order = 'score asc'
+    end
+    order_str = order_col.nil? ? default_order : 
+      order.nil? ? order_col : %Q{#{order_col} #{order}}
+    offset = (page - 1) * 10
+    
+    if page == 0
+      order_limit_str = ''
+      cols = %q{s.query}
+    else
+      order_limit_str = %Q{ #{order_str} limit #{limit} offset #{offset}}
+    end
+   
+    cols ||= %q{s.query,
+      s.uniq_count c_o_u_n_t,
+      round((s.search_con_rank_correlation+1)/2, 2) correlation,
+      round(((s.search_con_rank_correlation+1)/2+0.1)/s.uniq_count,7)*1000000 score}
+
+
+    join_str = %q{as s JOIN query_segmentation_daily qs ON 
+      (s.query=qs.query and s.data_date=qs.data_date )}
+
+    where_str = %q{s.data_date = ? and 
+      qs.segmentation = ? and qs.cat_id = ?}
+
+    select(cols).joins(join_str).where(
+      [where_str, data_date, query_segment, cat_id]).order(order_limit_str) 
+  end
+  
+  def self.get_distribution(query_segment, cat_id, data_date)
+    cols = %q{round((s.search_con_rank_correlation+1)/2,1) cat,
+    count(*) vol}
+    
+    join_str = %q{as s JOIN query_segmentation_daily qs ON 
+      (s.query=qs.query and s.data_date=qs.data_date )}
+
+    where_str = %q{s.data_date = ? and 
+      qs.segmentation = ? and qs.cat_id = ?}
+    
+    select(cols).joins(join_str).where(
+      [where_str, data_date, query_segment, cat_id]).group('cat')
+  end
+  
+  def self.get_stats(query_segment, cat_id)
+    cols = %q{unix_timestamp(s.data_date) * 1000 data_date,
+    sum(s.uniq_count*(s.search_con_rank_correlation+1)/2)/sum(s.uniq_count)
+     score, sum(s.uniq_count) count}
+    
+    join_str = %q{as s JOIN query_segmentation_daily qs ON 
+      (s.query=qs.query and s.data_date=qs.data_date )} 
+
+    where_str = %q{qs.segmentation = ? and qs.cat_id = ?}
+
+    select(cols).joins(join_str).where(
+      [where_str, query_segment, cat_id]).group(
+        's.data_date').having('count > 500').order('s.data_date') 
   end
 end

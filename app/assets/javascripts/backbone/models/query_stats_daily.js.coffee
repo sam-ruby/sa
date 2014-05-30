@@ -21,8 +21,6 @@ class Searchad.Collections.QueryStatsDailyCollection extends Backbone.PageableCo
   queryParams:
     currentPage: 'page'
     pageSize: 'per_page'
-    date: ->
-      @controller.get_filter_params().date
     query: ->
       @query
 

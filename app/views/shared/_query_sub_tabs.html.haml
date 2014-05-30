@@ -1,0 +1,32 @@
+.navbar.search-navbar{style: 'margin-bottom:1em'}
+  .navbar-inner
+    %ul#top-nav.nav
+      %li.active.overview
+        %a{:href=>'#'} 
+          %span
+            Overview
+      %li.top
+        %a{:href=>'#'} 
+          %span
+            Top Queries
+      %li.trend_2
+        %a{:href=>'#'}
+          %span
+            Trending
+      %li.poor_perform
+        %a{:href=>'#'}
+          %span
+            30 Day Opportunities
+      %li.poor_amzn
+        %a{:href=>'#'}
+          %span
+            Competitive Opportunities
+      %li.typical_query
+        %a{:href=>'#'}
+          %span
+            Representative Sample
+    %form.form-search.pull-right
+      .input-append
+        %input.span2.search-query{type: :text}
+        %button.btn.search{type: :submit}
+          Search

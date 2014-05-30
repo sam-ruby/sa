@@ -1,6 +1,8 @@
 class BaseController < ApplicationController
 
   layout 'cad'
+  # before_action :authenticate_user!
+  
   def login_user
     user = User.get_item_with_name(session[:user_id].to_s)
     session[:user_id] = nil if user.to_s.empty?
@@ -52,7 +54,7 @@ class BaseController < ApplicationController
     @date = nil
     #TBD: Is this an efficient way to get the maximum date. Do we
     #need this for every call.
-    max_min_dates = SearchQualityDaily.get_max_min_dates.first
+    max_min_dates = SummaryMetrics.get_max_min_dates.first
     @max_date, @min_date = max_min_dates.max_date, max_min_dates.min_date
     @view = params[:view] || 'weekly'
     @date = params[:date] ? Date.strptime(params[:date], '%m-%d-%Y') : @max_date

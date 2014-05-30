@@ -3,6 +3,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller = SearchQualityApp.Controller
 
   routes:
+    "(:search)(/*args)": "search"
+    "browse(/:task)(/:sub_task)(/*args)": "browse"
+    "category(/:task)(/:sub_task)(/*args)": "category"
     "search_rel(/query/:query)(/filters/*wday)": "search_rel"
     "search_rel/item_id/:id(/filters/*wday)": "search_query_items"
     
@@ -11,7 +14,6 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "trending(/query/:query)(/filters/*wday)": "trending"
     "trending/up(/query/:query)(/filters/*wday)": "up_trending"
     "trending/up(/query/:query)(/days/:days)(/filters/*wday)": "up_trending_days"
-    "(filters/*wday)": "trending"
     
     "query_monitoring/count(/query/:query)(/filters/*wday)":
       "query_monitoring_count"
@@ -23,23 +25,68 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "adhoc_query(/mode/query_comparison)(/wks_apart/:weeks/query_date/:date/query/)(:query)(/filters/*wday)":
       "adhoc_query_comparison"
 
-  set_date_info: (date_part) =>
-    curr_date = $('#dp3').datepicker('getDate')
-    if date_part?
-      date_parts = date_part.split('/')
-      for part, i in date_parts
-        if part == 'date'
-          if curr_date != Selected_Date
-            @controller.trigger('update_date', date_parts[i+1])
-            @controller.set_date(date_parts[i+1])
-        # else if part == 'year'
-        #   @controller.set_year(date_parts[i+1])
-        # else if part == 'week'
-        #   @controller.set_week(date_parts[i+1])
-    else if curr_date != Selected_Date
-      @controller.trigger('update_date', Selected_Date.toString('M-d-yyyy'))
+  get_cat_id: (filters) ->
+    if filters?
+      parts = filters.split('/')
+      for part, i in parts
+        if part == 'cat_path'
+          cat_path = parts[i+1]
+          cats = cat_path.split(/_/)
+          @cat_id = cats[cats.length-1] if cats? and cats.length > 0
+          @cat_path = cat_path if cat_path?
+    @cat_id ||=0
+  
+  set_date_info: (filter) =>
+    # @get_cat_id()
+    @date_changed = false
+    if (filter and filter.date? and filter.date != @date)
+      @controller.trigger('update_date', filter.date)
+      @controller.set_date(filter.date)
+      @date_changed = true
+      @date = filter.date
+    else if @controller.date != @date
+      @date_changed = true
+      @date = @controller.date
+      
+  _extractParameters: (route, fragment) =>
+    return if !fragment?
+    [path_parts, filter_parts] = fragment.split('filters')
+    get_parts = (fragment) ->
+      results = {}
+      parts = (part for part in fragment.split('/') when part != '')
+      for part, i in parts
+        continue unless i%2 == 0
+        continue if !part? or part == ''
+        if parts[i+1]?
+          results[part] = decodeURIComponent(parts[i+1])
+        else
+          results[part] = null
+      results
+    path_parts = if path_parts? then get_parts(path_parts) else {}
+    filter_parts = if filter_parts? then get_parts(filter_parts) else {}
+    [path_parts, filter_parts]
 
+  search:(path, filter) =>
+    path.search ||= 'overview'
+    @query_segment_changed = false
+    if !@path? or (@path? and @path.search != path.search)
+      @query_segment_changed = true
 
+    @metrics_changed = false
+    if !@path? or (@path? and @path.page != path.page)
+      @metrics_changed = true
+      @controller.set_metrics_name(path.page)
+
+    @set_date_info(filter)
+    @path = path
+    @filter = filter
+
+  browse:(@task, @sub_task, @task_args) =>
+    @set_date_info()
+  
+  catalog:(@task, @sub_task, @task_args) =>
+    @set_date_info()
+  
   adhoc_query_comparison: (weeks, date, query, date_parts) =>
     @set_date_info(date_parts)
     data=
@@ -81,15 +128,17 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller.trigger('search-kpi:index')
   
   trending: (query, date_parts) =>
-    @set_date_info(date_parts)
-    @controller.trigger('master-tabs:cleanup')
-    @controller.trigger('content-cleanup')
-    if query?
-      query = decodeURIComponent(query)
-      @controller.trigger(
-        'trending:index', query: query)
-    else
-      @controller.trigger('trending:index')
+    @navigate('search/top/traffic/filters/date/3-19-2014', trigger: true)
+
+    #@set_date_info(date_parts)
+    #@controller.trigger('master-tabs:cleanup')
+    #@controller.trigger('content-cleanup')
+    #if query?
+    #query = decodeURIComponent(query)
+    #  @controller.trigger(
+    # 'trending:index', query: query)
+    #else
+    #  @controller.trigger('trending:index')
 
   up_trending_days: (query, days, date_parts) =>
     @set_date_info(date_parts)
@@ -153,6 +202,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
         'qm-metrics:index', query: query)
     else
       @controller.trigger('qm-metrics:index')
+
 
   update_path: (path, options=null) =>
     url_parts = window.location.hash.replace('#', '').split('filters')

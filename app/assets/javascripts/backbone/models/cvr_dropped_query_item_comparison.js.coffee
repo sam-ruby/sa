@@ -24,9 +24,6 @@ class Searchad.Collections.CvrDroppedQueryComparisonItemCollection extends Backb
   state:
     pageSize: 16
   mode: 'client'
-  data:
-    query: null
-    query_date:null
 
   parse: (response) =>
     @data_date_before = response.data_date_before
@@ -34,6 +31,10 @@ class Searchad.Collections.CvrDroppedQueryComparisonItemCollection extends Backb
     response.items
   
   get_items: (data) =>
+    data = {} unless data
+    for k, v of @controller.get_filter_params()
+      continue unless v
+      data[k] = v
     @fetch(
       reset: true
       data: data

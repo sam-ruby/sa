@@ -78,7 +78,7 @@ Backgrid.CADQueryCell = Backgrid.Cell.extend(
   controller: SearchQualityApp.Controller
   router: SearchQualityApp.Router
   events:
-    'click': 'handleQueryClick'
+    'click a.query': 'handleQueryClick'
   handleQueryClick: (e) =>
     e.preventDefault()
     $(e.target).parents('table').find('tr.selected').removeClass('selected')
@@ -87,7 +87,11 @@ Backgrid.CADQueryCell = Backgrid.Cell.extend(
     # update path
   render: ->
     value = @model.get(@column.get('name'))
-    formatted_value = '<a class="query" href="#">' + value + '</a>'
+    formatted_value = '<span class="pull-right">' +
+      '<a href="http://www.walmart.com/search/search-ng.do?search_query=' +
+      encodeURIComponent(value) + '" target="_blank">' +
+      '<img src="/assets/walmart-transparent.png" class="walmart-icon"></a>' +
+      '</span><a class="query" href="#">' + value + '</a>'
     @$el.html(formatted_value)
     @delegateEvents()
     return this
