@@ -46,7 +46,11 @@
                 = key
           %td
             %span{:style=>'font-weight:normal'}
-              = value
+              - if (match = key.match(/new\s+features/i))
+                %a{:href=>value, :target => '_blank', :style=>'white-space:nowrap;'}
+                  = value
+              - else
+                = value
     %tr
       %td{:style=>'border: 0;'}
         %br

@@ -119,9 +119,9 @@ form.form-inline.overview-all
                 tr
                   td Confidence Interval
                 tr
-                  td Queries Processed
+                  td Confidence
                 tr
-                  td Significance
+                  td Queries Processed
           - var ms, ucl, lcl, query_count
           each segment, segment_id in segments
             - ms = metric[segment_id]
@@ -157,15 +157,14 @@ form.form-inline.overview-all
 
                   tr
                     td
-                      if ms && ms.metadata && ms.metadata.sup
-                        = intFormatter.fromRaw(ms.metadata.sup) 
-                      else
-                        |-
-                    
-                  tr
-                    td
                       if ms && ms.significance
                         = numFormatter.fromRaw(ms.significance) + '%'
                       else
                         |-
-
+                  
+                  tr
+                    td
+                      if ms && ms.metadata && ms.metadata.sup
+                        = intFormatter.fromRaw(ms.metadata.sup) 
+                      else
+                        |-
