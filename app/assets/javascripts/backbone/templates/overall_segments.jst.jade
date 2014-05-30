@@ -1,0 +1,170 @@
+- var s_formatter = JST['backbone/templates/metric_formatter']
+- var u_formatter = JST['backbone/templates/metric_unit_formatter']
+- var intFormatter = new Backgrid.NumberFormatter({decimals: 0})
+- var intFormatterDefault = new Backgrid.NumberFormatter()
+- var numFormatter = new Backgrid.NumberFormatter()
+- var numForm4D = new Backgrid.NumberFormatter({decimals: 4})
+form.form-inline.overview-all
+  label.checkbox.pull-right
+    input.show-details(type="checkbox")
+    |Show Metric Details
+.overview-all
+  .col-head
+    .name.metric-name
+      |Metric
+      .table-holder
+        table.table.table-condensed
+          tr
+            td.meta-name Traffic Percent.
+          tr.revenue
+            td.meta-name Revenue Percent.
+          tr
+            td.meta-name Query Count
+    each segment, segment_id in segments
+      if segment.path == 'all_queries'
+        - continue
+      - var traffic, revenue, queries
+      if segment.traffic
+        - traffic = intFormatterDefault.fromRaw(segment.traffic) + '%'
+      else
+        - traffic = 'N/A'
+      
+      if segment.revenue
+        - revenue = intFormatterDefault.fromRaw(segment.revenue) + '%'
+      else
+        - revenue = 'N/A'
+      
+      if segment.queries
+        - queries = intFormatter.fromRaw(segment.queries)
+      else
+        - queries = 'N/A'
+
+      - var seg_link
+      .segment-name
+        - seg_link = '#search/' + segment.path + '/page/overview'
+        a(href=seg_link)
+          = segment.name
+        table.table.table-condensed
+          tr
+            td.meta-value= traffic
+          tr.revenue
+            td.meta-value= revenue
+          tr
+            td.meta-value= queries
+
+  
+  each metric_cat in metrics
+    .info(class=metric_cat.class)
+      = metric_cat.name
+    - var no_data = true;
+    each metric, key in metric_cat.metrics
+      if metric
+        - no_data = false
+        - break
+    if no_data  
+      .metric
+        .no-data-row
+          span.no-data
+            i No Data Available
+      - continue
+    .metric(class=metric_cat.class)
+      each metric, metric_id in metric_cat.metrics
+        if !metric
+          - continue
+        - var m_obj = metrics_name[metric_id]
+        if !m_obj
+          - continue
+        div(class=[m_obj.id, 'mrow'])
+          .name.metric-name
+            if m_obj && m_obj.name
+              = m_obj.name
+            else
+              | Name not known
+          each segment, segment_id in segments
+            - var score, segment_id, slink, significance
+            if segment.path == 'all_queries'
+              - continue
+            if metric[segment_id]
+              - score = metric[segment_id].value
+            else if metric['ALL QUERIES']
+              - score = metric['ALL QUERIES'].value
+              - segment_id = 'ALL QUERIES'
+            else
+              - score = 'N/A'
+            .score.numerical-col
+              if score == 'N/A'
+                span.na-query
+                  = 'N/A'
+              else if score || score == 0
+                - slink = '#search/' + segment.path + '/page/' + m_obj.id
+                - significance = metric[segment_id].significance
+                if significance
+                  if significance >= 95
+                    i.icon-star.significance
+                  else if significance >= 90
+                    i.icon-star-empty.significance
+                != s_formatter({m_obj:m_obj, metric_details:metric[segment_id], slink:slink})
+              else
+                |&nbsp;
+            .unit
+              if score && score != 'N/A'
+                != u_formatter({m_obj: m_obj, metric_details:metric[segment_id]})
+              else
+                |&nbsp;
+
+        div(class=[m_obj.id, 'mrow-support-info'])
+          .support-cat 
+            table.table.table-condensed
+              tbody
+                tr
+                  td Confidence Interval
+                tr
+                  td Confidence
+                tr
+                  td Queries Processed
+          - var ms, ucl, lcl, query_count
+          each segment, segment_id in segments
+            - ms = metric[segment_id]
+            if segment.path == 'all_queries'
+              - continue
+            else if !ms && metric['ALL QUERIES']
+              - ms = metric['ALL QUERIES']
+              - segment_id = 'ALL QUERIES'
+            else if !ms
+              - continue
+            .support-info-value
+              table.table.table-condensed
+                tbody
+                  tr
+                    td
+                      if ms && ms.ucl && ms.lcl
+                        if m_obj.unit == 'dollar'
+                          - ucl = intFormatter.fromRaw(ms.ucl)
+                          - lcl = intFormatter.fromRaw(ms.lcl)
+                        else if m_obj.unit == 'query'
+                          if m_obj.decimals == 4
+                            - ucl = numForm4D.fromRaw(ms.ucl)
+                            - lcl = numForm4D.fromRaw(ms.lcl)
+                          else
+                            - ucl = intFormatter.fromRaw(ms.ucl)
+                            - lcl = intFormatter.fromRaw(ms.lcl)
+                        else
+                          - ucl = numFormatter.fromRaw(ms.ucl)
+                          - lcl = numFormatter.fromRaw(ms.lcl)
+                        = lcl + ' - ' + ucl
+                      else
+                        |-
+
+                  tr
+                    td
+                      if ms && ms.significance
+                        = numFormatter.fromRaw(ms.significance) + '%'
+                      else
+                        |-
+                  
+                  tr
+                    td
+                      if ms && ms.metadata && ms.metadata.sup
+                        = intFormatter.fromRaw(ms.metadata.sup) 
+                      else
+                        |-

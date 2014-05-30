@@ -69,9 +69,22 @@ Searchad::Application.routes.draw do
   match 'poor_performing(/:action(.:format))',
     :to => 'poor_performing', :via => [:get, :post]  
   
-  get 'test(/:action(.:format))', :to=>'test'
+  get 'ndcg(/:action(.:format))', :to=>'ndcg'
+  get 'o_ndcg(/:action(.:format))', :to=>'o_ndcg'
+  get 'conv_cor(/:action(.:format))', :to=>'conv_cor'
+  get 'traffic(/:action(.:format))', :to=>'traffic'
+  get 'pvr(/:action(.:format))', :to=>'pvr'
+  get 'atc(/:action(.:format))', :to=>'atc'
+  get 'conversion(/:action(.:format))', :to=>'conversion'
+  get 'revenue(/:action(.:format))', :to=>'revenue'
+  get 'oos(/:action(.:format))', :to=>'oos'
+  get 'p1_oos(/:action(.:format))', :to=>'p1_oos'
   get 'release_notes(/:action(.:format))', :to=>'help'
   get 'comp_analysis(/:action(.:format))', :to=>'comp_analysis'
+  get 'category(/:action(.:format))', :to=>'categories'
+  get 'get_daily_change', :to=>'summary_metrics#get_daily_change'
+  get 'get_overall_change', :to=>'summary_metrics#get_overall_change'
+  get 'signal_comparison(/:action)', :to =>'signal_comparison'
 
   match 'search_kpi(/:action(.:format))',
     :to => 'search_k_p_i', :via => [:get, :post]  

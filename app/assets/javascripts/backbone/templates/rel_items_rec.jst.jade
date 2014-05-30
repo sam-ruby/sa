@@ -1,0 +1,17 @@
+form.form-inline.item-selection
+  |Select upto 4 Items &nbsp;
+  i.icon-hand-down &nbsp;&nbsp;
+  button.btn.btn-small.do-sig-comp(type="button") Compare Signals
+  |&nbsp;
+  span.label.sig-comp-msg.label-warning
+    |Select ateast 1 item to compare
+
+  if show_recommended_items
+    label.show-rec-items.checkbox.pull-right
+      input.missed-items(type="checkbox")
+      |Show Recommended Items
+  else
+    span.pull-right(style="padding-top:10px;")
+      |No Recommendations with Significant Evidence 
+  br
+  a.item-uncheck(href="uncheck_items") Uncheck All Items

@@ -11,20 +11,29 @@ window.Searchad =
   Views: {}
   
 window.SearchQualityApp = do ->
-  controller = _.extend({}, Backbone.Events)
-  controller.set_view = (@view) =>
-  controller.get_view = => @view
-  controller.set_date = (@date) =>
-  # controller.set_week = (@week) =>
-  # controller.set_year = (@year) =>
-  controller.set_cat_id = (@cat_id) =>
-
-  controller.get_filter_params = =>
-    date: @date
-    week: @week
-    year: @year
-    cat_id: @cat_id
-
+  class Controller
+    set_flight_status: (@flight_status) =>
+    get_flight_status: =>
+      @flight_status
+    set_view: (@view) =>
+    get_view: => @view
+    set_date: (@date) =>
+    set_cat_id: (@cat_id) =>
+    set_metrics_name: (metric_name) =>
+      metrics = Searchad.Views.SummaryMetrics.prototype.metrics_name
+      for key, value of metrics when value.id == metric_name
+        @metrics_name = key
+    set_query_segment: (@query_segment) =>
+    get_filter_params: =>
+      date: @date
+      week: @week
+      year: @year
+      cat_id: @cat_id
+      query_segment: @query_segment
+      metrics_name: @metrics_name
+  controller = new Controller()
+  _.extend(controller, Backbone.Events)
+  
   Controller: controller
   
 window.Utils = do ->
@@ -66,10 +75,15 @@ window.Utils = do ->
     decimals: 2
     decimalSeparator: '.'
     orderSeparator: ','
-
     fromRaw: (rawValue) ->
       return '-' if !rawValue?
-      "#{super(parseFloat(rawValue))}%"
+      if !isNaN(parseFloat(rawValue))
+        try
+          "#{super(parseFloat(rawValue))}%"
+        catch error
+          "#{parseFloat(rawValue)}%"
+      else
+        '-'
  
   class CustomNumberFormatterNoDecimals extends Backgrid.NumberFormatter
     decimals: 0
@@ -77,30 +91,45 @@ window.Utils = do ->
     orderSeparator: ','
 
     fromRaw: (rawValue) ->
-      return '-' unless rawValue
-      super(parseFloat(rawValue))
+      return '-' unless rawValue?
+      if !isNaN(parseFloat(rawValue))
+        try
+          super(parseFloat(rawValue))
+        catch error
+          parseFloat(rawValue)
+      else
+        '-'
+  
+  class CurrencyFormatter extends Backgrid.NumberFormatter
+    decimals: 2
+    orderSeparator: ','
 
+    fromRaw: (rawValue) ->
+      rawValue = parseFloat(rawValue)
+      try
+        if rawValue == 0
+          '$' + rawValue.toFixed(0)
+        else if rawValue < 0
+          '- $' + super(Math.abs(rawValue))
+        else if rawValue > 0
+          '$' + super(rawValue)
+        else
+          '-'
+      catch error
+        rawValue
+  
   class CustomNumberFormatter extends Backgrid.NumberFormatter
     decimals: 2
     decimalSeparator: '.'
     orderSeparator: ','
 
     fromRaw: (rawValue) ->
-      return '-' unless rawValue
-      super(parseFloat(rawValue))
-
-  class CurrencyFormatter extends Backgrid.NumberFormatter
-    decimals: 0
-    orderSeparator: ','
-
-    fromRaw: (rawValue) ->
-      rawValue = parseFloat(rawValue)
-      if rawValue == 0
-        '$' + rawValue.toFixed(0)
-      else if rawValue < 0
-        '- $' + super(Math.abs(rawValue))
-      else if rawValue > 0
-        '$' + super(rawValue)
+      return '-' if !rawValue?
+      if !isNaN(parseFloat(rawValue))
+        try
+          super(parseFloat(rawValue))
+        catch error
+          parseFloat(rawValue)
       else
         '-'
 
@@ -110,5 +139,3 @@ window.Utils = do ->
   CustomNumberFormatter: CustomNumberFormatter
   CustomNumberFormatterNoDecimals: CustomNumberFormatterNoDecimals
   InitExportCsv: init_csv_export_feature
-  
-

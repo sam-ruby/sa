@@ -1,6 +1,7 @@
 unless image_url
   .missing-img &nbsp;
-  = item_id 
+  a(href='http://www.walmart.com/ip/' + item_id, target='_blank')
+    = item_id 
 else
   a(href='http://www.walmart.com/ip/' + item_id, target='_blank')
     img.item-image(src=image_url)

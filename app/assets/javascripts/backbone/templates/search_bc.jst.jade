@@ -1,0 +1,9 @@
+ul.breadcrumb.search
+  each path in bc_paths
+    if path.active == true
+      li.active
+        =path.name
+    else
+      li
+        a(href=path.href)= path.name
+        span.divider /

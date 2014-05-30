@@ -49,7 +49,9 @@ class QueryCatMetricsDaily < BaseModel
     select(selects).where(
     [%q{query = ? AND cat_id = ? AND (channel = 'ORGANIC_USER' or
      channel = 'ORGANIC_AUTO_COMPLETE') and 
-     page_type = 'SEARCH'}, query, 0]).group('data_date').order('data_date')
+     page_type = 'SEARCH' and data_date > 
+     (current_date - interval 180 day)}, query, 0]).group(
+       'data_date').order('data_date')
   end
 
   def self.get_query_stats_date(
@@ -88,24 +90,23 @@ class QueryCatMetricsDaily < BaseModel
       query = query.gsub('*', '%')
       where_conditions = sanitize_sql_array([
         %q{query_daily.page_type = 'SEARCH' and 
-        query_daily.query like '%s' 
-        and query_daily.channel in 
-        ("ORGANIC_USER", "ORGANIC_AUTO_COMPLETE") and 
-        query_daily.cat_id = 0}, query])
+        query_daily.data_date = '%s' and query_daily.query like '%s' 
+        and query_daily.channel in (
+        "ORGANIC_USER", "ORGANIC_AUTO_COMPLETE") and 
+        query_daily.cat_id = 0}, query_date, query])
     elsif !query.nil? and !query.empty?
       where_conditions = sanitize_sql_array([
         %q{query_daily.page_type = 'SEARCH' and 
-        query_daily.query = '%s' 
-        and query_daily.channel in 
-        ("ORGANIC_USER", "ORGANIC_AUTO_COMPLETE") and 
-        query_daily.cat_id = 0}, query])
-        limit = 1
+        query_daily.data_date = '%s' and query_daily.query = '%s' 
+        and query_daily.channel in ("ORGANIC_USER",
+        "ORGANIC_AUTO_COMPLETE") and 
+        query_daily.cat_id = 0}, query_date, query])
     else
       where_conditions = sanitize_sql_array([
         %q{query_daily.page_type = 'SEARCH' and 
         query_daily.data_date = '%s' and  
-        and query_daily.channel in 
-        ("ORGANIC_USER", "ORGANIC_AUTO_COMPLETE") and 
+        query_daily.channel in ("ORGANIC_USER",
+        "ORGANIC_AUTO_COMPLETE") and 
         query_daily.cat_id = 0}, query_date])
     end
 

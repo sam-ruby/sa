@@ -1,89 +1,80 @@
 class Category < BaseModel
   self.table_name = 'categories'
-  @@cat_map = []
-  
-  def self.get_cats_with_revenue(cat_ids, week=23)
-    cat_ids = [cat_ids] unless cat_ids.is_a? Array
-    joins('INNER JOIN cat_metrics_week on ' +
-          'cat_metrics_week.cat_id = categories.c_category_id').select(
-            'c_category_id, c_category_name, p_category_id, ' +
-            'p_category_name').where(
-              "p_category_id in (?) and channel = 'TOTAL' and " +
-              'cat_metrics_week.week = ? and ' +
-              'cat_metrics_week.cat_revenue > 0', cat_ids, week).order(
-                'c_category_name')
+
+  def self.autocomplete_categories(query)
+
+    final_categories = Array.new
+    conditions = ["p_category_name LIKE ? OR c_category_name LIKE ?", "%#{query}%", "%#{query}%"]
+
+    starting_categories = Category.find(:all, conditions: conditions)
+
+    starting_categories.each do |curr_category|
+      category_trail = Array.new
+      category_trail << curr_category
+      if curr_category.p_category_id != 0
+        self.find_category_trail(category_trail, curr_category.p_category_id)
+      end
+
+      final_categories << category_trail
+    end
+
+    return final_categories;
+  end
+
+  def self.find_category_trail(category_array, category_id)
+    conditions = ["c_category_id = ?", category_id]
+
+    categories = Category.find(:all, conditions: conditions)
+    categories.each do |curr_category|
+      category_array << curr_category
+      if curr_category.p_category_id != 0
+        find_category_trail(category_array, curr_category.p_category_id)
+      else
+        return category_array
+      end
+
+    end
+  end
+
+  def self.subcategories_by_parent_id(id, year, week)
+    cat_week_join = %q{as cat join cat_metrics_week a on 
+    a.cat_id = cat.c_category_id}
+
+    conditions = [%q{cat.p_category_id = ? and a.year = ? and a.week = ? 
+    and a.revenue > 0}, id, year, week]
+
+    select(%q{cat.c_category_id, cat.c_category_name,
+      (select count(*) from categories where 
+       p_category_id = cat.c_category_id) children}).joins(
+         cat_week_join).where(conditions).group('a.cat_id').order(
+           "c_category_name asc").uniq()
   end
   
-  def self.get_cat_map(flat=false)
-    cats = []
-    root_categories = get_cats_with_revenue(0);
-    first_level_categories = get_cats_with_revenue(
-      root_categories.map {|cat| cat.c_category_id})
-    second_level_categories = get_cats_with_revenue(
-      first_level_categories.map {|cat| cat.c_category_id }) 
+  def self.get_sibling_categories(s_id)
+    cat_week_join = "join cat_metrics_week on cat_id = c_category_id"
+    conditions = ["p_category_id = ? and revenue > 0", id]
+    categories = category.select(:c_category_id, :c_category_name).distinct
+      .joins(cat_week_join).distinct.where(conditions).order("c_category_name asc")
+  end
 
-    root_categories.each do |x| 
-      next if x.c_category_name.strip.empty?
-      root_cat = {:cat_ids => x.c_category_id,
-                  :cat_id => x.c_category_id,
-                  :label => x.c_category_name.strip,
-                  :name => x.c_category_name.strip,
-                  :category => 'All'}
-      cats << root_cat
-      root_cat['children'] = []
-      first_level_categories.select do |y|
-        y.p_category_id == x.c_category_id end.each do |y|
-          next if y.c_category_name.strip.empty?
-          f_cat = {:cat_ids => "#{x.c_category_id},#{y.c_category_id}",
-                   :cat_id => y.c_category_id,
-                   :label => y.c_category_name.strip,
-                   :name => y.c_category_name.strip,
-                   :category => "#{x.c_category_name}"}
-          root_cat['children'] << f_cat
-          f_cat['children'] = []
-          second_level_categories.select do |z|
-            z.p_category_id == y.c_category_id end.each do |z|
-              next if z.c_category_name.strip.empty?
-              cat_ids = "#{x.c_category_id},#{y.c_category_id}," +
-                "#{z.c_category_id}"
-              label = "#{y.c_category_name.strip}->#{z.c_category_name.strip}"
-              s_cat = {:cat_ids => cat_ids,
-                       :cat_id => z.c_category_id,
-                       :label => label,
-                       :name => z.c_category_name.strip,
-                       :category => "#{x.c_category_name}"}
-              f_cat['children'] << s_cat
-          end
-      end
-    end
-    if (flat) 
-      Rails.cache.fetch(:flat_category_map, :expires_in => 4.hours) do 
-        flatten_cats(cats)
-      end
+  def is_child
+    cat_week_join = "join cat_metrics_week on cat_id = c_category_id"
+    conditions = ["p_category_id = ? and cat_revenue > 0", self.c_category_id]
+    categories = Category.select(:c_category_id, :c_category_name).distinct.joins(cat_week_join).distinct.where(conditions).limit(1)
+    if categories.count == 1
+      return true
     else
-      Rails.cache.fetch(:category_map, :expires_in => 4.hours) do
-        cats
-      end
+      return false
     end
   end
 
-  def self.get_category_names(cat_ids)
-    cat_map = {}
-    Category.where(:c_category_id => cat_ids).each do |cat|
-      cat_map[cat.c_category_id] = cat.c_category_name
+  def is_parent
+    categories = Category.find_by_p_category_id(self.c_category_id)
+    if categories != nil
+      return true
+    else
+      return false
     end
-    cat_map
   end
-  
-  def self.flatten_cats(cats)
-    result = []
-    add_child = Proc.new {|cat|
-      result << cat
-      if cat['children'] and !cat['children'].empty?
-        cat['children'].each {|child_cat| add_child.call(child_cat)}
-      end
-    }
-    cats.each {|item| add_child.call(item) }
-    result
-  end
+
 end

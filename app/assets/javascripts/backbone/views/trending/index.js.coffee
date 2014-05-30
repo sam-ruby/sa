@@ -33,8 +33,6 @@ class Searchad.Views.Trending extends Backbone.View
     @collection.bind('request', @prepare_for_render)
     @controller.bind('date-changed', =>
       @get_items(trigger: true) if @active)
-    @controller.bind('content-cleanup', @unrender)
-    @listenTo(@controller, 'trending:cleanup', @clean_content)
     
     @active = false
   
@@ -55,28 +53,27 @@ class Searchad.Views.Trending extends Backbone.View
     @trigger = true
 
   prepare_for_render: =>
-    @$el.css('display', 'block')
-    @$el.find('li.period-selector').hide()
+    @$el.find('.ajax-loader').css('display', 'block')
     @controller.trigger('sub-content-cleanup')
     @controller.trigger('search:sub-tab-cleanup')
 
   clean_content: =>
     @active = false
-    @content_area.children().not('.ajax-loader').remove()
+    @$el.children().not('.ajax-loader').remove()
   
   unrender: =>
     @$el.hide()
 
-  render: (div)=>
+  render: =>
     return unless @active
-    div.find('.ajax-loader').hide()
+    @$el.find('.ajax-loader').hide()
     if @collection.size() == 0
-      div.prepend( @grid.render().$el)
+      @$el.prepend( @grid.render().$el)
       return
     else
-      div.prepend(@paginator.render().$el)
-      div.prepend(@grid.render().$el)
-    div.append( @export_csv_button() ) unless div.find('.export-csv').length>0
-    div.find('td a.query').first().trigger('click')
+      @$el.prepend(@paginator.render().$el)
+      @$el.prepend(@grid.render().$el)
+    @$el.append( @export_csv_button() ) unless @$el.find('.export-csv').length>0
+    @$el.find('td a.query').first().trigger('click')
     this
 

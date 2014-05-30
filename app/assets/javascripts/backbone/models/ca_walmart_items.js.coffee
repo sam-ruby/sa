@@ -19,8 +19,6 @@ class Searchad.Collections.CAWalmartItemsCollection extends Backbone.PageableCol
   
   model: Searchad.Models.CAWalmartItem
   url: '/comp_analysis/get_walmart_items.json'
-  state:
-    pageSize: 8
   mode: 'client'
   
   # since it is client side pagination, query param don't matter

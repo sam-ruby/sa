@@ -1,12 +1,10 @@
 class TrendingQueriesDaily < BaseModel
   self.table_name = 'trending_queries_daily'
  
-  def self.get_trending_words_count(period_in_days, data_date)
+  def self.get_trending_words_count(data_date, period)
     count(
-      select: 'query',
-      distinct: true,
       conditions: ['window_in_days = ? and data_date = ?',
-                   data_date, period_in_days])
+                   period, data_date])
   end
 
   def self.get_trending_words(query, data_date, period=2, page=1,  

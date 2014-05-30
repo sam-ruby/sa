@@ -7,12 +7,12 @@ class Searchad.Views.WeekPicker.IndexView extends Backbone.View
   initialize: (options) =>
     @weekly = false
     @controller = SearchQualityApp.Controller
-    @initCalendar()
+    @initCalendar(@controller.date)
     @listenTo(@controller, "set_latest_week_day", @setLatestWeekDay)
     @listenTo(@controller, "update_date", (date) =>
       @setDate(date)
       @showDateInfo())
-    @listenTo(@controller, 'view-change', @setView) 
+    @listenTo(@controller, 'view-change', @setView)
     filter_params = @controller.get_filter_params()
 
     # we only need to get available weeks wehn it is weekly mode
@@ -32,6 +32,7 @@ class Searchad.Views.WeekPicker.IndexView extends Backbone.View
       @$el.datepicker('setStartDate', Min_date)
       @$el.datepicker('setEndDate', Max_date)
       @setDate(@daily_date)
+      @showDateInfo()
   
     @week = filter_params.week if filter_params.week
     @year = filter_params.year if filter_params.year
@@ -103,7 +104,7 @@ class Searchad.Views.WeekPicker.IndexView extends Backbone.View
         SearchQualityApp.Controller.trigger('year-week-changed')
     , this)
 
-  initCalendar: =>
+  initCalendar: (date) =>
     @$el.datepicker(
       autoclose: false
       weekStart: 6
@@ -121,7 +122,5 @@ class Searchad.Views.WeekPicker.IndexView extends Backbone.View
               '-' + e.date.getFullYear()
             currentPath = window.location.hash.replace('#', '')
             newPath = Utils.UpdateURLParam(currentPath, 'date', dateStr, true)
-            SearchQualityApp.Router.navigate(newPath)
-            SearchQualityApp.Controller.set_date(dateStr)
-            SearchQualityApp.Controller.trigger('date-changed')
+            SearchQualityApp.Router.navigate(newPath, trigger: true)
       )
