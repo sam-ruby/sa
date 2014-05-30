@@ -1,5 +1,5 @@
 class ONdcg < BaseModel
-  self.table_name = 'query_metrics_daily'
+  self.table_name = 'query_metrics_daily_v2'
  
   def self.get_queries(winning, query_segment, cat_id, data_date,
                        metric_name, page=1,  limit=10, order_col=nil, order='asc')
@@ -15,7 +15,12 @@ class ONdcg < BaseModel
     
     if page == 0
       order_limit_str = ''
-      cols = %q{a.query}
+      cols = %q{a.query, 
+      if(a.metric_value<0.1 and sum(b.uniq_count)>1000,
+      sum(b.uniq_count)/(a.metric_value+0.01),
+      if(sum(b.uniq_count)<500,
+      sum(b.uniq_count)*(1-a.metric_value)*0.1,
+      sum(b.uniq_count)*(1-a.metric_value))) score}
     else
       order_limit_str = %Q{ #{order_str} limit #{limit} offset #{offset}}
     end
@@ -44,6 +49,6 @@ class ONdcg < BaseModel
 
     select(cols).joins(join_str).where(
       [where_str, data_date, metric_name, query_segment, cat_id]).group(
-        'a.query').order(order_limit_str) 
+        'a.query').having('score > 0').order(order_limit_str) 
   end
 end
