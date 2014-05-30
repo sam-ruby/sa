@@ -99,9 +99,9 @@ form.form-inline.overview-all
                 - slink = '#search/' + segment.path + '/page/' + m_obj.id
                 - significance = metric[segment_id].significance
                 if significance
-                  if significance >= 0.95
+                  if significance >= 95
                     i.icon-star.significance
-                  else if significance >= .90
+                  else if significance >= 90
                     i.icon-star-empty.significance
                 != s_formatter({m_obj:m_obj, metric_details:metric[segment_id], slink:slink})
               else
@@ -165,7 +165,7 @@ form.form-inline.overview-all
                   tr
                     td
                       if ms && ms.significance
-                        = ms.significance + '%'
+                        = numFormatter.fromRaw(ms.significance) + '%'
                       else
                         |-
 
