@@ -78,6 +78,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       cat: 'rel_orders'
       unit: 'score'
       mark_worst: 'min'
+    ###
     orders_mpr_5:
       name: 'Orders MPR@5'
       id: 'o_mpr_5'
@@ -96,6 +97,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       cat: 'rel_orders'
       unit: 'score'
       mark_worst: 'min'
+    ###
     orders_precision_5:
       name: 'Orders Prec@5'
       id: 'o_prec_5'
@@ -154,6 +156,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       unit: 'score'
       mark_worst: 'min'
       disabled: true
+    ###
     eval_mpr_5:
       name: 'Eval MPR@5'
       id: 'e_mpr_5'
@@ -175,6 +178,7 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       unit: 'score'
       mark_worst: 'min'
       disabled: true
+    ###
     eval_precision_5:
       name: 'Eval Prec@5'
       id: 'e_prec_5'
