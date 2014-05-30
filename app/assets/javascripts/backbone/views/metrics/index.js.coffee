@@ -19,6 +19,8 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       if @router.date_changed or @router.cat_changed or @router.query_segment_changed
         @dirty = true
       if path.page == feature and !path.details?
+        @cleanup()
+        @renderTable()
         @get_items() if @dirty
     )
     
@@ -83,8 +85,6 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     
   get_items: (data) =>
     @dirty = false
-    @cleanup()
-    @renderTable()
     @$el.find('.tab-holder').empty()
     @$el.find('.tab-holder').append(@navBar)
     @collection.get_items(data)

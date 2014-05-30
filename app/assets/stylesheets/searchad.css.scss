@@ -803,12 +803,22 @@ div.sig-comp-table {
       border-bottom: 1px solid #dddddd;
       border-left: 1px solid #ddd;
       border-right: 1px solid #ddd;
+      a.jstree-anchor {
+        &:hover, &:focus, &:active {
+          div.item-signals span {
+            background-color: rgb(231, 244, 249);
+          }
+        }
+      }
     }
     .name, .item, .score {
       padding: 4px 8px;
     }
     .item-signals {
       text-align: right;
+      span {
+        padding: 4px 8px;
+      }
     }
   }
   .srow {
@@ -823,11 +833,6 @@ div.sig-comp-table {
     }
     .srow {
       border: 0;
-      a.jstree-anchor {
-        &:hover div.item-signals, &:focus div.item-signals, &:active div.item-signals {
-          background-color: #f9f9f9;
-        }
-      }
     }
   }
 }
