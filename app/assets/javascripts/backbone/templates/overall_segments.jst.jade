@@ -113,7 +113,15 @@ form.form-inline.overview-all
                 |&nbsp;
 
         div(class=[m_obj.id, 'mrow-support-info'])
-          .support-cat Details
+          .support-cat 
+            table.table.table-condensed
+              tbody
+                tr
+                  td Confidence Interval
+                tr
+                  td Queries Processed
+                tr
+                  td Significance
           - var ms, ucl, lcl, query_count
           each segment, segment_id in segments
             - ms = metric[segment_id]
@@ -127,32 +135,37 @@ form.form-inline.overview-all
             .support-info-value
               table.table.table-condensed
                 tbody
-                  if ms && ms.ucl && ms.lcl
-                    if m_obj.unit == 'dollar'
-                      - ucl = intFormatter.fromRaw(ms.ucl)
-                      - lcl = intFormatter.fromRaw(ms.lcl)
-                    else if m_obj.unit == 'query'
-                      if m_obj.decimals == 4
-                        - ucl = numForm4D.fromRaw(ms.ucl)
-                        - lcl = numForm4D.fromRaw(ms.lcl)
+                  tr
+                    td
+                      if ms && ms.ucl && ms.lcl
+                        if m_obj.unit == 'dollar'
+                          - ucl = intFormatter.fromRaw(ms.ucl)
+                          - lcl = intFormatter.fromRaw(ms.lcl)
+                        else if m_obj.unit == 'query'
+                          if m_obj.decimals == 4
+                            - ucl = numForm4D.fromRaw(ms.ucl)
+                            - lcl = numForm4D.fromRaw(ms.lcl)
+                          else
+                            - ucl = intFormatter.fromRaw(ms.ucl)
+                            - lcl = intFormatter.fromRaw(ms.lcl)
+                        else
+                          - ucl = numFormatter.fromRaw(ms.ucl)
+                          - lcl = numFormatter.fromRaw(ms.lcl)
+                        = lcl + ' - ' + ucl
                       else
-                        - ucl = intFormatter.fromRaw(ms.ucl)
-                        - lcl = intFormatter.fromRaw(ms.lcl)
-                    else
-                      - ucl = numFormatter.fromRaw(ms.ucl)
-                      - lcl = numFormatter.fromRaw(ms.lcl)
-                    tr
-                      td Conf Inter
-                      td= lcl + '-' + ucl
-                    
-                  if ms && ms.metadata && ms.metadata.sup
-                    query_count = ms.metadata.sup 
-                    tr
-                      td Qry Proc
-                      td
-                        =intFormatter.fromRaw(query_count)
+                        |-
 
-                  if ms && ms.significance
-                    tr
-                      td Signific
-                      td= ms.significance + '%'
+                  tr
+                    td
+                      if ms && ms.metadata && ms.metadata.sup
+                        = intFormatter.fromRaw(ms.metadata.sup) 
+                      else
+                        |-
+                    
+                  tr
+                    td
+                      if ms && ms.significance
+                        = ms.significance + '%'
+                      else
+                        |-
+

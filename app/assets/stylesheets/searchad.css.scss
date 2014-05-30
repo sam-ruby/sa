@@ -1047,14 +1047,6 @@ div.overview-all {
       border-right: 1px solid #ddd;
       font-size: 12px;
       text-align: right;
-      table {
-        margin-bottom: 0;
-        tr:first-child {
-          td {
-            border: 0;
-          }
-        }
-      }
     }
     .name {
       white-space:nowrap;
@@ -1086,8 +1078,23 @@ div.overview-all {
         padding-left: 20px;
         white-space:nowrap;
         border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
         color: black;
         text-transform: capitalize;
+      }
+    }
+    .support-info-value, .support-cat {
+      padding: 0;
+      table {
+        margin-bottom: 0;
+        tr:first-child {
+          td {
+            border: 0;
+          }
+        }
+        td {
+          text-align: right;
+        }
       }
     }
   }
