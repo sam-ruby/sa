@@ -73,10 +73,7 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
       support_rows = $(e.target).parents('div.metric').find(
         "div.mrow-support-info.#{metric_id}")
       if support_rows.length > 0
-        if $(e.target).hasClass('make-tiny')
-          support_rows.hide()
-        else
-          support_rows.show()
+        support_rows.toggle('slideup')
     $(e.target).toggleClass('make-tiny')
 
   get_items: (data) =>
