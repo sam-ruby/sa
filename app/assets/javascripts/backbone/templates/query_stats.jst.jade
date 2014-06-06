@@ -3,27 +3,48 @@
 div.query-info
   span Daily Query Stats for :&nbsp;
   span.query-value
-    = query
+    = metric.query
     | &nbsp;
-    a(href='http://www.walmart.com/search/search-ng.do?search_query=' + encodeURIComponent(query), target='_blank')
+    a(href='http://www.walmart.com/search/search-ng.do?search_query=' + encodeURIComponent(metric.query), target='_blank')
       img.walmart-icon(src='/assets/walmart-transparent.png')
 
-table.table.table-bordered.query-stats
-  thead
-    tr
-      th.numerical-col Traffic
-      th.numerical-col Conversion
-      th.numerical-col PVR
-      th.numerical-col ATC
-      th.numerical-col Revenue
+table.table.table-condensed.query-stats
   tbody
     if metric
-      tr.success
-        td.numerical-col= intFormatter.fromRaw(metric.query_count)
-        td.numerical-col= intFormatterDefault.fromRaw(metric.query_con * 100) + '%'
-        td.numerical-col= intFormatterDefault.fromRaw(metric.query_pvr * 100) + '%'
-        td.numerical-col= intFormatterDefault.fromRaw(metric.query_atc * 100) + '%'
-        td.numerical-col= intFormatter.fromRaw(metric.query_revenue) + '$'
+      tr
+        td.name Orders NDCG@1
+        td.value= intFormatterDefault.fromRaw(metric.orders_ndcg_1)||'-'
+        td.spacer
+        td.name Traffic
+        td.value= intFormatter.fromRaw(metric.traffic)||'-'
+      
+      tr
+        td.name Orders NDCG@5
+        td.value= intFormatterDefault.fromRaw(metric.orders_ndcg_5)||'-'
+        td.spacer
+        td.name Conversion
+        td.value= intFormatterDefault.fromRaw(metric.conversion)||'-'
+      
+      tr
+        td.name Orders NDCG@16
+        td.value= intFormatterDefault.fromRaw(metric.orders_ndcg_16)||'-'
+        td.spacer
+        td.name PVR
+        td.value= intFormatterDefault.fromRaw(metric.pvr)||'-'
+
+      tr
+        td.name Orders Precision@16
+        td.value= intFormatterDefault.fromRaw(metric.orders_precision_16)||'-'
+        td.spacer
+        td.name ATC
+        td.value= intFormatterDefault.fromRaw(metric.atc)||'-'
+        
+      tr
+        td.name Eval Recall@16
+        td.value= intFormatterDefault.fromRaw(metric.eval_recall_16)||'-'
+        td.spacer
+        td.name Revenue
+        td.value= (intFormatter.fromRaw(metric.revenue)||0) + '$'
     else
       tr
         td(colspan=5, style='text-align:center;')
