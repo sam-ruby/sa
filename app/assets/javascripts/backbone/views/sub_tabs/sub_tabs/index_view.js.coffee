@@ -70,6 +70,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     @hide_spin()
     @$el.children().not('.ajax-loader').remove()
     metric = @queryStatsCollection.toJSON()[0]
+    metric.query = @query
     @$el.append(@query_stats_template(
       metric: metric))
     @dirty = false
