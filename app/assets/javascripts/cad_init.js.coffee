@@ -168,9 +168,8 @@ $ ->
     queryItemsView = new Searchad.Views.SubTabs.RelRev.IndexView(
       el: '#search-sub-content')
     queryItemsView.listenTo(
-      controller, 'search:rel-rev', (data) ->
-        queryItemsView.get_items(data)
-    )
+      controller, 'search:rel-rev', queryItemsView.render)
+
     SearchQualityApp.qv = queryItemsView
 
     #cvr dropped view

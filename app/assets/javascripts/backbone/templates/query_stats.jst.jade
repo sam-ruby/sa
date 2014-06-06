@@ -1,5 +1,6 @@
-- intFormatter = new Backgrid.NumberFormatter({decimals: 0})
-- intFormatterDefault = new Backgrid.NumberFormatter()
+- var intFormatter = new Backgrid.NumberFormatter({decimals: 0})
+- var intFormatterDefault = new Backgrid.NumberFormatter()
+- var pcFormat = function (value) { if (value ===null) return '-'; else return intFormatterDefault.fromRaw(value) + '%';}
 div.query-info
   span Daily Query Stats for :&nbsp;
   span.query-value
@@ -23,21 +24,21 @@ table.table.table-condensed.query-stats
         td.value= intFormatterDefault.fromRaw(metric.orders_ndcg_5)||'-'
         td.spacer
         td.name Conversion
-        td.value= intFormatterDefault.fromRaw(metric.conversion)||'-'
+        td.value= pcFormat(metric.conversion)
       
       tr
         td.name Orders NDCG@16
         td.value= intFormatterDefault.fromRaw(metric.orders_ndcg_16)||'-'
         td.spacer
         td.name PVR
-        td.value= intFormatterDefault.fromRaw(metric.pvr)||'-'
+        td.value= pcFormat(metric.pvr)
 
       tr
         td.name Orders Precision@16
         td.value= intFormatterDefault.fromRaw(metric.orders_precision_16)||'-'
         td.spacer
         td.name ATC
-        td.value= intFormatterDefault.fromRaw(metric.atc)||'-'
+        td.value= pcFormat(metric.atc)
         
       tr
         td.name Eval Recall@16
