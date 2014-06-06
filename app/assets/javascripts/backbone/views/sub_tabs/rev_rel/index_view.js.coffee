@@ -8,10 +8,16 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     _.bindAll(this, 'render', 'initTable')
     @collection = new Searchad.Collections.QueryItemsCollection()
     @shadowCollection = @collection.clone()
-    @shadowCollection.bind('reset', @render)
+    @shadowCollection.bind('reset', @render_result)
     @collection.bind('reset', @p_missed_items)
-    
     super(options)
+    
+    @items = []
+    @rel_item_template = JST["backbone/templates/rel_items_rec"]
+    Utils.InitExportCsv(this, '/search_rel/get_query_items.csv')
+    @div_container = $('<div>')
+    @div_container.hide()
+    @$el.append( @div_container )
     @initTable()
     
     @controller.bind('date-changed', =>
@@ -21,10 +27,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     @collection.bind('request', =>
       @controller.trigger('search:sub-content:show-spin')
     )
-    Utils.InitExportCsv(this, '/search_rel/get_query_items.csv')
     @undelegateEvents()
-    @items = []
-    @rel_item_template = JST["backbone/templates/rel_items_rec"]
     @active = false
 
   events: =>
@@ -63,13 +66,13 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
 
   p_missed_items: (e)=>
     view = this
-    if e?
+    if e? and e.target?
       target = $(e.target)
     else
       target = @$el.find('input:checkbox.missed-items')
 
-    @$el.find('table thead th.descending').removeClass('descending')
-    @$el.find('table thead th.ascending').removeClass('ascending')
+    #@$el.find('table thead th.descending').removeClass('descending')
+    #@$el.find('table thead th.ascending').removeClass('ascending')
 
     if target.is(':checked')
       @shadowCollection.reset(@collection.fullCollection.models)
@@ -209,6 +212,13 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
       className: 'rel-rev-grid'
       row: RecommendedRow
     )
+    
+    @div_container.append('<div class="hero-unit rel-best-seller-label"><span>' +
+      'Top 16 Relevance Items and Recommended Items</span></div>')
+    @div_container.append(@rel_item_template())
+    @div_container.append( @grid.render().$el )
+    @div_container.append( @export_csv_button() )
+
   get_items: (data) =>
     @active = true
     data || = { }
@@ -226,23 +236,27 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     @$el.append( $('<span>').addClass('label label-important').append(
       "No data available for #{query}") )
 
-  render: =>
+  render_result: =>
     return unless @active
+    rec_flag = @collection.fullCollection.where(in_top_16: 0).length > 0
+    recommended_div = @div_container.find('div.recommended-holder')
+    if !rec_flag
+      recommended_div.empty()
+      recommended_div.append('<span style="padding-top:10px">' +
+        'No Recommendations with Significant Evidence</span>')
+    
     @controller.trigger('search:sub-content:hide-spin')
-    if @shadowCollection.length == 0
-      @$el.append( @grid.render().$el )
-    else
-      if @$el.find('form.item-selection').length == 0
-        rec_flag = (@collection.fullCollection.where(in_top_16: 0).length > 0)
-        @$el.append(@rel_item_template(show_recommended_items: rec_flag))
-      
-      @grid.render().$el.insertAfter('form.item-selection')
-      @$el.append( @export_csv_button() ) if @$el.find(
-        'span.export-csv').length == 0
-
     @delegateEvents()
-    this
-  
+    return this
+
+  render: (data)=>
+    @items = []
+    @div_container.show()
+    @grid.render()
+    if @div_container.parents().length == 0
+      @$el.append(@div_container)
+    @get_items(data)
+      
   unrender: =>
     @active = false
     @$el.children().not('.ajax-loader').remove()

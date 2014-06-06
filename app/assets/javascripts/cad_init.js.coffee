@@ -4,6 +4,8 @@ $ ->
     SearchQualityApp.Router = router
     controller = SearchQualityApp.Controller
     controller.set_date(Selected_Date.toString('M-d-yyyy'))
+    controller.set_svc_tier_base_url(SvcTierBaseUrl)
+
     # comment out cuz we never select week or year, in CAD we only select dates
     # if we need what week or year it is, there is a function in backend to process that
     # controller.set_week(Selected_Week)
@@ -166,9 +168,8 @@ $ ->
     queryItemsView = new Searchad.Views.SubTabs.RelRev.IndexView(
       el: '#search-sub-content')
     queryItemsView.listenTo(
-      controller, 'search:rel-rev', (data) ->
-        queryItemsView.get_items(data)
-    )
+      controller, 'search:rel-rev', queryItemsView.render)
+
     SearchQualityApp.qv = queryItemsView
 
     #cvr dropped view

@@ -19,6 +19,7 @@ window.SearchQualityApp = do ->
     get_view: => @view
     set_date: (@date) =>
     set_cat_id: (@cat_id) =>
+    set_svc_tier_base_url: (@svc_base_url) =>
     set_metrics_name: (metric_name) =>
       metrics = Searchad.Views.SummaryMetrics.prototype.metrics_name
       for key, value of metrics when value.id == metric_name
