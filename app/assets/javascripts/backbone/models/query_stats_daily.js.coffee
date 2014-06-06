@@ -1,10 +1,4 @@
 class Searchad.Models.QueryStatsDaily extends Backbone.Model
-  defaults:
-    query_count: null
-    query_pvr: null
-    query_atc: null
-    query_con: null
-    query_revenue: null
 
 class Searchad.Collections.QueryStatsDailyCollection extends Backbone.PageableCollection
   initialize: (options) ->
@@ -13,8 +7,10 @@ class Searchad.Collections.QueryStatsDailyCollection extends Backbone.PageableCo
     super(options)
   
   model: Searchad.Models.QueryStatsDaily
-  url: '/search/get_query_stats_date.json'
-  mode: 'server'
+  url: =>
+    @controller.svc_base_url + '/query_stats/get_daily_info'
+
+  mode: 'client'
   state:
     pageSize: 10
 

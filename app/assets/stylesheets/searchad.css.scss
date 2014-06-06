@@ -1284,6 +1284,8 @@ form.item-selection, form.walmart-items-form {
 }
 .query-info {
   padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
   span.query-value {
     color: #1894c6;
     font-weight: 400;
@@ -1297,4 +1299,15 @@ form.item-selection, form.walmart-items-form {
 }
 table.query-stats {
   margin-bottom: 30px;
+  td {
+    border: 0;
+  }
+  td.name {
+    text-align: right;
+    font-weight: bold;
+    width: 200px;
+  }
+  td.value {
+    text-align: left;
+  }
 }
