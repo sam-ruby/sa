@@ -62,6 +62,7 @@ class BaseController < ApplicationController
     @limit = params[:per_page].to_i || 10
     @sort_by = params[:sort_by]
     @order = params[:order]
+    @svc_tier_base_url = ::SvcTier::Base_Url
   end 
 
 
