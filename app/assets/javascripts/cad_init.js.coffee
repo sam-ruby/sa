@@ -253,5 +253,4 @@ $ ->
     ajaxURL: '/feedback/send_feedback'
     html2canvasURL: 'assets/feedback-master/html2canvas.js')
   
-  #MDW.init({appId: 429415118})
-
+  MDW.init({appId: 429415118, hideToolbar: true})

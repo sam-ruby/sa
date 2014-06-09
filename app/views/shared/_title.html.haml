@@ -37,18 +37,11 @@
       %li.dropdown.login   
         %a.dropdown-toggle{'data-toggle'=>'dropdown', :href=>"#"}
           .logged-in-user
-            Eval user
           %b.caret
         %ul.dropdown-menu 
-          %li.nav-header
-            Login As
-          %li.divider
           %li
-            %a.eval{:href=>'#'}
-              Eval User
-          %li
-            %a.rel{:href=>'#'}
-              Relevance User
+            %a.logout{:href=>'#'}
+              Logout
       %li.dropdown   
         %a.dropdown-toggle{'data-toggle'=>'dropdown', :href=>"#"}
           %span{:style=>'font-size:1.5em;font-weight:500;color:burlywood;'}
