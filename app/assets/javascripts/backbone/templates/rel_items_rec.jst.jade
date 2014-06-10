@@ -1,3 +1,18 @@
+.hero-unit.rel-best-seller-label
+  span Showing Top 16 Relevance Items and Recommended Items
+  .from-search-engines.pull-right
+    span Get Items from &nbsp;
+    if engine_names.length > 0
+      select
+        each engine_name in engine_names
+          option(value=engine_name_url_map[engine_name])= engine_name
+    else
+      select(disabled=true)
+        option List Not Available
+    |&nbsp;
+    button.btn.get-items Go!
+
+
 form.form-inline.item-selection
   |Select upto 4 Items &nbsp;
   i.icon-hand-down &nbsp;&nbsp;

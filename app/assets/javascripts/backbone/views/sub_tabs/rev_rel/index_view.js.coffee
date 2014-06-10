@@ -56,6 +56,26 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
              "sig_comp/query/#{encodeURIComponent(path.query)}/items/" +
              "#{@items.join(',')}"
          @router.update_path(new_path, trigger: true)
+    'click button.get-items': (e) =>
+      engine_url = $(e.target).parents(
+        'div.from-search-engines').find('select :selected').val()
+      @show_realtime_items(engine_url)
+
+  show_realtime_items: (engine_url)=>
+    console.log 'Getting from ', engine_url, @query
+    $.ajax(
+      dataType: 'json'
+      url: @controller.svc_base_url + '/engine_stats/get_query_results'
+      data:
+        engine: engine_url
+        query: @query
+      complete: (xhr) ->
+        if xhr? and xhr.responseText?
+          data = JSON.parse(xhr.responseText)
+        else
+          data = {}
+        console.log 'Here is the data rxed ', data
+    )
 
 
   uncheck_items: (e)=>
@@ -212,13 +232,30 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
       className: 'rel-rev-grid'
       row: RecommendedRow
     )
-    
-    @div_container.append('<div class="hero-unit rel-best-seller-label"><span>' +
-      'Top 16 Relevance Items and Recommended Items</span></div>')
-    @div_container.append(@rel_item_template())
-    @div_container.append( @grid.render().$el )
-    @div_container.append( @export_csv_button() )
 
+    view = this
+    @addToDom = (data) ->
+      view.div_container.append(view.rel_item_template(
+        engine_names: data.engine_names
+        engine_name_url_map: data.engine_name_url_map))
+      view.div_container.append(view.grid.render().$el)
+      view.div_container.append(view.export_csv_button())
+
+    $.ajax(
+      dataType: 'json'
+      url: @controller.svc_base_url + '/engine_stats/get_engines'
+      complete: (xhr) ->
+        if xhr? and xhr.responseText?
+          data = JSON.parse(xhr.responseText)
+          engine_names = _.keys(data).sort()
+        else
+          data = {}
+          engine_names = []
+        view.addToDom(
+          engine_names: engine_names
+          engine_name_url_map: data)
+    )
+    
   get_items: (data) =>
     @active = true
     data || = { }

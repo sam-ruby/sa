@@ -1319,3 +1319,15 @@ table.query-stats {
     font-weight: 400;
   }
 }
+.from-search-engines {
+  font-size: 14px;
+  color: #333333;
+  span {
+    color: inherit;
+    font-weight: normal;
+  }
+  select {
+    margin-bottom: 0px;
+  }
+}
+
