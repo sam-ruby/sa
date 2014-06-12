@@ -15,7 +15,7 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
       metric.id for metric_id, metric of Searchad.Views.SummaryMetrics.prototype.metrics_name)
     @listenTo(@router, 'route:search', (path, filter) =>
       view = this
-      if @router.date_changed or @router.cat_changed
+      if @router.date_changed or @router.cat_changed or @router.search_inited
         @dirty = true
       path? and (@segment = path.search)
       if @segment == 'overview'

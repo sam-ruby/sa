@@ -35,6 +35,7 @@ $ ->
     categoryTabsView = new Searchad.Views.CategoryTabs.IndexView(
       el: '#category-bar')
 
+    ###
     masterTabView = new Searchad.Views.MasterTab.IndexView(
       el: '#search-sub-tasks .tabs')
 
@@ -43,7 +44,8 @@ $ ->
 
     upTrendingView = new Searchad.Views.UpTrending.IndexView(
       el: '#search-sub-tasks .search-content')
-    
+    ###
+    #
     overallMetricsView = new Searchad.Views.OverallMetrics(
       el: '#overall-metrics')
     
@@ -113,6 +115,7 @@ $ ->
     sigCompView = new Searchad.Views.SignalComparison(
       el: '#sig-comp')
 
+    ###
     searchKPI = new Searchad.Views.SearchKPI.IndexView(
       el: '#search-kpi'
       paid_dom_selector: '.hcharts-paid'
@@ -127,17 +130,16 @@ $ ->
     )
     searchQualityQueryView.listenTo(
       controller, 'search-rel:index', searchQualityQueryView.get_items)
-    
     # Search
     searchView = new Searchad.Views.AdhocQuery.SimpleSearchView(
       el: '#adhoc-query-report'
-      el_results: '#search-results'
-      )
+      el_results: '#search-results')
     searchView.listenTo(
       controller, 'adhoc:search', (data) -> searchView.do_search(data))
     searchView.listenTo(
       controller, 'load-search-results', searchView.load_search_results)
 
+    ###
     subtabsView =
       new Searchad.Views.SubTabs.IndexView(el: '#search-sub-tabs')
     subtabsView.listenTo(
@@ -171,7 +173,7 @@ $ ->
       controller, 'search:rel-rev', queryItemsView.render)
 
     SearchQualityApp.qv = queryItemsView
-
+    ###
     #cvr dropped view
     cvrDroppedQueryView = new Searchad.Views.AdhocQuery.cvrDroppedQueryView (
       el: '#adhoc-query-report'
@@ -181,7 +183,8 @@ $ ->
     cvrDroppedQueryView.listenTo(
         controller, 'adhoc:cvr_dropped_query',
         (data) -> cvrDroppedQueryView.get_items(data))
-
+    ###
+    #
     #cvr_dropped_view when click on q query show the item comparison
     #regarding that query
     cvrDroppedQueryItemComparisonView =
@@ -191,6 +194,7 @@ $ ->
       controller, 'cvr_dropped_query:item_comparison', (data) ->
          cvrDroppedQueryItemComparisonView.get_items(data)
     )
+    ###
     
     adhocQueryView = new Searchad.Views.AdhocQuery.IndexView(
       el: '#adhoc-query-report'
@@ -236,7 +240,7 @@ $ ->
     qmCountStatsView.listenTo(
       controller, 'qm-metrics:stats',
       (data)-> qmMetricStatsView.get_items(data))
-
+  ###
   Backbone.history.start()
   
   $('div.content').css('height', ($(window).height() + 50) + 'px')

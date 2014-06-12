@@ -71,10 +71,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     else
       target = @$el.find('input:checkbox.missed-items')
 
-    #@$el.find('table thead th.descending').removeClass('descending')
-    #@$el.find('table thead th.ascending').removeClass('ascending')
-
-    if target.is(':checked')
+    if target.length == 0 or target.is(':checked')
       @shadowCollection.reset(@collection.fullCollection.models)
     else
       @collection.fullCollection.where(in_top_16: 0).forEach((model) ->
@@ -244,7 +241,12 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
       recommended_div.empty()
       recommended_div.append('<span style="padding-top:10px">' +
         'No Recommendations with Significant Evidence</span>')
-    
+    else if recommended_div.find('input.missed-items').length == 0
+      recommended_div.empty()
+      recommended_div.append('<label class="show-rec-items checkbox">' +
+        '<input class="missed-items" type="checkbox" checked/>' +
+        'Show Recommended Items</label>')
+
     @controller.trigger('search:sub-content:hide-spin')
     @delegateEvents()
     return this
