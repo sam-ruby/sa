@@ -41,10 +41,7 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
     @$el.find('.ajax-loader').hide()
     return if @collection.length == 0
     signals = @collection.at(0).get('signals')
-    console.log signals
-
     items = @collection.at(0).get('items')
-    console.log items
 
     @$el.append( @navBar(title: 'Signal Comparison') )
     @$el.append(@template(
