@@ -16,8 +16,8 @@ a.subcat:hover {
   top: 5em;
   z-index: 1;
   display: none;
-  margin-right: 50%;
-  margin-left: 50%;
+  margin-right: 50% !important;
+  margin-left: 50% !important;
 }
 #summary-metrics, .tab-holder, .winners {
   .ajax-loader {
@@ -1328,6 +1328,13 @@ table.query-stats {
   }
   select {
     margin-bottom: 0px;
+  }
+}
+.engine-info {
+  font-size: 16px;
+  margin-bottom: 12px;
+  span.engine-url {
+    color: #1894c6;
   }
 }
 

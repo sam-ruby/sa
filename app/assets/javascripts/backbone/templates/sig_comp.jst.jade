@@ -1,6 +1,10 @@
 - var intFormatter = new Backgrid.NumberFormatter({decimals: 5})
 - var item_width = '' + 846.0/items.length + 'px'
 - var item_signal = JST['backbone/templates/item_signal']
+if engine_url
+  .engine-info
+    span Using Search Device at :&nbsp;
+    span.engine-url= engine_url
 
 .sig-comp-table
   .col-head

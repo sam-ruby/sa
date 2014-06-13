@@ -10,6 +10,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     @shadowCollection = @collection.clone()
     @shadowCollection.bind('reset', @render_result)
     @collection.bind('reset', @p_missed_items)
+    @collection.bind('error', @p_missed_items)
     super(options)
     
     @items = []
@@ -48,34 +49,45 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
          @$el.find('span.sig-comp-msg').fadeOut(8000)
        else
          path = @router.path
+         comm_url = 'details/sig_comp/query/' +
+           "sig_comp/query/#{encodeURIComponent(path.query)}/items/" +
+           "#{@items.join(',')}"
+         if @engine_url?
+           comm_url += '/engine_url/' + encodeURIComponent(@engine_url)
+         
          if path.search == 'adhoc'
-           new_path = "search/adhoc/details/sig_comp/query/" +
-             "#{encodeURIComponent(path.query)}/items/#{@items.join(',')}"
+           new_path = 'search/adhoc/' + comm_url
          else
-           new_path = "search/#{path.search}/page/#{path.page}/details/" +
-             "sig_comp/query/#{encodeURIComponent(path.query)}/items/" +
-             "#{@items.join(',')}"
+           new_path = "search/#{path.search}/page/#{path.page}/" +
+             comm_url
          @router.update_path(new_path, trigger: true)
     'click button.get-items': (e) =>
       engine_url = $(e.target).parents(
         'div.from-search-engines').find('select :selected').val()
       @show_realtime_items(engine_url)
 
-  show_realtime_items: (engine_url)=>
+  show_realtime_items: (@engine_url)=>
+    @grid.body.emptyText = 'Getting data ....'
+    @collection.fullCollection.reset()
+    view = this
     $.ajax(
       dataType: 'json'
       url: @controller.svc_base_url + '/engine_stats/get_query_items'
+      beforeSend: (xhr, settings) ->
+        view.controller.trigger('search:sub-content:show-spin')
       data:
-        engine: engine_url
+        engine: @engine_url
         query: @query
-      complete: (xhr) ->
-        if xhr? and xhr.responseText?
+      complete: (xhr, status) ->
+        if xhr? and xhr.responseText? and (status == 'success' or status == 'notmodified')
           data = JSON.parse(xhr.responseText)
+          view.grid.body.emptyText = 'No Data'
         else
-          data = {}
-        console.log 'Here is the data rxed ', data
+          view.grid.body.emptyText = 'No Data Received from http://' +
+            view.engine_url + '/search'
+          data = []
+        view.collection.reset(data)
     )
-
 
   uncheck_items: (e)=>
     e.preventDefault()
@@ -240,8 +252,8 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     $.ajax(
       dataType: 'json'
       url: @controller.svc_base_url + '/engine_stats/get_engines'
-      complete: (xhr) ->
-        if xhr? and xhr.responseText?
+      complete: (xhr, status) ->
+        if xhr? and xhr.responseText? and (status == 'success' or status == 'notmodified')
           data = JSON.parse(xhr.responseText)
           engine_names = _.keys(data).sort()
         else
@@ -262,13 +274,6 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     data.view || = "daily"
     @collection.get_items(data)
 
-  render_error: (query) ->
-    return unless @active
-    
-    @controller.trigger('search:sub-content:hide-spin')
-    @$el.append( $('<span>').addClass('label label-important').append(
-      "No data available for #{query}") )
-
   render_result: =>
     return unless @active
     rec_flag = @collection.fullCollection.where(in_top_16: 0).length > 0
@@ -288,6 +293,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     return this
 
   render: (data)=>
+    @engine_url = null
     @items = []
     @div_container.show()
     @grid.render()

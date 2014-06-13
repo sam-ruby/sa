@@ -12,13 +12,18 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
     @listenTo(@collection, 'request', @prepare_for_render)
     
     @listenTo(@router, 'route:search', (path, filter) =>
-      if @router.date_changed or @router.cat_changed or @router.query_segment_changed or (path.query? and path.query != @query) or (path.items? and path.items != @items)
+      if @router.date_changed or @router.cat_changed or @router.query_segment_changed or (path.query? and path.query != @query) or (path.items? and path.items != @items) or (path.engine_url? and path.engine_url != @engine_url)
         @query = path.query
         @items = path.items
+        @engine_url = path.engine_url
         @dirty = true
 
-      if path.details == 'sig_comp' and path.query? and path.items?
-        @get_items(query: @query, items: @items) if @dirty
+      if path.details == 'sig_comp' and path.query? and path.items? and @dirty
+        @get_items(
+          query: @query
+          items: @items
+          engine_url: @engine_url
+        )
     )
     @$el.tooltip(selector: 'a[data-toggle="tooltip"]')
   
@@ -45,6 +50,7 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
 
     @$el.append( @navBar(title: 'Signal Comparison') )
     @$el.append(@template(
+      engine_url: @engine_url
       signals: signals
       items: items))
     @$el.find('.signal-section').jstree() if signals.length > 0
