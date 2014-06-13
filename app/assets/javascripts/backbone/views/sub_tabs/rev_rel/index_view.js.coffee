@@ -62,10 +62,9 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
       @show_realtime_items(engine_url)
 
   show_realtime_items: (engine_url)=>
-    console.log 'Getting from ', engine_url, @query
     $.ajax(
       dataType: 'json'
-      url: @controller.svc_base_url + '/engine_stats/get_query_results'
+      url: @controller.svc_base_url + '/engine_stats/get_query_items'
       data:
         engine: engine_url
         query: @query
