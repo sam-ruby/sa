@@ -6,10 +6,8 @@ class Searchad.Collections.QueryItemsCollection extends Backbone.PageableCollect
     super(options)
 
   model: Searchad.Models.QueryItem
-  url: '/search_rel/get_query_items.json'
-  filters:
-    date: null
-
+  url: =>
+    @controller.svc_base_url + '/rel_items/get_top_recom_items'
   mode: 'client'
 
   get_items: (data) =>

@@ -3,9 +3,10 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller = SearchQualityApp.Controller
 
   routes:
-    "(:search)(/*args)": "search"
     "browse(/:task)(/:sub_task)(/*args)": "browse"
     "category(/:task)(/:sub_task)(/*args)": "category"
+    "ab-tests(/:task)(/:sub_task)(/*args)": "ab_tests"
+    "(:search)(/*args)": "search"
     "search_rel(/query/:query)(/filters/*wday)": "search_rel"
     "search_rel/item_id/:id(/filters/*wday)": "search_query_items"
     
@@ -68,6 +69,10 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
 
   search:(path, filter) =>
     path.search ||= 'overview'
+    if typeof @search_inited == 'undefined'
+      @search_inited = true
+    else
+      @search_inited = false
     @query_segment_changed = false
     if !@path? or (@path? and @path.search != path.search)
       @query_segment_changed = true
@@ -85,6 +90,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @set_date_info()
   
   catalog:(@task, @sub_task, @task_args) =>
+    @set_date_info()
+  
+  ab_tests:(@task, @sub_task, @task_args) =>
     @set_date_info()
   
   adhoc_query_comparison: (weeks, date, query, date_parts) =>

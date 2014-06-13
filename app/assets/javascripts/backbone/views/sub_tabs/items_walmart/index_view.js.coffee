@@ -19,8 +19,8 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     @controller.bind('sub-content-cleanup', @unrender)
     @start_date_already_changed = false
     @end_date_already_changed = false
-    Utils.InitExportCsv(this, '/comp_analysis/get_walmart_items.csv')
-    
+    Utils.InitExportCsv(
+      this, @controller.svc_base_url + '/rel_items/get_top_items')
     @div_container = $('<div>')
     @div_container.hide()
     @$el.append( @div_container )
@@ -29,6 +29,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     @undelegateEvents()
     @active = false
     @data = {}
+    @data.view = 'daily'
     @items = []
 
   form_template: JST['backbone/templates/walmart_item/form']
@@ -66,13 +67,15 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     @$el.find('table td input:disabled').removeAttr('disabled')
     @items = []
   
-  render:(data)=>
+  render: (data)=>
+    for k, v of data when k != 'view'
+      @data[k] = v
     @items = []
     @div_container.show()
     @grid.render()
     if @div_container.parents().length == 0
       @$el.append(@div_container)
-    @get_items(data)
+    @get_items()
 
   render_result: =>
     return unless @active
@@ -82,6 +85,8 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
 
   unrender: =>
     @active = false
+    #@data.view = 'daily'
+    #@div_container.find('table th.rank').css('display', 'table-cell')
     @div_container.hide()
     @controller.trigger('search:sub-content:hide-spin')
     @undelegateEvents()
@@ -91,53 +96,50 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     # $('#label-popular-items-over-time').removeClass('label-info')
     # $('#label-top-32-daily').addClass('label-info')
     # if top 32, reset date picker
-    data = {}
-    data.view || = "daily"
+    @data.view = "daily"
+
     # when click on reset btn, the date pickers needs to reset
     curr_date = @controller.get_filter_params().date
     @init_all_date_pickers(curr_date, curr_date)
-    @get_items(data)
+    @div_container.find('table th.rank').css('display', 'table-cell')
+    @div_container.find('div.walmart-results-label span').text(
+      'Top 16 Relevance Items')
+    @grid.sort('rank', 'ascending')
+    @get_items()
 
   popular_items_over_time:(e)=>
     e.preventDefault()
     # $('#label-popular-items-over-time').addClass('label-info')
     # $('#label-top-32-daily').removeClass('label-info')
-    data = {}
-    data.view || = "ranged"
-    @get_items(data)
+    @data.view = "ranged"
+    @div_container.find('table th.rank').css('display', 'none')
+    @div_container.find('div.walmart-results-label span').text(
+      'Top 16 Items by Impressions Over Time')
+    @grid.sort('shown_count', 'descending')
+    @get_items()
 
-  get_items: (data) =>
+  get_items: () =>
     @active = true
     start_date = @$el.find('input.start-date.datepicker').datepicker('getDate')
     end_date = @$el.find('input.end-date.datepicker').datepicker('getDate')
-    data.start_date = start_date.toString('M-d-yyyy')
-    data.end_date = end_date.toString('M-d-yyyy')
+    @data.start_date = start_date.toString('yyyy-M-d')
+    @data.end_date = end_date.toString('yyyy-M-d')
 
     # when get_items it means user update the select, so save it 
     # to user latest selects
-    Searchad.UserLatest.SubTab.walmart.start_date = data.start_date
-    Searchad.UserLatest.SubTab.walmart.end_date = data.end_date
+    #Searchad.UserLatest.SubTab.walmart.start_date = @data.start_date
+    #Searchad.UserLatest.SubTab.walmart.end_date = @data.end_date
     
-    data = @process_data(data)
-    # if the data param is the exact same stored with collection 
-    # data. then directly render
-    if JSON.stringify(data) == JSON.stringify(@collection.data)
+    @process_data()
+    if JSON.stringify(@data) == JSON.stringify(@collection.data)
       return @render_result()
-    @collection.get_items(data)
+    @collection.get_items(@data)
 
-  process_data:(data)=>
-    data || = {}
-    if data.query
-      @query = data.query
+  process_data:()=>
+    if @data.query?
+      @query = @data.query
     else
-      data.query = @query
-    if data.start_date == data.end_date
-      data.view = "daily"
-    else
-      data.view = "ranged"
-    @data = data
-
-    return data
+      @data.query = @query
 
   init_table: =>
     @grid = new Backgrid.Grid(
@@ -146,19 +148,20 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
       emptyText: 'No Data'
       className: 'walmart-results'
     )
+    @grid.sort('rank', 'ascending')
     @div_container.append( @form_template() )
-    walmart = Searchad.UserLatest.SubTab.walmart
-    @init_all_date_pickers(walmart.start_date,walmart.end_date )
-    @div_container.append( @grid.$el )
+    #walmart = Searchad.UserLatest.SubTab.walmart
+    @init_all_date_pickers()
+    @div_container.append( @grid.render().$el )
     @div_container.append( @export_csv_button() )
 
-  init_all_date_pickers:(start_date, end_date)  =>
+  init_all_date_pickers: =>
     # available_end_date = available_end_date || @available_end_date
     start_date_picker = @div_container.find('input.start-date.datepicker')
     end_date_picker =  @div_container.find('input.end-date.datepicker')
     current_date = @controller.get_filter_params().date
-    start_date ||= current_date
-    end_date ||= current_date
+    start_date = current_date
+    end_date = current_date
     checkin = start_date_picker.datepicker(
       endDate: Max_date
       onRender:  ->
@@ -254,8 +257,21 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
         @$el.html('<label class="checkbox signal-comp"><input type="checkbox"/></label>')
         @delegateEvents()
         return this
+    
+    check_render = ->
+      if view.data? and view.data.view == 'ranged'
+        false
+      else
+        true
 
-    columns = [{name: 'item_id',
+    columns = [{name: 'rank',
+    label: 'Rank',
+    editable: false,
+    sortable: true,
+    cell: 'integer',
+    renderable: check_render,
+    headerCell: @NumericHeaderCell},
+    {name: 'item_id',
     label: I18n.t('dashboard2.item'),
     editable: false,
     cell: ItemCell},
