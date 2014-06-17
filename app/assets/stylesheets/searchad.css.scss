@@ -742,19 +742,18 @@ tr.selected {
 }
 
 div.sig-comp-table {
-  width: 1148px;
+  //width: 1148px;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   .name, .item, .score, .no-data, .node, .item-signals {
     display: inline-block;
     line-height: 20px;
     vertical-align: top;
-    height: 100%;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
   }
   .name {
-    width: 300px;
+    width: 30%;
     text-transform: capitalize;
   }
   .no-data {
@@ -799,10 +798,11 @@ div.sig-comp-table {
   }
 
   .signal-section {
-    .srow {
+    .srow.jstree-closed, .srow.jstree-leaf {
       border-bottom: 1px solid #dddddd;
-      border-left: 1px solid #ddd;
-      border-right: 1px solid #ddd;
+      //border-left: 1px solid #ddd;
+      //border-right: 1px solid #ddd;
+      width: 100%;
       a.jstree-anchor {
         &:hover, &:focus, &:active {
           div.item-signals span {
@@ -810,11 +810,15 @@ div.sig-comp-table {
           }
         }
       }
+      .node {
+        width: 30%;
+      }
     }
     .name, .item, .score {
       padding: 4px 8px;
     }
     .item-signals {
+      width: 70%;
       text-align: right;
       span {
         padding: 4px 8px;
@@ -824,11 +828,12 @@ div.sig-comp-table {
   .srow {
     box-sizing: border-box;
     -moz-box-sizing: border-box;
-    position: relative;
+    //position: relative;
     a.jstree-anchor {
       div.item-signals {
         position: absolute;
         right: 0px;
+        //top: 0px;
       }
     }
     .srow {
@@ -1336,5 +1341,8 @@ table.query-stats {
   span.engine-url {
     color: #1894c6;
   }
+}
+.engine-comp-msg {
+  display: block !important;
 }
 

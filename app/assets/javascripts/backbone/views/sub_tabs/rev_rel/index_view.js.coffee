@@ -62,9 +62,18 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
              comm_url
          @router.update_path(new_path, trigger: true)
     'click button.get-items': (e) =>
+      e.preventDefault()
       engine_url = $(e.target).parents(
         'div.from-search-engines').find('select :selected').val()
+      return if engine_url == 'select_engine'
       @show_realtime_items(engine_url)
+    'click button.reset-get-items': (e) =>
+      e.preventDefault()
+      $(e.target).parents(
+        'div.from-search-engines').find('select option').each(()->
+          @selected = (@value == 'select_engine')
+        )
+      @get_items()
 
   show_realtime_items: (@engine_url)=>
     @grid.body.emptyText = 'Getting data ....'

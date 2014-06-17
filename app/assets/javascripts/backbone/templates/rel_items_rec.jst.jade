@@ -4,16 +4,18 @@
     span Get Items from &nbsp;
     if engine_names.length > 0
       select
+        option(value='select_engine') Select an Engine
         each engine_name in engine_names
           option(value=engine_name_url_map[engine_name])= engine_name
       |&nbsp;
-      button.btn.get-items Go!
+      button.btn.get-items Go
+      |&nbsp;
+      button.btn.reset-get-items Reset
     else
       select(disabled=true)
         option List Not Available
       |&nbsp;
       button.btn.get-items(disabled=true) Go!
-
 
 form.form-inline.item-selection
   |Select upto 4 Items &nbsp;

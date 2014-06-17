@@ -1,5 +1,5 @@
 - var intFormatter = new Backgrid.NumberFormatter({decimals: 5})
-- var item_width = '' + 846.0/items.length + 'px'
+- var item_width = 70.0/items.length + '%'
 - var item_signal = JST['backbone/templates/item_signal']
 if engine_url
   .engine-info
@@ -56,7 +56,7 @@ if engine_url
       ul
         each signal in signals
           - var max_stack = 100
-          != item_signal({signal: signal, items: items, item_width: item_width, max_stack: max_stack})
+          != item_signal({signal: signal, items: items, max_stack: max_stack})
     else
       .srow
         .no-data No Data Available
