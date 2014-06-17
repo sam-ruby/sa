@@ -9,7 +9,10 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       @listenTo(@collection, 'request', @prepare_for_table)
       @collection.winning = false
       @winning = false
+      @feature = feature
+      Utils.InitExportCsv(this)
       @init_table()
+
     else if @collection? and !@grid_cols?
       @listenTo(@collection, 'reset', @render)
 
@@ -35,12 +38,13 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     )
 
   events: =>
-    'click a.go-back-sm': (e) =>
+    events = {}
+    events['click a.go-back-sm'] = (e) =>
       query_segment = @router.path.search
       @router.update_path(
         "search/#{query_segment}/page/overview", trigger: true)
 
-    'click li.distribution a': (e) =>
+    events['click li.distribution a'] = (e) =>
       e.preventDefault()
       $(e.target).parents('ul').children('li').removeClass('active')
       $(e.target).parents('li').addClass('active')
@@ -48,11 +52,11 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       @$el.find('.carousel').carousel('pause')
       # $('html, body').animate({scrollTop: @$el.offset().top}, 1000)
    
-    'click a.brand': (e) =>
+    events['click a.brand'] = (e) =>
       e.preventDefault()
       window.scrollTo(0, 0)
    
-    'click li.timeline a': (e) =>
+    events['click li.timeline a'] = (e) =>
       e.preventDefault()
       $(e.target).parents('ul').children('li').removeClass('active')
       $(e.target).parents('li').addClass('active')
@@ -60,8 +64,19 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       @$el.find('.carousel').carousel('pause')
       # div = @$el.parent().find('div.timeline')
       # $('html, body').animate({scrollTop: div.offset().top}, 1000)
+    
+    events["click .#{@feature}-oppt-csv a"] = (e) =>
+      params = @controller.get_filter_params()
+      data =
+        date: params.date
+        query_segment: params.query_segment
+        cat_id: params.cat_id
+        metrics_name: params.metrics_name
+        winning: false
+      @export_csv($(e.target), data)
 
-    'click div.show-others a': 'show_other_queries'
+    events['click div.show-others a'] =  'show_other_queries'
+    events
 
   init_table: () =>
     @grid = new Backgrid.Grid(

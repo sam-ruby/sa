@@ -9,7 +9,7 @@ class Searchad.Views.Revenue.Winners extends Searchad.Views.Revenue
   initialize: (options) =>
     @collection = new Searchad.Collections.RevenueWinner()
     @tableCaption = JST["backbone/templates/win_lose"]
-    Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
+    Utils.InitExportCsv(this, @collection.url + '.csv', 'revenue_oppt')
     super(options)
  
   grid_cols: =>

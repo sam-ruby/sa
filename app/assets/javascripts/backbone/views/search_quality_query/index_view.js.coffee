@@ -31,11 +31,10 @@ class Searchad.Views.SearchQualityQuery.IndexView extends Backbone.View
     'click #advanced-search-submit':'advanced_search'
     'click .export-csv a': (e) ->
       date = @controller.get_filter_params().date
-      fileName = "query_analysis_#{date}.csv"
       data =
         date: date
       data['query'] = @collection.data.query if @collection.data.query
-      @export_csv($(e.target), fileName, data)
+      @export_csv($(e.target), data)
   
   filter: (e) =>
     e.preventDefault()

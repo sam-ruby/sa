@@ -67,10 +67,16 @@ window.Utils = do ->
       newPath = updateParam(pathURL, fName, fValue)
       return newPath + 'filters/' + filterURL
 
-  init_csv_export_feature = (view, url) ->
-    view.export_csv_button = _.template('<span class="label label-info export-csv pull-right"><a href="#" id="download-csv-btn"><i class="icon icon-download-alt">&nbsp;</i>Download</a></span>')
-    view.export_csv = view.export_csv || (el, fileName, data) =>
-      MDW.CSVExport.genDownloadCSVFromUrl(el, fileName, url, data)
+  init_csv_export_feature = (view) ->
+    view.export_csv_button = do (view) ->
+      css_class = view.feature + '-oppt-csv'
+      _.template('<span class="' + css_class + ' label label-info export-csv pull-right"><a href="#" id="download-csv-btn"><i class="icon icon-download-alt">&nbsp;</i>Download</a></span>')
+    view.export_csv = do (view) ->
+      url = view.collection.url + '.csv'
+      file_name_suffix = view.feature + '_oppt'
+      (el, data) ->
+        file_name = "#{file_name_suffix}_#{data.date}.csv"
+        MDW.CSVExport.genDownloadCSVFromUrl(el, file_name, url, data)
    
   class PercentFormatter extends Backgrid.NumberFormatter
     decimals: 2
