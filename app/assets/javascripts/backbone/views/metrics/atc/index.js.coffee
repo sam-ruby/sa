@@ -9,7 +9,6 @@ class Searchad.Views.Atc.Winners extends Searchad.Views.Atc
   initialize: (options) =>
     @collection = new Searchad.Collections.AtcWinner()
     @tableCaption = JST["backbone/templates/win_lose"]
-    Utils.InitExportCsv(this, @collection.url + '.csv', 'atc_oppt')
     super(options)
  
   grid_cols: =>

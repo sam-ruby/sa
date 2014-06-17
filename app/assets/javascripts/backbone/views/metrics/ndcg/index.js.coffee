@@ -6,7 +6,6 @@ class Searchad.Views.ONdcg extends Searchad.Views.Metrics.Index
     @tableCaption = JST["backbone/templates/win_lose"]
     for metric_db_id, metric_details of Searchad.Views.SummaryMetrics.prototype.metrics_name when metric_details.id == feature_path
       @metric_label = metric_details.name
-    Utils.InitExportCsv(this, @collection.url + '.csv', feature_path)
     super(feature_path)
 
   grid_cols: =>
