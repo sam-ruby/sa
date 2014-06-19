@@ -13,7 +13,6 @@ class Searchad.Views.EvalMetrics extends Searchad.Views.Metrics.Index
     @stopListening(@router, 'route:search')
     @listenTo(@router, 'route:search', (path, filter) =>
       if @router.date_changed or @router.cat_changed or @router.query_segment_changed or (@router.path? and @router.path.page? and (@router.path.page in eval_paths) and (@router.path.page != @current_metric))
-        console.log 'Making it dirty'
         @dirty = true
         @current_metric = @router.path.page
       
@@ -65,8 +64,6 @@ class Searchad.Views.EvalMetrics extends Searchad.Views.Metrics.Index
     {name: 'score',
     label: "Score",
     editable: false,
-    sortType: 'toggle',
-    headerCell: @SortedHeaderCell,
     cell: 'integer'}]
 
   render: =>

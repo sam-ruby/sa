@@ -12,6 +12,7 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       @feature = feature
       Utils.InitExportCsv(this)
       @init_table()
+      @grid.sort('score', 'descending')
 
     else if @collection? and !@grid_cols?
       @listenTo(@collection, 'reset', @render)

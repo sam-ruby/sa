@@ -40,8 +40,6 @@ class Searchad.Views.Atc.Winners extends Searchad.Views.Atc
     {name: 'score',
     label: "Score",
     editable: false,
-    sortType: 'toggle',
-    headerCell: @SortedHeaderCell,
     cell: 'integer'}]
 
   render: =>

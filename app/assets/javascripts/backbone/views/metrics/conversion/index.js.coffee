@@ -40,8 +40,6 @@ class Searchad.Views.Conversion.Winners extends Searchad.Views.Conversion
     {name: 'score',
     label: "Score",
     editable: false,
-    sortType: 'toggle',
-    headerCell: @SortedHeaderCell,
     cell: 'number'}]
 
   render: =>

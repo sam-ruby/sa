@@ -40,8 +40,6 @@ class Searchad.Views.Traffic.Winners extends Searchad.Views.Traffic
     {name: 'score',
     label: "Score",
     editable: false,
-    sortType: 'toggle',
-    headerCell: @SortedHeaderCell,
     cell: 'integer'}]
 
   

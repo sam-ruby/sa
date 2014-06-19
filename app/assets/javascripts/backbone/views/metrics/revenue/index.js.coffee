@@ -40,8 +40,6 @@ class Searchad.Views.Revenue.Winners extends Searchad.Views.Revenue
     {name: 'score',
     label: "Score",
     editable: false,
-    sortType: 'toggle',
-    headerCell: @SortedHeaderCell,
     cell: 'integer'}]
 
   render: =>

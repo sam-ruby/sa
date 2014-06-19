@@ -47,8 +47,6 @@ class Searchad.Views.ONdcg extends Searchad.Views.Metrics.Index
     {name: 'score',
     label: "Score",
     editable: false,
-    sortType: 'toggle',
-    headerCell: @SortedHeaderCell,
     cell: 'integer'}]
 
   

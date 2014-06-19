@@ -40,8 +40,6 @@ class Searchad.Views.Pvr.Winners extends Searchad.Views.Pvr
     {name: 'score',
     label: "Score",
     editable: false,
-    sortType: 'toggle',
-    headerCell: @SortedHeaderCell,
     cell: 'integer'}]
 
   render: =>
