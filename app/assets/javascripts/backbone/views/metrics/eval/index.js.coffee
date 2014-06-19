@@ -1,18 +1,36 @@
 #= require backbone/views/metrics/index
 
-class Searchad.Views.ONdcg extends Searchad.Views.Metrics.Index
-  initialize: (feature_path) ->
+class Searchad.Views.EvalMetrics extends Searchad.Views.Metrics.Index
+  initialize: ->
     @collection = new Searchad.Collections.NdcgWinner()
     @tableCaption = JST["backbone/templates/win_lose"]
-    for metric_db_id, metric_details of Searchad.Views.SummaryMetrics.prototype.metrics_name when metric_details.id == feature_path
-      @metric_label = metric_details.name
-    super(feature_path)
+    eval_paths = ['e_ndcg_5', 'e_ndcg_16', 'e_ndcg_1', 'e_prec_1', 'e_prec_5',
+      'e_prec_16', 'e_recall_1', 'e_recall_5', 'e_recall_16']
+    
+    super(eval_paths)
+    @current_metic = null
+    
+    @stopListening(@router, 'route:search')
+    @listenTo(@router, 'route:search', (path, filter) =>
+      if @router.date_changed or @router.cat_changed or @router.query_segment_changed or (@router.path? and @router.path.page? and (@router.path.page in eval_paths) and (@router.path.page != @current_metric))
+        console.log 'Making it dirty'
+        @dirty = true
+        @current_metric = @router.path.page
+      
+      if (path.page in eval_paths) and !path.details?
+        @cleanup()
+        @renderTable()
+        @get_items() if @dirty
+
+    )
 
   grid_cols: =>
-    if @metric_label?
-      metric_label = @metric_label
-    else
+    get_col_label = =>
       metric_label = 'Metric Value'
+      for metric_db_id, metric_details of Searchad.Views.SummaryMetrics.prototype.metrics_name when metric_details.id == @router.path.page
+        metric_label = metric_details.name
+        break
+      metric_label
 
     [{name: 'query',
     label: I18n.t('search_analytics.query_string'),
@@ -25,7 +43,7 @@ class Searchad.Views.ONdcg extends Searchad.Views.Metrics.Index
     headerCell: @NumericHeaderCell,
     cell: 'integer'},
     {name: 'metric_value',
-    label: metric_label,
+    label: get_col_label,
     editable: false,
     headerCell: @NumericHeaderCell,
     cell: 'number'},
@@ -51,6 +69,5 @@ class Searchad.Views.ONdcg extends Searchad.Views.Metrics.Index
     headerCell: @SortedHeaderCell,
     cell: 'integer'}]
 
-  
   render: =>
     @renderTable()

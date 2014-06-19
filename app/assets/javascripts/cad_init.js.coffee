@@ -87,6 +87,9 @@ $ ->
     
     oRecall_16_WinnersView = new Searchad.Views.ORec16(
       el: '#winners')
+    
+    eval_winners_view = new Searchad.Views.EvalMetrics(
+      el: '#winners')
 
     #convCorWinnersView = new Searchad.Views.ConvCorrelation.Winners(
     # el: '#winners')

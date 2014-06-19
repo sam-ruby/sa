@@ -21,7 +21,8 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     @listenTo(@router, 'route:search', (path, filter) =>
       if @router.date_changed or @router.cat_changed or @router.query_segment_changed
         @dirty = true
-      if path.page == feature and !path.details?
+      if (((feature instanceof Array) and (path.page in feature)) or (
+        path.page == feature)) and !path.details?
         @cleanup()
         @renderTable()
         @get_items() if @dirty
@@ -64,16 +65,33 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
       @$el.find('.carousel').carousel('pause')
       # div = @$el.parent().find('div.timeline')
       # $('html, body').animate({scrollTop: div.offset().top}, 1000)
-    
-    events["click .#{@feature}-oppt-csv a"] = (e) =>
-      params = @controller.get_filter_params()
-      data =
-        date: params.date
-        query_segment: params.query_segment
-        cat_id: params.cat_id
-        metrics_name: params.metrics_name
-        winning: false
-      @export_csv($(e.target), data)
+   
+    if (@feature instanceof Array)
+      for feature in @feature
+        events["click .#{feature}-oppt-csv a"] = (e) =>
+          params = @controller.get_filter_params()
+          data =
+            date: params.date
+            query_segment: params.query_segment
+            cat_id: params.cat_id
+            metrics_name: params.metrics_name
+            winning: false
+            page: 1
+            per_page: 4000
+          @export_csv($(e.target), data)
+    else
+      events["click .#{@feature}-oppt-csv a"] = (e) =>
+        params = @controller.get_filter_params()
+        data =
+          date: params.date
+          query_segment: params.query_segment
+          cat_id: params.cat_id
+          metrics_name: params.metrics_name
+          winning: false
+          page: 1
+          per_page: 4000
+        @export_csv($(e.target), data)
+
 
     events['click div.show-others a'] =  'show_other_queries'
     events

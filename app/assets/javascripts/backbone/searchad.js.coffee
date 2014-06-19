@@ -69,12 +69,17 @@ window.Utils = do ->
 
   init_csv_export_feature = (view) ->
     view.export_csv_button = do (view) ->
-      css_class = view.feature + '-oppt-csv'
-      _.template('<span class="' + css_class + ' label label-info export-csv pull-right"><a href="#" id="download-csv-btn"><i class="icon icon-download-alt">&nbsp;</i>Download</a></span>')
+      ->
+        if view.router.path? and view.router.path.page?
+          css_class = view.router.path.page + '-oppt-csv'
+        else
+          css_class = ''
+        _.template('<span class="' + css_class + ' label label-info export-csv pull-right"><a href="#" id="download-csv-btn"><i class="icon icon-download-alt">&nbsp;</i>Download</a></span>')()
+
     view.export_csv = do (view) ->
       url = view.collection.url + '.csv'
-      file_name_suffix = view.feature + '_oppt'
       (el, data) ->
+        file_name_suffix = view.router.path.page + '_oppt'
         file_name = "#{file_name_suffix}_#{data.date}.csv"
         MDW.CSVExport.genDownloadCSVFromUrl(el, file_name, url, data)
    
