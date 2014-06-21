@@ -19,7 +19,7 @@ $ ->
           controller.trigger('view-change', view: 'daily'))
     
     categoriesView = new Searchad.Views.Categories.IndexView(
-      el: '#cat-container')
+      el: '#cat-selector')
     weekView = new Searchad.Views.WeekPicker.IndexView(
       el: '#dp3')
 

@@ -1,4 +1,15 @@
 --- # This is a text file to mark the features/bug fixes that went in a Release
+2.1.0:
+    Date: Jun 20, 2014
+    Features:
+      PERSSERANA-638: Retrieve and Compare Signals from Adhoc Polaris Engines
+      PERSSERANA-644: Enable Authentication to track usage, and to store Preferences
+      PERSSERANA-654: Enable NDCG Metrics based on Evaluation
+      PERSSERANA-639: Introduce Service Layer for fast and scalable performance 
+    Fixes:
+      PERSSERANA-652: Fix the bug with exporting Opportunities to CSV file
+      PERSSERANA-642: Relevance Best Seller Analysis feature enhancements
+
 2.0.1:
     Date: Jun 6, 2014
     Fixes:

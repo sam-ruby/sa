@@ -24,11 +24,17 @@
 
     %ul#cat-container.nav.pull-right
       %li#cat-selector.dropdown
+        %span.cat-path
         %a.dropdown-toggle{'data-toggle'=>'dropdown', :href=>"#"}
           %span.cat-selected
-            All Departments
           %b.caret
-        %ul.dropdown-menu.cat-list 
+        %ul.dropdown-menu
+          %li
+            .carousel.slide{'data-interval' => 'false'}
+              .carousel-inner
+                .item.left-one
+                .item.active
+                .item.right-one
 
       %li.date-week-holder
       %li

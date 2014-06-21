@@ -26,19 +26,13 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "adhoc_query(/mode/query_comparison)(/wks_apart/:weeks/query_date/:date/query/)(:query)(/filters/*wday)":
       "adhoc_query_comparison"
 
-  get_cat_id: (filters) ->
-    if filters?
-      parts = filters.split('/')
-      for part, i in parts
-        if part == 'cat_path'
-          cat_path = parts[i+1]
-          cats = cat_path.split(/_/)
-          @cat_id = cats[cats.length-1] if cats? and cats.length > 0
-          @cat_path = cat_path if cat_path?
-    @cat_id ||=0
+  set_cat_id: (filter) ->
+    @cat_changed = false
+    if (filter and filter.cat_path? and filter.cat_path != @cat_path)
+      @cat_changed = true
+      @cat_path = filter.cat_path
   
   set_date_info: (filter) =>
-    # @get_cat_id()
     @date_changed = false
     if (filter and filter.date? and filter.date != @date)
       @controller.trigger('update_date', filter.date)
@@ -83,6 +77,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       @controller.set_metrics_name(path.page)
 
     @set_date_info(filter)
+    @set_cat_id(filter)
     @path = path
     @filter = filter
 

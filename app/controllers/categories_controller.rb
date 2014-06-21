@@ -13,6 +13,15 @@ class CategoriesController < BaseController
     end		        
   end
 
+  def get_cats
+    cat_ids = params[:cat_ids]
+    respond_to do |format|
+      format.json do 
+        render :json => Category.where(c_category_id: cat_ids)
+      end
+    end
+  end
+
   def remove_saved_category 
     @saved_categories = SavedCategory.where(
       user_id: session[:user_id], category_trail:params[:trail]);
@@ -73,19 +82,27 @@ class CategoriesController < BaseController
   def get_children
     year_week = get_week_from_date(@date)
     curr_cat_name = 'All Departments'
+    cats = []
     c_id = params[:cat_id] || 0
+    if c_id.kind_of?(Array) 
+      last_c_id = c_id.last.to_i
+    else
+      last_c_id = c_id.to_i
+    end
+
     categories = Category.subcategories_by_parent_id(
-      c_id, year_week[:year], year_week[:week])
-    if c_id != 0 
-      curr_cat = Category.find_by_c_category_id(c_id)
-      curr_cat_name = current_cat[:c_category_name] unless curr_cat.nil?
+      last_c_id, year_week[:year], year_week[:week])
+    if (c_id.kind_of?(Array) || c_id.to_i != 0)
+      Category.where(c_category_id: c_id).each do |rec|
+        cats.push(
+          {cat_id: rec.c_category_id,
+           cat_name: rec.c_category_name})
+      end
     end
 
     result = {}
     result[:sub_categories] = categories.to_json
-    result['cat_name'] = curr_cat_name
-    result['cat_id'] = c_id
-
+    result['cats'] = cats
     respond_to do |format|
       format.json { render :json => result}
     end		        
