@@ -1247,7 +1247,6 @@ tr.empty {
   .logged-in-user {
     color: burlywood;
     display: inline-block;
-    width: 120px;
     text-align: right;
     padding-right: 2px;
   }
@@ -1345,4 +1344,66 @@ table.query-stats {
 .engine-comp-msg {
   display: block !important;
 }
-
+li#cat-selector {
+  a.dropdown-toggle {
+    padding-left: 2px;
+    display: inline-block;
+  }
+}
+.cat-list {
+  min-width: 180px;
+  list-style: none;
+  li.go-up-cat, li.cat-link-parent, li.divider {
+    margin-left: -20px;
+  }
+  li.cat-link-parent {
+    position: relative;
+    span.outer {
+      padding: 4px 6px;
+      a.cat-click {
+        text-decoration: none;
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+          color: #0088cc;
+        }
+      }
+      i.cat-link-child {
+        position: absolute;
+        right: 0px;
+        cursor: pointer;
+        padding: 0 3px 0 10px;
+      }
+    }
+  }
+  li.go-up-cat {
+    text-align: left;
+    a.cat-click-go-up {
+      padding: 0;
+      text-decoration: none;
+      &:hover {
+        background-image: none;
+        span {
+          text-decoration: underline;
+          color: #0088c !important;
+          cursor: pointer;
+        }
+        i {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}
+#top-bar {
+  div.navbar-inner {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+      
+.date-week-holder {
+  color: white;
+  margin-right: 5px;
+  line-height: 3em;
+}
