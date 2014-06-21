@@ -16,8 +16,8 @@ a.subcat:hover {
   top: 5em;
   z-index: 1;
   display: none;
-  margin-right: 50%;
-  margin-left: 50%;
+  margin-right: 50% !important;
+  margin-left: 50% !important;
 }
 #summary-metrics, .tab-holder, .winners {
   .ajax-loader {
@@ -742,19 +742,18 @@ tr.selected {
 }
 
 div.sig-comp-table {
-  width: 1148px;
+  //width: 1148px;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   .name, .item, .score, .no-data, .node, .item-signals {
     display: inline-block;
     line-height: 20px;
     vertical-align: top;
-    height: 100%;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
   }
   .name {
-    width: 300px;
+    width: 30%;
     text-transform: capitalize;
   }
   .no-data {
@@ -799,10 +798,11 @@ div.sig-comp-table {
   }
 
   .signal-section {
-    .srow {
+    .srow.jstree-closed, .srow.jstree-leaf {
       border-bottom: 1px solid #dddddd;
-      border-left: 1px solid #ddd;
-      border-right: 1px solid #ddd;
+      //border-left: 1px solid #ddd;
+      //border-right: 1px solid #ddd;
+      width: 100%;
       a.jstree-anchor {
         &:hover, &:focus, &:active {
           div.item-signals span {
@@ -810,11 +810,15 @@ div.sig-comp-table {
           }
         }
       }
+      .node {
+        width: 30%;
+      }
     }
     .name, .item, .score {
       padding: 4px 8px;
     }
     .item-signals {
+      width: 70%;
       text-align: right;
       span {
         padding: 4px 8px;
@@ -824,11 +828,12 @@ div.sig-comp-table {
   .srow {
     box-sizing: border-box;
     -moz-box-sizing: border-box;
-    position: relative;
+    //position: relative;
     a.jstree-anchor {
       div.item-signals {
         position: absolute;
         right: 0px;
+        //top: 0px;
       }
     }
     .srow {
@@ -1242,7 +1247,6 @@ tr.empty {
   .logged-in-user {
     color: burlywood;
     display: inline-block;
-    width: 120px;
     text-align: right;
     padding-right: 2px;
   }
@@ -1311,11 +1315,95 @@ table.query-stats {
     text-align: left;
   }
 }
-.rel-best-seller-label {
+.rel-best-seller-label, .walmart-results-label {
   padding: 5px;
   span {
     margin: 0;
     color: #1894c6;
     font-weight: 400;
   }
+}
+.from-search-engines {
+  font-size: 14px;
+  color: #333333;
+  span {
+    color: inherit;
+    font-weight: normal;
+  }
+  select {
+    margin-bottom: 0px;
+  }
+}
+.engine-info {
+  font-size: 16px;
+  margin-bottom: 12px;
+  span.engine-url {
+    color: #1894c6;
+  }
+}
+.engine-comp-msg {
+  display: block !important;
+}
+li#cat-selector {
+  a.dropdown-toggle {
+    padding-left: 2px;
+    display: inline-block;
+  }
+}
+.cat-list {
+  min-width: 180px;
+  list-style: none;
+  li.go-up-cat, li.cat-link-parent, li.divider {
+    margin-left: -20px;
+  }
+  li.cat-link-parent {
+    position: relative;
+    span.outer {
+      padding: 4px 6px;
+      a.cat-click {
+        text-decoration: none;
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+          color: #0088cc;
+        }
+      }
+      i.cat-link-child {
+        position: absolute;
+        right: 0px;
+        cursor: pointer;
+        padding: 0 3px 0 10px;
+      }
+    }
+  }
+  li.go-up-cat {
+    text-align: left;
+    a.cat-click-go-up {
+      padding: 0;
+      text-decoration: none;
+      &:hover {
+        background-image: none;
+        span {
+          text-decoration: underline;
+          color: #0088c !important;
+          cursor: pointer;
+        }
+        i {
+          text-decoration: none;
+        }
+      }
+    }
+  }
+}
+#top-bar {
+  div.navbar-inner {
+    padding-right: 0;
+    padding-left: 0;
+  }
+}
+      
+.date-week-holder {
+  color: white;
+  margin-right: 5px;
+  line-height: 3em;
 }

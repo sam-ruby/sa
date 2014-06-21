@@ -10,6 +10,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     @shadowCollection = @collection.clone()
     @shadowCollection.bind('reset', @render_result)
     @collection.bind('reset', @p_missed_items)
+    @collection.bind('error', @p_missed_items)
     super(options)
     
     @items = []
@@ -48,15 +49,54 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
          @$el.find('span.sig-comp-msg').fadeOut(8000)
        else
          path = @router.path
+         comm_url = 'details/sig_comp/query/' +
+           "sig_comp/query/#{encodeURIComponent(path.query)}/items/" +
+           "#{@items.join(',')}"
+         if @engine_url?
+           comm_url += '/engine_url/' + encodeURIComponent(@engine_url)
+         
          if path.search == 'adhoc'
-           new_path = "search/adhoc/details/sig_comp/query/" +
-             "#{encodeURIComponent(path.query)}/items/#{@items.join(',')}"
+           new_path = 'search/adhoc/' + comm_url
          else
-           new_path = "search/#{path.search}/page/#{path.page}/details/" +
-             "sig_comp/query/#{encodeURIComponent(path.query)}/items/" +
-             "#{@items.join(',')}"
+           new_path = "search/#{path.search}/page/#{path.page}/" +
+             comm_url
          @router.update_path(new_path, trigger: true)
+    'click button.get-items': (e) =>
+      e.preventDefault()
+      engine_url = $(e.target).parents(
+        'div.from-search-engines').find('select :selected').val()
+      return if engine_url == 'select_engine'
+      @show_realtime_items(engine_url)
+    'click button.reset-get-items': (e) =>
+      e.preventDefault()
+      $(e.target).parents(
+        'div.from-search-engines').find('select option').each(()->
+          @selected = (@value == 'select_engine')
+        )
+      @get_items()
 
+  show_realtime_items: (@engine_url)=>
+    @grid.body.emptyText = 'Getting data ....'
+    @collection.fullCollection.reset()
+    view = this
+    $.ajax(
+      dataType: 'json'
+      url: @controller.svc_base_url + '/engine_stats/get_query_items'
+      beforeSend: (xhr, settings) ->
+        view.controller.trigger('search:sub-content:show-spin')
+      data:
+        engine: @engine_url
+        query: @query
+      complete: (xhr, status) ->
+        if xhr? and xhr.responseText? and (status == 'success' or status == 'notmodified')
+          data = JSON.parse(xhr.responseText)
+          view.grid.body.emptyText = 'No Data'
+        else
+          view.grid.body.emptyText = 'No Data Received from http://' +
+            view.engine_url + '/search'
+          data = []
+        view.collection.reset(data)
+    )
 
   uncheck_items: (e)=>
     e.preventDefault()
@@ -71,10 +111,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     else
       target = @$el.find('input:checkbox.missed-items')
 
-    #@$el.find('table thead th.descending').removeClass('descending')
-    #@$el.find('table thead th.ascending').removeClass('ascending')
-
-    if target.is(':checked')
+    if target.length == 0 or target.is(':checked')
       @shadowCollection.reset(@collection.fullCollection.models)
     else
       @collection.fullCollection.where(in_top_16: 0).forEach((model) ->
@@ -212,13 +249,30 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
       className: 'rel-rev-grid'
       row: RecommendedRow
     )
-    
-    @div_container.append('<div class="hero-unit rel-best-seller-label"><span>' +
-      'Top 16 Relevance Items and Recommended Items</span></div>')
-    @div_container.append(@rel_item_template())
-    @div_container.append( @grid.render().$el )
-    @div_container.append( @export_csv_button() )
 
+    view = this
+    @addToDom = (data) ->
+      view.div_container.append(view.rel_item_template(
+        engine_names: data.engine_names
+        engine_name_url_map: data.engine_name_url_map))
+      view.div_container.append(view.grid.render().$el)
+      view.div_container.append(view.export_csv_button())
+
+    $.ajax(
+      dataType: 'json'
+      url: @controller.svc_base_url + '/engine_stats/get_engines'
+      complete: (xhr, status) ->
+        if xhr? and xhr.responseText? and (status == 'success' or status == 'notmodified')
+          data = JSON.parse(xhr.responseText)
+          engine_names = _.keys(data).sort()
+        else
+          data = {}
+          engine_names = []
+        view.addToDom(
+          engine_names: engine_names
+          engine_name_url_map: data)
+    )
+    
   get_items: (data) =>
     @active = true
     data || = { }
@@ -229,13 +283,6 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     data.view || = "daily"
     @collection.get_items(data)
 
-  render_error: (query) ->
-    return unless @active
-    
-    @controller.trigger('search:sub-content:hide-spin')
-    @$el.append( $('<span>').addClass('label label-important').append(
-      "No data available for #{query}") )
-
   render_result: =>
     return unless @active
     rec_flag = @collection.fullCollection.where(in_top_16: 0).length > 0
@@ -244,12 +291,18 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
       recommended_div.empty()
       recommended_div.append('<span style="padding-top:10px">' +
         'No Recommendations with Significant Evidence</span>')
-    
+    else if recommended_div.find('input.missed-items').length == 0
+      recommended_div.empty()
+      recommended_div.append('<label class="show-rec-items checkbox">' +
+        '<input class="missed-items" type="checkbox" checked/>' +
+        'Show Recommended Items</label>')
+
     @controller.trigger('search:sub-content:hide-spin')
     @delegateEvents()
     return this
 
   render: (data)=>
+    @engine_url = null
     @items = []
     @div_container.show()
     @grid.render()

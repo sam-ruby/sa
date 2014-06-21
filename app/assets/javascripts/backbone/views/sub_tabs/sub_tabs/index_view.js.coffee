@@ -10,6 +10,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     @queryStatsCollection =
       new Searchad.Collections.QueryStatsDailyCollection()
     @queryStatsCollection.bind('reset', @render_query_info)
+    @queryStatsCollection.bind('error', @render_query_info)
     @queryStatsCollection.bind('request', =>
       @controller.trigger('sub-content-cleanup')
       @controller.trigger('search:sub-tab-cleanup')
@@ -70,6 +71,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     @hide_spin()
     @$el.children().not('.ajax-loader').remove()
     metric = @queryStatsCollection.toJSON()[0]
+    metric = {}  if !metric?
     metric.query = @query
     @$el.append(@query_stats_template(
       metric: metric))

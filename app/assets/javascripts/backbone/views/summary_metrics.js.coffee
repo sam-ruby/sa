@@ -141,21 +141,21 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
-      disabled: true
+      disabled: false
     eval_ndcg_1:
       name: 'Eval NDCG@1'
       id: 'e_ndcg_1'
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
-      disabled: true
+      disabled: false
     eval_ndcg_16:
       name: 'Eval NDCG@16'
       id: 'e_ndcg_16'
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
-      disabled: true
+      disabled: false
     ###
     eval_mpr_5:
       name: 'Eval MPR@5'
@@ -185,42 +185,42 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
-      disabled: true
+      disabled: false
     eval_precision_1:
       name: 'Eval Prec@1'
       id: 'e_prec_1'
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
-      disabled: true
+      disabled: false
     eval_precision_16:
       name: 'Eval Prec@16'
       id: 'e_prec_16'
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
-      disabled: true
+      disabled: false
     eval_recall_5:
       name: 'Eval Recall@5'
       id: 'e_recall_5'
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
-      disabled: true
+      disabled: false
     eval_recall_1:
       name: 'Eval Recall@1'
       id: 'e_recall_1'
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
-      disabled: true
+      disabled: false
     eval_recall_16:
       name: 'Eval Recall@16'
       id: 'e_recall_16'
       cat: 'rel_eval'
       unit: 'score'
       mark_worst: 'min'
-      disabled: true
+      disabled: false
     CAF:
       name: 'First Item Clicks'
       id: 'clicks_f_item'

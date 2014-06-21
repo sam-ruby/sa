@@ -1,25 +1,25 @@
-li.cat_header
-  if top_cat_id != 0 
-    a.cat_go_back.pull-left(href='#')
-      i.icon-hand-left(id="cat_" + top_cat_id)
-        
-    a.cat_click(id="cat_" + top_cat_id)
-      = top_cat_name 
-  else
-    = top_cat_name
+if top_cat_id && top_cat_id != 0
+  li.go-up-cat
+    a.cat-click-go-up(data-cat_id = top_cat_id, data-cat_name=top_cat_name)
+      i.icon-chevron-left
+      span
+        if top_cat_name.length > 20
+          - top_cat_name = top_cat_name.substr(0, 20) + '..'
+        = top_cat_name
+  li.divider
 
-- for(var i=0; i<sub_categories.length; i++)
-  - var sub_cat = sub_categories.at(i)
-  li.cat_link_parent
+- console.log(sub_categories);
+each sub_cat in sub_categories
+  li.cat-link-parent
     span.outer   
-      a.cat_click(id = "cat_" + sub_cat.get('c_category_id'))
-        = sub_cat.get('c_category_name')
-      if sub_cat.is_parent 
-        i.cat_link_child.icon-chevron-right(id="cat_" + sub_cat.get('c_category_id'))
-          span(style = 'display:none;')= sub_cat.get('c_category_name')
-      else 
-        i.icon-chevron-right.icon-white(style = 'color:white;')
-  
+      a.cat-click(data-cat_id = sub_cat.c_category_id)
+        - var cat_name = sub_cat.c_category_name
+        if cat_name && cat_name.length > 20
+          - cat_name = cat_name.substr(0, 20) + '..'
+        = cat_name
+      if show_nav
+        i.cat-link-child.icon-chevron-right(data-cat_id = sub_cat.c_category_id, data-cat_name = sub_cat.c_category_name)
+
 if sub_categories.length == 0 
-  li.cat_link_parent
+  li.cat-link-parent
     span.outer No sub categories

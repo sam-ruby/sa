@@ -1,13 +1,6 @@
 class Searchad.Models.CAWalmartItem extends Backbone.Model
-  defaults:
-    position: null
-    name: null
-    brand: null
-    newprice: null
-    curr_item_price: null
 
 class Searchad.Collections.CAWalmartItemsCollection extends Backbone.PageableCollection
-  
   initialize: (options) ->
     @controller = SearchQualityApp.Controller
     super(options)
@@ -18,7 +11,8 @@ class Searchad.Collections.CAWalmartItemsCollection extends Backbone.PageableCol
     }
   
   model: Searchad.Models.CAWalmartItem
-  url: '/comp_analysis/get_walmart_items.json'
+  url: =>
+    @controller.svc_base_url + '/rel_items/get_top_items'
   mode: 'client'
   
   # since it is client side pagination, query param don't matter
@@ -27,8 +21,8 @@ class Searchad.Collections.CAWalmartItemsCollection extends Backbone.PageableCol
     for k, v of @controller.get_filter_params()
       continue unless v
       data[k] = v
-
-    @data = data
+    for k, v of data
+      @data[k] = v
     @fetch(
       reset: true
       data: @data

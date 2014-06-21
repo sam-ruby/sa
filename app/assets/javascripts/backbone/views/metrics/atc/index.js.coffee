@@ -9,7 +9,6 @@ class Searchad.Views.Atc.Winners extends Searchad.Views.Atc
   initialize: (options) =>
     @collection = new Searchad.Collections.AtcWinner()
     @tableCaption = JST["backbone/templates/win_lose"]
-    Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
     super(options)
  
   grid_cols: =>
@@ -41,8 +40,6 @@ class Searchad.Views.Atc.Winners extends Searchad.Views.Atc
     {name: 'score',
     label: "Score",
     editable: false,
-    sortType: 'toggle',
-    headerCell: @SortedHeaderCell,
     cell: 'integer'}]
 
   render: =>

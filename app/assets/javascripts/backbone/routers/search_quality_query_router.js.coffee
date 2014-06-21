@@ -3,9 +3,10 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @controller = SearchQualityApp.Controller
 
   routes:
-    "(:search)(/*args)": "search"
     "browse(/:task)(/:sub_task)(/*args)": "browse"
     "category(/:task)(/:sub_task)(/*args)": "category"
+    "ab-tests(/:task)(/:sub_task)(/*args)": "ab_tests"
+    "(:search)(/*args)": "search"
     "search_rel(/query/:query)(/filters/*wday)": "search_rel"
     "search_rel/item_id/:id(/filters/*wday)": "search_query_items"
     
@@ -25,19 +26,13 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "adhoc_query(/mode/query_comparison)(/wks_apart/:weeks/query_date/:date/query/)(:query)(/filters/*wday)":
       "adhoc_query_comparison"
 
-  get_cat_id: (filters) ->
-    if filters?
-      parts = filters.split('/')
-      for part, i in parts
-        if part == 'cat_path'
-          cat_path = parts[i+1]
-          cats = cat_path.split(/_/)
-          @cat_id = cats[cats.length-1] if cats? and cats.length > 0
-          @cat_path = cat_path if cat_path?
-    @cat_id ||=0
+  set_cat_id: (filter) ->
+    @cat_changed = false
+    if (filter and filter.cat_path? and filter.cat_path != @cat_path)
+      @cat_changed = true
+      @cat_path = filter.cat_path
   
   set_date_info: (filter) =>
-    # @get_cat_id()
     @date_changed = false
     if (filter and filter.date? and filter.date != @date)
       @controller.trigger('update_date', filter.date)
@@ -68,6 +63,10 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
 
   search:(path, filter) =>
     path.search ||= 'overview'
+    if typeof @search_inited == 'undefined'
+      @search_inited = true
+    else
+      @search_inited = false
     @query_segment_changed = false
     if !@path? or (@path? and @path.search != path.search)
       @query_segment_changed = true
@@ -78,6 +77,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
       @controller.set_metrics_name(path.page)
 
     @set_date_info(filter)
+    @set_cat_id(filter)
     @path = path
     @filter = filter
 
@@ -85,6 +85,9 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @set_date_info()
   
   catalog:(@task, @sub_task, @task_args) =>
+    @set_date_info()
+  
+  ab_tests:(@task, @sub_task, @task_args) =>
     @set_date_info()
   
   adhoc_query_comparison: (weeks, date, query, date_parts) =>

@@ -9,7 +9,6 @@ class Searchad.Views.Oos.Winners extends Searchad.Views.Oos
   initialize: (options) =>
     @collection = new Searchad.Collections.OosWinner()
     @tableCaption = JST["backbone/templates/win_lose"]
-    Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
     super(options)
  
   grid_cols: =>

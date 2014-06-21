@@ -1,7 +1,8 @@
 #= require backbone/models/conv_cor
 
-class Searchad.Models.ONdcgWinner extends Backbone.Model
+class Searchad.Models.NdcgWinner extends Backbone.Model
 
-class Searchad.Collections.ONdcgWinner extends Searchad.Collections.ConvCorrelation
-  model: Searchad.Models.ONdcgWinner
-  url: '/o_ndcg/get_trending'
+class Searchad.Collections.NdcgWinner extends Searchad.Collections.ConvCorrelation
+  model: Searchad.Models.NdcgWinner
+  url: =>
+    @controller.svc_base_url + '/opportunities'

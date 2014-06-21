@@ -27,6 +27,8 @@ class Searchad.Collections.ConvCorrelation extends Backbone.PageableCollection
   mode: 'server'
 
   get_items: (data) =>
+    @state.totalRecords = null
+    @state.currentPage = 1
     @fetch(
       reset: true
       data: data

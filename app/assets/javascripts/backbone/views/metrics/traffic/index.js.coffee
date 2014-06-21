@@ -9,7 +9,6 @@ class Searchad.Views.Traffic.Winners extends Searchad.Views.Traffic
   initialize: (options) =>
     @collection = new Searchad.Collections.TrafficWinner()
     @tableCaption = JST["backbone/templates/win_lose"]
-    Utils.InitExportCsv(this, "/search_rel/get_search_words.csv")
     super(options)
  
   grid_cols: =>
@@ -41,8 +40,6 @@ class Searchad.Views.Traffic.Winners extends Searchad.Views.Traffic
     {name: 'score',
     label: "Score",
     editable: false,
-    sortType: 'toggle',
-    headerCell: @SortedHeaderCell,
     cell: 'integer'}]
 
   

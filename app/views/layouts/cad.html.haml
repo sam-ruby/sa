@@ -86,11 +86,6 @@
         top: 0em;
         margin-bottom: 1em;
       }
-      .date-week-holder {
-        color: white;
-        margin-right: 1em;
-        line-height: 3em;
-      }
       #dp3 {
         cursor: pointer;
       }
@@ -110,6 +105,7 @@
     = csrf_meta_tag 
   
   %body
+    #mdw-toolbar{:style => 'display:none'}
     = yield :title
     .container{style:'margin-top:1.5em; margin-bottom: 5em;'}
       .row

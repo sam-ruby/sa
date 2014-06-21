@@ -9,23 +9,24 @@
   var SvcTierBaseUrl = '#{@svc_tier_base_url}';
 #cad-breadcrumb
 
-#search-sub-tasks
-  .tabs
-  .search-content
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-  
-  .overview
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+/
+  #search-sub-tasks
+    .tabs
+    .search-content
+      = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+    
+    .overview
+      = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
         
-#browse-sub-tasks
-  .tabs
-  .browse-content
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
-        
-#category-sub-tasks
-  .tabs
-  .category-content
-    = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+  #browse-sub-tasks
+    .tabs
+    .browse-content
+      = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
+          
+  #category-sub-tasks
+    .tabs
+    .category-content
+      = image_tag 'ajax_loader.gif', :class=>'ajax-loader'
 
 #summary-metric-car.carousel.slide{'data-interval' => 'false'}
   .carousel-inner
