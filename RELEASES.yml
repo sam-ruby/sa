@@ -9,6 +9,8 @@
     Fixes:
       PERSSERANA-652: Fix the bug with exporting Opportunities to CSV file
       PERSSERANA-642: Relevance Best Seller Analysis feature enhancements
+      PERSSERANA-658: Feedback link not sending emails
+      PERSSERANA-659: Automatic resizing of UI for Signal Comparison Feature
 
 2.0.1:
     Date: Jun 6, 2014
