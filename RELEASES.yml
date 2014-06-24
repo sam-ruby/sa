@@ -4,13 +4,16 @@
     Features:
       PERSSERANA-638: Retrieve and Compare Signals from Adhoc Polaris Engines
       PERSSERANA-644: Enable Authentication to track usage, and to store Preferences
-      PERSSERANA-654: Enable NDCG Metrics based on Evaluation
+      PERSSERANA-654: Enable NDCG Metrics based on Evaluation for UI and Backend
       PERSSERANA-639: Introduce Service Layer for fast and scalable performance 
     Fixes:
       PERSSERANA-652: Fix the bug with exporting Opportunities to CSV file
       PERSSERANA-642: Relevance Best Seller Analysis feature enhancements
       PERSSERANA-658: Feedback link not sending emails
       PERSSERANA-659: Automatic resizing of UI for Signal Comparison Feature
+      PERSSERANA-600: Improve accuracy of search Relevance Metrics calculation
+      PERSSERANA-653: Improve SQL query stability for Relevance Metrics calculation
+      PERSSERANA-612: Reconfig date passing mechanism in weekly jobs
 
 2.0.1:
     Date: Jun 6, 2014
