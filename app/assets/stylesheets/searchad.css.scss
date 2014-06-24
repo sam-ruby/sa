@@ -1349,6 +1349,12 @@ li#cat-selector {
     padding-left: 2px;
     display: inline-block;
   }
+  span.cat-path {
+    color: white;
+    span.divider {
+      padding: 0 7px;
+    }
+  }
 }
 .cat-list {
   min-width: 180px;
@@ -1378,23 +1384,26 @@ li#cat-selector {
   }
   li.go-up-cat {
     text-align: left;
-    a.cat-click-go-up {
-      padding: 0;
-      text-decoration: none;
-      &:hover {
-        background-image: none;
-        span {
+    span.parent {
+      a.cat-click{
+        padding: 0;
+        text-decoration: none;
+        cursor: pointer;
+        &:hover {
+          background-image: none;
           text-decoration: underline;
-          color: #0088c !important;
-          cursor: pointer;
+          color: #0088cc !important;
         }
-        i {
-          text-decoration: none;
-        }
+      }
+      i.cat-go-up {
+        text-decoration: none;
+        padding: 5px 0 5px;
+        cursor: pointer;
       }
     }
   }
 }
+
 #top-bar {
   div.navbar-inner {
     padding-right: 0;

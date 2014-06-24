@@ -1,14 +1,16 @@
-if top_cat_id && top_cat_id != 0
-  li.go-up-cat
-    a.cat-click-go-up(data-cat_id = top_cat_id, data-cat_name=top_cat_name)
-      i.icon-chevron-left
-      span
-        if top_cat_name.length > 20
-          - top_cat_name = top_cat_name.substr(0, 20) + '..'
-        = top_cat_name
-  li.divider
+li.go-up-cat
+  span.parent
+    if parseInt(parent_cat.cat_id) != 0
+      i.icon-chevron-left.cat-go-up(data-grant_parent_cat_id = grant_parent_cat.cat_id)
+    a.cat-click(data-cat_id = parent_cat.cat_id)
+      if parent_cat.cat_name.length > 20
+        - top_cat_name = parent_cat.cat_name.substr(0, 20) + '..'
+      else
+        - top_cat_name = parent_cat.cat_name
+      = top_cat_name
 
-- console.log(sub_categories);
+li.divider
+
 each sub_cat in sub_categories
   li.cat-link-parent
     span.outer   
@@ -23,3 +25,5 @@ each sub_cat in sub_categories
 if sub_categories.length == 0 
   li.cat-link-parent
     span.outer No sub categories
+      
+      

@@ -88,12 +88,15 @@ class CategoriesController < BaseController
       last_c_id = c_id.last.to_i
     else
       last_c_id = c_id.to_i
+      c_id = [c_id]
     end
 
     categories = Category.subcategories_by_parent_id(
       last_c_id, year_week[:year], year_week[:week])
     if (c_id.kind_of?(Array) || c_id.to_i != 0)
-      Category.where(c_category_id: c_id).each do |rec|
+      Category.select('c_category_name, c_category_id').where(
+        c_category_id: c_id).uniq.order(
+          'Field(c_category_id, ' + c_id.join(',') + ')').each do |rec|
         cats.push(
           {cat_id: rec.c_category_id,
            cat_name: rec.c_category_name})

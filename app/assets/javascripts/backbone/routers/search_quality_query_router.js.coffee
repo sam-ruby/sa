@@ -31,6 +31,8 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     if (filter and filter.cat_path? and filter.cat_path != @cat_path)
       @cat_changed = true
       @cat_path = filter.cat_path
+      cats = @cat_path.split('_')
+      @controller.set_cat_id(cats[cats.length - 1])
   
   set_date_info: (filter) =>
     @date_changed = false
