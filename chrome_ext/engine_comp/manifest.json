@@ -1,0 +1,15 @@
+{
+  "manifest_version": 2,
+  "name": "Polaris Engine Comparison",
+  "description": "Extension to submit a Jenkins Job for doing Polaris Engine Comp",
+  "version": "1.0", 
+  "permissions": [
+    "http://*.walmartlabs.com/",
+    "https://*.googleapis.com/"
+  ],
+  "content_security_policy": "script-src 'self' https://*.googleapis.com; object-src 'self'",
+  "browser_action": {
+    "default_icon": "images/walmart.png",
+    "default_popup": "html/engine_comp.html"
+  }
+}

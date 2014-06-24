@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Submit a Jenkins Job to do Polaris Engine Comparison</title>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <style>
+      body {
+        min-width: 800px;
+        min-height: 500px;
+        overflow-x: hidden;
+      }
+
+      img {
+        margin: 5px;
+        border: 2px solid black;
+        vertical-align: middle;
+        width: 75px;
+        height: 75px;
+      }
+      div.form-submission-results, div.success, div.error {
+        display: none;
+      }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js">
+    </script>
+    <script src="/javascript/engine_comp.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="form-engine-comp">
+        <h3>Submit a Jenkins job for comparing 2 Polaris Engines</h3>
+        <form role="form" method="get" class="engine-comp">
+          <div class="form-group">
+            <label class="control-label" for="user">User ID</label>
+            <input id="user" type="text" class="form-control" 
+              placeholder="User ID">
+          </div>
+
+          <div class="form-group">
+            <label class="control-label" for="engine_1">Engine 1 URL</label>
+            <input id="engine_1" type="text" class="form-control" 
+              placeholder="URL for Polaris Engine 1">
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="engine_2">Engine 2 URL</label>
+            <input id="engine_2" type="text" class="form-control" 
+              placeholder="URL for Polaris Engine 2">
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+      </div>
+      <div class="form-submission-results">
+        <div class="success">
+          <h3>Job successfully scheduled</h3>
+          <div class="succes">
+            Job ID is 
+            <span class="job-id"></span>
+          </div>
+          <div class="another-job">
+            <a href="#">Submit Another Job</a>
+          </div>
+        </div>
+        <div class="error">
+          <h3>There was an error submitting the Job. Please try again.</h3>
+          <div class="error">
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
