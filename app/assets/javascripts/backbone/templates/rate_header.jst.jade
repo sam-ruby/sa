@@ -1,0 +1,15 @@
+span.dropdown.rate-filter
+  a.dropdown-toggle(data-toggle="dropdown", href="#')
+    i.icon-filter
+  |&nbsp;
+  ul.dropdown-menu.rate-filter-menu(role="menu", aria-labelledby="dLabel")
+    li
+      a.filter-all(tabindex="-1", href="#")
+        |Filter: All
+    li
+      a.filter-exclude-bad(tabindex="-1", href="#")
+        |Exclude Bad Intents
+    li
+      a.filter-only-good(tabindex="-1", href="#")
+        |Only Good Intents
+

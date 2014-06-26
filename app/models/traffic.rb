@@ -17,7 +17,9 @@ class Traffic < BaseModel
   end
 
   def self.get_queries(winning, query_segment, cat_id, data_date,
-                       page=1,  limit=10, order_col=nil, order='asc')
+                       filter_by=nil, filter_cond=nil, user_id=nil,
+                       page=1,  limit=10, 
+                       order_col=nil, order='asc')
     cols = nil
     if winning
       default_order = 'score asc'
@@ -35,19 +37,31 @@ class Traffic < BaseModel
       order_limit_str = %Q{ #{order_str} limit #{limit} offset #{offset}}
     end
    
-    cols ||= %q{s.query, 
+    cols ||= %q{s.query, uq.rating,
     sum(s.uniq_count) c_o_u_n_t,
     pow(sum(s.uniq_count),2)/(sum(s.uniq_con)/sum(s.uniq_count)+0.01) score,
     sum(s.uniq_pvr)/sum(s.uniq_count)*100 p_v_r,
     sum(s.uniq_atc)/sum(s.uniq_count)*100 a_t_c,
     sum(s.uniq_con)/sum(s.uniq_count)*100 c_o_n}
 
-    join_str = %q{as s JOIN query_segmentation_daily qs ON 
-      (s.query=qs.query and s.data_date=qs.data_date )}
-
+    join_str = %Q{as s JOIN query_segmentation_daily qs ON 
+      (s.query=qs.query and s.data_date=qs.data_date )
+      LEFT OUTER JOIN user_rated_queries uq on
+      s.query = uq.query and
+      uq.metric_name = 'all' and
+      uq.user_id = '#{user_id}'}
+    
     where_str = %q{s.cat_id = 0 and s.page_type = 'SEARCH' and
     s.channel in ('ORGANIC_USER', 'ORGANIC_AUTO_COMPLETE')  and 
     s.data_date in (?) and qs.segmentation = ? and qs.cat_id = ?}
+    
+    if filter_by and filter_cond
+      if filter_by == 'rating' and filter_cond == 'with_good'
+        where_str += %q{ and (uq.rating is null or uq.rating = 1) }
+      elsif filter_by == 'rating' and filter_cond == 'only_good'
+        where_str += %q{ and uq.rating = 1}
+      end
+    end
 
     select(cols).joins(join_str).where(
       [where_str, data_date, query_segment, cat_id]).group('s.query').order(

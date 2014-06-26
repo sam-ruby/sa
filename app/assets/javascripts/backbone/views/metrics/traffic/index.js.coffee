@@ -40,9 +40,14 @@ class Searchad.Views.Traffic.Winners extends Searchad.Views.Traffic
     {name: 'score',
     label: "Score",
     editable: false,
-    cell: 'integer'}]
-
-  
+    cell: 'integer'},
+    {name: 'rating'
+    label: "Rate it!"
+    editable: false
+    sortable: false
+    headerCell: @RateHeaderCell
+    cell: @RateCell}]
+    
   render: =>
     @renderTable()
 

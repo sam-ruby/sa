@@ -19,6 +19,7 @@ window.SearchQualityApp = do ->
     get_view: => @view
     set_date: (@date) =>
     set_cat_id: (@cat_id) =>
+    set_user_id: (@user_id) =>
     set_svc_tier_base_url: (@svc_base_url) =>
     set_metrics_name: (metric_name) =>
       metrics = Searchad.Views.SummaryMetrics.prototype.metrics_name
@@ -133,8 +134,7 @@ window.Utils = do ->
   class CustomNumberFormatter extends Backgrid.NumberFormatter
     decimals: 2
     decimalSeparator: '.'
-    orderSeparator: ','
-
+    orderSeparator: ',' 
     fromRaw: (rawValue) ->
       return '-' if !rawValue?
       if !isNaN(parseFloat(rawValue))

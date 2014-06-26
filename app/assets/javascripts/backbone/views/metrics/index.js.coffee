@@ -98,8 +98,9 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
     events
 
   init_table: () =>
+    cols = @grid_cols()
     @grid = new Backgrid.Grid(
-      columns: @grid_cols()
+      columns: cols
       collection: @collection
       emptyText: 'No Data'
       className: 'winners-grid'

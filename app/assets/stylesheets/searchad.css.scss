@@ -1125,6 +1125,7 @@ div.overview-all {
 
 .winners-grid {
   @extend .backgrid;
+  position: relative;
   
   tbody {
     tr.selected {
@@ -1415,4 +1416,43 @@ li#cat-selector {
   color: white;
   margin-right: 5px;
   line-height: 3em;
+}
+span.rate-up, span.rate-down {
+  padding: 0 10px;
+  cursor: pointer;
+}
+.green-rate {
+  span {
+    i.icon-thumbs-up {
+      color: green;
+    }
+  }
+}
+.red-rate {
+  span {
+    i.icon-thumbs-down {
+      color: red;
+    }
+  }
+}
+
+.rate-filter {
+  position: inherit !important;
+  a.dropdown-toggle {
+    display: inline-block;
+  }
+  ul.rate-filter-menu {
+    min-width: 100px;
+    padding: 0;
+    margin: 0;
+    right: 0;
+    top: 35px;
+    left: inherit;
+    li {
+      a {
+        padding: 3px 5px;
+        font-size: 14px;
+      }
+    }
+  }
 }

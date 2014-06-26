@@ -5,7 +5,10 @@ $ ->
     controller = SearchQualityApp.Controller
     controller.set_date(Selected_Date.toString('M-d-yyyy'))
     controller.set_svc_tier_base_url(SvcTierBaseUrl)
-
+    MDW.getLoginStatus((session) ->
+      if session
+        controller.set_user_id(session.username)
+    )
     # comment out cuz we never select week or year, in CAD we only select dates
     # if we need what week or year it is, there is a function in backend to process that
     # controller.set_week(Selected_Week)
@@ -26,8 +29,7 @@ $ ->
     topTabsView = new Searchad.Views.TopTabs.IndexView(
       el: '#top-bar')
     
-    searchTabsView = new Searchad.Views.SearchTabs.IndexView(
-      el: '#search-bar')
+    searchTabsView = new Searchad.Views.SearchTabs.IndexView( el: '#search-bar')
 
     browseTabsView = new Searchad.Views.BrowseTabs.IndexView(
       el: '#browse-bar')
