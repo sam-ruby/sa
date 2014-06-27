@@ -93,6 +93,9 @@ $ ->
     eval_winners_view = new Searchad.Views.EvalMetrics(
       el: '#winners')
 
+    ue_winners_view = new Searchad.Views.UEMetrics(
+      el: '#winners')
+    
     #convCorWinnersView = new Searchad.Views.ConvCorrelation.Winners(
     # el: '#winners')
    

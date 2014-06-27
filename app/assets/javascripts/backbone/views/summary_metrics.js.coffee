@@ -224,14 +224,12 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     CAF:
       name: 'First Item Clicks'
       id: 'clicks_f_item'
-      disabled: true
       cat: 'user_eng'
       unit: 'percentage'
       mark_worst: 'min'
     AR:
       name: 'Abandon Rate'
       id: 'aband_rate'
-      disabled: true
       cat: 'user_eng'
       unit: 'percentage'
       mark_worst: 'max'
@@ -245,42 +243,36 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
     QDT:
       name: 'Query Dwell Time'
       id: 'dwell_time'
-      disabled: true
       cat: 'user_eng'
       unit: 'seconds'
       mark_worst: 'min'
     FCT:
       name: 'Earliest Item Click'
       id: 'first_click'
-      disabled: true
       cat: 'user_eng'
       unit: 'seconds'
       mark_worst: 'max'
     LCT:
       name: 'Latest Item Click'
       id: 'latest_click'
-      disabled: true
       cat: 'user_eng'
       unit: 'seconds'
       mark_worst: 'max'
     CPQ:
       name: 'Clicks Per Query'
       id: 'clicks_query'
-      disabled: true
       cat: 'user_eng'
       unit: 'click'
       mark_worst: 'min'
     MRR:
       name: 'Tot Reciprocal Rank'
       id: 'mrr'
-      disabled: true
       cat: 'user_eng'
       unit: 'score'
       mark_worst: 'min'
     QRR:
       name: 'Query Reformulation'
       id: 'qrr'
-      disabled: true
       cat: 'user_eng'
       unit: 'percentage'
       mark_worst: 'max'
