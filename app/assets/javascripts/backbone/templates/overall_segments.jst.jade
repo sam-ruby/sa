@@ -74,8 +74,14 @@ form.form-inline.overview-all
         - var m_obj = metrics_name[metric_id]
         if !m_obj
           - continue
+
+        - var metric_name_class
+        if metric_cat.class == 'general'
+          - metric_name_class = 'gm-name'
+        else
+          - metric_name_class = 'name'
         div(class=[m_obj.id, 'mrow'])
-          .name.metric-name
+          div(class=metric_name_class).metric-name
             if m_obj && m_obj.name
               = m_obj.name
             else
@@ -93,8 +99,7 @@ form.form-inline.overview-all
               - score = 'N/A'
             .score.numerical-col
               if score == 'N/A'
-                span.na-query
-                  = 'N/A'
+                span.no-data-found
               else if score || score == 0
                 - slink = '#search/' + segment.path + '/page/' + m_obj.id
                 - significance = metric[segment_id].significance
@@ -111,7 +116,9 @@ form.form-inline.overview-all
                 != u_formatter({m_obj: m_obj, metric_details:metric[segment_id]})
               else
                 |&nbsp;
-
+        
+        if metric_cat.class == 'general'
+          -continue
         div(class=[m_obj.id, 'mrow-support-info'])
           .support-cat 
             table.table.table-condensed
@@ -130,8 +137,6 @@ form.form-inline.overview-all
             else if !ms && metric['ALL QUERIES']
               - ms = metric['ALL QUERIES']
               - segment_id = 'ALL QUERIES'
-            else if !ms
-              - continue
             .support-info-value
               table.table.table-condensed
                 tbody
@@ -153,18 +158,20 @@ form.form-inline.overview-all
                           - lcl = numFormatter.fromRaw(ms.lcl)
                         = lcl + ' - ' + ucl
                       else
-                        |-
+                        span.no-data-found
 
                   tr
                     td
                       if ms && ms.significance
                         = numFormatter.fromRaw(ms.significance) + '%'
                       else
-                        |-
+                        span.no-data-found
                   
                   tr
                     td
                       if ms && ms.metadata && ms.metadata.sup
                         = intFormatter.fromRaw(ms.metadata.sup) 
                       else
-                        |-
+                        span.no-data-found
+
+

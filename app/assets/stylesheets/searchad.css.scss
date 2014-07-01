@@ -842,7 +842,7 @@ div.sig-comp-table {
   }
 }
 div.overview {
-  .name, .score, .change, .significant, .top, .info, .unit, .no-data {
+  .name, .gm-name, .score, .change, .significant, .top, .info, .unit, .no-data {
     display: inline-block;
     line-height: 20px;
     vertical-align: top;
@@ -854,7 +854,7 @@ div.overview {
     width: 100%;
     text-align: center;
   }
-  .name {
+  .name, .gm-name, {
     white-space:nowrap;
     width: 15%;
     padding-left: 5px !important;
@@ -948,7 +948,7 @@ form.overview-all {
   padding-bottom: 10px;
 }
 div.overview-all {
-  .name, .score, .info, .unit, .segment-name, .support-cat, .support-info, .support-info-value, .no-data {
+  .name, .gm-name, .score, .info, .unit, .segment-name, .support-cat, .support-info, .support-info-value, .no-data {
     -moz-box-sizing: border-box;
     box-sizing:border-box;
     line-height: 20px;
@@ -961,7 +961,7 @@ div.overview-all {
   .segment-name, .support-info-value {
     width: 16.5%;
   }
-  .name, .support-cat {
+  .name, .support-cat, .gm-name {
     width: 17.5%;
   }
   .score {
@@ -1041,7 +1041,7 @@ div.overview-all {
     .mrow.selected {
       background-color: #dff0d8;
     }
-    .name, .score, .info, .unit, .segment-name, .support-info-value, .support-cat, .no-data {
+    .name, .gm-name, .score, .info, .unit, .segment-name, .support-info-value, .support-cat, .no-data {
       padding: 4px 6px 4px 6px;
     }
     .score {
@@ -1058,13 +1058,15 @@ div.overview-all {
       font-size: 12px;
       text-align: right;
     }
-    .name {
+    .name, .gm-name {
       white-space:nowrap;
       @include gradient-horizontal(white, #f2f2f2);
       border-left: 1px solid #ddd;
       color: #777777;
       text-transform: capitalize;
       cursor: pointer;
+    }
+    .name {
       &:before, &.make-tiny:before {
         content: "+";
         float: right;
@@ -1454,5 +1456,12 @@ span.rate-up, span.rate-down {
         font-size: 14px;
       }
     }
+  }
+}
+span.no-data-found {
+  font-style: italic;
+  padding: 0;
+  &:before {
+    content: "No Data";
   }
 }

@@ -76,12 +76,12 @@ class SummaryMetricsController < BaseController
           ("ORGANIC_USER", "ORGANIC_AUTO_COMPLETE") and cat_id = ? and 
           data_date = ?}, cat_id, @date]).select(
             'sum(uniq_count) total_count, sum(revenue) revenue').first
-          segment_meta_data.each do|record|
-            segment_results.push(
-              {traffic_percent: record.uniq_count/totals.total_count.to_f*100,
-               revenue_percent: record.seg_revenue/totals.revenue.to_f*100}.merge(
-                 record.attributes))
-          end
+        segment_meta_data.each do|record|
+          segment_results.push(
+            {traffic_percent: record.uniq_count/totals.total_count.to_f*100,
+             revenue_percent: record.seg_revenue/totals.revenue.to_f*100}.merge(
+               record.attributes))
+        end
         summary_metrics = SummaryMetrics.get_overall_metrics(
           cat_id, @date).each do |record|
             record.metadata = JSON.parse(record.metadata) unless (

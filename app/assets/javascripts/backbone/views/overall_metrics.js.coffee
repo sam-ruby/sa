@@ -99,7 +99,7 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
     segment_lookup = Searchad.Views.SearchTabs.IndexView.prototype.segment_lookup
     
     for segment_path, segment of segment_lookup
-      if segment.id.match(/trend_(7|14|21|28)/i)
+      if segment.id.match(/trend_(2|14|21|28)/i)
         continue
       else if segment.id.match(/drop_con/i)
         continue
