@@ -72,27 +72,4 @@ This class will provide a basic cell for rendering Query column, which has a eve
 listener on each <a>xxx query</a>
 ###
 
-Backgrid.CADQueryCell = Backgrid.Cell.extend(
-  initialize: (options) ->
-    Backgrid.Cell.prototype.initialize.call(this, options)
-  controller: SearchQualityApp.Controller
-  router: SearchQualityApp.Router
-  events:
-    'click a.query': 'handleQueryClick'
-  handleQueryClick: (e) =>
-    e.preventDefault()
-    $(e.target).parents('table').find('tr.selected').removeClass('selected')
-    $(e.target).parents('tr').addClass('selected')
-    # trigger controller function
-    # update path
-  render: ->
-    value = @model.get(@column.get('name'))
-    formatted_value = '<span class="pull-right">' +
-      '<a href="http://www.walmart.com/search/search-ng.do?search_query=' +
-      encodeURIComponent(value) + '" target="_blank">' +
-      '<img src="/assets/walmart-transparent.png" class="walmart-icon"></a>' +
-      '</span><a class="query" href="#">' + value + '</a>'
-    @$el.html(formatted_value)
-    @delegateEvents()
-    return this
-)
+

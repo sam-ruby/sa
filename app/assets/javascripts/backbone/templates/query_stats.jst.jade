@@ -14,38 +14,48 @@ table.table.table-condensed.query-stats
     if metric
       tr
         td.name Orders NDCG@1
-        td.value= intFormatterDefault.fromRaw(metric.orders_ndcg_1)||'-'
+        td.value= intFormatterDefault.fromRaw(metric.orders_ndcg_1)||'No Data'
         td.spacer
         td.name Traffic
-        td.value= intFormatter.fromRaw(metric.traffic)||'-'
+        td.value= intFormatter.fromRaw(metric.traffic)||'No Data'
       
       tr
         td.name Orders NDCG@5
-        td.value= intFormatterDefault.fromRaw(metric.orders_ndcg_5)||'-'
+        td.value= intFormatterDefault.fromRaw(metric.orders_ndcg_5)||'No Data'
         td.spacer
         td.name Conversion
         td.value= pcFormat(metric.conversion)
       
       tr
         td.name Orders NDCG@16
-        td.value= intFormatterDefault.fromRaw(metric.orders_ndcg_16)||'-'
+        td.value= intFormatterDefault.fromRaw(metric.orders_ndcg_16)||'No Data'
         td.spacer
         td.name PVR
         td.value= pcFormat(metric.pvr)
 
       tr
         td.name Orders Precision@16
-        td.value= intFormatterDefault.fromRaw(metric.orders_precision_16)||'-'
+        td.value= intFormatterDefault.fromRaw(metric.orders_precision_16)||'No Data'
         td.spacer
         td.name ATC
         td.value= pcFormat(metric.atc)
         
       tr
-        td.name Eval Recall@16
-        td.value= intFormatterDefault.fromRaw(metric.eval_recall_16)||'-'
+        td.name Eval Recall@5
+        td.value= intFormatterDefault.fromRaw(metric.eval_recall_5)||'No Data'
         td.spacer
         td.name Revenue
         td.value= (intFormatter.fromRaw(metric.revenue)||0) + '$'
+      
+      tr
+        td.name Percentage of Traffic Reformulated
+        td.value
+          if metric.QRR 
+            = intFormatterDefault.fromRaw(metric.QRR) + '%'
+          else
+            | 'No Data'
+        td.spacer
+
     else
       tr
         td(colspan=5, style='text-align:center;')

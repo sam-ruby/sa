@@ -119,10 +119,66 @@ class Searchad.Views.Base extends Backbone.View
         super(options)
         @$el.css('width', '30%')
 
-    class @QueryCell extends Backgrid.CADQueryCell
+    class @MetricCell extends Backgrid.IntegerCell
+      initialize: (options) ->
+        super(options)
+        @percent_cell = new Backgrid.PercentCell(
+          column: @column
+          model: @model)
+      
+      controller: SearchQualityApp.Controller
+      router: SearchQualityApp.Router
+      render: ->
+        if @router.path? and @router.path.page == 'qrr'
+          @percent_cell.render()
+        else
+          super()
+
+    class @CADQueryCell extends Backgrid.Cell
+      initialize: (options) ->
+        super
+      controller: SearchQualityApp.Controller
+      router: SearchQualityApp.Router
+      
+      events:
+        'click a.query': 'handleQueryClick'
+      
+      handleQueryClick: (e) =>
+        e.preventDefault()
+        $(e.target).parents('table').find('tr.selected').removeClass('selected')
+        $(e.target).parents('tr').addClass('selected')
+      
+      render: ->
+        value = @model.get(@column.get('name'))
+        formatted_value = '<span class="pull-right">' +
+          '<a href="http://www.walmart.com/search/search-ng.do?search_query=' +
+          encodeURIComponent(value) + '" target="_blank">' +
+          '<img src="/assets/walmart-transparent.png" class="walmart-icon"></a>' +
+          '</span><a class="query" href="#">' + value + '</a>'
+        @$el.html(formatted_value)
+        @delegateEvents()
+        return this
+    
+    class @QueryCell extends @CADQueryCell
+      events: =>
+        events = that.CADQueryCell.prototype.events
+        events['click a.query-reform'] = 'handleQueryReformulations'
+        events
+        
+      handleQueryReformulations: (e) ->
+        e.preventDefault()
+        QueryCell.__super__.handleQueryClick.apply(this, arguments)
+        query = @model.get(@column.get('name'))
+        that.show_query()
+        segment = (that.router.path? and that.router.path.search) || 'top'
+        feature = (that.router.path? and that.router.path.page) || 'traffic'
+        new_path = "search/#{segment}/page/#{feature}/details/query_reform/" +
+          'query/' + encodeURIComponent(query)
+        that.router.update_path(new_path, trigger: true)
+
       handleQueryClick: (e) ->
         e.preventDefault()
-        Backgrid.CADQueryCell.prototype.handleQueryClick.call(this, e)
+        super(e)
         query = @model.get('query')
         that.show_query()
         segment = (that.router.path? and that.router.path.search) || 'top'
@@ -131,6 +187,21 @@ class Searchad.Views.Base extends Backbone.View
           encodeURIComponent(query)
         that.router.update_path(new_path, trigger: true)
  
+      render: =>
+        value = @model.get(@column.get('name'))
+        if @router.path? and @router.path.page == 'qrr' and @router.path.details != 'query_reform'
+          formatted_value = '<span class="pull-right">' +
+            '<a href="#" class="query-reform">Reform..</a>' +
+            '<a href="http://www.walmart.com/search/search-ng.do?search_query=' +
+            encodeURIComponent(value) + '" target="_blank">' +
+            '<img src="/assets/walmart-transparent.png" class="walmart-icon"></a>' +
+            '</span><a class="query" href="#">' + value + '</a>'
+          @$el.html(formatted_value)
+          @delegateEvents()
+        else
+          super()
+        this
+
     class @PercentFormatter extends Backgrid.NumberFormatter
       fromRaw: (rawValue) ->
         return '-' unless rawValue?
@@ -138,7 +209,6 @@ class Searchad.Views.Base extends Backbone.View
           try
             "#{super(parseFloat(rawValue))}%"
           catch error
-            console.log 'Here it is '
             "#{parseFloat(rawValue).toFixed(2)}%"
         else
           '-'
