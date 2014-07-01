@@ -29,19 +29,24 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
         @carousel.carousel(1).queue(->
           view.controller.set_flight_status(false))
         @carousel.carousel('pause')
-      else if path.details? and path.details == '1'
+      else if path.details? and path.details == 'query_reform'
         @controller.set_flight_status(true)
         @carousel.carousel(3).queue(->
           view.controller.set_flight_status(false))
         @carousel.carousel('pause')
-      else if path.details? and path.details == 'sig_comp'
+      else if path.details? and path.details == '1'
         @controller.set_flight_status(true)
         @carousel.carousel(4).queue(->
           view.controller.set_flight_status(false))
         @carousel.carousel('pause')
+      else if path.details? and path.details == 'sig_comp'
+        @controller.set_flight_status(true)
+        @carousel.carousel(5).queue(->
+          view.controller.set_flight_status(false))
+        @carousel.carousel('pause')
       else if @segment == 'adhoc' and path.query?
         @controller.set_flight_status(true)
-        @carousel.carousel(3).queue(->
+        @carousel.carousel(4).queue(->
           view.controller.set_flight_status(false))
         @carousel.carousel('pause')
       else if path.page? and feature_paths.indexOf(path.page) != -1

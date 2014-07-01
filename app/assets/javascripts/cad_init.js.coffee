@@ -96,6 +96,9 @@ $ ->
     ue_winners_view = new Searchad.Views.UEMetrics(
       el: '#winners')
     
+    query_reform_view = new Searchad.Views.QueryReformulation.Winners(
+      el: '#query-reform')
+    
     #convCorWinnersView = new Searchad.Views.ConvCorrelation.Winners(
     # el: '#winners')
    

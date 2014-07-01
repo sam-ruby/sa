@@ -58,6 +58,18 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
           bc_paths.push(name: segment_name, href: segment_overview_link)
           bc_paths.push(name: metric_name,  href: metric_link)
           bc_paths.push(name: query, active: true)
+        else if metric_id? and parseInt(path.details) == 1 and path.query?
+          query = decodeURIComponent(path.query)
+          bc_paths.push(name: 'Overview of Metrics', href: overview_link)
+          bc_paths.push(name: segment_name, href: segment_overview_link)
+          bc_paths.push(name: metric_name,  href: metric_link)
+          bc_paths.push(name: query, active: true)
+        else if metric_id? and metric_id == 'qrr' and path.details? and path.details == 'query_reform' and path.query?
+          query = decodeURIComponent(path.query)
+          bc_paths.push(name: 'Overview of Metrics', href: overview_link)
+          bc_paths.push(name: segment_name, href: segment_overview_link)
+          bc_paths.push(name: metric_name,  href: metric_link)
+          bc_paths.push(name: query, active: true)
         else if metric_id?
           bc_paths.push(name: 'Overview of Metrics', href: overview_link)
           bc_paths.push(name: segment_name, href: segment_overview_link)

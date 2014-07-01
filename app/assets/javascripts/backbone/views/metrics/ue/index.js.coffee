@@ -20,10 +20,10 @@ class Searchad.Views.UEMetrics extends Searchad.Views.Metrics.Index
         @cleanup()
         @renderTable()
         @get_items() if @dirty
-
     )
 
   grid_cols: =>
+    view = this
     get_col_label = =>
       metric_label = 'Metric Value'
       for metric_db_id, metric_details of Searchad.Views.SummaryMetrics.prototype.metrics_name when metric_details.id == @router.path.page
