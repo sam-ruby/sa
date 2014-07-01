@@ -119,9 +119,24 @@ class Searchad.Views.Base extends Backbone.View
         super(options)
         @$el.css('width', '30%')
 
+    class @MetricCell extends Backgrid.IntegerCell
+      initialize: (options) ->
+        super(options)
+        @percent_cell = new Backgrid.PercentCell(
+          column: @column
+          model: @model)
+      
+      controller: SearchQualityApp.Controller
+      router: SearchQualityApp.Router
+      render: ->
+        if @router.path? and @router.path.page == 'qrr'
+          @percent_cell.render()
+        else
+          super()
+
     class @CADQueryCell extends Backgrid.Cell
       initialize: (options) ->
-        Backgrid.Cell.prototype.initialize.call(this, options)
+        super
       controller: SearchQualityApp.Controller
       router: SearchQualityApp.Router
       
@@ -132,8 +147,6 @@ class Searchad.Views.Base extends Backbone.View
         e.preventDefault()
         $(e.target).parents('table').find('tr.selected').removeClass('selected')
         $(e.target).parents('tr').addClass('selected')
-        # trigger controller function
-        # update path
       
       render: ->
         value = @model.get(@column.get('name'))

@@ -45,7 +45,7 @@ class Searchad.Views.UEMetrics extends Searchad.Views.Metrics.Index
     label: get_col_label,
     editable: false,
     headerCell: @NumericHeaderCell,
-    cell: 'number'},
+    cell: @MetricCell},
     {name: 'c_o_n',
     label: 'Conversion',
     editable: false,
