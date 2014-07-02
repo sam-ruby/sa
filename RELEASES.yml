@@ -1,4 +1,17 @@
 --- # This is a text file to mark the features/bug fixes that went in a Release
+2.2.0:
+    Date: Jul 02, 2014
+    Features:
+      PERSSERANA-660: Compare two Polaris Engine evaluations for opportunities
+      PERSSERANA-662: Enable User Engagement Metrics
+      PERSSERANA-564: Show Reformulated Queries for Query Reformulation Metrics
+      PERSSERANA-656: Enabled Category/Department selection
+      PERSSERANA-656: Enabled Category/Department selection
+    Fixes:
+      PERSSERANA-669: Removed support information for General Metrics
+      PERSSERANA-664: Correct the Opportunity calculation  for User Engagement Metrics
+      PERSSERANA-651: Engine Comparison Improvement
+
 2.1.0:
     Date: Jun 20, 2014
     Features:
