@@ -8,7 +8,8 @@ class Searchad.Views.QueryReformulation extends Searchad.Views.Metrics.Index
         @collection.query = @query = path.query
         @dirty = true
 
-      if path.details == 'query_reform' and path.query? and @dirty
+      if path.details == 'query_reform' and path.query?
+        window.scrollTo(0, 0)
         @cleanup()
         @renderTable()
         @queryStatsCollection.query = @query

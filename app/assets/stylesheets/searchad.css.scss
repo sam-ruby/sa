@@ -1064,9 +1064,9 @@ div.overview-all {
       border-left: 1px solid #ddd;
       color: #777777;
       text-transform: capitalize;
-      cursor: pointer;
     }
     .name {
+      cursor: pointer;
       &:before, &.make-tiny:before {
         content: "+";
         float: right;

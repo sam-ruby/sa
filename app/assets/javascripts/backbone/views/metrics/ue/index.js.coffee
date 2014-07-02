@@ -17,6 +17,7 @@ class Searchad.Views.UEMetrics extends Searchad.Views.Metrics.Index
         @current_metric = @router.path.page
       
       if (path.page in ue_paths) and !path.details?
+        window.scrollTo(0, 0)
         @cleanup()
         @renderTable()
         @get_items() if @dirty

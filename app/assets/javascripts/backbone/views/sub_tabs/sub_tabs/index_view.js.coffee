@@ -31,6 +31,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
         @dirty = true
 
       if parseInt(path.details) == 1 and path.query?
+        window.scrollTo(0, 0)
         return if !@dirty
         if path.search? and (match = path.search.match(/drop_con_(\d+)/))
           weeks_apart = match[1]
@@ -50,6 +51,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
         @queryStatsCollection.get_items()
 
       else if path.search == 'adhoc' and path.query?
+        window.scrollTo(0, 0)
         return if !@dirty
         @data =
           search: true

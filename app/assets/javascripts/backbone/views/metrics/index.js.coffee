@@ -24,6 +24,7 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
         @dirty = true
       if (((feature instanceof Array) and (path.page in feature)) or (
         path.page == feature)) and !path.details?
+        window.scrollTo(0, 0)
         @cleanup()
         @renderTable()
         @get_items() if @dirty
