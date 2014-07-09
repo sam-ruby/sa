@@ -15,7 +15,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     
     @items = []
     @rel_item_template = JST["backbone/templates/rel_items_rec"]
-    Utils.InitExportCsv(this, '/search_rel/get_query_items.csv')
+    Utils.InitExportCsv(this)
     @div_container = $('<div>')
     @div_container.hide()
     @$el.append( @div_container )
@@ -42,7 +42,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
       data =
         date: date
         query: @query
-      @export_csv($(e.target), fileName, data)
+      @export_csv($(e.target), data)
     'click button.do-sig-comp': =>
        if @items.length == 0
          @$el.find('span.sig-comp-msg').fadeIn()

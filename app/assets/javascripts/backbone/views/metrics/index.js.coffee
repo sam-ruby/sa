@@ -62,6 +62,7 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
             winning: false
             page: 1
             per_page: 4000
+            query: @collection.query
           @export_csv($(e.target), data)
     else
       events["click .#{@feature}-oppt-csv a"] = (e) =>
@@ -74,8 +75,8 @@ class Searchad.Views.Metrics.Index extends Searchad.Views.Base
           winning: false
           page: 1
           per_page: 4000
+          query: @collection.query
         @export_csv($(e.target), data)
-
 
     events['click div.show-others a'] =  'show_other_queries'
     events

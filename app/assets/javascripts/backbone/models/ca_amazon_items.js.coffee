@@ -10,7 +10,7 @@ class Searchad.Collections.CAAmazonItemsCollection extends Backbone.PageableColl
     super(options)
 
   model: Searchad.Models.CAAmazonItem
-  url: '/comp_analysis/get_amazon_items.json'
+  url: '/comp_analysis/get_amazon_items'
   state:
     pageSize: 8
   mode: 'client'

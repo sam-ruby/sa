@@ -78,7 +78,10 @@ window.Utils = do ->
         _.template('<span class="' + css_class + ' label label-info export-csv pull-right"><a href="#" id="download-csv-btn"><i class="icon icon-download-alt">&nbsp;</i>Download</a></span>')()
 
     view.export_csv = do (view) ->
-      url = view.collection.url + '.csv'
+      if view.collection.url? and (typeof(view.collection.url) == 'function')
+        url = view.collection.url() + '.csv'
+      else
+        url = view.collection.url + '.csv'
       (el, data) ->
         file_name_suffix = view.router.path.page + '_oppt'
         file_name = "#{file_name_suffix}_#{data.date}.csv"

@@ -2,7 +2,8 @@
 #= require backbone/models/query_reform
 class Searchad.Views.QueryReformulation extends Searchad.Views.Metrics.Index
   initialize: (options) ->
-    super()
+    super('qrr')
+    @stopListening(@router, 'route:search')
     @listenTo(@router, 'route:search', (path, filter) =>
       if @router.date_changed or @router.cat_changed or @router.query_segment_changed or (path.query? and path.query != @query)
         @collection.query = @query = path.query

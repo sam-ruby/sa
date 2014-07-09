@@ -19,8 +19,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
     @controller.bind('sub-content-cleanup', @unrender)
     @start_date_already_changed = false
     @end_date_already_changed = false
-    Utils.InitExportCsv(
-      this, @controller.svc_base_url + '/rel_items/get_top_items')
+    Utils.InitExportCsv(this)
     @div_container = $('<div>')
     @div_container.hide()
     @$el.append( @div_container )
@@ -42,7 +41,7 @@ class Searchad.Views.SubTabs.WalmartItems.IndexView extends Searchad.Views.Base
         fileName = "walmart_search_results_#{query}_#{@data.start_date}- #{@data.end_date}.csv"
       else
         fileName = "walmart_search_results_#{query}_#{@data.date}.csv"
-      @export_csv($(e.target), fileName, @data)
+      @export_csv($(e.target), @data)
     'click a.item-uncheck': 'uncheck_items'
     'click #label-popular-items-over-time ':'popular_items_over_time'
     'click #label-top-32-daily':'top_32_daily'
