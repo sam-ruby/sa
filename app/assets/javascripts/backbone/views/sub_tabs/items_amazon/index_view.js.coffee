@@ -46,7 +46,7 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Searchad.Views.Base
     'click li.not-in-top-32': (e) ->
       e.preventDefault()
       @render_not_in_top_32()
-    'click .export-csv a': (e) ->
+    'click .export-csv a': (e) =>
       query = @query.replace(/\s+/g, '_')
       query = query.replace(/"|'/, '')
       fileName = "competitive_analysis_" + query + ".csv"
@@ -54,7 +54,7 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Searchad.Views.Base
         query: @query
         view: 'daily'
         date: @controller.get_filter_params().date
-      @export_csv($(e.target), fileName, data)
+      @export_csv($(e.target), data)
 
   gridColumns: =>
     class ItemCell extends Backgrid.Cell
@@ -99,6 +99,15 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Searchad.Views.Base
         this.delegateEvents()
         return this
 
+    class WalmartPosition extends Backgrid.IntegerCell
+      render: =>
+        @$el.empty()
+        position = @model.get(@column.get('name'))
+        if !position?
+          @$el.append('<span class="walmart-position">Not in Top 32</span>')
+        else super()
+        this
+
     columns = [{
     name: 'position',
     label: 'Amazon Position'
@@ -111,7 +120,7 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Searchad.Views.Base
     {name: 'walmart_position',
     label: 'Walmart Position'
     editable: false,
-    cell: 'integer'},
+    cell: WalmartPosition},
     {name: 'brand',
     label: I18n.t('dashboard2.brand'),
     editable: false,

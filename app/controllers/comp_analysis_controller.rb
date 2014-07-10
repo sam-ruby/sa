@@ -68,9 +68,12 @@ class CompAnalysisController < BaseController
           query, four_weeks_info)
       end
       format.csv do 
-        results = URLMapping.get_amazon_items(
-          query, four_weeks_info)[:all_items].map do|record|
-            {'Amazon Position' => record.position,
+        results = []
+        URLMapping.get_amazon_items(
+          query, four_weeks_info)[:all_items].each do|record|
+            puts record
+            results.push({
+              'Amazon Position' => record.position,
              'Item Name' => record.name,
              'Amazon Item image URL' => record.img_url,
              'Amazon Item URL' => record.url,
@@ -78,7 +81,7 @@ class CompAnalysisController < BaseController
              'Walmart Position' => record.walmart_position,
              'Brand' => record.brand,
              'Amazon Price' => record.newprice.to_f.round(2),
-             'Walmart Price' => record.curr_item_price.to_f.round(2)}
+             'Walmart Price' => record.curr_item_price.to_f.round(2)})
           end
         render :json => results
       end
