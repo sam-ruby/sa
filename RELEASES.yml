@@ -1,4 +1,14 @@
 --- # This is a text file to mark the features/bug fixes that went in a Release
+2.2.2:
+    Date: Jul 10, 2014
+    Fixes:
+      PERSSERANA-674: Download as CSV for Query Analysis features not working
+
+2.2.1:
+    Date: Jul 07, 2014
+    Fixes:
+      PERSSERANA-686: Download the opportunities as CSV for Metrics not working
+
 2.2.0:
     Date: Jul 02, 2014
     Features:
