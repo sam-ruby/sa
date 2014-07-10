@@ -20,6 +20,7 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
       path? and (@segment = path.search)
       if @segment == 'overview'
         @get_items() if @dirty
+        @controller.send_event('Overall Metrics')
         @controller.set_flight_status(true)
         @carousel.carousel(0).queue(->
           view.controller.set_flight_status(false))

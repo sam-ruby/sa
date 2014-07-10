@@ -16,6 +16,9 @@ class Searchad.Views.SummaryMetrics extends Searchad.Views.Base
         @dirty = true
       if path? and path.page? and path.page.match(/overview/i)
         @get_items()if @dirty
+        segment = @router.path.search
+        segment_name = @segment_lookup[segment].name if segment?
+        @controller.send_event('Summary Metrics', segment_name)
     )
   
   metrics_name:

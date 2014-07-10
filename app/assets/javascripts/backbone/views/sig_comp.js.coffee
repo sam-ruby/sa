@@ -24,6 +24,7 @@ class Searchad.Views.SignalComparison extends Searchad.Views.Base
           items: @items
           engine_url: @engine_url
         )
+        @controller.send_event('Signal Comparison', @query)
     )
     @$el.tooltip(selector: 'a[data-toggle="tooltip"]')
   

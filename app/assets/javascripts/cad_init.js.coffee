@@ -5,6 +5,8 @@ $ ->
     controller = SearchQualityApp.Controller
     controller.set_date(Selected_Date.add(-2).days().toString('M-d-yyyy'))
     controller.set_svc_tier_base_url(SvcTierBaseUrl)
+    controller.set_environment(Environment)
+
     MDW.getLoginStatus((session) ->
       if session
         controller.set_user_id(session.username)

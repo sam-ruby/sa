@@ -19,8 +19,10 @@ class Searchad.Views.EvalMetrics extends Searchad.Views.Metrics.Index
       if (path.page in eval_paths) and !path.details?
         @cleanup()
         @renderTable()
+        for metric, m_details of Searchad.Views.SummaryMetrics.prototype.metrics_name when m_details.id == path.page
+          metric_name = m_details.name
+          @controller.send_event(metric_name, 'Opportunity Load')
         @get_items() if @dirty
-
     )
 
   grid_cols: =>

@@ -82,12 +82,15 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @set_cat_id(filter)
     @path = path
     @filter = filter
+    @controller.send_event('Search', 'usage')
 
   browse:(@task, @sub_task, @task_args) =>
     @set_date_info()
+    @controller.send_event('Browse', 'usage')
   
   catalog:(@task, @sub_task, @task_args) =>
     @set_date_info()
+    @controller.send_event('Category', 'usage')
   
   ab_tests:(@task, @sub_task, @task_args) =>
     @set_date_info()

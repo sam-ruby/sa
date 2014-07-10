@@ -49,6 +49,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
           show_only_series: show_series
         @queryStatsCollection.query = @query
         @queryStatsCollection.get_items()
+        @controller.send_event('Query Analysis', @query)
 
       else if path.search == 'adhoc' and path.query?
         window.scrollTo(0, 0)
@@ -59,6 +60,7 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
         @queryStatsCollection.query = @query
         @queryStatsCollection.get_items()
         $('form.form-search input:text').val(@query)
+        @controller.send_event('Adhoc Search', @query)
     )
     
     $('form.form-search button.search').on('click', (e)=>

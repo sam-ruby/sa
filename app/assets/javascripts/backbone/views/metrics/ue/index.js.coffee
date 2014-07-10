@@ -20,6 +20,9 @@ class Searchad.Views.UEMetrics extends Searchad.Views.Metrics.Index
         window.scrollTo(0, 0)
         @cleanup()
         @renderTable()
+        for metric, m_details of Searchad.Views.SummaryMetrics.prototype.metrics_name when m_details.id == path.page
+          metric_name = m_details.name
+          @controller.send_event(metric_name, 'Opportunity Load')
         @get_items() if @dirty
     )
 

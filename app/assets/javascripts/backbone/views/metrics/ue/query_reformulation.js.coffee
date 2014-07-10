@@ -15,6 +15,7 @@ class Searchad.Views.QueryReformulation extends Searchad.Views.Metrics.Index
         @renderTable()
         @queryStatsCollection.query = @query
         @queryStatsCollection.get_items()
+        @controller.send_event('Query Reformulation', @query)
         @get_items(
           query: @query
         ) if @dirty

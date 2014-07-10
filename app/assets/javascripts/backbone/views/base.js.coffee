@@ -125,12 +125,18 @@ class Searchad.Views.Base extends Backbone.View
         @percent_cell = new Backgrid.PercentCell(
           column: @column
           model: @model)
+        @number_cell = new Backgrid.NumberCell(
+          decimals: 4
+          column: @column
+          model: @model)
       
       controller: SearchQualityApp.Controller
       router: SearchQualityApp.Router
       render: ->
         if @router.path? and @router.path.page == 'qrr'
           @percent_cell.render()
+        else if @router.path? and @router.path.page == 'mrr'
+          @number_cell.render()
         else
           super()
 

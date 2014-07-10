@@ -12,6 +12,7 @@ window.Searchad =
   
 window.SearchQualityApp = do ->
   class Controller
+    black_listed_user_ids: ['svargh1', 'vmartha', 'zwang3', 'ajiang2']
     set_flight_status: (@flight_status) =>
     get_flight_status: =>
       @flight_status
@@ -26,6 +27,7 @@ window.SearchQualityApp = do ->
       for key, value of metrics when value.id == metric_name
         @metrics_name = key
     set_query_segment: (@query_segment) =>
+    set_environment: (@environment) =>
     get_filter_params: =>
       date: @date
       week: @week
@@ -33,6 +35,13 @@ window.SearchQualityApp = do ->
       cat_id: @cat_id
       query_segment: @query_segment
       metrics_name: @metrics_name
+    send_event: (cat, action, label, value) =>
+      return if !window.MDW? or !window.MDW.Analytic? or !@user_id?
+      return if @user_id in @black_listed_user_ids
+      return if @environment == 'development'
+      cad_cat = 'CAD-' + @environment + ':' + @user_id
+      MDW.Analytic.sendEvent(cad_cat, cat, action, label)
+
   controller = new Controller()
   _.extend(controller, Backbone.Events)
   
