@@ -35,12 +35,16 @@ window.SearchQualityApp = do ->
       cat_id: @cat_id
       query_segment: @query_segment
       metrics_name: @metrics_name
-    send_event: (cat, action, label, value) =>
+    send_event: (action, label) =>
       return if !window.MDW? or !window.MDW.Analytic? or !@user_id?
-      return if @user_id in @black_listed_user_ids
-      return if @environment == 'development'
-      cad_cat = 'CAD-' + @environment + ':' + @user_id
-      MDW.Analytic.sendEvent(cad_cat, cat, action, label)
+      #return if @user_id in @black_listed_user_ids
+      #return if @environment == 'development'
+      cat = 'CAD-' + @environment + ':' + @user_id
+      action ||= 'No Action'
+      label ||= ''
+      value = 1
+      console.log cat, action, label, value
+      MDW.Analytic.sendEvent(cat, action, label, value)
 
   controller = new Controller()
   _.extend(controller, Backbone.Events)
