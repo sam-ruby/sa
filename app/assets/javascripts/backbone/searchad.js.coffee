@@ -37,9 +37,9 @@ window.SearchQualityApp = do ->
       metrics_name: @metrics_name
     send_event: (action, label) =>
       return if !window.MDW? or !window.MDW.Analytic? or !@user_id?
-      #return if @user_id in @black_listed_user_ids
-      #return if @environment == 'development'
-      cat = 'CAD-' + @environment + ':' + @user_id
+      return if @user_id in @black_listed_user_ids
+      return if @environment != 'production'
+      cat = 'CAD'
       action ||= 'No Action'
       label ||= ''
       value = 1
