@@ -127,6 +127,9 @@ $ ->
 
     sigCompView = new Searchad.Views.SignalComparison(
       el: '#sig-comp')
+    
+    polCompView = new Searchad.Views.PolarisComparison(
+      el: '#polaris-comp')
 
     ###
     searchKPI = new Searchad.Views.SearchKPI.IndexView(

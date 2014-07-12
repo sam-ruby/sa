@@ -154,6 +154,8 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
       /(\s+)?(active|dropdown)(\s+)?/, '')
     if segment == 'overview'
       @router.update_path("search/#{segment}", trigger: true)
+    else if segment == 'polaris_comp'
+      @router.update_path("search/#{segment}", trigger: true)
     else
       @router.update_path("search/#{segment}/page/overview", trigger: true)
 

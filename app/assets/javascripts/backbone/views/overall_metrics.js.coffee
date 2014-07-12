@@ -25,6 +25,11 @@ class Searchad.Views.OverallMetrics extends Searchad.Views.Base
         @carousel.carousel(0).queue(->
           view.controller.set_flight_status(false))
         @carousel.carousel('pause')
+      else if @segment == 'polaris_comp'
+        @controller.set_flight_status(true)
+        @carousel.carousel(6).queue(->
+          view.controller.set_flight_status(false))
+        @carousel.carousel('pause')
       else if path.page? and path.page == 'overview'
         @controller.set_flight_status(true)
         @carousel.carousel(1).queue(->

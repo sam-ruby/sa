@@ -1474,3 +1474,24 @@ a.query-reform {
   color: red;
   font-style: italic;
 }
+#polaris-comp {
+  .backgrid-paginator {
+    margin-bottom: 0px;
+  }
+}
+
+div.form-submission-results, div.success, div.error {
+  display: none;
+}
+div.form-engine-comp {
+  select, input, button {
+    margin-right: 10px;
+  }
+  span.label {
+    margin-right: 5px;
+  }
+  input.error, select.error {
+    border-color: #b94a48;
+  }
+}
+
