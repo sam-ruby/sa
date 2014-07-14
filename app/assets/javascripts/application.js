@@ -19,6 +19,7 @@
 //= require backgrid-paginator/backgrid-paginator
 //= require lunr
 //= require jade/runtime
+//= require bootstrap-alert
 //= require bootstrap-tooltip
 //= require bootstrap-modal
 //= require bootstrap-popover

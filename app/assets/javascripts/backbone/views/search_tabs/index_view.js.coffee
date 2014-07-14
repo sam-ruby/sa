@@ -12,6 +12,7 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
       @$el.css('display', 'block')
       query_segment = @segment_lookup[path.search]
       bc_paths = []
+      route_class = path.search
       
       if query_segment?
         segment_name = query_segment.name
@@ -22,12 +23,12 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
           route_class = 'poor_perform'
         else if segment_path.match(/trend/)
           route_class = 'trend_2'
-        else
-          route_class = path.search
       
       if route_class? and segment_db_id?
         @toggleTab(@$el.find("li.#{route_class} a"))
         @controller.set_query_segment(segment_db_id)
+      else if route_class?
+        @toggleTab(@$el.find("li.#{route_class} a"))
       else
         @toggleTab(@$el.find("li.overview a"))
 

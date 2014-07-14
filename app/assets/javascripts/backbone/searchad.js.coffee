@@ -21,6 +21,7 @@ window.SearchQualityApp = do ->
     set_date: (@date) =>
     set_cat_id: (@cat_id) =>
     set_user_id: (@user_id) =>
+    set_user_email_address: (@user_email_address) =>
     set_svc_tier_base_url: (@svc_base_url) =>
     set_metrics_name: (metric_name) =>
       metrics = Searchad.Views.SummaryMetrics.prototype.metrics_name

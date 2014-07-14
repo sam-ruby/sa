@@ -5,8 +5,7 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
     @template = JST["backbone/templates/pol_comp"]
     @navBar = JST["backbone/templates/mini_navbar"]
     super()
-    @listenTo(@collection, 'reset', @render)
-    @listenTo(@collection, 'request', @prepare_for_render)
+    #@listenTo(@collection, 'request', @prepare_for_render)
     
     @listenTo(@router, 'route:search', (path, filter) =>
       if path.search == 'polaris_comp'
@@ -23,31 +22,43 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
         url = this.value
         $(e.target).parents('.controls').find('input.engine').val(url)
       )
-    'click button.submit': (e)=>
+    'click form.engine-comp button.submit': (e)=>
       e.preventDefault()
-      @submit_request(e.target.form) if @validate_inputs(e.target.form)
-    'click button.reset': (e)->
+      if @validate_inputs(e.target.form)
+        @submit_request(e.target.form)
+        @get_items()
+        @reset_form(e)
+    'click form.engine-comp button.reset': (e)->
       e.preventDefault()
-      $(e.target.form).find('input.error, select.error').removeClass('error')
-      $(e.target.form).find('select option[value="select_engine"]').attr(
-        'selected', true)
-      @container.find('form.engine-comp input').val('')
-    'click a.go-back-sm': (e) =>
-      query_segment = @router.path.search
-      @router.update_path(
-        "search/#{query_segment}/page/overview", trigger: true)
+      @reset_form(e)
+    'click a.close': (e)=>
+      e.stopPropagation()
+      e.preventDefault()
+      $(e.target).parents('.alert').removeClass(
+        'alert-success').removeClass('alert-error')
+      $(e.target).parents('.alert').toggle('slideup')
+
+
+  reset_form: (e)=>
+    $(e.target.form).find('input.error, select.error').removeClass('error')
+    $(e.target.form).find('select option[value="select_engine"]').attr(
+      'selected', true)
+    @container.find('form.engine-comp input').val('')
 
   submit_request: (form)->
     that = this
+    switch_1 = $(form).find('input.switch')[0].value
+    switch_2 = $(form).find('input.switch')[1].value
+    email = @controller.user_email_address
+    email = email.split('@')[0] if email?
     data =
-      user: @controller.user_email_id
-      engine_1: $(form).find('input.engine')[0].value
-      engine_2: $(form).find('input.engine')[1].value
-      switch_1: $(form).find('input.switch')[0].value
-      switch_2: $(form).find('input.switch')[1].value
-      
+      user: email
+      engine_1:
+        'http://' + $(form).find('input.engine')[0].value + '/search?' + switch_1
+      engine_2: 'http://' + $(form).find('input.engine')[1].value + '/search?' + switch_2
+    
     $.ajax(
-      @controller.svc_base_url + 'engine_stats/post_request',
+      @controller.svc_base_url + '/engine_stats/post_request',
       data: data
       dataType: 'json'
       success: (data, status)->
@@ -71,17 +82,22 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
     flag
   
   show_job_id: (job_id) ->
-    @container.find('div.form-engine-comp').toggle('slideup')
-    @container.find('div.form-submission-results .error-div').hide()
-    @container.find('div.form-submission-results span.job-id').text(job_id)
-    @container.find('div.form-submission-results .success-div').show()
-    @container.find('div.form-submission-results').show()
+    form = @container.find('div.form-submission-results')
+    form.find('.error-div').hide()
+    form.find('span.job-id').text(job_id)
+    form.find('.success-div').show()
+    if !form.hasClass('alert-success')
+      form.addClass('alert-success')
+    form.show()
   
   show_job_error: (error) ->
-    @container.find('div.form-submission-results .success-div').hide()
-    @container.find('div.form-submission-results div.error').text(error)
-    @container.find('div.form-submission-results .error-div').show()
-    @container.find('div.form-submission-results').show()
+    form = @container.find('div.form-submission-results')
+    form.find('.success-div').hide()
+    form.find('span.error').text(error)
+    form.find('.error-div').show()
+    if !form.hasClass('alert-error')
+      form.addClass('alert-error')
+    form.show()
 
   init_render: =>
     @container.append(@navBar(title: 'Submit Request for Polaris Comparison'))
@@ -125,7 +141,25 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
     @delegateEvents()
 
   grid_cols: =>
-    [{name: 'instance_1',
+    class PolarisJobCell extends Backgrid.UriCell
+      render: =>
+        super()
+        return this if !@model.get(@column.get('name'))?
+        @$el.find('a').empty()
+        job_id = @model.get('job_id')
+        @$el.find('a').attr('download', "Job_Results_#{job_id}.csv}")
+        @$el.find('a').append('<i class="icon-download-alt"> Results</i>')
+        this
+
+    [{name: 'created',
+    label: 'Created On',
+    editable: false,
+    cell: 'date'},
+    {name: 'job_id',
+    label: 'Job ID',
+    editable: false,
+    cell: 'integer'},
+    {name: 'instance_1',
     label: 'Polaris 1',
     editable: false,
     headerCell: @QueryHeaderCell,
@@ -145,10 +179,11 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
     {name: 'result',
     label: 'Results',
     editable: false,
-    cell: 'uri'}]
+    cell: PolarisJobCell}]
 
   get_items: (data) ->
     @collection.get_items(data)
+    @collection.getFirstPage()
 
   prepare_for_render: =>
     @$el.children().not('.ajax-loader').remove()

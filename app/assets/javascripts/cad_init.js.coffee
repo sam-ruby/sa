@@ -10,6 +10,7 @@ $ ->
     MDW.getLoginStatus((session) ->
       if session
         controller.set_user_id(session.username)
+        controller.set_user_email_address(session.email)
     )
     # comment out cuz we never select week or year, in CAD we only select dates
     # if we need what week or year it is, there is a function in backend to process that

@@ -1,3 +1,14 @@
+.form-submission-results.alert
+  a.close(href="#")
+    &times;
+  .success-div
+    h4 Job Requested Successfully!
+      span.succes &nbsp;ID is &nbsp;
+      span.job-id
+  .error-div
+    h4 Please try again! &nbsp;
+      span.error
+
 .form-engine-comp
   form.form-horizontal.engine-comp(role="form", method="get")
     .control-group
@@ -26,15 +37,4 @@
         button.btn.btn-default.reset(type="reset") Reset
 
 
-.form-submission-results
-  .success-div
-    h3 Job successfully scheduled
-    .succes
-      Job ID is 
-      span.job-id
-    .another
-      a(href="#") Submit Another Job
-  .error-div
-    h3 There was an error submitting the Job. Please try again
-    .error
 
