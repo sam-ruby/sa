@@ -1,0 +1,40 @@
+.form-engine-comp
+  form.form-horizontal.engine-comp(role="form", method="get")
+    .control-group
+      label.control-label Polaris 1
+      .controls
+        select.engine-names
+          option(value='select_engine') Select an Engine
+        span.label URL
+        input.engine(type="text", placeholder="URL for Polaris Engine 1")
+        span.label Switch
+        input.switch(type="text", placeholder="switch_name:off")
+    
+    .control-group
+      label.control-label(for="engine_2) Polaris 2 
+      .controls
+        select.engine-names
+          option(value='select_engine') Select an Engine
+        span.label URL
+        input.engine(type="text", placeholder="URL for Polaris Engine 2")
+        span.label Switch
+        input.switch(type="text", placeholder="switch_name:on")
+    
+    .control-group
+      .controls
+        button.btn.btn-default.submit(type="submit") Submit
+        button.btn.btn-default.reset(type="reset") Reset
+
+
+.form-submission-results
+  .success-div
+    h3 Job successfully scheduled
+    .succes
+      Job ID is 
+      span.job-id
+    .another
+      a(href="#") Submit Another Job
+  .error-div
+    h3 There was an error submitting the Job. Please try again
+    .error
+
