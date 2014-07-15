@@ -10,7 +10,7 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Searchad.Views.Base
     class @AmazonCollection extends Backbone.PageableCollection
       mode: 'client'
       state:
-        pageSize: 10
+        pageSize: 32
     @amazonCollection = new @AmazonCollection()
     super()
     @collection.bind('reset', @process_all_items)
