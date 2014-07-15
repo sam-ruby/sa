@@ -5,47 +5,55 @@ Searchad.Views.SubTabs.AmazonItems ||= {}
 
 class Searchad.Views.SubTabs.AmazonItems.IndexView extends Searchad.Views.Base
   initialize: (options) =>
+    @$el.hide()
     @collection = new Searchad.Collections.CAAmazonItemsCollection()
+    class @AmazonCollection extends Backbone.PageableCollection
+      mode: 'client'
+      state:
+        pageSize: 10
+    @amazonCollection = new @AmazonCollection()
     super()
-    @collection.bind('reset', @render_all_items)
+    @collection.bind('reset', @process_all_items)
     @collection.bind('reset', (collection) =>
       that = this
+      that.controller.trigger('search:sub-content:hide-spin')
       if collection.at(0).get('all_items').length > 0
         that.controller.trigger('search:amazon-items:stats',
           query: that.query
           collection: collection)
     )
+
     @collection.bind('request', =>
-      @$el.children().not('ul').remove()
-      @$el.hide()
+      @$el.show()
+      @delegateEvents()
       @controller.trigger('search:sub-content:show-spin')
-      @undelegateEvents()
     )
 
     @query = ''
     
-    @controller.bind('search:amazon-items:in-top-32', @render_in_top_32)
+    @controller.bind('search:amazon-items:in-top-32', @process_in_top_32)
     @controller.bind(
-      'search:amazon-items:not-in-top-32', @render_not_in_top_32)
+      'search:amazon-items:not-in-top-32', @process_not_in_top_32)
     @controller.bind('date-changed', =>
       @get_items() if @active)
-
     @controller.bind('content-cleanup', @unrender)
     @controller.bind('sub-content-cleanup', @unrender)
+    
     Utils.InitExportCsv(this, "/comp_analysis/get_amazon_items.csv")
+    @init_table()
     @undelegateEvents()
     @active = false
  
   events: =>
     'click li.all-items': (e) ->
       e.preventDefault()
-      @render_all_items()
+      @process_all_items()
     'click li.in-top-32': (e) ->
       e.preventDefault()
-      @render_in_top_32()
+      @process_in_top_32()
     'click li.not-in-top-32': (e) ->
       e.preventDefault()
-      @render_not_in_top_32()
+      @process_not_in_top_32()
     'click .export-csv a': (e) =>
       query = @query.replace(/\s+/g, '_')
       query = query.replace(/"|'/, '')
@@ -81,19 +89,28 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Searchad.Views.Base
       render: =>
         @$el.empty()
         amazon_price = @model.get("newprice")
+        walmart_item_id = @model.get('item_id')
         walmart_price = @model.get("curr_item_price")
         walmart_price = walmart_price.toFixed(2) if walmart_price
         price_string = ""
       
+        walmart_item_link = '<span class="pull-right">' +
+          '<a href="http://www.walmart.com/ip/' +
+          walmart_item_id + '" target="_blank">' +
+          '<img src="/assets/walmart-transparent.png" class="walmart-icon"></a>' +
+          '</span>'
+
         if walmart_price == null
           price_string =
-            "<div class='walmart_price not_carried'>Not Carried</div>"
+            "<span class='walmart_price not_carried'>Not Carried</span>"
         else if walmart_price > amazon_price
-          price_string = "<div class='walmart_price more_expensive'>$" +
-            walmart_price+' (More Expensive)'+"</div>"
+          price_string = walmart_item_link +
+            "<span class='walmart_price more_expensive'>$" +
+            walmart_price+' (More Expensive)'+"</span>"
         else
-          price_string = "<div class='walmart_price less_expensive'>$" +
-            walmart_price+"</div>"
+          price_string = walmart_item_link +
+            "<span class='walmart_price less_expensive'>$" +
+            walmart_price+"</span>"
 
         @$el.html(price_string)
         this.delegateEvents()
@@ -114,22 +131,22 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Searchad.Views.Base
     editable: false,
     cell: 'integer'},
     {name: 'name',
-    label: I18n.t('dashboard.item'),
+    label: 'Amazon Item',
     editable: false,
     cell: ItemCell},
-    {name: 'walmart_position',
-    label: 'Walmart Position'
-    editable: false,
-    cell: WalmartPosition},
-    {name: 'brand',
-    label: I18n.t('dashboard2.brand'),
-    editable: false,
-    cell: 'string'},
     {name: "newprice",
     label: "Amazon Price",
     editable: false,
     cell: "number",
     formatter: Utils.CurrencyFormatter},
+    {name: 'brand',
+    label: I18n.t('dashboard2.brand'),
+    editable: false,
+    cell: 'string'},
+    {name: 'walmart_position',
+    label: 'Walmart Position'
+    editable: false,
+    cell: WalmartPosition},
     {name: "curr_item_price",
     editable: false,
     label: "Walmart Price",
@@ -137,19 +154,17 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Searchad.Views.Base
     
     columns
 
-  initTable: =>
+  init_table: =>
     @grid = new Backgrid.Grid(
       columns: @gridColumns()
       collection: @amazonCollection
       emptyText: 'No Data'
     )
-    @paginator = new Backgrid.Extension.Paginator(
-      collection: @amazonCollection
-    )
-   
+    @$el.append( @grid.render().$el)
+    @$el.append( @export_csv_button() )
+
   unrender: =>
     @active = false
-    @$el.children().not('ul').remove()
     @$el.hide()
     @controller.trigger('search:sub-content:hide-spin')
     @undelegateEvents()
@@ -160,39 +175,21 @@ class Searchad.Views.SubTabs.AmazonItems.IndexView extends Searchad.Views.Base
     @controller.trigger('search:sub-content:show-spin')
     @collection.get_items(data)
 
-  processData: (data) =>
-    @amazonCollection =
-      new Searchad.Collections.PoorPerfAmazonItemsCollection(data)
-    @initTable()
-    @amazonCollection.bind('reset', @render)
-    @$el.children().not('ul').remove()
-    @controller.trigger('search:sub-content:hide-spin')
-    @render()
-
-  render: =>
-    return unless @active
-    @$el.show()
-    @$el.append( @grid.render().$el)
-    @$el.append( @paginator.render().$el)
-    @$el.append( @export_csv_button() )
-    @delegateEvents()
-    this
-
-  render_all_items: =>
+  process_all_items: =>
     @controller.trigger('search:sub-content:hide-spin')
     @$el.find('li.active').removeClass('active')
     @$el.find('li.all-items').addClass('active')
     data = @collection.at(0).get('all_items')
-    @processData(_.clone(data))
+    @amazonCollection.reset(_.clone(data))
 
-  render_in_top_32: =>
+  process_in_top_32: =>
     @$el.find('li.active').removeClass('active')
     @$el.find('li.in-top-32').addClass('active')
     data = @collection.at(0).get('in_top_32')
-    @processData(_.clone(data))
+    @amazonCollection.reset(_.clone(data))
 
-  render_not_in_top_32: =>
+  process_not_in_top_32: =>
     @$el.find('li.active').removeClass('active')
     @$el.find('li.not-in-top-32').addClass('active')
     data = @collection.at(0).get('not_in_top_32')
-    @processData(_.clone(data))
+    @amazonCollection.reset(_.clone(data))

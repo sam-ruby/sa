@@ -160,6 +160,9 @@ class Searchad.Views.Base extends Backbone.View
           '<a href="http://www.walmart.com/search/search-ng.do?search_query=' +
           encodeURIComponent(value) + '" target="_blank">' +
           '<img src="/assets/walmart-transparent.png" class="walmart-icon"></a>' +
+          '<a href="http://www.amazon.com/s?url=search-alias%3Daps&field-keywords=' +
+          encodeURIComponent(value) + '" target="_blank">' +
+          '<img src="/assets/amazon-icon.jpeg" class="amazon-icon"></a>' +
           '</span><a class="query" href="#">' + value + '</a>'
         @$el.html(formatted_value)
         @delegateEvents()
@@ -201,6 +204,9 @@ class Searchad.Views.Base extends Backbone.View
             '<a href="http://www.walmart.com/search/search-ng.do?search_query=' +
             encodeURIComponent(value) + '" target="_blank">' +
             '<img src="/assets/walmart-transparent.png" class="walmart-icon"></a>' +
+            '<a href="http://www.amazon.com/s?url=search-alias%3Daps&field-keywords=' +
+            encodeURIComponent(value) + '" target="_blank">' +
+            '<img src="/assets/amazon-icon.jpeg" class="amazon-icon"></a>' +
             '</span><a class="query" href="#">' + value + '</a>'
           @$el.html(formatted_value)
           @delegateEvents()

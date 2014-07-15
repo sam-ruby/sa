@@ -1299,10 +1299,13 @@ form.item-selection, form.walmart-items-form {
     font-size: 18px;
   }
 }
-.walmart-icon {
-  width: 21px;
-  height: 21px;
+.walmart-icon, .amazon-icon {
+  width: 24px;
+  height: 24px;
   margin-top: -3px;
+}
+.amazon-icon {
+  padding-left: 5px;
 }
 table.query-stats {
   margin-bottom: 30px;
