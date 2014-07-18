@@ -78,16 +78,22 @@ class Searchad.Views.SubTabs.IndexView extends Backbone.View
     metric = {}  if !metric?
     metric.query = @query
     @$el.append(@query_stats_template(
+      router: @router
       metric: metric))
     @dirty = false
     @render() if metric?
 
-  events:
+  events: =>
     'click li.search-stats-tab': 'stats'
     'click li.search-amazon-items-tab': 'amazon_items'
     'click li.search-walmart-items-tab': 'walmart_items'
     'click li.rev-rel-tab': 'rev_rel'
     'click li.cvr-dropped-item-comparison-tab': 'show_cvr_dropped_item_comparison'
+    'click a.query-stats': (e)=>
+      e.preventDefault()
+      href = $(e.target).attr('href')
+      @router.update_path(href, trigger: true)
+
 
   template: JST['backbone/templates/poor_performing/search_sub_tabs']
 

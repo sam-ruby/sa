@@ -62,4 +62,5 @@ class Searchad.Views.QueryReformulation.Winners extends Searchad.Views.QueryRefo
     metric = {}  if !metric?
     metric.query = @query
     @$el.prepend(@query_stats_template(
+      router: @router
       metric: metric))

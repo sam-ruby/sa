@@ -1,6 +1,12 @@
 - var intFormatter = new Backgrid.NumberFormatter({decimals: 0})
-- var intFormatterDefault = new Backgrid.NumberFormatter()
-- var pcFormat = function (value) { if (value ===null) return '-'; else return intFormatterDefault.fromRaw(value) + '%';}
+- var intFormatterDefault = new Backgrid.NumberFormatter({decimals: 4})
+- var intFormatterPc = new Backgrid.NumberFormatter({decimals: 2})
+- var pcFormat = function (value) { if (value ===null) return '-'; else return intFormatterPc.fromRaw(value) + '%';}
+
+- var segment = (router.path && router.path.search) || 'top'
+- var feature = (router.path && router.path.page) || 'traffic'
+- var new_path = '#search/' + segment + '/page/' + feature + '/details/query_reform/query/' + encodeURIComponent(metric.query)
+
 div.query-info
   span Daily Query Stats for :&nbsp;
   span.query-value
@@ -50,8 +56,9 @@ table.table.table-condensed.query-stats
       tr
         td.name Percentage of Traffic Reformulated
         td.value
-          if metric.QRR 
-            = intFormatterDefault.fromRaw(metric.QRR) + '%'
+          if metric.QRR
+            a.query-stats(href=new_path)
+              = pcFormat(metric.QRR)
           else
             | 'No Data'
         td.spacer
