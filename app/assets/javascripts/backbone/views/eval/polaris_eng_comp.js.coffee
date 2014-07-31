@@ -174,12 +174,14 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
     
     $.ajax(
       dataType: 'json'
-      url: @controller.svc_base_url + '/labels/get_label_list'
+      data:
+        date: @controller.date
+      url: @controller.svc_base_url + '/labels/get_query_sets'
       success: (data) =>
         that.container.find('select.query-sample').empty()
         for label in data
           @container.find('select.query-sample').append(
-            $("<option value='#{label.label}'>#{label.label}</option>"))
+            $("<option value='#{label.segmentation}'>#{label.segmentation}</option>"))
       error: =>
         that.container.find('select.query-sample').empty()
         @container.find('select.query-sample').append(

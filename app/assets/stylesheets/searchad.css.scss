@@ -1498,6 +1498,9 @@ div.form-engine-comp {
   select, input, button {
     margin-right: 10px;
   }
+  select[multiple] {
+    height: 250px;
+  }
   span.label {
     margin-right: 5px;
   }
