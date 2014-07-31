@@ -160,14 +160,17 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
 
     class MyIntegerCell extends Backgrid.IntegerCell
       render: =>
-        if parseInt(@model.get('in_top_16')) == 1
-          val = @model.get(@column.get('name'))
-          if val > 0
-            @$el.html('<span class="badge badge-success green-order">' +
-              val + '</span>')
-          else
-            @$el.html('<span class="badge badge-warning red-order">' +
-              val + '</span>')
+        in_store = (@model.get('is_SOI') == 1)
+        in_top_16 = parseInt(@model.get('in_top_16')) == 1
+        val = @model.get(@column.get('name'))
+        if in_store
+          @$el.html('<span class="badge">In Store</span>')
+        else if (in_top_16 and val > 0)
+          @$el.html('<span class="badge badge-success green-order">' +
+            val + '</span>')
+        else if in_top_16
+          @$el.html('<span class="badge badge-warning red-order">' +
+            val + '</span>')
         else
           super()
         this
@@ -177,10 +180,10 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
         @$el.addClass('recom-item-position')
         if @model.get('in_top_16') == 1
           super()
-          this
         else
-          @$el.html('<span class="label label-important">Recommended Item</span>')
-          this
+          @$el.html(
+            '<span class="label label-important">Recommended Item</span>')
+        this
 
     class OrdersHeaderCell extends @NumericHeaderCell
       events:

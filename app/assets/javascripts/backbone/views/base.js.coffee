@@ -229,19 +229,21 @@ class Searchad.Views.Base extends Backbone.View
       formatter: Utils.CustomNumberFormatter
       render: =>
         @$el.empty()
+        in_store = (@model.get('is_SOI') == 1)
         val = parseFloat(@model.get(@column.get('name')))
         if !val? or isNaN(val)
           @$el.html('--')
-          return this
-       
-        val_formatted = this.formatter.fromRaw(val)
-        if val > 90
-          class_name = 'badge-important'
-          el = $(
-            "<span class='badge #{class_name}'>#{val_formatted}%</span>")
         else
-          el = $("<span>#{val_formatted}%</span>")
-        @$el.append(el)
+          val_formatted = this.formatter.fromRaw(val)
+          if in_store
+            el = $('<span class="badge">In Store</span>')
+          else if val > 90
+            class_name = 'badge-important'
+            el = $(
+              "<span class='badge #{class_name}'>#{val_formatted}%</span>")
+          else
+            el = $("<span>#{val_formatted}%</span>")
+          @$el.append(el)
         this
 
     class @CadIntFormatter extends Backgrid.NumberFormatter
