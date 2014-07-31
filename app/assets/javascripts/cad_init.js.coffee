@@ -32,13 +32,17 @@ $ ->
     topTabsView = new Searchad.Views.TopTabs.IndexView(
       el: '#top-bar')
     
-    searchTabsView = new Searchad.Views.SearchTabs.IndexView( el: '#search-bar')
+    searchTabsView = new Searchad.Views.SearchTabs.IndexView(
+      el: '#search-bar')
 
     browseTabsView = new Searchad.Views.BrowseTabs.IndexView(
       el: '#browse-bar')
     
     categoryTabsView = new Searchad.Views.CategoryTabs.IndexView(
       el: '#category-bar')
+    
+    evalTabsView = new Searchad.Views.EvalTabs.IndexView(
+      el: '#eval-bar')
 
     ###
     masterTabView = new Searchad.Views.MasterTab.IndexView(
@@ -130,7 +134,10 @@ $ ->
       el: '#sig-comp')
     
     polCompView = new Searchad.Views.PolarisComparison(
-      el: '#polaris-comp')
+      el: '#pol-eng-comp')
+    
+    querySampleView = new Searchad.Views.QuerySample(
+      el: '#query-samp')
 
     ###
     searchKPI = new Searchad.Views.SearchKPI.IndexView(

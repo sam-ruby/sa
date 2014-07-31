@@ -1,20 +1,36 @@
 #= require backbone/views/base
 class Searchad.Views.PolarisComparison extends Searchad.Views.Base
   initialize: (feature) ->
-    @collection = new Searchad.Collections.PolarisComparisonJobs()
+    @recent_requests = new Searchad.Collections.PolarisComp.RecentRequests()
     @template = JST["backbone/templates/pol_comp"]
     @navBar = JST["backbone/templates/mini_navbar"]
     super()
-    #@listenTo(@collection, 'request', @prepare_for_render)
     
-    @listenTo(@router, 'route:search', (path, filter) =>
-      if path.search == 'polaris_comp'
-        @get_items(user_id: @controller.user_id)
-        @controller.send_event('Polaris Comparison', 'Form Display')
+    @carousel = @$el.parents('.carousel.slide')
+    @listenTo(@router, 'route:eval', (path, filter) =>
+      view = this
+      if @router.date_changed or @router.cat_changed or @router.eval_inited
+        @dirty = true
+
+      if path.eval == 'pol_eng_comp'
+        @controller.set_flight_status(true)
+        @carousel.carousel(0).queue(->
+          view.controller.set_flight_status(false))
+        @carousel.carousel('pause')
+        @controller.send_event('Polaris Engine Comparison', 'Form Display')
+        
+        window.scrollTo(0, 0)
         @render()
+        @get_items(user_id: @controller.user_id) if @dirty
+      else if path.eval = 'query_samp'
+        @controller.set_flight_status(true)
+        @carousel.carousel(1).queue(->
+          view.controller.set_flight_status(false))
+        @carousel.carousel('pause')
     )
     @container = $("<div>")
     @init_render()
+    @listenTo(@recent_requests, 'request', @prepare_for_render)
   
   events: =>
     'change select.engine-names': (e) =>
@@ -37,26 +53,40 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
       $(e.target).parents('.alert').removeClass(
         'alert-success').removeClass('alert-error')
       $(e.target).parents('.alert').toggle('slideup')
-
+    'click .sub-tabs li a': (e) =>
+      e.preventDefault()
+      $(e.target).parents('ul').find('li').removeClass('active')
+      css_class = $(e.target).parents('li').attr('class')
+      if css_class
+        feature = css_class.split('-tab')[0]
+        @switch_sub_tab_content(feature)
+        $(e.target).parents('li').addClass('active')
 
   reset_form: (e)=>
-    $(e.target.form).find('input.error, select.error').removeClass('error')
+    $(e.target.form).find(
+      '.control-group.error, input.error, select.error').removeClass('error')
     $(e.target.form).find('select option[value="select_engine"]').attr(
       'selected', true)
+    $(e.target.form).find('select.query-sample option:selected').attr(
+      'selected', false)
     @container.find('form.engine-comp input').val('')
 
   submit_request: (form)->
     that = this
     switch_1 = $(form).find('input.switch')[0].value
     switch_2 = $(form).find('input.switch')[1].value
+    label = $(form).find('select.query-sample').val()
+    label = label.join(';') if label
     email = @controller.user_email_address
     email = email.split('@')[0] if email?
     data =
       user: email
       engine_1:
         'http://' + $(form).find('input.engine')[0].value + '/search?' + switch_1
-      engine_2: 'http://' + $(form).find('input.engine')[1].value + '/search?' + switch_2
-    
+      engine_2:
+        'http://' + $(form).find('input.engine')[1].value + '/search?' + switch_2
+      query_mix: label
+
     $.ajax(
       @controller.svc_base_url + '/engine_stats/post_request',
       data: data
@@ -68,17 +98,21 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
       error: (jqXhr, status) ->
        that.show_job_error(status)
     )
-  
+    
   validate_inputs: (form)->
     flag = true
     that = this
-    $(form).find('input.error, select.error').removeClass('error')
+    $(form).find('.control-group.error, input.error, select.error').removeClass('error')
     $(form).find('input[type="text"].engine').each(->
       if this.value == ''
         flag = false
         $(this).parents('.controls').find('select').addClass('error')
         $(this).addClass('error')
     )
+    query_sample_select = $(form).find('select.query-sample')
+    if query_sample_select.val() and query_sample_select.val().length > 3
+      query_sample_select.parents('.control-group').addClass('error')
+      flag = false
     flag
   
   show_job_id: (job_id) ->
@@ -98,25 +132,26 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
     if !form.hasClass('alert-error')
       form.addClass('alert-error')
     form.show()
-
+    
   init_render: =>
-    @container.append(@navBar(title: 'Submit Request for Polaris Comparison'))
+    @container.append(@navBar(
+      title: 'Submit Request for Polaris Comparison'))
     @container.append(@template())
 
+    @container.append(@navBar(
+      title: 'Recent Requests'))
     cols = @grid_cols()
     @grid = new Backgrid.Grid(
       columns: cols
-      collection: @collection
+      collection: @recent_requests
       emptyText: 'No Data'
       className: 'winners-grid'
     )
     @paginator = new Backgrid.Extension.Paginator(
-      collection: @collection
+      collection: @recent_requests
     )
-    @container.append(@navBar(title: 'Recent Requests'))
     @container.append( @grid.render().$el )
     @container.append( @paginator.render().$el )
-    this
 
   render: =>
     that = this
@@ -134,6 +169,21 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
         that.container.find('select.engine-names').empty()
         @container.find('select.engine-names').append(
           $("<option value='select_engine'>Error! List Not Available</option>"))
+
+    )
+    
+    $.ajax(
+      dataType: 'json'
+      url: @controller.svc_base_url + '/labels/get_label_list'
+      success: (data) =>
+        that.container.find('select.query-sample').empty()
+        for label in data
+          @container.find('select.query-sample').append(
+            $("<option value='#{label.label}'>#{label.label}</option>"))
+      error: =>
+        that.container.find('select.query-sample').empty()
+        @container.find('select.query-sample').append(
+          $("<option value='select_query_sample'>Error! List Not Available</option>"))
 
     )
 
@@ -182,9 +232,12 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
     cell: PolarisJobCell}]
 
   get_items: (data) ->
-    @collection.get_items(data)
-    @collection.getFirstPage()
+    @recent_requests.get_items(data)
 
   prepare_for_render: =>
-    @$el.children().not('.ajax-loader').remove()
-    @$el.find('.ajax-loader').css('display', 'block')
+    @container.find('table tbody tr:first-child').empty()
+    td = document.createElement("td")
+    td.setAttribute("colspan", @grid.columns.length)
+    $(td).append($('<img class="ajax-loader-table" src="/assets/ajax_loader.gif"/>'))
+    @container.find('table tbody tr:first-child').append(td)
+

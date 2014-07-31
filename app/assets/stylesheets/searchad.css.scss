@@ -19,6 +19,14 @@ a.subcat:hover {
   margin-right: 50% !important;
   margin-left: 50% !important;
 }
+.ajax-loader-table {
+  z-index: 1;
+  display: block;
+  margin-right: 50% !important;
+  margin-left: 50% !important;
+  height: 40px;
+}
+
 #summary-metrics, .tab-holder, .winners {
   .ajax-loader {
     top: 7em;
@@ -1284,7 +1292,7 @@ form.item-selection, form.walmart-items-form {
     margin-top: 10px;
   }
 }
-#search-bar .search-navbar {
+#search-bar .search-navbar, #eval-bar .eval-navbar {
   .form-search {
     margin: 5px 0 0 0;
   }
@@ -1477,13 +1485,13 @@ a.query-reform {
   color: red;
   font-style: italic;
 }
-#polaris-comp {
+#pol-eng-comp, #query-samp {
   .backgrid-paginator {
     margin-bottom: 0px;
   }
 }
 
-div.form-submission-results, div.success, div.error {
+div.form-submission-results, .success-div, .error-div {
   display: none;
 }
 div.form-engine-comp {
@@ -1497,7 +1505,16 @@ div.form-engine-comp {
     border-color: #b94a48;
   }
 }
+div.form-query-label {
+  button {
+    margin-right: 10px;
+  }
+}
+
 a.query-stats {
   text-decoration: underline;
+}
+.form-submission-query-label {
+  display: none;
 }
 

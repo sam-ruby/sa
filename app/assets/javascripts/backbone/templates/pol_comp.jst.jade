@@ -32,9 +32,14 @@
         input.switch(type="text", placeholder="switches=switch_name:on")
     
     .control-group
+      label.control-label(for="query_set) Query Sample
+        br
+        span.label-select-help (Upto 3 Samples)
+      .controls
+        select.query-sample(multiple="multiple")
+          option(value='select_query_sample') Select a Query Sample
+
+    .control-group
       .controls
         button.btn.btn-default.submit(type="submit") Submit
         button.btn.btn-default.reset(type="reset") Reset
-
-
-

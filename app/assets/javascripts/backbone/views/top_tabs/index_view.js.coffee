@@ -17,6 +17,8 @@ class Searchad.Views.TopTabs.IndexView extends Backbone.View
         @toggleTab(@$el.find('.category-tab a'))
       else if route == 'ab_tests'
         @toggleTab(@$el.find('.ab-tests-tab a'))
+      else if route == 'eval'
+        @toggleTab(@$el.find('.eval-tab a'))
     )
 
   replace_login: (e) =>

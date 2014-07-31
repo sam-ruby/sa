@@ -10,6 +10,9 @@
   
   #category-bar{style: 'display:none'}
     = render 'shared/query_sub_tabs'
+  
+  #eval-bar{style: 'display:none'}
+    = render 'shared/eval_sub_tabs'
 
 - content_for :main_content do
   = javascript_include_tag :application

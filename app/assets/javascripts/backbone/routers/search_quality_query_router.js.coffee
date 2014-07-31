@@ -6,6 +6,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     "browse(/:task)(/:sub_task)(/*args)": "browse"
     "category(/:task)(/:sub_task)(/*args)": "category"
     "ab-tests(/:task)(/:sub_task)(/*args)": "ab_tests"
+    "eval(/*args)": "eval"
     "(:search)(/*args)": "search"
     "search_rel(/query/:query)(/filters/*wday)": "search_rel"
     "search_rel/item_id/:id(/filters/*wday)": "search_query_items"
@@ -63,7 +64,7 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     filter_parts = if filter_parts? then get_parts(filter_parts) else {}
     [path_parts, filter_parts]
 
-  search:(path, filter) =>
+  search: (path, filter) =>
     path.search ||= 'overview'
     if typeof @search_inited == 'undefined'
       @search_inited = true
@@ -83,6 +84,19 @@ class Searchad.Routers.SearchQualityQuery extends Backbone.Router
     @path = path
     @filter = filter
     @controller.send_event('Search', 'usage')
+
+  eval: (path, filter) =>
+    path.eval ||= 'pol_eng_comp'
+    if typeof @eval_inited == 'undefined'
+      @eval_inited = true
+    else
+      @eval_inited = false
+
+    @set_date_info(filter)
+    @set_cat_id(filter)
+    @path = path
+    @filter = filter
+    @controller.send_event('Eval', 'usage')
 
   browse:(@task, @sub_task, @task_args) =>
     @set_date_info()

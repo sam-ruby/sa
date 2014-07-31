@@ -1,0 +1,18 @@
+.navbar.eval-navbar{style: 'margin-bottom:1em'}
+  .navbar-inner
+    %ul#top-nav.nav
+      %li.active.pol_eng_comp
+        %a{:href=>'#eval/pol_eng_comp'} 
+          %span
+            Polaris Engine Comparison
+
+      %li.query_samp
+        %a{:href=>'#eval/query_samp'} 
+          %span
+            Query Sampling
+
+    %form.form-search.pull-right
+      .input-append
+        %input.span2.search-query{type: :text}
+        %button.btn.search{type: :submit}
+          Search

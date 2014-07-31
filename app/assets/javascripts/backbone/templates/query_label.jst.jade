@@ -1,0 +1,35 @@
+.form-submission-query-label.alert
+  a.close(href="#")
+    &times;
+  .success-div
+    h4 
+      span.label-text
+      span &nbsp; Uploaded Successfully!
+  .error-div
+    h4 
+      span.label-text
+      span &nbsp;
+      span.error
+      |&nbsp;Please try a different label
+
+.form-query-label
+  form.form-horizontal.query-label(role="form", method="post",
+    enctype="multipart/form-data")
+    .control-group
+      label.control-label CSV File with Queries
+      .controls
+        input.file(type="file", name="query_file", 
+          placeholder="Upload CSV file having Queries")
+
+    .control-group
+      label.control-label Unique 10 char Name
+      .controls
+        input.name(type="text", name="label", 
+          placeholder="Please provide a unique label")
+    
+    .control-group
+      .controls
+        button.btn.btn-default.upload(type="submit") Upload
+        button.btn.btn-default.reset(type="reset") Reset
+    
+    input.user(type="hidden", name="user", value=user)

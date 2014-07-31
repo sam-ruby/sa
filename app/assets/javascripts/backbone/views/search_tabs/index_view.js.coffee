@@ -8,8 +8,14 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
       'ul.search li a', 'click', (e)=>
         @page_nav(e))
     
+    @listenTo(@router, 'route', (route, params) =>
+      @unrender() if route != 'search'
+    )
+    
     @listenTo(@router, 'route:search', (path, filter) =>
       @$el.css('display', 'block')
+      $('#search').css('display', 'block')
+      window.scrollTo(0, 0)
       query_segment = @segment_lookup[path.search]
       bc_paths = []
       route_class = path.search
@@ -143,6 +149,7 @@ class Searchad.Views.SearchTabs.IndexView extends Backbone.View
 
   unrender: =>
     @$el.hide()
+    $('#search').hide()
   
   page_nav: (e) =>
     e.preventDefault()
