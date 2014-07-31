@@ -53,14 +53,6 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
       $(e.target).parents('.alert').removeClass(
         'alert-success').removeClass('alert-error')
       $(e.target).parents('.alert').toggle('slideup')
-    'click .sub-tabs li a': (e) =>
-      e.preventDefault()
-      $(e.target).parents('ul').find('li').removeClass('active')
-      css_class = $(e.target).parents('li').attr('class')
-      if css_class
-        feature = css_class.split('-tab')[0]
-        @switch_sub_tab_content(feature)
-        $(e.target).parents('li').addClass('active')
 
   reset_form: (e)=>
     $(e.target.form).find(
