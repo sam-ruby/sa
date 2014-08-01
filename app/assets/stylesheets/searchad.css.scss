@@ -1520,4 +1520,41 @@ a.query-stats {
 .form-submission-query-label {
   display: none;
 }
-
+.help-text-block {
+  display: inline-block;
+  vertical-align: top;
+  max-width: 520px;
+  .help-text-contents {
+    display: none;
+  }
+  .link-control {
+    margin-bottom: 15px;
+    a {
+      &:after {
+        content: "Show Query Set Description";
+      }
+    }
+    a.hd-text {
+      &:after {
+        content: "Hide Query Set Description";
+      }
+    }
+    a {
+      text-decoration: underline;
+    }
+  }
+  .query-set {
+    display: block;
+    margin-bottom: 10px;
+    .title {
+      font-weight: bold;
+      &:after {
+        content: ":";
+        padding-right: 10px;
+      }
+    }
+    .body {
+      font-weight: normal;
+    }
+  }
+}

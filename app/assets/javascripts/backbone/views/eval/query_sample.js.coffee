@@ -15,7 +15,7 @@ class Searchad.Views.QuerySample extends Searchad.Views.Base
       if path.eval== 'query_samp'
         @render()
         @get_items(user_id: @controller.user_id) if  @dirty
-        @controller.send_event('Query Sample')
+        @controller.send_event('Query Set')
     )
     @container = $("<div>")
     @init_render()
@@ -93,12 +93,12 @@ class Searchad.Views.QuerySample extends Searchad.Views.Base
 
   init_render: =>
     @container.append(@navBar(
-      title: 'Upload a Query Sample'))
+      title: 'Upload a Query Set'))
     @container.append(
         @query_label_upload_template(user: @controller.user_id))
     
     @container.append(@navBar(
-      title: 'Query Samples'))
+      title: 'Query Sets'))
     @grid = new Backgrid.Grid(
       columns: @grid_cols()
       collection: @query_labels
@@ -134,11 +134,17 @@ class Searchad.Views.QuerySample extends Searchad.Views.Base
     [{name: 'created',
     label: 'Created On',
     editable: false,
+    headerCell: @NumericHeaderCell,
     cell: 'date'},
     {name: 'label',
     label: 'Label',
     editable: false,
     cell: 'string'},
+    {name: 'label_size',
+    label: 'Label Size',
+    editable: false,
+    headerCell: @NumericHeaderCell,
+    cell: 'integer'},
     {name: 'user',
     label: 'User ID',
     editable: false,

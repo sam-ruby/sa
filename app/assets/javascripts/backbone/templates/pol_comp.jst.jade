@@ -32,12 +32,35 @@
         input.switch(type="text", placeholder="switches=switch_name:on")
     
     .control-group
-      label.control-label(for="query_set) Query Sample
+      label.control-label(for="query_set) Query Sets
         br
-        span.label-select-help (Upto 3 Samples)
+        span.label-select-help (Upto 3 Sets)
       .controls
         select.query-sample(multiple="multiple")
           option(value='select_query_sample') Select a Query Sample
+        .help-text-block
+          .link-control
+            a(href="#")
+          .help-text-contents    
+            .query-set
+              span.title Top Queries
+              span.body Top 2000 queries ranked by daily query traffic
+            .query-set
+              span.title Trending in last 2, 7, 14, 21, 28 days
+              span.body Queries having relatievly higher traffic with in a given time period (2 days, 7 days, 14 days, etc.) 
+            .query-set
+              span.title Conversion dropping in last 1, 2, 3 weeks
+              span.body Queries having relatievly lower Conversion with in 1 week, 2 weeks or 3 weeks
+            .query-set
+              span.title Poorly Performing in last 30 days
+              span.body Queries having higher traffic with low Product View Rate
+            .query-set
+              span.title Comptetive Opportunities
+              span.body Queries having significant Assortment Gap in Items compared to Amazon
+            .query-set
+              span.title Typical Queries
+              span.body Set of randomly sampled queries formulate this segment.
+
 
     .control-group
       .controls

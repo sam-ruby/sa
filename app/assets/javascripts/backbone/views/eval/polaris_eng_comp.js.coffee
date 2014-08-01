@@ -53,6 +53,13 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
       $(e.target).parents('.alert').removeClass(
         'alert-success').removeClass('alert-error')
       $(e.target).parents('.alert').toggle('slideup')
+    'click .link-control a': (e)->
+      e.preventDefault()
+      if $(e.target).hasClass('hd-text')
+        @$el.find('.help-text-contents').slideUp()
+      else
+        @$el.find('.help-text-contents').slideDown()
+      $(e.target).toggleClass('hd-text')
 
   reset_form: (e)=>
     $(e.target.form).find(
@@ -171,9 +178,17 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
       url: @controller.svc_base_url + '/labels/get_query_sets'
       success: (data) =>
         that.container.find('select.query-sample').empty()
-        for label in data
-          @container.find('select.query-sample').append(
+        std_opt_group = $('<optgroup label="Std. Query Sets">')
+        user_opt_group = $('<optgroup label="User Query Sets">')
+        for label in data when label.query_group == 'golden'
+          std_opt_group.append(
             $("<option value='#{label.segmentation}'>#{label.segmentation}</option>"))
+        for label in data when label.query_group == 'user'
+          user_opt_group.append(
+            $("<option value='#{label.segmentation}'>#{label.segmentation}</option>"))
+        @container.find('select.query-sample').append(std_opt_group)
+        @container.find('select.query-sample').append(user_opt_group)
+
       error: =>
         that.container.find('select.query-sample').empty()
         @container.find('select.query-sample').append(
@@ -198,10 +213,12 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
     [{name: 'created',
     label: 'Created On',
     editable: false,
+    headerCell: @NumericHeaderCell,
     cell: 'date'},
     {name: 'job_id',
     label: 'Job ID',
     editable: false,
+    headerCell: @NumericHeaderCell,
     cell: 'integer'},
     {name: 'instance_1',
     label: 'Polaris 1',
