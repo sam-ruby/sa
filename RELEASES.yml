@@ -1,4 +1,26 @@
 --- # This is a text file to mark the features/bug fixes that went in a Release
+2.3:
+    Date: Aug 1, 2014
+    Features:
+      PERSSERANA-332: Daily Email Notification of A/B Test Results
+      PERSSERANA-684: Daily Email Notification of current and new site kpis
+      PERSSERANA-691: Polaris Engine Comparison for a Query Set
+      PERSSERANA-708: Get Solr Signal and related data for Recommeneded items
+      PERSSERANA-690: Developed New Query Segments; HEAD, TAIL and TORSO
+      PERSSERANA-718: Identify In Store Only items and display accordingly
+      PERSSERANA-726: Notification in the event daily/weekly Job fails
+    Fixes:
+      PERSSERANA-675: 
+      PERSSERANA-709: Add statistics test results in new vs current site metrics comparison
+      PERSSERANA-710: Decouple job relevance_metrics_daily_Prod and diff_queries_polaris_instances_Prod from accessing the table query_w_enough_judge so that one job does not break during table update triggered by another  
+      PERSSERANA-675: Enable WMT, AMZN site links for each items shown
+      PERSSERANA-674: Mark Walmart Position as not in top 32 for the respective items
+      PERSSERANA-687: Fix download query feature in Query Analysis page
+      PERSSERANA-680: Change default day date to last 2 days
+      PERSSERANA-703: Link "Percentage of Traffic Reformulated" value on query-level page to query reformulations list
+      PERSSERANA-712: Additional Download buttons populate when sorting on column title on competitive analysis tab
+
+
 2.2.2:
     Date: Jul 10, 2014
     Fixes:
