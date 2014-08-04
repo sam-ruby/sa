@@ -1,7 +1,7 @@
 - var intFormatter = new Backgrid.NumberFormatter({decimals: 0})
 - var intFormatterDefault = new Backgrid.NumberFormatter({decimals: 4})
 - var intFormatterPc = new Backgrid.NumberFormatter({decimals: 2})
-- var pcFormat = function (value) { if (value ===null) return '-'; else return intFormatterPc.fromRaw(value) + '%';}
+- var pcFormat = function (value) { return intFormatterPc.fromRaw(value) + '%';}
 
 - var segment = (router.path && router.path.search) || 'top'
 - var feature = (router.path && router.path.page) || 'traffic'
@@ -15,55 +15,189 @@ div.query-info
     a(href='http://www.walmart.com/search/search-ng.do?search_query=' + encodeURIComponent(metric.query), target='_blank')
       img.walmart-icon(src='/assets/walmart-transparent.png')
 
-table.table.table-condensed.query-stats
+table.table.table-condensed.table-bordered.query-stats
+  thead
+    tr
+      th.title(colspan=2)
+        span Orders
+      th.title(colspan=2)
+        span Eval Judgement
+      th.title(colspan=2)
+        span User Engagement
+      th.title(colspan=2)
+        span General
   tbody
     if metric
       tr
-        td.name Orders NDCG@1
-        td.value= intFormatterDefault.fromRaw(metric.orders_ndcg_1)||'No Data'
-        td.spacer
-        td.name Traffic
-        td.value= intFormatter.fromRaw(metric.traffic)||'No Data'
-      
-      tr
-        td.name Orders NDCG@5
-        td.value= intFormatterDefault.fromRaw(metric.orders_ndcg_5)||'No Data'
-        td.spacer
-        td.name Conversion
-        td.value= pcFormat(metric.conversion)
-      
-      tr
-        td.name Orders NDCG@16
-        td.value= intFormatterDefault.fromRaw(metric.orders_ndcg_16)||'No Data'
-        td.spacer
-        td.name PVR
-        td.value= pcFormat(metric.pvr)
-
-      tr
-        td.name Orders Precision@16
-        td.value= intFormatterDefault.fromRaw(metric.orders_precision_16)||'No Data'
-        td.spacer
-        td.name ATC
-        td.value= pcFormat(metric.atc)
-        
-      tr
-        td.name Eval Recall@5
-        td.value= intFormatterDefault.fromRaw(metric.eval_recall_5)||'No Data'
-        td.spacer
-        td.name Revenue
-        td.value= (intFormatter.fromRaw(metric.revenue)||0) + '$'
-      
-      tr
-        td.name Percentage of Traffic Reformulated
+        td.name NDCG@1
         td.value
-          if metric.QRR
+          if metric.orders_ndcg_1 || (metric.orders_ndcg_1 == 0) 
+            =intFormatterDefault.fromRaw(metric.orders_ndcg_1)
+          else
+            span.no-data
+        
+        td.name NDCG@1
+        td.value
+          if metric.eval_ndcg_1 || (metric.eval_ndcg_1 == 0)
+            =intFormatterDefault.fromRaw(metric.eval_ndcg_1)
+          else
+            span.no-data
+        
+        td.name Query Reform Rate
+        td.value
+          if metric.QRR || (metric.QRR == 0)
             a.query-stats(href=new_path)
               = pcFormat(metric.QRR)
           else
-            | 'No Data'
-        td.spacer
+            span.no-data
 
+        td.name Traffic
+        td.value
+          if metric.traffic || (metric.traffic == 0)
+            = intFormatter.fromRaw(metric.traffic)
+          else
+            span.no-data
+      
+      tr
+        td.name NDCG@5
+        td.value
+          if metric.orders_ndcg_5 || (metric.orders_ndcg_5 == 0)
+            = intFormatterDefault.fromRaw(metric.orders_ndcg_5)
+          else
+            span.no-data
+        
+        td.name NDCG@5
+        td.value
+          if metric.eval_ndcg_5 || (metric.eval_ndcg_5 == 0)
+            =intFormatterDefault.fromRaw(metric.eval_ndcg_5)
+          else
+            span.no-data
+      
+        td.name Abandon Rate
+        td.value
+          if metric.AR || (metric.AR  == 0)
+            = pcFormat(metric.AR)
+          else
+            span.no-data
+        
+        td.name Conversion 
+        td.value
+          if metric.conversion || (metric.conversion == 0)
+            = pcFormat(metric.conversion)
+          else
+            span.no-data
+ 
+      tr
+        td.name Precision@5
+        td.value
+          if metric.orders_precision_5 || (metric.orders_precision_5 == 0)
+            = intFormatterDefault.fromRaw(metric.orders_precision_5)
+          else
+            span.no-data
+        
+        td.name Precision@5
+        td.value
+          if metric.eval_precision_5 || (metric.eval_precision_5 == 0)
+            = intFormatterDefault.fromRaw(metric.eval_precision_5)
+          else
+            span.no-data
+      
+        td.name First Item Clicks
+        td.value
+          if metric.CAF || (metric.CAF == 0)
+            = pcFormat(metric.CAF)
+          else
+            span.no-data
+        
+        td.name PVR 
+        td.value
+          if metric.pvr || (metric.pvr == 0)
+            = pcFormat(metric.pvr)
+          else
+            span.no-data
+      
+      tr
+        td.name Precision@1
+        td.value
+          if metric.orders_precision_1 || (metric.orders_precision_1 == 0)
+            = intFormatterDefault.fromRaw(metric.orders_precision_1)
+          else
+            span.no-data
+        
+        td.name Precision@1
+        td.value
+          if metric.eval_precision_1 || (metric.eval_precision_1 == 0)
+            = intFormatterDefault.fromRaw(metric.eval_precision_1)
+          else
+            span.no-data
+      
+        td.name Clicks Per Query
+        td.value
+          if metric.CAF || (metric.CAF == 0)
+            =intFormatterPc.fromRaw(metric.CAF) + ' clks'
+          else
+            span.no-data
+        
+        td.name ATC
+        td.value
+          if metric.atc || (metric.atc == 0)
+            = pcFormat(metric.atc)
+          else
+            span.no-data
+      
+      tr
+        td.name Recall@1
+        td.value
+          if metric.orders_recall_1 ||(metric.orders_recall_1 == 0)
+            = intFormatterDefault.fromRaw(metric.orders_recall_1)
+          else
+            span.no-data
+        
+        td.name Recall@1
+        td.value
+          if metric.eval_precision_1 || (metric.eval_precision_1 == 0)
+            = intFormatterDefault.fromRaw(metric.eval_precision_1)
+          else
+            span.no-data
+      
+        td.name Reciprocal Rank
+        td.value
+          if metric.MRR || (metric.MRR == 0)
+            = intFormatterDefault.fromRaw(metric.MRR)
+          else
+            span.no-data
+        
+        td.name Revenue
+        td.value
+          if metric.revenue
+            = intFormatter.fromRaw(metric.revenue) + '$'
+          else
+            = '0$'
+        
+      tr
+        td.name Recall@5
+        td.value
+          if metric.orders_recall_5 || (metric.orders_recall_5 == 0)
+            = intFormatterDefault.fromRaw(metric.orders_recall_5)
+          else
+            span.no-data
+        
+        td.name Recall@5
+        td.value
+          if metric.eval_precision_5 || (metric.eval_precision_5 == 0)
+            = intFormatterDefault.fromRaw(metric.eval_precision_5)
+          else
+            span.no-data
+      
+        td.name Query Dwell Time
+        td.value
+          if metric.QDT || (metric.QDT == 0)
+            =intFormatterPc.fromRaw(metric.QDT) + ' secs'
+          else
+            span.no-data
+
+        td.name &nbsp;
+        td.value &nbsp;
     else
       tr
-        td(colspan=5, style='text-align:center;')
-          i No Data Available
+        td(colspan=8) No Data

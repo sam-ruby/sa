@@ -1317,17 +1317,38 @@ form.item-selection, form.walmart-items-form {
 }
 table.query-stats {
   margin-bottom: 30px;
-  td {
-    border: 0;
-  }
   td.name {
     text-align: right;
     font-weight: bold;
-    width: 200px;
   }
   td.value {
     text-align: left;
   }
+  th.title {
+    text-align: center;
+    color: #1894c6;
+  }
+  td.value {
+    border-left: 0;
+  }
+  td {
+    border-top: 0;
+  }
+  tbody {
+    tr:first-child {
+      td {
+        border-top: 1px solid rgb(221, 221, 221);
+      }
+    }
+    span.no-data {
+      font-size: 12px;
+      font-style: italic;
+      &:after {
+        content: 'No Data';
+      }
+    }
+  }
+
 }
 .rel-best-seller-label, .walmart-results-label {
   padding: 5px;
