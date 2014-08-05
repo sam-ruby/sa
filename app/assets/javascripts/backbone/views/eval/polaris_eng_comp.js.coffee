@@ -40,10 +40,13 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
       )
     'click form.engine-comp button.submit': (e)=>
       e.preventDefault()
-      if @validate_inputs(e.target.form)
+      [flag, msg] = @validate_inputs(e.target.form)
+      if flag
         @submit_request(e.target.form)
         @get_items()
         @reset_form(e)
+      else
+        @show_job_error(msg)
     'click form.engine-comp button.reset': (e)->
       e.preventDefault()
       @reset_form(e)
@@ -80,11 +83,9 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
     email = email.split('@')[0] if email?
     data =
       user: email
-      engine_1:
-        'http://' + $(form).find('input.engine')[0].value + '/search?' + switch_1
-      engine_2:
-        'http://' + $(form).find('input.engine')[1].value + '/search?' + switch_2
-      query_mix: label
+      engine_1: 'http://' + $(form).find('input.engine')[0].value + '/search?' + switch_1
+      engine_2: 'http://' + $(form).find('input.engine')[1].value + '/search?' + switch_2
+    data.query_mix = label if label
 
     $.ajax(
       @controller.svc_base_url + '/engine_stats/post_request',
@@ -99,28 +100,40 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
     )
     
   validate_inputs: (form)->
-    flag = true
     that = this
     $(form).find('.control-group.error, input.error, select.error').removeClass('error')
+    curr_eng_val = null
+    flag = true
+    msg = ''
     $(form).find('input[type="text"].engine').each(->
       if this.value == ''
-        flag = false
         $(this).parents('.controls').find('select').addClass('error')
         $(this).addClass('error')
+        flag = false
+        msg = 'Required field is empty'
+      else if curr_eng_val? and (curr_eng_val == this.value)
+        $(this).parents('.controls').find('select').addClass('error')
+        $(this).addClass('error')
+        flag = false
+        msg = 'Engine values cannot be same'
+      curr_eng_val = this.value
     )
+    return [flag, msg] if flag == false
+
     query_sample_select = $(form).find('select.query-sample')
     if query_sample_select.val() and query_sample_select.val().length > 3
       query_sample_select.parents('.control-group').addClass('error')
-      flag = false
-    flag
+      return [false, 'More than 3 Query sets selected']
+    
+    [true, '']
   
   show_job_id: (job_id) ->
     form = @container.find('div.form-submission-results')
     form.find('.error-div').hide()
     form.find('span.job-id').text(job_id)
     form.find('.success-div').show()
-    if !form.hasClass('alert-success')
-      form.addClass('alert-success')
+    form.removeClass('alert-success alert-error')
+    form.addClass('alert-success')
     form.show()
   
   show_job_error: (error) ->
@@ -128,8 +141,8 @@ class Searchad.Views.PolarisComparison extends Searchad.Views.Base
     form.find('.success-div').hide()
     form.find('span.error').text(error)
     form.find('.error-div').show()
-    if !form.hasClass('alert-error')
-      form.addClass('alert-error')
+    form.removeClass('alert-success alert-error')
+    form.addClass('alert-error')
     form.show()
     
   init_render: =>
