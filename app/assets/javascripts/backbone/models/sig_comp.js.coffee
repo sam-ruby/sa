@@ -8,7 +8,7 @@ class Searchad.Collections.SignalComparison extends Searchad.Collections.ConvCor
 
   model: Searchad.Models.SignalComparison
   url: =>
-    @controller.svc_base_url + '/signals/get_item_signals'
+    @controller.svc_base_url + '/engine_stats/get_query_item_signals'
   comparator: (a, b) ->
     val_a = parseInt(a.get('in_top_16')) * 100 + parseInt(a.get('position'))
     val_b = parseInt(b.get('in_top_16')) * 100 + parseInt(b.get('position'))

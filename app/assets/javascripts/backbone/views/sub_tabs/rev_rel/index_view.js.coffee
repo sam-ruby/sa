@@ -66,6 +66,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
       engine_url = $(e.target).parents(
         'div.from-search-engines').find('select :selected').val()
       return if engine_url == 'select_engine'
+      @items = []
       @show_realtime_items(engine_url)
     'click button.reset-get-items': (e) =>
       e.preventDefault()
@@ -73,6 +74,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
         'div.from-search-engines').find('select option').each(()->
           @selected = (@value == 'select_engine')
         )
+      @items = []
       @get_items()
 
   show_realtime_items: (@engine_url)=>
@@ -87,6 +89,7 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
       data:
         engine: @engine_url
         query: @query
+        date: @controller.date
       complete: (xhr, status) ->
         if xhr? and xhr.responseText? and (status == 'success' or status == 'notmodified')
           data = JSON.parse(xhr.responseText)
