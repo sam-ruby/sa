@@ -311,6 +311,11 @@ class Searchad.Views.SubTabs.RelRev.IndexView extends Searchad.Views.Base
     @engine_url = null
     @items = []
     @div_container.show()
+    if @div_container.find('.from-search-engines select').attr(
+      'disabled') != true
+      @div_container.find('.from-search-engines select option').each(()->
+        @selected = (@value == 'select_engine')
+      )
     @grid.render()
     if @div_container.parents().length == 0
       @$el.append(@div_container)
